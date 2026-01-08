@@ -14,7 +14,7 @@
 # BUGS:
 - [ ] cursor didn't jump at the bottom of the screen when ':' is pressed
 - [ ] cursor style didn't change right away when mode is changed
-- [ ] fix 'O'
+- [x] fix 'O'
 
 # Refactor:
 - [x] rename Program into the Editor
