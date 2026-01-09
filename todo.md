@@ -1,15 +1,16 @@
 # TODO:
 - [x] delete line when backspace was hit and there is no text in line
-- [ ] saving files
-- [ ] open files
+- [x] saving files
+- [x] open files
 - [ ] add aditinal data of cursor pos
 - [ ] add some vim basic command
 - [?] figure out how to work with tabs
 - [ ] figure out how to wrap or show long lines of text
-- [ ] show and move text up and down
+- [ ] add text crolling up and down
 - [ ] render md
 - [ ] add file manager in editor(could be side bar or just type over all screen)
 - [x] wrap curror at the end of the lines
+- [ ] recalculate window if font was changed
 
 # BUGS:
 
@@ -47,3 +48,8 @@
 ## LineVisual:
 - [ ] 'x' to delete and copy chars under selectet region
 - [ ] 'd' to delete and copy chars under selectet region
+
+# Render
+- [x] color cursor and cur line number as yellow
+- [ ] hide md symbols when cursor is not on the line
+- [ ] show md symbold when cursor is on the line

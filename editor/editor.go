@@ -11,6 +11,7 @@ import (
 const (
 	initialCurOfset  = 2
 	initialLineShift = 1
+	ScrollBorder     = 5
 )
 
 const (
@@ -24,6 +25,8 @@ const (
 	moveToStart  = "\033[0H"
 	cursorBloc   = "\x1b[0 q"
 	cursorLine   = "\x1b[5 q"
+	cursorYellow = "\033]12;yellow"
+	cursorReset  = "\033]112\a"
 )
 
 type Mode string
@@ -37,6 +40,7 @@ const (
 type Editor struct {
 	oldState   *term.State
 	b          *Buffer
+	ui         *UI
 	curMode    Mode
 	curCommand string
 	file       string
@@ -53,21 +57,44 @@ func InitEditor() *Editor {
 	if err != nil {
 		panic(err)
 	}
-	w, h, _ := term.GetSize(_fdOut)
+	_w, _h, _ := term.GetSize(_fdOut)
 
-	b := InitBuffer()
+	_b := InitBuffer()
+	_ui := InitUI(_h)
 
 	e := &Editor{
 		oldState:   old,
-		b:          b,
+		b:          _b,
+		ui:         _ui,
 		curMode:    normal,
 		curCommand: "",
 		fdIn:       _fdIn,
-		w:          w,
-		h:          h,
+		w:          _w,
+		h:          _h,
 	}
 
+	fmt.Print(cursorYellow)
 	return e
+}
+
+func (e *Editor) ScrollUp() {
+	if e.ui.curRow == ScrollBorder {
+		if e.ui.upperBorder != 0 {
+			e.ui.upperBorder -= 1
+			e.ui.lowerBorder -= 1
+		}
+	}
+	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
+}
+
+func (e *Editor) ScrollDown() {
+	if e.ui.curRow == e.h-ScrollBorder {
+		if e.ui.lowerBorder != len(e.b.lines)+ScrollBorder {
+			e.ui.upperBorder += 1
+			e.ui.lowerBorder += 1
+		}
+	}
+	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 }
 
 func (e *Editor) caseNormal(key rune) {
@@ -76,8 +103,10 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.H()
 	case 'j':
 		e.b.J()
+		e.ScrollDown()
 	case 'k':
 		e.b.K()
+		e.ScrollUp()
 	case 'l':
 		e.b.L()
 	case 'i':
@@ -101,10 +130,12 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.cursor.ofset = 0
 		e.b.InsertEmptyLine(below)
 		e.b.cursor.line += 1
+		e.ScrollDown()
 	case 'O':
 		e.curMode = insert
 		e.b.cursor.ofset = 0
 		e.b.InsertEmptyLine(above)
+		e.ScrollUp()
 	case 'x':
 		e.b.Delkey()
 	}
@@ -114,6 +145,7 @@ func (e *Editor) caseInsert(key rune) {
 	switch key {
 	case '\013', '\r', '\n':
 		e.b.InsertLine()
+		e.ScrollDown()
 	case '\033':
 		e.curMode = normal
 		if e.b.cursor.ofset > 0 {
@@ -121,6 +153,7 @@ func (e *Editor) caseInsert(key rune) {
 		}
 	case '\127', '\x7f':
 		e.b.RemoveKey(0)
+		e.ScrollUp()
 	case '\t':
 		//NOTE: yeah, I just insert 4 spaces instead of tabs
 		e.b.InsertKey(' ')
@@ -159,22 +192,25 @@ func (e *Editor) caseCommand(key rune) {
 func (e *Editor) execCommand() bool {
 	switch e.curCommand {
 	case "q":
-		fmt.Print(clearView, clearHistory, moveToStart)
+		fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
 		term.Restore(e.fdIn, e.oldState)
 		os.Exit(0)
 		return true
 	case "w":
+		//TODO: add notification if there is no file name provided
 		err := e.SaveFile()
 		if err != nil {
 			return false
 		}
+		e.curCommand = ""
+		e.curMode = normal
 		return true
 	case "x", "wq":
 		err := e.SaveFile()
 		if err != nil {
 			return false
 		} else {
-			fmt.Print(clearView, clearHistory, moveToStart)
+			fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
 			term.Restore(e.fdIn, e.oldState)
 			os.Exit(0)
 			return true
@@ -185,8 +221,7 @@ func (e *Editor) execCommand() bool {
 }
 
 func (e *Editor) Run() {
-	//var buf [1]rune
-	Draw(e)
+	e.ui.DrawNew(e)
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		key, _, err := reader.ReadRune()
@@ -202,6 +237,6 @@ func (e *Editor) Run() {
 			e.caseInsert(key)
 		}
 
-		Draw(e)
+		e.ui.DrawNew(e)
 	}
 }
