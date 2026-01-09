@@ -6,7 +6,7 @@
 - [ ] add some vim basic command
 - [?] figure out how to work with tabs
 - [ ] figure out how to wrap or show long lines of text
-- [ ] add text crolling up and down
+- [x] add text crolling up and down
 - [ ] render md
 - [ ] add file manager in editor(could be side bar or just type over all screen)
 - [x] wrap curror at the end of the lines

@@ -221,7 +221,7 @@ func (e *Editor) execCommand() bool {
 }
 
 func (e *Editor) Run() {
-	e.ui.DrawNew(e)
+	e.ui.Draw(e)
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		key, _, err := reader.ReadRune()
@@ -237,6 +237,6 @@ func (e *Editor) Run() {
 			e.caseInsert(key)
 		}
 
-		e.ui.DrawNew(e)
+		e.ui.Draw(e)
 	}
 }
