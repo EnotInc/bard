@@ -6,12 +6,14 @@ import (
 )
 
 func main() {
+	var file string
 	e := editor.InitEditor()
 	if len(os.Args) == 2 {
-		filePath := os.Args[1]
-		err := e.LoadFile(filePath)
-		if err != nil {
-			panic(err)
+		file = os.Args[1]
+		if _, err := os.Stat(file); err == nil {
+			e.LoadFile(file)
+		} else {
+			os.Create(file)
 		}
 	}
 	e.Run()

@@ -8,7 +8,7 @@ import (
 func (e *Editor) LoadFile(file string) error {
 	f, err := os.Open(file)
 	if err != nil {
-		return nil
+		return err
 	}
 	scanner := bufio.NewScanner(f)
 
