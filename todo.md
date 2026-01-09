@@ -18,8 +18,7 @@
 
 # Refactor:
 - [x] rename Program into the Editor
-- [ ] split into files
-- [ ] extend buttons(like 'esc' or 'enter') into they own type
+- [?] split into files
 
 # Vim commands:
 ## Insert:

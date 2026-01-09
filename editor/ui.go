@@ -5,6 +5,24 @@ import (
 	"strconv"
 )
 
+type color string
+
+const (
+	red    color = ""
+	green  color = ""
+	gray   color = ""
+	yellow color = ""
+	black  color = ""
+)
+
+const (
+	initialOfset = 2
+)
+
+func colorise(data string, color string) string {
+	return fmt.Sprintf("%s%s", color, data)
+}
+
 func buildNumber(n int, maxOfset int) string {
 	numStr := strconv.Itoa(n)
 	numLen := len(numStr)
@@ -18,29 +36,23 @@ func buildNumber(n int, maxOfset int) string {
 
 func Draw(e *Editor) {
 	data := ""
-	data += fmt.Sprintf("%s", e.curType)
 	data += fmt.Sprintf("%s%s%s", clearView, clearHistory, moveToStart)
-
-	s := strconv.Itoa(len(e.buffer.lines))
-	numberOfset := len(s)
-
 	for i := range e.h - 1 {
-		if i < len(e.buffer.lines) {
-			n := buildNumber(i+1, numberOfset)
-			data += fmt.Sprintf("%s %s\r\n", n, e.buffer.lines[i])
+		if i < len(e.b.lines) {
+			n := buildNumber(i+1, len(fmt.Sprint(len(e.b.lines))))
+			data += fmt.Sprintf("%s %s\n\r", n, string(e.b.lines[i].data))
 		} else {
-			data += "~\r\n"
+			data += "~\n\r"
 		}
 	}
 	switch e.curMode {
 	case insert:
-		data += fmt.Sprintf("--%s--", e.curMode)
+		data += "-- INSERT --"
+		data += fmt.Sprintf("\033[%d;%dH", e.b.cursor.line, e.b.cursor.ofset+initialCurOfset)
 	case command:
-		data += fmt.Sprintf(":%s", e.curCommand)
+		data += fmt.Sprintf(":%s\033[%d;%dH", e.curCommand, e.h, len(e.curCommand)+initialOfset)
+	case normal:
+		data += fmt.Sprintf("\033[%d;%dH", e.b.cursor.line, e.b.cursor.ofset+initialOfset)
 	}
-	if e.curMode != command {
-		data += fmt.Sprintf("\t\t\t%d-%d", e.buffer.curLine, e.buffer.curOfset)
-	}
-	data += fmt.Sprintf("\033[%d;%dH", e.buffer.curLine+initialLineShift, e.buffer.curOfset+numberOfset+initialCurOfset)
 	fmt.Print(data)
 }
