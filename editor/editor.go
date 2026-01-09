@@ -39,6 +39,7 @@ type Editor struct {
 	b          *Buffer
 	curMode    Mode
 	curCommand string
+	file       string
 	fdIn       int
 	w          int
 	h          int
@@ -72,16 +73,40 @@ func InitEditor() *Editor {
 func (e *Editor) caseNormal(key rune) {
 	switch key {
 	case 'h':
+		e.b.H()
 	case 'j':
+		e.b.J()
 	case 'k':
+		e.b.K()
 	case 'l':
+		e.b.L()
 	case 'i':
 		e.curMode = insert
 	case 'a':
+		e.curMode = insert
+		if len(e.b.lines[e.b.cursor.line].data) > 0 {
+			e.b.cursor.ofset += 1
+		}
+	case 'I':
+		e.curMode = insert
+		//TODO: move to the first char instad of the 0
+		e.b.cursor.ofset = 0
+	case 'A':
+		e.curMode = insert
+		e.b.cursor.ofset = len(e.b.lines[e.b.cursor.line].data)
 	case ':':
 		e.curMode = command
 	case 'o':
+		e.curMode = insert
+		e.b.cursor.ofset = 0
+		e.b.InsertEmptyLine(below)
+		e.b.cursor.line += 1
 	case 'O':
+		e.curMode = insert
+		e.b.cursor.ofset = 0
+		e.b.InsertEmptyLine(above)
+	case 'x':
+		e.b.Delkey()
 	}
 }
 
@@ -91,7 +116,17 @@ func (e *Editor) caseInsert(key rune) {
 		e.b.InsertLine()
 	case '\033':
 		e.curMode = normal
+		if e.b.cursor.ofset > 0 {
+			e.b.cursor.ofset -= 1
+		}
 	case '\127', '\x7f':
+		e.b.RemoveKey(0)
+	case '\t':
+		//NOTE: yeah, I just insert 4 spaces instead of tabs
+		e.b.InsertKey(' ')
+		e.b.InsertKey(' ')
+		e.b.InsertKey(' ')
+		e.b.InsertKey(' ')
 	default:
 		fmt.Print(key)
 		e.b.InsertKey(key)
@@ -101,13 +136,20 @@ func (e *Editor) caseInsert(key rune) {
 func (e *Editor) caseCommand(key rune) {
 	switch key {
 	case '\033':
+		e.curCommand = ""
+		e.curMode = normal
 	case '\127', '\x7f':
+		if len(e.curCommand) > 0 {
+			e.curCommand = e.curCommand[:len(e.curCommand)-1]
+		} else {
+			e.curCommand = ""
+			e.curMode = normal
+		}
 	case '\013', '\r', '\n':
 		success := e.execCommand()
 		if !success {
 			e.curCommand = ""
 			e.curMode = normal
-			//TODO: move cursor back to prev pos
 		}
 	default:
 		e.curCommand += string(key)
@@ -121,6 +163,22 @@ func (e *Editor) execCommand() bool {
 		term.Restore(e.fdIn, e.oldState)
 		os.Exit(0)
 		return true
+	case "w":
+		err := e.SaveFile()
+		if err != nil {
+			return false
+		}
+		return true
+	case "x", "wq":
+		err := e.SaveFile()
+		if err != nil {
+			return false
+		} else {
+			fmt.Print(clearView, clearHistory, moveToStart)
+			term.Restore(e.fdIn, e.oldState)
+			os.Exit(0)
+			return true
+		}
 	default:
 		return false
 	}
