@@ -9,10 +9,10 @@ type color string
 
 const (
 	reset  color = "\033[0m"
-	red    color = ""
+	red    color = "\033[31m"
 	green  color = ""
 	gray   color = ""
-	yellow color = "\033[33m"
+	yellow color = "\033[93m"
 	black  color = ""
 )
 

@@ -36,12 +36,18 @@ func (b *Buffer) H() {
 func (b *Buffer) J() {
 	if b.cursor.line < len(b.lines)-1 {
 		b.cursor.line += 1
+		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
+			b.cursor.ofset = len(b.lines[b.cursor.line].data)
+		}
 	}
 }
 
 func (b *Buffer) K() {
 	if b.cursor.line > 0 {
 		b.cursor.line -= 1
+		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
+			b.cursor.ofset = len(b.lines[b.cursor.line].data)
+		}
 	}
 }
 

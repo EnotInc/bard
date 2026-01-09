@@ -25,7 +25,7 @@ const (
 	moveToStart  = "\033[0H"
 	cursorBloc   = "\x1b[0 q"
 	cursorLine   = "\x1b[5 q"
-	cursorYellow = "\033]12;yellow"
+	cursorYellow = "\033]12;yellow\x07"
 	cursorReset  = "\033]112\a"
 )
 
@@ -98,6 +98,7 @@ func (e *Editor) ScrollDown() {
 }
 
 func (e *Editor) caseNormal(key rune) {
+	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
 	case 'h':
 		e.b.H()
@@ -118,8 +119,12 @@ func (e *Editor) caseNormal(key rune) {
 		}
 	case 'I':
 		e.curMode = insert
-		//TODO: move to the first char instad of the 0
-		e.b.cursor.ofset = 0
+		for i := range len(e.b.lines[e.b.cursor.line].data) {
+			if e.b.lines[e.b.cursor.line].data[i] != ' ' {
+				e.b.cursor.ofset = i
+				break
+			}
+		}
 	case 'A':
 		e.curMode = insert
 		e.b.cursor.ofset = len(e.b.lines[e.b.cursor.line].data)

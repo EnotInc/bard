@@ -3,6 +3,7 @@ package editor
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 func (e *Editor) LoadFile(file string) error {
@@ -18,6 +19,7 @@ func (e *Editor) LoadFile(file string) error {
 		l := &line{}
 
 		scannedLine := scanner.Text()
+		scannedLine = strings.ReplaceAll(scannedLine, "\t", "    ")
 		e.b.lines = append(e.b.lines, l)
 		e.b.lines[len(e.b.lines)-1].data = []rune(scannedLine)
 	}
