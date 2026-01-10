@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	initialCurOfset  = 2
 	initialLineShift = 1
 	ScrollBorder     = 5
 )
@@ -23,8 +22,6 @@ const (
 	clearView    = "\033[2J"
 	clearHistory = "\033[3J"
 	moveToStart  = "\033[0H"
-	cursorBloc   = "\x1b[0 q"
-	cursorLine   = "\x1b[5 q"
 	cursorYellow = "\033]12;yellow\x07"
 	cursorReset  = "\033]112\a"
 )
@@ -32,9 +29,11 @@ const (
 type Mode string
 
 const (
-	normal  = "NORMAL"
-	command = "COMMAND"
-	insert  = "INSERT"
+	normal      Mode = "NORMAL"
+	command     Mode = "COMMAND"
+	insert      Mode = "INSERT"
+	visual      Mode = "VISUAL"
+	visual_line Mode = "VISUAL-LINE"
 )
 
 type Editor struct {
@@ -110,6 +109,10 @@ func (e *Editor) caseNormal(key rune) {
 		e.ScrollUp()
 	case 'l':
 		e.b.L()
+	case 'v':
+		e.curMode = visual
+	case 'V':
+		e.curMode = visual_line
 	case 'i':
 		e.curMode = insert
 	case 'a':
@@ -143,6 +146,9 @@ func (e *Editor) caseNormal(key rune) {
 		e.ScrollUp()
 	case 'x':
 		e.b.Delkey()
+	case 's':
+		e.b.Delkey()
+		e.curMode = insert
 	}
 }
 
@@ -166,7 +172,6 @@ func (e *Editor) caseInsert(key rune) {
 		e.b.InsertKey(' ')
 		e.b.InsertKey(' ')
 	default:
-		fmt.Print(key)
 		e.b.InsertKey(key)
 	}
 }
@@ -225,6 +230,20 @@ func (e *Editor) execCommand() bool {
 	}
 }
 
+func (e *Editor) caseVisual(key rune) {
+	switch key {
+	case '\033':
+		e.curMode = normal
+	}
+}
+
+func (e *Editor) caseVisualLine(key rune) {
+	switch key {
+	case '\033':
+		e.curMode = normal
+	}
+}
+
 func (e *Editor) Run() {
 	e.ui.Draw(e)
 	reader := bufio.NewReader(os.Stdin)
@@ -240,6 +259,10 @@ func (e *Editor) Run() {
 			e.caseCommand(key)
 		case insert:
 			e.caseInsert(key)
+		case visual:
+			e.caseVisual(key)
+		case visual_line:
+			e.caseVisualLine(key)
 		}
 
 		e.ui.Draw(e)

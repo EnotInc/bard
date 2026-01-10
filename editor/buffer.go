@@ -75,11 +75,13 @@ func (b *Buffer) RemoveKey(keyShift int) {
 }
 
 func (b *Buffer) Delkey() {
-	curLine := b.lines[b.cursor.line]
-	index := b.cursor.ofset
-	curLine.data = slices.Delete(curLine.data, index, index+1)
-	if b.cursor.ofset == len(b.lines[b.cursor.line].data) && b.cursor.ofset > 0 {
-		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+	if len(b.lines[b.cursor.line].data) > 0 {
+		curLine := b.lines[b.cursor.line]
+		index := b.cursor.ofset
+		curLine.data = slices.Delete(curLine.data, index, index+1)
+		if b.cursor.ofset == len(b.lines[b.cursor.line].data) && b.cursor.ofset > 0 {
+			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+		}
 	}
 }
 
