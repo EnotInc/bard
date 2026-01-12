@@ -13,8 +13,17 @@ type cursor struct {
 	ofset int
 }
 
+type yankLine struct {
+	data        []rune
+	start_line  int
+	start_ofset int
+	end_line    int
+	end_ofset   int
+}
+
 type Buffer struct {
 	lines  []*line
+	yank   []*yankLine
 	cursor *cursor
 }
 
@@ -37,7 +46,10 @@ func (b *Buffer) J() {
 	if b.cursor.line < len(b.lines)-1 {
 		b.cursor.line += 1
 		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-			b.cursor.ofset = len(b.lines[b.cursor.line].data)
+			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+			if b.cursor.ofset < 0 {
+				b.cursor.ofset = 0
+			}
 		}
 	}
 }
@@ -46,13 +58,16 @@ func (b *Buffer) K() {
 	if b.cursor.line > 0 {
 		b.cursor.line -= 1
 		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-			b.cursor.ofset = len(b.lines[b.cursor.line].data)
+			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+			if b.cursor.ofset < 0 {
+				b.cursor.ofset = 0
+			}
 		}
 	}
 }
 
 func (b *Buffer) L() {
-	if b.cursor.ofset < len(b.lines[b.cursor.line].data)-1 { //NOTE: -1 here is used to not get out of bounds
+	if b.cursor.ofset < len(b.lines[b.cursor.line].data)-1 {
 		b.cursor.ofset += 1
 	}
 }
@@ -79,9 +94,6 @@ func (b *Buffer) Delkey() {
 		curLine := b.lines[b.cursor.line]
 		index := b.cursor.ofset
 		curLine.data = slices.Delete(curLine.data, index, index+1)
-		if b.cursor.ofset == len(b.lines[b.cursor.line].data) && b.cursor.ofset > 0 {
-			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-		}
 	}
 }
 
@@ -117,4 +129,32 @@ func (b *Buffer) DelAndMoveLine() {
 
 func (b *Buffer) RemoveLine() {
 	b.lines = slices.Delete(b.lines, b.cursor.line, b.cursor.line+1)
+}
+
+func (b *Buffer) Yank() {
+	//TODO: figure out how to copy the hole line
+	//Ig I i can use some kind of a loop, don't rly know
+	//Now I can copy only 1 char
+	if len(b.lines[b.cursor.line].data) > 0 {
+		var ydata []rune
+		ydata = append(ydata, b.lines[b.cursor.line].data[b.cursor.ofset])
+		yline := &yankLine{
+			data:        ydata,
+			start_line:  b.cursor.line,
+			start_ofset: b.cursor.ofset,
+			end_line:    b.cursor.line,
+			end_ofset:   b.cursor.ofset,
+		}
+		b.yank = []*yankLine{}
+		b.yank = append(b.yank, yline)
+	}
+}
+
+func (b *Buffer) Paste() {
+	if len(b.yank) == 1 {
+		b.cursor.ofset += 1
+		yanked := b.yank[0].data
+		b.InsertKey(yanked[0])
+		b.cursor.ofset -= 1
+	}
 }

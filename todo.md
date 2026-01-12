@@ -17,6 +17,8 @@
 - [x] line 1000 crashing the editor, "Slice bound out of range [:-1]". Breaking somewhere at buildNumber func (59 line)
 
 # Vim commands:
+- [ ] build commands modifyers (like 12j to move 12 line down)
+
 ## Insert:
 - [x] 'esc' to normal
 - [ ] 'ctrl-c' to normal
@@ -34,6 +36,9 @@
 - [?] 'x' to delete and copy char under cursor
 - [x] 's' to delete char under the cursor and enter insert mode
 - [ ] 'r' to replace key under the cursor with a new one
+- [ ] '.' to repeat last command
+- [ ] 'G' to go the end of the file
+- [ ] 'gg' to go the beggining of the file
 
 
 ## Command:
@@ -41,6 +46,7 @@
 - [x] 'w' to write
 - [x] 'wq' to write
 - [x] 'x' to save and quit
+- [x] 'rln' to change line numeration
 
 ## Visual:
 - [ ] 'x' to delete and copy chars under selectet region
@@ -54,3 +60,4 @@
 - [x] color cursor and cur line number as yellow
 - [?] hide md symbols when cursor is not on the line
 - [?] show md symbold when cursor is on the line
+

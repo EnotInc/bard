@@ -25,6 +25,7 @@ const (
 )
 
 type UI struct {
+	rln         bool
 	upperBorder int
 	lowerBorder int
 	curRow      int
@@ -34,6 +35,7 @@ type UI struct {
 func InitUI(h int) *UI {
 	r := render.InitReder()
 	ui := &UI{
+		rln:         false,
 		lowerBorder: h,
 		upperBorder: 0,
 		curRow:      0,
@@ -46,36 +48,44 @@ func colorise(data string, c color) string {
 	return fmt.Sprintf("%s%s%s", c, data, resetFg)
 }
 
-func (b *Buffer) buildNumber(n int, maxOfset int) string {
-	numStr := strconv.Itoa(n)
+func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
+	rn := n
+	if rln && rn != b.cursor.line+1 {
+		rn = b.cursor.line - n + 1
+		if rn < 0 {
+			rn *= -1
+		}
+	}
+	numStr := strconv.Itoa(rn)
 	numLen := len(numStr)
 	num := ""
+
 	if maxOfset <= initialOfset {
 		maxOfset = initialOfset
 	}
 	for range maxOfset - numLen {
 		num += " "
 	}
-	//num = fmt.Sprintf("%s%s%s", num, numStr, "")
+	num = fmt.Sprintf("%s%s", num, numStr)
+
 	if b.cursor.line+1 == n {
-		num = fmt.Sprintf("%s%s%s", num[:len(num)-1], numStr, " ")
 		num = colorise(num, yellowFg)
 	} else {
-		num = fmt.Sprintf("%s%s%s", num, numStr, "")
 		num = colorise(num, resetFg)
 	}
-	return fmt.Sprintf("%s", num)
+
+	return num
 }
 
 func buildSpaces(maxOfset int) string {
 	space := ""
-	if maxOfset <= initialOfset-1 {
-		maxOfset = initialOfset - 1
+	if maxOfset <= initialOfset {
+		maxOfset = initialOfset
 	}
 	for range maxOfset - 1 {
 		space += " "
 	}
-	return fmt.Sprintf("%s", space)
+	return space
 }
 
 func (e *Editor) buildLowerBar(curdata string) string {
@@ -84,7 +94,7 @@ func (e *Editor) buildLowerBar(curdata string) string {
 	for range freeSpace {
 		data += " "
 	}
-	data += fmt.Sprintf("%d-%d", e.b.cursor.line, e.b.cursor.ofset)
+	data += fmt.Sprintf("%d-%d", e.b.cursor.line+1, e.b.cursor.ofset+1)
 	return data
 }
 
@@ -99,23 +109,23 @@ func (ui *UI) Draw(e *Editor) {
 		isCurLine := e.b.cursor.line == i
 
 		if i < len(e.b.lines) {
-			n := e.b.buildNumber(i+1, maxNumLen)
+			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
 			l := ui.render.RednerLine(e.b.lines[i].data, isCurLine)
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
 			fmt.Fprintf(&data, "%s~\n\r", emtpyLineSpases)
 		}
 	}
-	x := e.b.cursor.ofset + initialOfset + len(emtpyLineSpases) + initialCurOfset
+	x := e.b.cursor.ofset + initialOfset + len(emtpyLineSpases) + initialCurOfset - 1
 	y := e.ui.curRow + cursorLineOfset
 
 	switch e.curMode {
 	case insert:
-		fmt.Fprintf(&data, "-- INSERT --")
+		fmt.Fprintf(&data, "%s", e.buildLowerBar("-- INSERT --"))
 		fmt.Fprintf(&data, cursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	case command:
-		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(":", yellowFg), e.curCommand, e.h, len(e.curCommand)+initialOfset-1) // 1 is a magic number, just get use to it
+		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.curCommand, e.h, len(e.curCommand)+initialOfset)
 		fmt.Fprintf(&data, cursorBloc)
 	case normal:
 		cursorPos := fmt.Sprintf("%s[%s]", emtpyLineSpases, e.file)

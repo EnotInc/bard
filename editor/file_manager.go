@@ -23,6 +23,9 @@ func (e *Editor) LoadFile(file string) error {
 		e.b.lines = append(e.b.lines, l)
 		e.b.lines[len(e.b.lines)-1].data = []rune(scannedLine)
 	}
+	if len(e.b.lines) == 0 {
+		e.b.lines = append(e.b.lines, &line{})
+	}
 	e.file = file
 	return nil
 }

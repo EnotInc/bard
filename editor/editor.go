@@ -145,7 +145,13 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
 	case 'x':
+		e.b.Yank()
 		e.b.Delkey()
+		if e.b.cursor.ofset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.ofset > 0 {
+			e.b.cursor.ofset -= 1
+		}
+	case 'p':
+		e.b.Paste()
 	case 's':
 		e.b.Delkey()
 		e.curMode = insert
@@ -225,6 +231,11 @@ func (e *Editor) execCommand() bool {
 			os.Exit(0)
 			return true
 		}
+	case "rln":
+		e.ui.rln = !e.ui.rln
+		e.curCommand = ""
+		e.curMode = normal
+		return true
 	default:
 		return false
 	}

@@ -1,6 +1,8 @@
 package render
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	reset     = "\033[0m"
@@ -26,15 +28,10 @@ func (r *Renderer) RednerLine(line []rune, isCur bool) string {
 	var data = ""
 	for i := range len(line) {
 		cur := line[i]
-		if i == 0 && cur == '#' {
-			data += fmt.Sprintf("%s%s", bold, string(line))
-			break
-		}
+		//TODO: tokenise string indstead of
 		switch cur {
 		case '_':
 			data += r.renderChar(cur, italic, isCur)
-		case '-':
-			data += r.renderChar(cur, stricked, isCur)
 		default:
 			data += fmt.Sprintf("%c", cur)
 		}
