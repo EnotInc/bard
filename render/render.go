@@ -10,50 +10,72 @@ const (
 	italic    = "\033[3m"
 	underline = "\033[7m"
 	stricked  = "\033[9m"
+	startSel  = "\033[100m"
+	endSel    = "\033[49m"
 )
 
 type Renderer struct {
-	curMod string
+	curMod      string
+	width       int
+	HStartLine  int
+	HStartOfset int
+	HEndLine    int
+	HEndOfset   int
 }
 
-func InitReder() *Renderer {
+func InitReder(w int) *Renderer {
 	r := &Renderer{
-		curMod: reset,
+		curMod:      reset,
+		width:       w,
+		HStartLine:  -1,
+		HStartOfset: -1,
+		HEndLine:    -1,
+		HEndOfset:   -1,
 	}
 
 	return r
 }
 
-func (r *Renderer) RednerLine(line []rune, isCur bool) string {
-	var data = ""
-	for i := range len(line) {
-		cur := line[i]
-		//TODO: tokenise string indstead of
-		switch cur {
-		case '_':
-			data += r.renderChar(cur, italic, isCur)
-		default:
-			data += fmt.Sprintf("%c", cur)
-		}
+func (r *Renderer) RenderVisualLine(line []rune, lineIndex int, isCurLine bool) string {
+	l := ""
+
+	startO := r.HStartOfset
+	endO := r.HEndOfset
+	startL := r.HStartLine
+	endL := r.HEndLine
+
+	if endO+(endL*r.width) < startO+(startL*r.width) {
+		startO, endO = endO, startO
+		startL, endL = endL, startL
 	}
-	data += reset
-	r.curMod = reset
-	return data
+	// if endL < startL {
+	// }
+	if startL == endL && endL == lineIndex {
+		l += string(line[:startO])
+		l += startSel
+		l += string(line[startO:endO])
+		l += endSel
+		l += string(line[endO:])
+	} else if lineIndex == startL {
+		l += string(line[:startO])
+		l += startSel
+		l += string(line[startO:])
+	} else if lineIndex == endL {
+		l += startSel
+		l += string(line[:endO])
+		l += endSel
+		l += string(line[endO:])
+	} else if startL < lineIndex && lineIndex < endL {
+		l = fmt.Sprintf("%s%s", startSel, string(line))
+	} else {
+		l = fmt.Sprintf("%s", string(line))
+	}
+	l += fmt.Sprintf("%s", endSel)
+	return l
 }
 
-func (r *Renderer) renderChar(ch rune, mod string, isCur bool) string {
-	var data = ""
-	switch r.curMod {
-	case reset:
-		r.curMod = mod
-	case mod:
-		data += fmt.Sprintf("%s", r.curMod)
-		r.curMod = reset
-	}
-	if isCur {
-		data += fmt.Sprintf("%c", ch)
-	}
-	data += fmt.Sprintf("%s", r.curMod)
-
+func (r *Renderer) RednerMarkDownLine(line []rune, isCurLine bool) string {
+	//TODO; meke markdown render
+	data := string(line)
 	return data
 }

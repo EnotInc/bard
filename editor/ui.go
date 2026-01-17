@@ -11,7 +11,6 @@ type color string
 
 const (
 	resetFg    color = "\033[0m"
-	grayBg     color = "\033[100m"
 	yellowFg   color = "\033[93m"
 	cursorBloc       = "\x1b[0 q"
 	cursorLine       = "\x1b[5 q"
@@ -32,8 +31,8 @@ type UI struct {
 	render      *render.Renderer
 }
 
-func InitUI(h int) *UI {
-	r := render.InitReder()
+func InitUI(h int, w int) *UI {
+	r := render.InitReder(w)
 	ui := &UI{
 		rln:         false,
 		lowerBorder: h,
@@ -110,7 +109,13 @@ func (ui *UI) Draw(e *Editor) {
 
 		if i < len(e.b.lines) {
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
-			l := ui.render.RednerLine(e.b.lines[i].data, isCurLine)
+			l := ""
+			switch e.curMode {
+			case visual, visual_line:
+				l = ui.render.RenderVisualLine(e.b.lines[i].data, i, isCurLine)
+			default:
+				l = ui.render.RednerMarkDownLine(e.b.lines[i].data, isCurLine)
+			}
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
 			fmt.Fprintf(&data, "%s~\n\r", emtpyLineSpases)

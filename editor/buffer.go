@@ -4,6 +4,11 @@ import (
 	"slices"
 )
 
+const (
+	head = true
+	tail = false
+)
+
 type line struct {
 	data []rune
 }

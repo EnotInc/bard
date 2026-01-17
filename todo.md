@@ -60,4 +60,3 @@
 - [x] color cursor and cur line number as yellow
 - [?] hide md symbols when cursor is not on the line
 - [?] show md symbold when cursor is on the line
-

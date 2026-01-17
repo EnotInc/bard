@@ -59,7 +59,7 @@ func InitEditor() *Editor {
 	_w, _h, _ := term.GetSize(_fdOut)
 
 	_b := InitBuffer()
-	_ui := InitUI(_h)
+	_ui := InitUI(_h, _w)
 
 	e := &Editor{
 		oldState:   old,
@@ -96,6 +96,25 @@ func (e *Editor) ScrollDown() {
 	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 }
 
+func (e *Editor) StartVisualCursor() {
+	e.ui.render.HStartLine = e.b.cursor.line
+	e.ui.render.HStartOfset = e.b.cursor.ofset
+	e.ui.render.HEndLine = e.b.cursor.line
+	e.ui.render.HEndOfset = e.b.cursor.ofset
+}
+
+func (e *Editor) CanselVisual() {
+	e.ui.render.HStartLine = -1
+	e.ui.render.HStartOfset = -1
+	e.ui.render.HEndLine = -1
+	e.ui.render.HEndOfset = -1
+}
+
+func (e *Editor) MoveHighlightCursor() {
+	e.ui.render.HEndOfset = e.b.cursor.ofset
+	e.ui.render.HEndLine = e.b.cursor.line
+}
+
 func (e *Editor) caseNormal(key rune) {
 	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
@@ -111,8 +130,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.L()
 	case 'v':
 		e.curMode = visual
-	case 'V':
-		e.curMode = visual_line
+		e.StartVisualCursor()
 	case 'i':
 		e.curMode = insert
 	case 'a':
@@ -245,14 +263,19 @@ func (e *Editor) caseVisual(key rune) {
 	switch key {
 	case '\033':
 		e.curMode = normal
+		e.CanselVisual()
+	case 'h':
+		e.b.H()
+	case 'j':
+		e.b.J()
+		e.ScrollDown()
+	case 'k':
+		e.b.K()
+		e.ScrollUp()
+	case 'l':
+		e.b.L()
 	}
-}
-
-func (e *Editor) caseVisualLine(key rune) {
-	switch key {
-	case '\033':
-		e.curMode = normal
-	}
+	e.MoveHighlightCursor()
 }
 
 func (e *Editor) Run() {
@@ -272,8 +295,6 @@ func (e *Editor) Run() {
 			e.caseInsert(key)
 		case visual:
 			e.caseVisual(key)
-		case visual_line:
-			e.caseVisualLine(key)
 		}
 
 		e.ui.Draw(e)
