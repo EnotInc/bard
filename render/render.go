@@ -1,9 +1,5 @@
 package render
 
-import (
-	"fmt"
-)
-
 const (
 	reset     = "\033[0m"
 	bold      = "\033[1m"
@@ -13,47 +9,77 @@ const (
 )
 
 type Renderer struct {
-	curMod string
+	curMode string
+	l       *lexer
 }
 
 func InitReder() *Renderer {
-	r := &Renderer{
-		curMod: reset,
-	}
-
+	r := &Renderer{}
 	return r
 }
 
-func (r *Renderer) RednerLine(line []rune, isCur bool) string {
+func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
+	r.l = NewLexer(line)
 	var data = ""
-	for i := range len(line) {
-		cur := line[i]
-		//TODO: tokenise string indstead of
-		switch cur {
-		case '_':
-			data += r.renderChar(cur, italic, isCur)
-		default:
-			data += fmt.Sprintf("%c", cur)
+
+	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {
+		switch tok.Type {
+		case TEXT:
+			data += string(tok.Literal)
+		case OneStar, OneUnderline:
+			data += r.renderItalc(&tok, isCur)
+		case TwoStars, TwoUnderlines:
+			data += r.renderBold(&tok, isCur)
 		}
 	}
+
 	data += reset
-	r.curMod = reset
+	r.curMode = reset
 	return data
 }
 
-func (r *Renderer) renderChar(ch rune, mod string, isCur bool) string {
-	var data = ""
-	switch r.curMod {
-	case reset:
-		r.curMod = mod
-	case mod:
-		data += fmt.Sprintf("%s", r.curMod)
-		r.curMod = reset
-	}
-	if isCur {
-		data += fmt.Sprintf("%c", ch)
-	}
-	data += fmt.Sprintf("%s", r.curMod)
+func (r *Renderer) renderHeader(t *Token) string {
+	return ""
+}
 
-	return data
+func (r *Renderer) renderItalc(t *Token, show bool) string {
+	var s = ""
+	r.changeMode(italic)
+	s += r.curMode
+	if show {
+		s += string(t.Literal)
+	}
+
+	return s
+}
+
+func (r *Renderer) renderBold(t *Token, show bool) string {
+	var s = ""
+	//TODO: Figure out why it's now working in windws powershell
+	r.changeMode(bold)
+	s += r.curMode
+	if show {
+		s += string(t.Literal)
+	}
+
+	return s
+}
+
+func (r *Renderer) renderStreaced(t *Token, show bool) string {
+	var s = ""
+	r.changeMode(stricked)
+	s += r.curMode
+	if show {
+		s += string(t.Literal)
+	}
+
+	return s
+}
+
+func (r *Renderer) changeMode(mode string) {
+	if r.curMode == mode {
+		r.curMode = reset
+	} else {
+		r.curMode = mode
+	}
 }

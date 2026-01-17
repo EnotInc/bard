@@ -1,3 +1,3 @@
-foo _bar_
+foo bar
 baz
 qwerty
