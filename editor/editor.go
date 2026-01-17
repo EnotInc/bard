@@ -96,25 +96,6 @@ func (e *Editor) ScrollDown() {
 	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 }
 
-func (e *Editor) StartVisualCursor() {
-	e.ui.render.HStartLine = e.b.cursor.line
-	e.ui.render.HStartOfset = e.b.cursor.ofset
-	e.ui.render.HEndLine = e.b.cursor.line
-	e.ui.render.HEndOfset = e.b.cursor.ofset
-}
-
-func (e *Editor) CanselVisual() {
-	e.ui.render.HStartLine = -1
-	e.ui.render.HStartOfset = -1
-	e.ui.render.HEndLine = -1
-	e.ui.render.HEndOfset = -1
-}
-
-func (e *Editor) MoveHighlightCursor() {
-	e.ui.render.HEndOfset = e.b.cursor.ofset
-	e.ui.render.HEndLine = e.b.cursor.line
-}
-
 func (e *Editor) caseNormal(key rune) {
 	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
@@ -130,7 +111,6 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.L()
 	case 'v':
 		e.curMode = visual
-		e.StartVisualCursor()
 	case 'i':
 		e.curMode = insert
 	case 'a':
@@ -263,7 +243,6 @@ func (e *Editor) caseVisual(key rune) {
 	switch key {
 	case '\033':
 		e.curMode = normal
-		e.CanselVisual()
 	case 'h':
 		e.b.H()
 	case 'j':
@@ -275,7 +254,6 @@ func (e *Editor) caseVisual(key rune) {
 	case 'l':
 		e.b.L()
 	}
-	e.MoveHighlightCursor()
 }
 
 func (e *Editor) Run() {

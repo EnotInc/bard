@@ -32,7 +32,7 @@ type UI struct {
 }
 
 func InitUI(h int, w int) *UI {
-	r := render.InitReder(w)
+	r := render.InitReder()
 	ui := &UI{
 		rln:         false,
 		lowerBorder: h,
@@ -109,13 +109,7 @@ func (ui *UI) Draw(e *Editor) {
 
 		if i < len(e.b.lines) {
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
-			l := ""
-			switch e.curMode {
-			case visual, visual_line:
-				l = ui.render.RenderVisualLine(e.b.lines[i].data, i, isCurLine)
-			default:
-				l = ui.render.RednerMarkDownLine(e.b.lines[i].data, isCurLine)
-			}
+			l := ui.render.RednerMarkdownLine(e.b.lines[i].data, isCurLine)
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
 			fmt.Fprintf(&data, "%s~\n\r", emtpyLineSpases)
