@@ -10,6 +10,9 @@ type Token struct {
 const (
 	TEXT = "text"
 
+	Unknow = "unknow"
+	Symbol = "symbol"
+
 	EOL = "EOL" // End Of Line
 
 	LineNumber = "n."

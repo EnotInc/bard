@@ -44,12 +44,48 @@ func (l *lexer) NextToken() Token {
 			l.readChar()
 			t = Token{Type: Stricked, Literal: []rune("~~")}
 		} else {
-			t = l.readText()
+			t = Token{Type: Symbol, Literal: []rune{l.ch}}
 		}
+		l.readChar()
+	case '#':
+		pos := l.position
+		count := 1
+
+		for l.peekChar() == '#' {
+			count += 1
+			l.readChar()
+		}
+
+		end := l.position + 1
+
+		if count > 6 || l.peekChar() != ' ' {
+			t = Token{Type: Symbol, Literal: []rune(l.input[pos:end])}
+		} else {
+			switch count {
+			case 1:
+				t = Token{Type: Header_1, Literal: []rune(l.input[pos:end])}
+			case 2:
+				t = Token{Type: Header_2, Literal: []rune(l.input[pos:end])}
+			case 3:
+				t = Token{Type: Header_3, Literal: []rune(l.input[pos:end])}
+			case 4:
+				t = Token{Type: Header_4, Literal: []rune(l.input[pos:end])}
+			case 5:
+				t = Token{Type: Header_5, Literal: []rune(l.input[pos:end])}
+			case 6:
+				t = Token{Type: Header_6, Literal: []rune(l.input[pos:end])}
+			}
+		}
+		l.readChar()
 	case 0:
 		t = Token{Type: EOL, Literal: []rune("")}
 	default:
-		t = l.readText()
+		if isLetterOrNumber(l.ch) {
+			t = l.readText()
+		} else {
+			t = Token{Type: Symbol, Literal: []rune{l.ch}}
+			l.readChar()
+		}
 	}
 
 	return t

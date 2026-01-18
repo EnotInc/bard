@@ -32,7 +32,7 @@ type UI struct {
 }
 
 func InitUI(h int, w int) *UI {
-	r := render.InitReder()
+	r := render.InitReder(w, h)
 	ui := &UI{
 		rln:         false,
 		lowerBorder: h,
