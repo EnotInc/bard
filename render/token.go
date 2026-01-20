@@ -10,8 +10,9 @@ type Token struct {
 const (
 	TEXT = "text"
 
-	Unknow = "unknow"
-	Symbol = "symbol"
+	WhiteSpace = " "
+	Unknow     = "unknow"
+	Symbol     = "symbol"
 
 	EOL = "EOL" // End Of Line
 
@@ -36,4 +37,5 @@ const (
 	Header_6 = "######"
 
 	Quote = ">"
+	Tag   = "#text"
 )
