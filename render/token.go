@@ -13,6 +13,7 @@ const (
 	WhiteSpace = " "
 	Unknow     = "unknow"
 	Symbol     = "symbol"
+	Shield     = "\\"
 
 	EOL = "EOL" // End Of Line
 
@@ -38,4 +39,7 @@ const (
 
 	Quote = ">"
 	Tag   = "#text"
+
+	CodeLine  = "`"
+	CodeBlock = "```"
 )

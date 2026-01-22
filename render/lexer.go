@@ -26,6 +26,13 @@ func (l *lexer) readChar() {
 func (l *lexer) NextToken() Token {
 	var t Token
 	switch l.ch {
+	case '\\':
+		if isLetterOrNumber(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
+			t = Token{Type: Symbol, Literal: []rune{l.ch}}
+		} else {
+			t = Token{Type: Shield, Literal: []rune{l.ch}}
+		}
+		l.readChar()
 	case '>':
 		t = Token{Type: Quote, Literal: []rune{'>'}}
 		l.readChar()
@@ -80,6 +87,27 @@ func (l *lexer) NextToken() Token {
 			}
 			l.readChar()
 		}
+	case '`':
+		pos := l.position
+		count := 1
+
+		for l.peekChar() == '`' {
+			count += 1
+			l.readChar()
+		}
+
+		end := l.position + 1
+		lit := []rune(l.input[pos:end])
+
+		switch count {
+		case 1:
+			t = Token{Type: CodeLine, Literal: lit}
+		case 3:
+			t = Token{Type: CodeBlock, Literal: lit}
+		default:
+			t = Token{Type: Symbol, Literal: lit}
+		}
+		l.readChar()
 	case 0:
 		t = Token{Type: EOL, Literal: []rune("")}
 	default:
