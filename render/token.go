@@ -17,8 +17,11 @@ const (
 
 	EOL = "EOL" // End Of Line
 
-	LineNumber = "n."
-	LineDash   = "-"
+	ListNumberDot = "n."
+	ListNumberB   = "n)"
+	ListDash      = "-"
+	ListBoxEmpty  = "- [ ]"
+	ListBoxField  = "- [x]"
 
 	OneStar    = "*"
 	TwoStars   = "**"

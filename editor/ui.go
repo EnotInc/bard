@@ -18,7 +18,6 @@ const (
 
 const (
 	initialOfset    = 3
-	initialCurOfset = 1
 	cursorLineOfset = 1
 	cursorDataOfset = 20
 )
@@ -115,7 +114,7 @@ func (ui *UI) Draw(e *Editor) {
 			fmt.Fprintf(&data, "%s~\n\r", emtpyLineSpases)
 		}
 	}
-	x := e.b.cursor.ofset + initialOfset + len(emtpyLineSpases) + initialCurOfset - 1
+	x := e.b.cursor.ofset + initialOfset + len(emtpyLineSpases)
 	y := e.ui.curRow + cursorLineOfset
 
 	switch e.curMode {

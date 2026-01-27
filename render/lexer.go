@@ -26,8 +26,49 @@ func (l *lexer) readChar() {
 func (l *lexer) NextToken() Token {
 	var t Token
 	switch l.ch {
+	case '-':
+		//NOTE: I knwo that this is not looking good. I'll figure this out, later, maybe...
+		str := "-"
+		if l.peekChar() == ' ' {
+			l.readChar()
+			str += " "
+			isField := false
+			t = Token{Type: ListDash, Literal: []rune{l.ch}}
+			if l.peekChar() == '[' {
+				l.readChar()
+				str += "["
+				if l.peekChar() == ' ' || isLetter(l.peekChar()) {
+					isField = ' ' != l.peekChar()
+					l.readChar()
+					str += string(l.ch)
+					if l.peekChar() == ']' {
+						str += "]"
+						l.readChar()
+						if isField {
+							t = Token{Type: ListBoxField, Literal: []rune(str)}
+						} else {
+							t = Token{Type: ListBoxEmpty, Literal: []rune(str)}
+						}
+						//l.readChar()
+					} else {
+						//l.readChar()
+						t = Token{Type: TEXT, Literal: []rune(str)}
+					}
+				} else {
+					//l.readChar()
+					t = Token{Type: TEXT, Literal: []rune(str)}
+				}
+			} else {
+				//l.readChar()
+				t = Token{Type: ListDash, Literal: []rune(str)}
+			}
+		} else {
+			t = Token{Type: Symbol, Literal: []rune(str)}
+			//l.readChar()
+		}
+		l.readChar()
 	case '\\':
-		if isLetterOrNumber(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
+		if isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
 			t = Token{Type: Symbol, Literal: []rune{l.ch}}
 		} else {
 			t = Token{Type: Shield, Literal: []rune{l.ch}}
@@ -63,7 +104,7 @@ func (l *lexer) NextToken() Token {
 		end := l.position + 1
 		lit := []rune(l.input[pos:end])
 
-		if count == 1 && isLetterOrNumber(l.peekChar()) /* && l.peekChar() != ' '*/ {
+		if count == 1 && (isLetter(l.peekChar()) || isNumber(l.peekChar())) /* && l.peekChar() != ' '*/ {
 			l.readChar()
 			text := l.readText()
 			t = Token{Type: Tag, Literal: append(lit, text...)}
@@ -111,7 +152,21 @@ func (l *lexer) NextToken() Token {
 	case 0:
 		t = Token{Type: EOL, Literal: []rune("")}
 	default:
-		if isLetterOrNumber(l.ch) {
+		if isNumber(l.ch) {
+			s := l.readNumber()
+			switch l.ch {
+			case ')':
+				s = append(s, ')')
+				t = Token{Type: ListNumberB, Literal: s}
+				l.readChar()
+			case '.':
+				s = append(s, '.')
+				t = Token{Type: ListNumberDot, Literal: s}
+				l.readChar()
+			default:
+				t = Token{Type: TEXT, Literal: s}
+			}
+		} else if isLetter(l.ch) || isNumber(l.ch) {
 			s := l.readText()
 			t = Token{Type: TEXT, Literal: s}
 		} else {
@@ -123,16 +178,28 @@ func (l *lexer) NextToken() Token {
 	return t
 }
 
-func (l *lexer) readText() []rune {
+func (l *lexer) readNumber() []rune {
 	pos := l.position
-	for isLetterOrNumber(l.ch) {
+	for isNumber(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
 }
 
-func isLetterOrNumber(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || '0' <= ch && ch <= '9'
+func (l *lexer) readText() []rune {
+	pos := l.position
+	for isLetter(l.ch) || isNumber(l.ch) {
+		l.readChar()
+	}
+	return l.input[pos:l.position]
+}
+
+func isLetter(ch rune) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isNumber(ch rune) bool {
+	return '0' <= ch && ch <= '9'
 }
 
 func (l *lexer) peekChar() rune {
