@@ -96,11 +96,40 @@ func (e *Editor) ScrollDown() {
 	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 }
 
+func (e *Editor) ScrollRight() {
+	if e.ui.curOff >= e.w-ScrollBorder*2 {
+		if e.ui.rightBorder != len(e.b.lines[e.b.cursor.line].data)-ScrollBorder*2 {
+			e.ui.leftBorder += 1
+			e.ui.rightBorder += 1
+		}
+	}
+	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+}
+
+func (e *Editor) ScrollLeft() {
+	if e.ui.curOff <= ScrollBorder {
+		if e.ui.leftBorder != 0 {
+			e.ui.leftBorder -= 1
+			e.ui.rightBorder -= 1
+		}
+		// if e.ui.rightBorder != len(e.b.lines[e.b.cursor.line].data) {
+		// }
+	}
+	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+}
+
+func (e *Editor) moveLeft() {
+	e.ui.leftBorder = 0
+	e.ui.rightBorder = e.w - initialOfset
+	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+}
+
 func (e *Editor) caseNormal(key rune) {
 	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
 	case 'h':
 		e.b.H()
+		e.ScrollLeft()
 	case 'j':
 		e.b.J()
 		e.ScrollDown()
@@ -109,15 +138,18 @@ func (e *Editor) caseNormal(key rune) {
 		e.ScrollUp()
 	case 'l':
 		e.b.L()
+		e.ScrollRight()
 	case 'v':
 		e.curMode = visual
 	case 'i':
 		e.curMode = insert
+		e.ScrollLeft()
 	case 'a':
 		e.curMode = insert
 		if len(e.b.lines[e.b.cursor.line].data) > 0 {
 			e.b.cursor.ofset += 1
 		}
+		e.ScrollRight()
 	case 'I':
 		e.curMode = insert
 		for i := range len(e.b.lines[e.b.cursor.line].data) {
@@ -126,6 +158,7 @@ func (e *Editor) caseNormal(key rune) {
 				break
 			}
 		}
+		e.moveLeft()
 	case 'A':
 		e.curMode = insert
 		e.b.cursor.ofset = len(e.b.lines[e.b.cursor.line].data)
@@ -137,19 +170,23 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.InsertEmptyLine(below)
 		e.b.cursor.line += 1
 		e.ScrollDown()
+		e.moveLeft()
 	case 'O':
 		e.curMode = insert
 		e.b.cursor.ofset = 0
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
+		e.moveLeft()
 	case 'x':
-		e.b.Yank()
+		//e.b.Yank()
 		e.b.Delkey()
 		if e.b.cursor.ofset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.ofset > 0 {
 			e.b.cursor.ofset -= 1
 		}
-	case 'p':
-		e.b.Paste()
+		e.ScrollLeft()
+	//TODO: reimplement
+	// case 'p':
+	// 	e.b.Paste()
 	case 's':
 		e.b.Delkey()
 		e.curMode = insert
@@ -161,22 +198,26 @@ func (e *Editor) caseInsert(key rune) {
 	case '\013', '\r', '\n':
 		e.b.InsertLine()
 		e.ScrollDown()
+		e.moveLeft()
 	case '\033':
 		e.curMode = normal
 		if e.b.cursor.ofset > 0 {
 			e.b.cursor.ofset -= 1
 		}
+		e.ScrollLeft()
 	case '\127', '\x7f':
 		e.b.RemoveKey(0)
+		e.ScrollLeft()
 		e.ScrollUp()
 	case '\t':
 		//NOTE: yeah, I just insert 4 spaces instead of tabs
-		e.b.InsertKey(' ')
-		e.b.InsertKey(' ')
-		e.b.InsertKey(' ')
-		e.b.InsertKey(' ')
+		for range 4 {
+			e.b.InsertKey(' ')
+			e.ScrollRight()
+		}
 	default:
 		e.b.InsertKey(key)
+		e.ScrollRight()
 	}
 }
 
