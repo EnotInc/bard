@@ -17,9 +17,8 @@ const (
 )
 
 const (
-	initialOfset    = 3
-	initialCurOfset = 1
 	cursorLineOfset = 1
+	initialOfset    = 3
 	cursorDataOfset = 20
 )
 
@@ -27,7 +26,10 @@ type UI struct {
 	rln         bool
 	upperBorder int
 	lowerBorder int
+	leftBorder  int
+	rightBorder int
 	curRow      int
+	curOff      int
 	render      *render.Renderer
 }
 
@@ -37,7 +39,10 @@ func InitUI(h int, w int) *UI {
 		rln:         false,
 		lowerBorder: h,
 		upperBorder: 0,
+		leftBorder:  0,
+		rightBorder: w - initialOfset,
 		curRow:      0,
+		curOff:      0,
 		render:      r,
 	}
 	return ui
@@ -107,15 +112,30 @@ func (ui *UI) Draw(e *Editor) {
 	for i := ui.upperBorder; i < ui.lowerBorder-1; i++ {
 		isCurLine := e.b.cursor.line == i
 
+		start := e.ui.leftBorder
+		end := e.ui.rightBorder - len(emtpyLineSpases)
+
 		if i < len(e.b.lines) {
+
+			str := e.b.lines[i].data
+			if len(str) <= end {
+				end = len(str)
+			}
+			if len(str) < start {
+				start = 0
+				end = 0
+				str = []rune{}
+			}
+
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
-			l := ui.render.RednerMarkdownLine(e.b.lines[i].data, isCurLine)
+			l := ui.render.RednerMarkdownLine(str[start:end], isCurLine)
+
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
 			fmt.Fprintf(&data, "%s~\n\r", emtpyLineSpases)
 		}
 	}
-	x := e.b.cursor.ofset + initialOfset + len(emtpyLineSpases) + initialCurOfset - 1
+	x := e.ui.curOff + initialOfset + len(emtpyLineSpases)
 	y := e.ui.curRow + cursorLineOfset
 
 	switch e.curMode {
