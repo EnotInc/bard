@@ -82,8 +82,8 @@ func (e *Editor) ScrollUp() {
 			e.ui.upperBorder -= 1
 			e.ui.lowerBorder -= 1
 		}
+		e.setUiCursor()
 	}
-	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 }
 
 func (e *Editor) ScrollDown() {
@@ -92,8 +92,8 @@ func (e *Editor) ScrollDown() {
 			e.ui.upperBorder += 1
 			e.ui.lowerBorder += 1
 		}
+		e.setUiCursor()
 	}
-	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 }
 
 func (e *Editor) ScrollRight() {
@@ -102,8 +102,8 @@ func (e *Editor) ScrollRight() {
 			e.ui.leftBorder += 1
 			e.ui.rightBorder += 1
 		}
+		e.setUiCursor()
 	}
-	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
 }
 
 func (e *Editor) ScrollLeft() {
@@ -112,16 +112,20 @@ func (e *Editor) ScrollLeft() {
 			e.ui.leftBorder -= 1
 			e.ui.rightBorder -= 1
 		}
-		// if e.ui.rightBorder != len(e.b.lines[e.b.cursor.line].data) {
-		// }
+		e.setUiCursor()
 	}
+}
+
+func (e *Editor) setUiCursor() {
+	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
 	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
 }
 
 func (e *Editor) moveLeft() {
 	e.ui.leftBorder = 0
 	e.ui.rightBorder = e.w - initialOfset
-	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+	//e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+	e.setUiCursor()
 }
 
 func (e *Editor) caseNormal(key rune) {
@@ -191,6 +195,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.Delkey()
 		e.curMode = insert
 	}
+	e.setUiCursor()
 }
 
 func (e *Editor) caseInsert(key rune) {
@@ -219,6 +224,7 @@ func (e *Editor) caseInsert(key rune) {
 		e.b.InsertKey(key)
 		e.ScrollRight()
 	}
+	e.setUiCursor()
 }
 
 func (e *Editor) caseCommand(key rune) {
