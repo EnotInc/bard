@@ -128,6 +128,12 @@ func (e *Editor) moveLeft() {
 	e.setUiCursor()
 }
 
+func (e *Editor) moveRight() {
+	e.ui.rightBorder = len(e.b.lines[e.b.cursor.line].data) + ScrollBorder*2
+	e.ui.leftBorder = e.ui.rightBorder - e.w
+	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+}
+
 func (e *Editor) caseNormal(key rune) {
 	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
@@ -166,6 +172,7 @@ func (e *Editor) caseNormal(key rune) {
 	case 'A':
 		e.curMode = insert
 		e.b.cursor.ofset = len(e.b.lines[e.b.cursor.line].data)
+		e.moveRight()
 	case ':':
 		e.curMode = command
 	case 'o':
