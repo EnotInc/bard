@@ -98,7 +98,7 @@ func (e *Editor) ScrollDown() {
 
 func (e *Editor) ScrollRight() {
 	if e.ui.curOff >= e.w-ScrollBorder*2 {
-		if e.ui.rightBorder != len(e.b.lines[e.b.cursor.line].data)-ScrollBorder*2 {
+		if e.ui.rightBorder != len(e.b.lines[e.b.cursor.line].data)+ScrollBorder {
 			e.ui.leftBorder += 1
 			e.ui.rightBorder += 1
 		}
@@ -131,7 +131,13 @@ func (e *Editor) moveLeft() {
 func (e *Editor) moveRight() {
 	e.ui.rightBorder = len(e.b.lines[e.b.cursor.line].data) + ScrollBorder*2
 	e.ui.leftBorder = e.ui.rightBorder - e.w
-	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+	if e.ui.leftBorder < 0 {
+		e.ui.leftBorder = 0
+	}
+	if e.ui.rightBorder < e.w-initialOfset {
+		e.ui.rightBorder = e.w - initialOfset
+	}
+	e.setUiCursor()
 }
 
 func (e *Editor) caseNormal(key rune) {
