@@ -129,8 +129,10 @@ func (e *Editor) moveLeft() {
 }
 
 func (e *Editor) moveRight() {
-	e.ui.rightBorder = len(e.b.lines[e.b.cursor.line].data) + ScrollBorder*2
-	e.ui.leftBorder = e.ui.rightBorder - e.w
+	// e.ui.rightBorder = len(e.b.lines[e.b.cursor.line].data) + ScrollBorder*2
+	// e.ui.leftBorder = e.ui.rightBorder - e.w - initialOfset
+	e.ui.rightBorder = e.b.cursor.ofset + ScrollBorder
+	e.ui.leftBorder = e.ui.rightBorder - e.w + initialOfset
 	if e.ui.leftBorder < 0 {
 		e.ui.leftBorder = 0
 	}
@@ -143,6 +145,9 @@ func (e *Editor) moveRight() {
 func (e *Editor) shiftLeft() {
 	if e.ui.leftBorder > e.b.cursor.ofset {
 		e.ui.leftBorder = e.b.cursor.ofset - ScrollBorder
+		if e.ui.leftBorder < 0 {
+			e.ui.leftBorder = 0
+		}
 		e.ui.rightBorder = e.ui.leftBorder + e.w - initialOfset
 		e.setUiCursor()
 	}

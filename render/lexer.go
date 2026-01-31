@@ -27,7 +27,7 @@ func (l *lexer) NextToken() Token {
 	var t Token
 	switch l.ch {
 	case '-':
-		//NOTE: I knwo that this is not looking good. I'll figure this out, later, maybe...
+		//NOTE: I know that this is not looking good. I'll figure this out, later, maybe...
 		str := "-"
 		if l.peekChar() == ' ' {
 			l.readChar()
