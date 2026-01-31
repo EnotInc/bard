@@ -9,7 +9,7 @@ const (
 	resetColor  = "\033[39m"
 	bold        = "\033[1m"
 	italic      = "\033[3m"
-	underline   = "\033[7m" // so this doesn't work, ig, and now I use this for headers coz it give me a cool bg highlight
+	underline   = "\033[4m"
 	stricked    = "\033[9m"
 	symbolColor = "\033[90m"
 	quote       = "\033[32m"

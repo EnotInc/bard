@@ -10,8 +10,11 @@ import (
 type color string
 
 const (
-	resetFg    color = "\033[0m"
-	yellowFg   color = "\033[93m"
+	resetFg color = "\033[0m"
+	grayFg  color = "\033[90m"
+	//yellowFg   color = "\033[93m"
+	yellowFg   color = "\033[33m"
+	cyanFg     color = "\033[36m"
 	cursorBloc       = "\x1b[0 q"
 	cursorLine       = "\x1b[5 q"
 )
@@ -75,7 +78,7 @@ func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
 	if b.cursor.line+1 == n {
 		num = colorise(num, yellowFg)
 	} else {
-		num = colorise(num, resetFg)
+		num = colorise(num, grayFg)
 	}
 
 	return num
@@ -131,8 +134,9 @@ func (ui *UI) Draw(e *Editor) {
 			l := ui.render.RednerMarkdownLine(str[start:end], isCurLine)
 
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
+			//fmt.Fprintf(&data, "%s %s\n\r", n, string(str[start:end]))
 		} else {
-			fmt.Fprintf(&data, "%s~\n\r", emtpyLineSpases)
+			fmt.Fprintf(&data, "%s\n\r", colorise("~", cyanFg))
 		}
 	}
 	x := e.ui.curOff + initialOfset + len(emtpyLineSpases)

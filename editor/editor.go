@@ -140,6 +140,14 @@ func (e *Editor) moveRight() {
 	e.setUiCursor()
 }
 
+func (e *Editor) shiftLeft() {
+	if e.ui.leftBorder > e.b.cursor.ofset {
+		e.ui.leftBorder = e.b.cursor.ofset - ScrollBorder
+		e.ui.rightBorder = e.ui.leftBorder + e.w - initialOfset
+		e.setUiCursor()
+	}
+}
+
 func (e *Editor) caseNormal(key rune) {
 	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
@@ -149,9 +157,11 @@ func (e *Editor) caseNormal(key rune) {
 	case 'j':
 		e.b.J()
 		e.ScrollDown()
+		e.shiftLeft()
 	case 'k':
 		e.b.K()
 		e.ScrollUp()
+		e.shiftLeft()
 	case 'l':
 		e.b.L()
 		e.ScrollRight()
