@@ -11,6 +11,7 @@ type color string
 
 const (
 	resetFg color = "\033[0m"
+	redFg   color = "\033[31m"
 	grayFg  color = "\033[90m"
 	//yellowFg   color = "\033[93m"
 	yellowFg   color = "\033[33m"
@@ -96,12 +97,9 @@ func buildSpaces(maxOfset int) string {
 }
 
 func (e *Editor) buildLowerBar(curdata string) string {
-	freeSpace := e.w - cursorDataOfset - len(curdata)
-	var data = curdata
-	for range freeSpace {
-		data += " "
-	}
-	data += fmt.Sprintf("%d-%d", e.b.cursor.line+1, e.b.cursor.ofset+1)
+	var data = ""
+	data += fmt.Sprintf(" %d-%d ", e.b.cursor.line+1, e.b.cursor.ofset+1)
+	data += fmt.Sprintf("%s %s%s%s", curdata, redFg, e.message, resetFg)
 	return data
 }
 
@@ -131,7 +129,12 @@ func (ui *UI) Draw(e *Editor) {
 			}
 
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
-			l := ui.render.RednerMarkdownLine(str[start:end], isCurLine)
+			var l = ""
+			if e.isMdFile {
+				l = ui.render.RednerMarkdownLine(str[start:end], isCurLine)
+			} else {
+				l = string(str[start:end])
+			}
 
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 			//fmt.Fprintf(&data, "%s %s\n\r", n, string(str[start:end]))
@@ -151,7 +154,7 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.curCommand, e.h, len(e.curCommand)+initialOfset)
 		fmt.Fprintf(&data, cursorBloc)
 	case normal:
-		cursorPos := fmt.Sprintf("%s[%s]", emtpyLineSpases, e.file)
+		cursorPos := fmt.Sprintf("[%s]", e.file)
 		fmt.Fprintf(&data, "%s", e.buildLowerBar(cursorPos))
 		fmt.Fprintf(&data, cursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)

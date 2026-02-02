@@ -43,6 +43,8 @@ type Editor struct {
 	curMode    Mode
 	curCommand string
 	file       string
+	message    string
+	isMdFile   bool
 	fdIn       int
 	w          int
 	h          int
@@ -66,13 +68,14 @@ func InitEditor() *Editor {
 		b:          _b,
 		ui:         _ui,
 		curMode:    normal,
+		isMdFile:   false,
 		curCommand: "",
 		fdIn:       _fdIn,
 		w:          _w,
 		h:          _h,
 	}
 
-	fmt.Print(cursorYellow)
+	//fmt.Print(cursorYellow)
 	return e
 }
 
@@ -238,7 +241,7 @@ func (e *Editor) caseInsert(key rune) {
 			e.b.cursor.ofset -= 1
 		}
 		e.ScrollLeft()
-	case '\127', '\x7f':
+	case '\x7f':
 		e.b.RemoveKey(0)
 		e.ScrollLeft()
 		e.ScrollUp()
@@ -268,49 +271,31 @@ func (e *Editor) caseCommand(key rune) {
 			e.curMode = normal
 		}
 	case '\013', '\r', '\n':
-		success := e.execCommand()
-		if !success {
-			e.curCommand = ""
-			e.curMode = normal
-		}
+		e.execCommand()
+		e.curCommand = ""
+		e.curMode = normal
 	default:
 		e.curCommand += string(key)
 	}
 }
 
-func (e *Editor) execCommand() bool {
+func (e *Editor) execCommand() {
 	switch e.curCommand {
 	case "q":
 		fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
 		term.Restore(e.fdIn, e.oldState)
 		os.Exit(0)
-		return true
 	case "w":
-		//TODO: add notification if there is no file name provided
-		err := e.SaveFile()
-		if err != nil {
-			return false
-		}
-		e.curCommand = ""
-		e.curMode = normal
-		return true
+		e.SaveFile()
 	case "x", "wq":
-		err := e.SaveFile()
-		if err != nil {
-			return false
-		} else {
-			fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
-			term.Restore(e.fdIn, e.oldState)
-			os.Exit(0)
-			return true
-		}
+		e.SaveFile()
+		fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
+		term.Restore(e.fdIn, e.oldState)
+		os.Exit(0)
 	case "rln":
 		e.ui.rln = !e.ui.rln
-		e.curCommand = ""
-		e.curMode = normal
-		return true
 	default:
-		return false
+		e.message = "unknown command"
 	}
 }
 
@@ -335,6 +320,7 @@ func (e *Editor) Run() {
 	e.ui.Draw(e)
 	reader := bufio.NewReader(os.Stdin)
 	for {
+		e.message = ""
 		key, _, err := reader.ReadRune()
 		if err != nil {
 			panic(err)

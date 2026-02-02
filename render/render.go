@@ -7,26 +7,29 @@ import (
 const (
 	reset       = "\033[0m"
 	resetColor  = "\033[39m"
-	bold        = "\033[1m"
-	italic      = "\033[3m"
-	underline   = "\033[4m"
-	stricked    = "\033[9m"
 	symbolColor = "\033[90m"
-	quote       = "\033[32m"
-	startSel    = "\033[100m"
-	endSel      = "\033[49m"
-	boldItalic  = "\033[1m\033[3m"
 
-	code   = "\033[48;5;236m"
-	header = "\033[7;1;38;5;255;48;5;236m"
-	tag    = "\033[48;5;60m\033[38;5;219m"
+	bold       = "\033[1m"
+	italic     = "\033[3m"
+	boldItalic = "\033[1m\033[3m"
+	underline  = "\033[4m"
+	stricked   = "\033[9m"
+	quote      = "\033[32m"
+
+	startSel = "\033[100m"
+	endSel   = "\033[49m"
+
+	code      = "\033[48;5;236m"
+	codeBlock = "\033[48;5;236m"
+	header    = "\033[7;1;38;5;255;48;5;236m"
+	tag       = "\033[48;5;60m\033[38;5;219m"
 
 	tagS     = "["
 	tagE     = "]"
 	shield   = "\\"
-	listDash = "\u2981"
-	boxEmpty = "\u2610 "
-	boxField = "\u2612 "
+	listDash = "\u2981 "
+	boxEmpty = " \u2610 "
+	boxField = " \u2612 "
 )
 
 type Renderer struct {
@@ -42,11 +45,17 @@ func InitReder(w, h int) *Renderer {
 		h:        h,
 		shielded: false,
 	}
+	r.l = NewLexer()
 	return r
 }
 
 func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
-	r.l = NewLexer(line)
+	//here is reset lexer, so it can read a new line. Prev I was creating a new instance of a lexer, which is not rly good, ig
+	r.l.input = line
+	r.l.position = 0
+	r.l.readPosition = 0
+	r.l.readChar()
+
 	var data = ""
 
 	var i = 0
@@ -206,7 +215,7 @@ func (r *Renderer) renderTag(t *Token, isCur bool) string {
 			s += string(t.Literal)
 			s += tagE
 		} else {
-			s += colorise(string(t.Literal))
+			s += string(t.Literal)
 			r.shielded = false
 		}
 		s += reset
@@ -220,10 +229,10 @@ func (r *Renderer) renderHeader(t *Token, isCurl bool) string {
 	var s = ""
 	if !r.shielded {
 		if !isCurl {
-			tabs := (r.w - len(r.l.input)) / 2
+			shift := (r.w - len(r.l.input)) / 2
 			r.curAttr = reset
 
-			s += strings.Repeat(" ", tabs)
+			s += strings.Repeat(" ", shift)
 		}
 		//s += header
 		s += underline

@@ -3,6 +3,7 @@ package editor
 import (
 	"bufio"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -11,6 +12,9 @@ func (e *Editor) LoadFile(file string) error {
 	if err != nil {
 		return err
 	}
+	ext := filepath.Ext(file)
+	e.isMdFile = (ext == ".md" || ext == ".MD")
+
 	scanner := bufio.NewScanner(f)
 
 	//clearing the list of lines, coz I make one line in InitEditor() func
@@ -30,7 +34,7 @@ func (e *Editor) LoadFile(file string) error {
 	return nil
 }
 
-func (e *Editor) SaveFile() error {
+func (e *Editor) SaveFile() {
 	if !(e.file == "" || len(e.file) == 0) {
 		var data []byte
 
@@ -42,8 +46,11 @@ func (e *Editor) SaveFile() error {
 
 		err := os.WriteFile(e.file, data, 0644)
 		if err != nil {
-			return err
+			e.message = err.Error()
+		} else {
+			e.message = "file saved"
 		}
+	} else {
+		e.message = "file name was not provided"
 	}
-	return nil
 }

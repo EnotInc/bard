@@ -7,8 +7,9 @@ type lexer struct {
 	ch           rune
 }
 
-func NewLexer(input []rune) *lexer {
-	l := &lexer{input: input}
+func NewLexer() *lexer {
+	//l := &lexer{input: input}
+	l := &lexer{}
 	l.readChar()
 	return l
 }
@@ -75,7 +76,7 @@ func (l *lexer) NextToken() Token {
 		}
 		l.readChar()
 	case '>':
-		t = Token{Type: Quote, Literal: []rune{'>'}}
+		t = Token{Type: Quote, Literal: []rune{l.ch}}
 		l.readChar()
 	case ' ':
 		l.readChar()
@@ -221,7 +222,7 @@ func (l *lexer) getAttrToken(ch rune, types []TokenType) Token {
 	}
 
 	end := l.position + 1
-	if count > 3 || l.peekChar() == ' ' {
+	if count > 3 /*|| l.peekChar() == ' '*/ {
 		t = Token{Type: Symbol, Literal: []rune(l.input[pos:end])}
 	} else {
 		switch count {
