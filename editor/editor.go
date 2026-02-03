@@ -59,6 +59,9 @@ func InitEditor() *Editor {
 		panic(err)
 	}
 	_w, _h, _ := term.GetSize(_fdOut)
+	if _w < 80 || _h < 20 { //standart terminal size
+		panic(fmt.Sprintf("\nUnable to run in this terminal, window is too small: (%d %d)", _w, _h))
+	}
 
 	_b := InitBuffer()
 	_ui := InitUI(_h, _w)

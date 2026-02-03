@@ -5,13 +5,13 @@ type TokenType string
 type Token struct {
 	Type    TokenType
 	Literal []rune
+	Value   []rune
 }
 
 const (
 	TEXT = "text"
 
 	WhiteSpace = " "
-	Unknow     = "unknow"
 	Symbol     = "symbol"
 	Shield     = "\\"
 

@@ -9,7 +9,7 @@ To navigate through text, you must use Vim motions, and if you not familiar with
 
 ## **Instalation**
 It is not available in any package managers yet, so to install Bard you can do this:
-```
+```bash
 git clone https://github.com/EnotInc/bard
 cd bard/cmd/bard
 go install

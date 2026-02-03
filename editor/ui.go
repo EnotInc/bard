@@ -10,10 +10,9 @@ import (
 type color string
 
 const (
-	resetFg color = "\033[0m"
-	redFg   color = "\033[31m"
-	grayFg  color = "\033[90m"
-	//yellowFg   color = "\033[93m"
+	resetFg    color = "\033[0m"
+	redFg      color = "\033[31m"
+	grayFg     color = "\033[90m"
 	yellowFg   color = "\033[33m"
 	cyanFg     color = "\033[36m"
 	cursorBloc       = "\x1b[0 q"
@@ -71,9 +70,7 @@ func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
 	if maxOfset <= initialOfset {
 		maxOfset = initialOfset
 	}
-	for range maxOfset - numLen {
-		num += " "
-	}
+	num = strings.Repeat(" ", maxOfset-numLen)
 	num = fmt.Sprintf("%s%s", num, numStr)
 
 	if b.cursor.line+1 == n {
@@ -90,9 +87,7 @@ func buildSpaces(maxOfset int) string {
 	if maxOfset <= initialOfset {
 		maxOfset = initialOfset
 	}
-	for range maxOfset - 1 {
-		space += " "
-	}
+	space = strings.Repeat(" ", maxOfset-1)
 	return space
 }
 
@@ -137,7 +132,6 @@ func (ui *UI) Draw(e *Editor) {
 			}
 
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
-			//fmt.Fprintf(&data, "%s %s\n\r", n, string(str[start:end]))
 		} else {
 			fmt.Fprintf(&data, "%s\n\r", colorise("~", cyanFg))
 		}

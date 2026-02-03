@@ -1,49 +1,48 @@
 package render
 
-import (
-	"strings"
-)
+type asciiCode string
+
+func (a asciiCode) str() string {
+	return string(a)
+}
 
 const (
-	reset       = "\033[0m"
-	resetColor  = "\033[39m"
-	symbolColor = "\033[90m"
+	reset       asciiCode = "\033[0m"
+	resetColor  asciiCode = "\033[39m"
+	symbolColor asciiCode = "\033[90m"
 
-	bold       = "\033[1m"
-	italic     = "\033[3m"
-	boldItalic = "\033[1m\033[3m"
-	underline  = "\033[4m"
-	stricked   = "\033[9m"
-	quote      = "\033[32m"
+	bold        asciiCode = "\033[1m"
+	italic      asciiCode = "\033[3m"
+	boldItalic  asciiCode = "\033[1m\033[3m"
+	underline   asciiCode = "\033[4m"
+	stricked    asciiCode = "\033[9m"
+	quote       asciiCode = "\033[32m"
+	quoteSymbol asciiCode = "\u2503"
 
-	startSel = "\033[100m"
-	endSel   = "\033[49m"
+	startSel asciiCode = "\033[100m"
+	endSel   asciiCode = "\033[49m"
 
-	code      = "\033[48;5;236m"
-	codeBlock = "\033[48;5;236m"
-	header    = "\033[7;1;38;5;255;48;5;236m"
-	tag       = "\033[48;5;60m\033[38;5;219m"
+	codeLine asciiCode = "\033[48;5;236m\033[33m"
+	header   asciiCode = "\033[34m"
 
-	tagS     = "["
-	tagE     = "]"
-	shield   = "\\"
-	listDash = "\u2981 "
-	boxEmpty = " \u2610 "
-	boxField = " \u2612 "
+	tagS     asciiCode = "\033[48;5;60m\033[38;5;219m["
+	tagE     asciiCode = "]" + reset
+	shield   asciiCode = "\\"
+	listDash asciiCode = "\u2981 "
+	boxEmpty asciiCode = " \u2610 "
+	boxField asciiCode = " \u2612 "
 )
 
 type Renderer struct {
-	curAttr  string
-	w, h     int
-	shielded bool
-	l        *lexer
+	curAttr asciiCode
+	w, h    int
+	l       *lexer
 }
 
 func InitReder(w, h int) *Renderer {
 	r := &Renderer{
-		w:        w,
-		h:        h,
-		shielded: false,
+		w: w,
+		h: h,
 	}
 	r.l = NewLexer()
 	return r
@@ -51,6 +50,7 @@ func InitReder(w, h int) *Renderer {
 
 func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 	//here is reset lexer, so it can read a new line. Prev I was creating a new instance of a lexer, which is not rly good, ig
+
 	r.l.input = line
 	r.l.position = 0
 	r.l.readPosition = 0
@@ -63,7 +63,7 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 		switch tok.Type {
 		case Header_1, Header_2, Header_3, Header_4, Header_5, Header_6:
 			if i == 0 {
-				data += r.renderHeader(&tok, isCur)
+				data += r.renderHeader(&tok)
 			} else {
 				data += string(tok.Literal)
 			}
@@ -98,44 +98,44 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 				data += string(tok.Literal)
 			}
 		case CodeLine:
-			data += r.renderCodeLine(&tok, isCur)
+			data += r.simpleAttrRender(codeLine, string(tok.Literal), isCur)
 		case TEXT:
 			data += r.renderText(&tok)
 		case Shield:
-			data += r.renderShield(isCur)
+			data += r.renderShield(&tok, isCur)
 		case Tag:
 			data += r.renderTag(&tok, isCur)
 		case OneStar, OneUnderline:
-			data += r.renderItalc(&tok, isCur)
+			data += r.simpleAttrRender(italic, string(tok.Literal), isCur)
 		case TwoStars, TwoUnderlines:
-			data += r.renderBold(&tok, isCur)
+			data += r.simpleAttrRender(bold, string(tok.Literal), isCur)
 		case ThreeStars, ThreeUnderlines:
-			data += r.rednerBoldItalic(&tok, isCur)
+			data += r.simpleAttrRender(boldItalic, string(tok.Literal), isCur)
 		case Stricked:
-			data += r.renderStriked(&tok, isCur)
+			data += r.simpleAttrRender(stricked, string(tok.Literal), isCur)
 		case WhiteSpace:
 			data += " "
-		case Symbol, Unknow:
-			data += string(tok.Literal)
+		case Symbol:
+			data += string(tok.Value)
 		}
 		i += 1
 	}
 
-	data += reset
+	data += reset.str()
 	r.curAttr = reset
 	return data
 }
 
-func colorise(symbol string) string {
-	return symbolColor + symbol + resetColor
+func painAsAttr(symbol string) string {
+	return symbolColor.str() + symbol + resetColor.str()
 }
 
 func (r *Renderer) renderBoxEmpty(t *Token, isCur bool) string {
 	var s = ""
 	if isCur {
-		s += colorise(string(t.Literal))
+		s += painAsAttr(string(t.Literal))
 	} else {
-		s += boxEmpty
+		s += boxEmpty.str()
 	}
 	return s
 }
@@ -143,191 +143,91 @@ func (r *Renderer) renderBoxEmpty(t *Token, isCur bool) string {
 func (r *Renderer) renderBoxField(t *Token, isCur bool) string {
 	var s = ""
 	if isCur {
-		s += colorise(string(t.Literal))
+		s += painAsAttr(string(t.Literal))
 	} else {
-		s += boxField
+		s += boxField.str()
 	}
 	return s
 }
 
 func (r *Renderer) renderListNumber(t *Token) string {
-	var s = ""
-	s += colorise(string(t.Literal))
+	s := string(t.Value)
+	s += painAsAttr(string(t.Literal))
 	return s
 }
 
 func (r *Renderer) renderListDash(t *Token, isCur bool) string {
 	var s = ""
-	if !r.shielded {
-		if isCur {
-			s += colorise(string(t.Literal))
-		} else {
-			s += listDash
-		}
+	if isCur {
+		s += painAsAttr(string(t.Literal))
 	} else {
-		s += string(t.Literal)
-		r.shielded = false
+		s += listDash.str()
 	}
 	return s
 }
 
-func (r *Renderer) renderShield(isCur bool) string {
+func (r *Renderer) renderShield(t *Token, isCur bool) string {
 	var s = ""
-	if !r.shielded {
-		r.shielded = true
-		if isCur {
-			s += colorise("\\")
-		}
-	} else {
-		s += "\\"
-		r.shielded = false
+	if isCur {
+		s += painAsAttr(string(t.Literal))
 	}
+	s += string(t.Value)
 	return s
 }
 
 func (r *Renderer) renderQuote(t *Token, isCur bool) string {
 	var s = ""
-	if !r.shielded {
-		s += quote
-		if isCur {
-			s += colorise(string(t.Literal))
-		} else {
-			s += "\u2503"
-		}
-		s += reset
+	s += quote.str()
+	if isCur {
+		s += painAsAttr(string(t.Literal))
 	} else {
-		s += string(t.Literal)
-		r.shielded = false
+		s += quoteSymbol.str()
 	}
+	s += reset.str()
 	return s
 }
 
 func (r *Renderer) renderText(t *Token) string {
-	return string(t.Literal)
+	return string(t.Value)
 }
 
 func (r *Renderer) renderTag(t *Token, isCur bool) string {
 	var s = ""
-	if !r.shielded {
-		s += tag
-		if !isCur {
-			s += tagS
-			s += string(t.Literal)
-			s += tagE
-		} else {
-			s += string(t.Literal)
-			r.shielded = false
-		}
-		s += reset
+	if !isCur {
+		s += tagS.str()
+		s += string(t.Literal)
+		s += string(t.Value)
+		s += tagE.str()
 	} else {
 		s += string(t.Literal)
+		s += string(t.Value)
 	}
+	s += reset.str()
 	return s
 }
 
-func (r *Renderer) renderHeader(t *Token, isCurl bool) string {
+func (r *Renderer) renderHeader(t *Token) string {
 	var s = ""
-	if !r.shielded {
-		if !isCurl {
-			shift := (r.w - len(r.l.input)) / 2
-			r.curAttr = reset
-
-			s += strings.Repeat(" ", shift)
-		}
-		//s += header
-		s += underline
-		s += string(t.Literal)
-	} else {
-		s += string(t.Literal)
-		r.shielded = false
-	}
+	s += header.str()
+	s += underline.str()
+	s += string(t.Literal)
 	return s
 }
 
-func (r *Renderer) renderItalc(t *Token, isCur bool) string {
+func (r *Renderer) simpleAttrRender(mode asciiCode, attr string, isCur bool) string {
 	var s = ""
-	if !r.shielded {
-		r.changeMode(italic)
-		s += r.curAttr
-		if isCur {
-			s += colorise(string(t.Literal))
-		}
-	} else {
-		s += string(t.Literal)
-		r.shielded = false
-	}
-
-	return s
-}
-
-func (r *Renderer) renderBold(t *Token, show bool) string {
-	var s = ""
-	if !r.shielded {
-		r.changeMode(bold)
-		s += r.curAttr
-		if show {
-			s += colorise(string(t.Literal))
-		}
-	} else {
-		s += string(t.Literal)
-		r.shielded = false
-	}
-
-	return s
-}
-
-func (r *Renderer) rednerBoldItalic(t *Token, isCur bool) string {
-	var s = ""
-	if !r.shielded {
-		r.changeMode(boldItalic)
-		s += r.curAttr
-		if isCur {
-			s += colorise(string(t.Literal))
-		}
-	} else {
-		s += string(t.Literal)
-		r.shielded = false
-	}
-
-	return s
-}
-
-func (r *Renderer) renderStriked(t *Token, show bool) string {
-	var s = ""
-	if !r.shielded {
-		r.changeMode(stricked)
-		s += r.curAttr
-		if show {
-			s += colorise(string(t.Literal))
-		}
-	} else {
-		s += string(t.Literal)
-		r.shielded = false
-	}
-
-	return s
-}
-
-func (r *Renderer) renderCodeLine(t *Token, isCur bool) string {
-	var s = ""
-	if !r.shielded {
-		r.changeMode(code)
-		s += r.curAttr
-		if isCur {
-			s += colorise(string(t.Literal))
-		}
-	} else {
-		s += string(t.Literal)
-		r.shielded = false
-	}
-
-	return s
-}
-
-func (r *Renderer) changeMode(mode string) {
 	if r.curAttr == mode {
 		r.curAttr = reset
+		if isCur {
+			s += painAsAttr(attr)
+		}
+		s += r.curAttr.str()
 	} else {
 		r.curAttr = mode
+		s += r.curAttr.str()
+		if isCur {
+			s += painAsAttr(attr)
+		}
 	}
+	return s
 }

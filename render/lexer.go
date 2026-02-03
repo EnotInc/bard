@@ -64,15 +64,17 @@ func (l *lexer) NextToken() Token {
 				t = Token{Type: ListDash, Literal: []rune(str)}
 			}
 		} else {
-			t = Token{Type: Symbol, Literal: []rune(str)}
+			t = Token{Type: Symbol, Value: []rune(str)}
 			//l.readChar()
 		}
 		l.readChar()
 	case '\\':
 		if isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
-			t = Token{Type: Symbol, Literal: []rune{l.ch}}
+			t = Token{Type: Symbol, Value: []rune{l.ch}}
 		} else {
-			t = Token{Type: Shield, Literal: []rune{l.ch}}
+			sh := l.ch
+			l.readChar()
+			t = Token{Type: Shield, Literal: []rune{sh}, Value: []rune{l.ch}}
 		}
 		l.readChar()
 	case '>':
@@ -80,7 +82,7 @@ func (l *lexer) NextToken() Token {
 		l.readChar()
 	case ' ':
 		l.readChar()
-		t = Token{Type: WhiteSpace, Literal: []rune{' '}}
+		t = Token{Type: WhiteSpace, Value: []rune{' '}}
 	case '*':
 		t = l.getAttrToken('*', []TokenType{OneStar, TwoStars, ThreeStars})
 	case '_':
@@ -90,7 +92,7 @@ func (l *lexer) NextToken() Token {
 			l.readChar()
 			t = Token{Type: Stricked, Literal: []rune("~~")}
 		} else {
-			t = Token{Type: Symbol, Literal: []rune{l.ch}}
+			t = Token{Type: Symbol, Value: []rune{l.ch}}
 		}
 		l.readChar()
 	case '#':
@@ -108,9 +110,9 @@ func (l *lexer) NextToken() Token {
 		if count == 1 && (isLetter(l.peekChar()) || isNumber(l.peekChar())) /* && l.peekChar() != ' '*/ {
 			l.readChar()
 			text := l.readText()
-			t = Token{Type: Tag, Literal: append(lit, text...)}
+			t = Token{Type: Tag, Literal: lit, Value: text}
 		} else if count > 6 || l.peekChar() != ' ' {
-			t = Token{Type: Symbol, Literal: lit}
+			t = Token{Type: Symbol, Value: lit}
 			l.readChar()
 		} else {
 			switch count {
@@ -144,10 +146,10 @@ func (l *lexer) NextToken() Token {
 		switch count {
 		case 1:
 			t = Token{Type: CodeLine, Literal: lit}
-		case 3:
-			t = Token{Type: CodeBlock, Literal: lit}
+		// case 3:
+		// 	t = Token{Type: CodeBlock, Literal: lit}
 		default:
-			t = Token{Type: Symbol, Literal: lit}
+			t = Token{Type: Symbol, Value: lit}
 		}
 		l.readChar()
 	case 0:
@@ -157,21 +159,19 @@ func (l *lexer) NextToken() Token {
 			s := l.readNumber()
 			switch l.ch {
 			case ')':
-				s = append(s, ')')
-				t = Token{Type: ListNumberB, Literal: s}
+				t = Token{Type: ListNumberB, Value: s, Literal: []rune{')'}}
 				l.readChar()
 			case '.':
-				s = append(s, '.')
-				t = Token{Type: ListNumberDot, Literal: s}
+				t = Token{Type: ListNumberDot, Value: s, Literal: []rune{'.'}}
 				l.readChar()
 			default:
-				t = Token{Type: TEXT, Literal: s}
+				t = Token{Type: TEXT, Value: s}
 			}
 		} else if isLetter(l.ch) || isNumber(l.ch) {
 			s := l.readText()
-			t = Token{Type: TEXT, Literal: s}
+			t = Token{Type: TEXT, Value: s}
 		} else {
-			t = Token{Type: Symbol, Literal: []rune{l.ch}}
+			t = Token{Type: Symbol, Value: []rune{l.ch}}
 			l.readChar()
 		}
 	}
@@ -223,7 +223,7 @@ func (l *lexer) getAttrToken(ch rune, types []TokenType) Token {
 
 	end := l.position + 1
 	if count > 3 /*|| l.peekChar() == ' '*/ {
-		t = Token{Type: Symbol, Literal: []rune(l.input[pos:end])}
+		t = Token{Type: Symbol, Value: []rune(l.input[pos:end])}
 	} else {
 		switch count {
 		case 1:
