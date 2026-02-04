@@ -27,13 +27,14 @@ const (
 	codeLine asciiCode = "\033[48;5;236m\033[33m"
 	header   asciiCode = "\033[34m"
 
-	tagColor asciiCode = "\033[48;5;60m\033[38;5;219m"
-	tagS               = "["
-	tagE               = "]"
-	shield   asciiCode = "\\"
-	listDash asciiCode = "\u2981 "
-	boxEmpty asciiCode = " \u2610 "
-	boxField asciiCode = " \u2612 "
+	listColor asciiCode = "\033[35m"
+	tagColor  asciiCode = "\033[48;5;60m\033[38;5;219m"
+	tagS                = "["
+	tagE                = "]"
+	shield    asciiCode = "\\"
+	listDash  asciiCode = "\u2981 "
+	boxEmpty  asciiCode = " \u2610 "
+	boxField  asciiCode = " \u2612 "
 )
 
 type Renderer struct {
@@ -174,8 +175,10 @@ func (r *Renderer) renderBoxField(t *Token, isCur bool) string {
 }
 
 func (r *Renderer) renderListNumber(t *Token) string {
-	s := string(t.Value)
-	s += painAsAttr(string(t.Literal))
+	var s = ""
+	s += paintString(listColor, string(t.Value))
+	s += paintString(listColor, string(t.Literal))
+	s += reset.str()
 	return s
 }
 
@@ -235,6 +238,7 @@ func (r *Renderer) renderHeader(t *Token) string {
 	var s = ""
 	s += header.str()
 	s += underline.str()
+	r.curAttr = header
 	s += string(t.Literal)
 	return s
 }

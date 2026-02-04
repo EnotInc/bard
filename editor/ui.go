@@ -156,7 +156,7 @@ func (ui *UI) Draw(e *Editor) {
 			var diff = 0
 			if e.isMdFile {
 				l, diff = ui.render.RednerMarkdownLine(str, isCurLine)
-				l = visibleSubString(l, start, e.w-initialOfset-diff)
+				l = visibleSubString(l, start, e.w-initialOfset-diff-2 /*just a magic number*/)
 			} else {
 				l = string(str[start:end])
 			}

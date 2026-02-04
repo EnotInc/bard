@@ -107,7 +107,7 @@ func (l *lexer) NextToken() Token {
 		end := l.position + 1
 		lit := []rune(l.input[pos:end])
 
-		if count == 1 && (isLetter(l.peekChar()) || isNumber(l.peekChar())) /* && l.peekChar() != ' '*/ {
+		if count == 1 && (isLetter(l.peekChar()) || isNumber(l.peekChar())) {
 			l.readChar()
 			text := l.readText()
 			t = Token{Type: Tag, Literal: lit, Value: text}
