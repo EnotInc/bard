@@ -1,5 +1,7 @@
 package render
 
+import "fmt"
+
 type asciiCode string
 
 func (a asciiCode) str() string {
@@ -25,8 +27,9 @@ const (
 	codeLine asciiCode = "\033[48;5;236m\033[33m"
 	header   asciiCode = "\033[34m"
 
-	tagS     asciiCode = "\033[48;5;60m\033[38;5;219m["
-	tagE     asciiCode = "]" + reset
+	tagColor asciiCode = "\033[48;5;60m\033[38;5;219m"
+	tagS               = "["
+	tagE               = "]"
 	shield   asciiCode = "\\"
 	listDash asciiCode = "\u2981 "
 	boxEmpty asciiCode = " \u2610 "
@@ -44,11 +47,12 @@ func InitReder(w, h int) *Renderer {
 		w: w,
 		h: h,
 	}
+	//TODO: create a new lexer, for code, and separate it form default markdown lexer and renderer
 	r.l = NewLexer()
 	return r
 }
 
-func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
+func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) (string, int) {
 	//here is reset lexer, so it can read a new line. Prev I was creating a new instance of a lexer, which is not rly good, ig
 
 	r.l.input = line
@@ -57,6 +61,7 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 	r.l.readChar()
 
 	var data = ""
+	var diff = 0
 
 	var i = 0
 	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {
@@ -70,12 +75,14 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 		case ListBoxField:
 			if i == 0 {
 				data += r.renderBoxField(&tok, isCur)
+				diff += 2
 			} else {
 				data += string(tok.Literal)
 			}
 		case ListBoxEmpty:
 			if i == 0 {
 				data += r.renderBoxEmpty(&tok, isCur)
+				diff += 2
 			} else {
 				data += string(tok.Literal)
 			}
@@ -99,20 +106,27 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 			}
 		case CodeLine:
 			data += r.simpleAttrRender(codeLine, string(tok.Literal), isCur)
+			diff += 1
 		case TEXT:
 			data += r.renderText(&tok)
 		case Shield:
 			data += r.renderShield(&tok, isCur)
+			diff += 1
 		case Tag:
 			data += r.renderTag(&tok, isCur)
+			diff -= 1
 		case OneStar, OneUnderline:
 			data += r.simpleAttrRender(italic, string(tok.Literal), isCur)
+			diff += 1
 		case TwoStars, TwoUnderlines:
 			data += r.simpleAttrRender(bold, string(tok.Literal), isCur)
+			diff += 2
 		case ThreeStars, ThreeUnderlines:
 			data += r.simpleAttrRender(boldItalic, string(tok.Literal), isCur)
+			diff += 3
 		case Stricked:
 			data += r.simpleAttrRender(stricked, string(tok.Literal), isCur)
+			diff += 2
 		case WhiteSpace:
 			data += " "
 		case Symbol:
@@ -123,11 +137,20 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) string {
 
 	data += reset.str()
 	r.curAttr = reset
-	return data
+	return data, diff
 }
 
 func painAsAttr(symbol string) string {
-	return symbolColor.str() + symbol + resetColor.str()
+	sym := paintString(symbolColor, symbol)
+	return sym + resetColor.str()
+}
+
+func paintString(ascii asciiCode, str string) string {
+	var s = ""
+	for _, x := range str {
+		s += fmt.Sprintf("%s%c", ascii, x)
+	}
+	return s
 }
 
 func (r *Renderer) renderBoxEmpty(t *Token, isCur bool) string {
@@ -188,19 +211,21 @@ func (r *Renderer) renderQuote(t *Token, isCur bool) string {
 }
 
 func (r *Renderer) renderText(t *Token) string {
-	return string(t.Value)
+	return paintString(r.curAttr, string(t.Value))
 }
 
 func (r *Renderer) renderTag(t *Token, isCur bool) string {
 	var s = ""
 	if !isCur {
-		s += tagS.str()
-		s += string(t.Literal)
-		s += string(t.Value)
-		s += tagE.str()
+		s += tagColor.str()
+		s += tagS
+		s += paintString(tagColor, string(t.Literal))
+		s += paintString(tagColor, string(t.Value))
+		s += tagE
+		s += reset.str()
 	} else {
-		s += string(t.Literal)
-		s += string(t.Value)
+		s += paintString(tagColor, string(t.Literal))
+		s += paintString(tagColor, string(t.Value))
 	}
 	s += reset.str()
 	return s

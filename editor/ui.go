@@ -98,6 +98,34 @@ func (e *Editor) buildLowerBar(curdata string) string {
 	return data
 }
 
+// NOTE: NGL, I made this with AI coz I'm to dumb to figure this out by myself. Yeah, shame on me T-T
+func visibleSubString(text string, start int, end int) string {
+	var res []byte
+	visibleCount := 0
+	inEscape := false
+	escapeStart := -1
+
+	for i := 0; i < len(text); i++ {
+		if text[i] == '\033' {
+			inEscape = true
+			escapeStart = i
+		} else if inEscape && text[i] == 'm' {
+			inEscape = false
+			if visibleCount >= start && visibleCount < start+end {
+				res = append(res, text[escapeStart:i+1]...)
+			}
+			escapeStart = -1
+		} else if !inEscape {
+			if visibleCount >= start && visibleCount < start+end {
+				res = append(res, text[i])
+			}
+			visibleCount++
+		}
+	}
+
+	return string(res)
+}
+
 func (ui *UI) Draw(e *Editor) {
 	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
@@ -125,8 +153,10 @@ func (ui *UI) Draw(e *Editor) {
 
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
 			var l = ""
+			var diff = 0
 			if e.isMdFile {
-				l = ui.render.RednerMarkdownLine(str[start:end], isCurLine)
+				l, diff = ui.render.RednerMarkdownLine(str, isCurLine)
+				l = visibleSubString(l, start, e.w-initialOfset-diff)
 			} else {
 				l = string(str[start:end])
 			}
