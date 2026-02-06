@@ -7,11 +7,13 @@ import (
 	"strings"
 )
 
-func (e *Editor) LoadFile(file string) error {
+func (e *Editor) LoadFile(file string) {
 	f, err := os.Open(file)
 	if err != nil {
-		return err
+		panic(err)
 	}
+	defer f.Close()
+
 	ext := filepath.Ext(file)
 	e.isMdFile = (ext == ".md" || ext == ".MD")
 
@@ -31,7 +33,6 @@ func (e *Editor) LoadFile(file string) error {
 		e.b.lines = append(e.b.lines, &line{})
 	}
 	e.file = file
-	return nil
 }
 
 func (e *Editor) SaveFile() {

@@ -33,8 +33,8 @@ const (
 	tagE                = "]"
 	shield    asciiCode = "\\"
 	listDash  asciiCode = "\u2981 "
-	boxEmpty  asciiCode = " \u2610 "
-	boxField  asciiCode = " \u2612 "
+	boxEmpty  asciiCode = " \u25a1"
+	boxField  asciiCode = " \u25a0"
 )
 
 type Renderer struct {
@@ -76,14 +76,12 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) (string, int) {
 		case ListBoxField:
 			if i == 0 {
 				data += r.renderBoxField(&tok, isCur)
-				diff += 2
 			} else {
 				data += string(tok.Literal)
 			}
 		case ListBoxEmpty:
 			if i == 0 {
 				data += r.renderBoxEmpty(&tok, isCur)
-				diff += 2
 			} else {
 				data += string(tok.Literal)
 			}
@@ -214,7 +212,10 @@ func (r *Renderer) renderQuote(t *Token, isCur bool) string {
 }
 
 func (r *Renderer) renderText(t *Token) string {
-	return paintString(r.curAttr, string(t.Value))
+	if r.curAttr != reset {
+		return paintString(r.curAttr, string(t.Value))
+	}
+	return string(t.Value)
 }
 
 func (r *Renderer) renderTag(t *Token, isCur bool) string {

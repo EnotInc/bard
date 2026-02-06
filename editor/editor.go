@@ -84,9 +84,8 @@ func InitEditor() *Editor {
 
 func (e *Editor) ScrollUp() {
 	if e.ui.curRow == ScrollBorder {
-		if e.ui.upperBorder != 0 {
-			e.ui.upperBorder -= 1
-			e.ui.lowerBorder -= 1
+		if e.ui.yScroll != 0 {
+			e.ui.yScroll -= 1
 		}
 		e.setUiCursor()
 	}
@@ -94,9 +93,8 @@ func (e *Editor) ScrollUp() {
 
 func (e *Editor) ScrollDown() {
 	if e.ui.curRow == e.h-ScrollBorder {
-		if e.ui.lowerBorder != len(e.b.lines)+ScrollBorder {
-			e.ui.upperBorder += 1
-			e.ui.lowerBorder += 1
+		if e.ui.yScroll+e.h != len(e.b.lines)+ScrollBorder {
+			e.ui.yScroll += 1
 		}
 		e.setUiCursor()
 	}
@@ -104,9 +102,8 @@ func (e *Editor) ScrollDown() {
 
 func (e *Editor) ScrollRight() {
 	if e.ui.curOff >= e.w-ScrollBorder*2 {
-		if e.ui.rightBorder != len(e.b.lines[e.b.cursor.line].data)+ScrollBorder {
-			e.ui.leftBorder += 1
-			e.ui.rightBorder += 1
+		if e.ui.xScroll+e.w-initialOfset != len(e.b.lines[e.b.cursor.line].data)+ScrollBorder {
+			e.ui.xScroll += 1
 		}
 		e.setUiCursor()
 	}
@@ -114,53 +111,42 @@ func (e *Editor) ScrollRight() {
 
 func (e *Editor) ScrollLeft() {
 	if e.ui.curOff <= ScrollBorder {
-		if e.ui.leftBorder != 0 {
-			e.ui.leftBorder -= 1
-			e.ui.rightBorder -= 1
+		if e.ui.xScroll != 0 {
+			e.ui.xScroll -= 1
 		}
 		e.setUiCursor()
 	}
 }
 
 func (e *Editor) setUiCursor() {
-	e.ui.curRow = e.b.cursor.line - e.ui.upperBorder
-	e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+	e.ui.curRow = e.b.cursor.line - e.ui.yScroll
+	e.ui.curOff = e.b.cursor.ofset - e.ui.xScroll
 }
 
 func (e *Editor) moveLeft() {
-	e.ui.leftBorder = 0
-	e.ui.rightBorder = e.w - initialOfset
-	//e.ui.curOff = e.b.cursor.ofset - e.ui.leftBorder
+	e.ui.xScroll = 0
 	e.setUiCursor()
 }
 
 func (e *Editor) moveRight() {
-	// e.ui.rightBorder = len(e.b.lines[e.b.cursor.line].data) + ScrollBorder*2
-	// e.ui.leftBorder = e.ui.rightBorder - e.w - initialOfset
-	e.ui.rightBorder = e.b.cursor.ofset + ScrollBorder
-	e.ui.leftBorder = e.ui.rightBorder - e.w + initialOfset
-	if e.ui.leftBorder < 0 {
-		e.ui.leftBorder = 0
-	}
-	if e.ui.rightBorder < e.w-initialOfset {
-		e.ui.rightBorder = e.w - initialOfset
+	e.ui.xScroll = len(e.b.lines[e.b.cursor.line].data) - e.w + ScrollBorder*2
+	if e.ui.xScroll < 0 {
+		e.ui.xScroll = 0
 	}
 	e.setUiCursor()
 }
 
 func (e *Editor) shiftLeft() {
-	if e.ui.leftBorder > e.b.cursor.ofset {
-		e.ui.leftBorder = e.b.cursor.ofset - ScrollBorder
-		if e.ui.leftBorder < 0 {
-			e.ui.leftBorder = 0
+	if e.ui.xScroll > e.b.cursor.ofset {
+		e.ui.xScroll = e.b.cursor.ofset - ScrollBorder
+		if e.ui.xScroll < 0 {
+			e.ui.xScroll = 0
 		}
-		e.ui.rightBorder = e.ui.leftBorder + e.w - initialOfset
 		e.setUiCursor()
 	}
 }
 
 func (e *Editor) caseNormal(key rune) {
-	//e.b.cursor.lastOfset = e.b.cursor.ofset
 	switch key {
 	case 'h':
 		e.b.H()

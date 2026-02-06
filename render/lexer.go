@@ -38,7 +38,7 @@ func (l *lexer) NextToken() Token {
 			if l.peekChar() == '[' {
 				l.readChar()
 				str += "["
-				if l.peekChar() == ' ' || isLetter(l.peekChar()) {
+				if l.peekChar() == ' ' || isLetter(l.peekChar()) || l.peekChar() == '?' {
 					isField = ' ' != l.peekChar()
 					l.readChar()
 					str += string(l.ch)
@@ -50,22 +50,17 @@ func (l *lexer) NextToken() Token {
 						} else {
 							t = Token{Type: ListBoxEmpty, Literal: []rune(str)}
 						}
-						//l.readChar()
 					} else {
-						//l.readChar()
-						t = Token{Type: TEXT, Literal: []rune(str)}
+						t = Token{Type: TEXT, Value: []rune(str)}
 					}
 				} else {
-					//l.readChar()
-					t = Token{Type: TEXT, Literal: []rune(str)}
+					t = Token{Type: TEXT, Value: []rune(str)}
 				}
 			} else {
-				//l.readChar()
 				t = Token{Type: ListDash, Literal: []rune(str)}
 			}
 		} else {
 			t = Token{Type: Symbol, Value: []rune(str)}
-			//l.readChar()
 		}
 		l.readChar()
 	case '\\':

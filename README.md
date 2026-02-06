@@ -5,7 +5,7 @@ I wrote Bard because I wanted to have beautiful markdown rendering, similar to O
 
 ## **Usage**
 To run bard, just type `bard` in terminal. You can provide file name to open it, or create a new one.
-To navigate through text, you must use Vim motions, and if you not familiar with any of this, it's a good time to lear so you can say "*I use vim, btw*" (and use Bard, ofc)
+To navigate through text, you must use Vim motions, and if you not familiar with any of this, it's a good time to lear so you can say "*I use vim, btw*" (and Bard, ofc)
 
 ## **Instalation**
 It is not available in any package managers yet, so to install Bard you can do this:

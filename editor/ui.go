@@ -26,27 +26,23 @@ const (
 )
 
 type UI struct {
-	rln         bool
-	upperBorder int
-	lowerBorder int
-	leftBorder  int
-	rightBorder int
-	curRow      int
-	curOff      int
-	render      *render.Renderer
+	rln     bool
+	xScroll int
+	yScroll int
+	curRow  int
+	curOff  int
+	render  *render.Renderer
 }
 
 func InitUI(h int, w int) *UI {
 	r := render.InitReder(w, h)
 	ui := &UI{
-		rln:         false,
-		lowerBorder: h,
-		upperBorder: 0,
-		leftBorder:  0,
-		rightBorder: w - initialOfset,
-		curRow:      0,
-		curOff:      0,
-		render:      r,
+		rln:     false,
+		xScroll: 0,
+		yScroll: 0,
+		curRow:  0,
+		curOff:  0,
+		render:  r,
 	}
 	return ui
 }
@@ -98,48 +94,86 @@ func (e *Editor) buildLowerBar(curdata string) string {
 	return data
 }
 
-// NOTE: NGL, I made this with AI coz I'm to dumb to figure this out by myself. Yeah, shame on me T-T
+// // NOTE: NGL, I made this with AI coz I'm to dumb to figure this out by myself. Yeah, shame on me T-T
+// func visibleSubString(text string, start int, end int) string {
+// 	var res []rune
+// 	visibleCount := 0
+// 	inEscape := false
+// 	escapeStart := -1
+// 	//TODO: recalc diff if symols aren't on screen
+
+// 	for i := 0; i < len(text); i++ {
+// 		if text[i] == '\033' {
+// 			inEscape = true
+// 			escapeStart = i
+// 		} else if inEscape && text[i] == 'm' {
+// 			inEscape = false
+// 			if visibleCount >= start && visibleCount < start+end {
+// 				res = append(res, text[escapeStart:i+1]...)
+// 			}
+// 			escapeStart = -1
+// 		} else if !inEscape {
+// 			if visibleCount >= start && visibleCount < start+end {
+// 				res = append(res, rune(text[i]))
+// 			}
+// 			visibleCount++
+// 		}
+// 	}
+
+// 	return string(res) + "\033[0m"
+// }
+
 func visibleSubString(text string, start int, end int) string {
-	var res []byte
+	var res strings.Builder
 	visibleCount := 0
 	inEscape := false
-	escapeStart := -1
+	var escapeSeq strings.Builder
 
-	for i := 0; i < len(text); i++ {
-		if text[i] == '\033' {
+	for _, r := range text {
+		if r == '\033' {
 			inEscape = true
-			escapeStart = i
-		} else if inEscape && text[i] == 'm' {
-			inEscape = false
-			if visibleCount >= start && visibleCount < start+end {
-				res = append(res, text[escapeStart:i+1]...)
-			}
-			escapeStart = -1
-		} else if !inEscape {
-			if visibleCount >= start && visibleCount < start+end {
-				res = append(res, text[i])
-			}
-			visibleCount++
+			escapeSeq.Reset()
+			escapeSeq.WriteRune(r)
+			continue
 		}
+		if inEscape {
+			escapeSeq.WriteRune(r)
+			if r == 'm' {
+				inEscape = false
+				if visibleCount >= start && visibleCount <= start+end {
+					res.WriteString(escapeSeq.String())
+				}
+			}
+			continue
+		}
+		if visibleCount >= start && visibleCount <= start+end {
+			res.WriteRune(r)
+		}
+		visibleCount++
 	}
 
-	return string(res)
+	return res.String()
 }
 
+// foobar
+// 10
+// 6 - diff
+// isCurLine
+
 func (ui *UI) Draw(e *Editor) {
-	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
+	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines)))) //wtf
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
 
 	var data strings.Builder
 	fmt.Fprintf(&data, "%s%s%s", clearView, clearHistory, moveToStart)
 
-	for i := ui.upperBorder; i < ui.lowerBorder-1; i++ {
-		isCurLine := e.b.cursor.line == i
-
-		start := e.ui.leftBorder
-		end := e.ui.rightBorder - len(emtpyLineSpases)
+	for i := ui.yScroll; i < ui.yScroll+e.h-1; i++ {
 
 		if i < len(e.b.lines) {
+			isCurLine := e.b.cursor.line == i
+
+			start := e.ui.xScroll
+			end := e.w - initialOfset - 2 // I don't rly know why 2 is working here, but i'll keep for now, ig
 
 			str := e.b.lines[i].data
 			if len(str) <= end {
@@ -156,7 +190,10 @@ func (ui *UI) Draw(e *Editor) {
 			var diff = 0
 			if e.isMdFile {
 				l, diff = ui.render.RednerMarkdownLine(str, isCurLine)
-				l = visibleSubString(l, start, e.w-initialOfset-diff-2 /*just a magic number*/)
+				if isCurLine {
+					diff = 0
+				}
+				l = visibleSubString(l, start, end-diff)
 			} else {
 				l = string(str[start:end])
 			}
