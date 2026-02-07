@@ -31,6 +31,7 @@ type UI struct {
 	yScroll int
 	curRow  int
 	curOff  int
+	w, h    int
 	render  *render.Renderer
 }
 
@@ -42,6 +43,8 @@ func InitUI(h int, w int) *UI {
 		yScroll: 0,
 		curRow:  0,
 		curOff:  0,
+		w:       w,
+		h:       h,
 		render:  r,
 	}
 	return ui
@@ -161,19 +164,19 @@ func visibleSubString(text string, start int, end int) string {
 // isCurLine
 
 func (ui *UI) Draw(e *Editor) {
-	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines)))) //wtf
+	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
 
 	var data strings.Builder
 	fmt.Fprintf(&data, "%s%s%s", clearView, clearHistory, moveToStart)
 
-	for i := ui.yScroll; i < ui.yScroll+e.h-1; i++ {
+	for i := ui.yScroll; i < ui.yScroll+ui.h-1; i++ {
 
 		if i < len(e.b.lines) {
 			isCurLine := e.b.cursor.line == i
 
 			start := e.ui.xScroll
-			end := e.w - initialOfset - 2 // I don't rly know why 2 is working here, but i'll keep for now, ig
+			end := ui.w - initialOfset - 2 // I don't rly know why -2 is working here, but i'll keep for now, ig
 
 			str := e.b.lines[i].data
 			if len(str) <= end {
@@ -212,7 +215,7 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, cursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	case command:
-		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.curCommand, e.h, len(e.curCommand)+initialOfset)
+		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.curCommand, ui.h, len(e.curCommand)+initialOfset)
 		fmt.Fprintf(&data, cursorBloc)
 	case normal:
 		cursorPos := fmt.Sprintf("[%s]", e.file)
