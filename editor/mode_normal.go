@@ -1,28 +1,47 @@
 package editor
 
+import (
+	"strconv"
+)
+
 const (
 	above = iota
 	below
 )
 
+func (e *Editor) moveWithSubCommand(move func(int)) {
+	if e.subCmd == "" {
+		move(1)
+		return
+	}
+	amount, err := strconv.Atoi(e.subCmd)
+	if err != nil {
+		e.subCmd = ""
+		return
+	}
+	move(amount)
+	e.subCmd = ""
+}
+
 func (e *Editor) caseNormal(key rune) {
 	switch key {
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':
+		e.subCmd += string(key)
 	case 'h':
-		e.b.H()
+		e.moveWithSubCommand(e.b.H)
+		e.setUiCursor()
 		e.ScrollLeft()
 	case 'j':
-		e.b.J()
+		e.moveWithSubCommand(e.b.J)
 		e.ScrollDown()
 		e.shiftLeft()
 	case 'k':
-		e.b.K()
+		e.moveWithSubCommand(e.b.K)
 		e.ScrollUp()
 		e.shiftLeft()
 	case 'l':
-		e.b.L()
+		e.moveWithSubCommand(e.b.L)
 		e.ScrollRight()
-	case 'v':
-		e.curMode = visual
 	case 'i':
 		e.curMode = insert
 		e.ScrollLeft()
@@ -65,6 +84,8 @@ func (e *Editor) caseNormal(key rune) {
 	case 's':
 		e.b.Delkey()
 		e.curMode = insert
+	default:
+		e.subCmd = ""
 	}
 	e.setUiCursor()
 }

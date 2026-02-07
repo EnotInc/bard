@@ -5,6 +5,20 @@ const (
 )
 
 func (e *Editor) setUiCursor() {
+	if e.ui.xScroll > e.b.cursor.ofset {
+		e.ui.xScroll = e.b.cursor.ofset
+	} else if e.ui.xScroll < e.b.cursor.ofset-e.ui.w+ScrollBorder*2 {
+		e.ui.xScroll = e.b.cursor.ofset - e.ui.w + ScrollBorder*2
+	}
+	if e.ui.yScroll > e.b.cursor.line-ScrollBorder {
+		e.ui.yScroll = e.b.cursor.line - ScrollBorder
+		if e.ui.yScroll < 0 {
+			e.ui.yScroll = 0
+		}
+	} else if e.ui.yScroll < e.b.cursor.line-e.ui.h+ScrollBorder {
+		e.ui.yScroll = e.b.cursor.line - e.ui.h + ScrollBorder
+	}
+
 	e.ui.curRow = e.b.cursor.line - e.ui.yScroll
 	e.ui.curOff = e.b.cursor.ofset - e.ui.xScroll
 }

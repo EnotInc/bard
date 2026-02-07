@@ -19,23 +19,22 @@ const (
 type Mode string
 
 const (
-	normal      Mode = "NORMAL"
-	command     Mode = "COMMAND"
-	insert      Mode = "INSERT"
-	visual      Mode = "VISUAL"
-	visual_line Mode = "VISUAL-LINE"
+	normal  Mode = "NORMAL"
+	command Mode = "COMMAND"
+	insert  Mode = "INSERT"
 )
 
 type Editor struct {
-	oldState   *term.State
-	b          *Buffer
-	ui         *UI
-	curMode    Mode
-	curCommand string
-	file       string
-	message    string
-	isMdFile   bool
-	fdIn       int
+	oldState *term.State
+	b        *Buffer
+	ui       *UI
+	curMode  Mode
+	command  string
+	subCmd   string
+	file     string
+	message  string
+	isMdFile bool
+	fdIn     int
 }
 
 func InitEditor() *Editor {
@@ -55,13 +54,14 @@ func InitEditor() *Editor {
 	_ui := InitUI(_h, _w)
 
 	e := &Editor{
-		oldState:   old,
-		b:          _b,
-		ui:         _ui,
-		curMode:    normal,
-		isMdFile:   false,
-		curCommand: "",
-		fdIn:       _fdIn,
+		oldState: old,
+		b:        _b,
+		ui:       _ui,
+		curMode:  normal,
+		isMdFile: false,
+		command:  "",
+		subCmd:   "",
+		fdIn:     _fdIn,
 	}
 
 	return e
@@ -83,8 +83,6 @@ func (e *Editor) Run() {
 			e.caseCommand(key)
 		case insert:
 			e.caseInsert(key)
-		case visual:
-			e.caseVisual(key)
 		}
 
 		e.ui.Draw(e)

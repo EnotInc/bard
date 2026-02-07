@@ -41,39 +41,47 @@ func InitBuffer() *Buffer {
 	return b
 }
 
-func (b *Buffer) H() {
-	if b.cursor.ofset > 0 {
-		b.cursor.ofset -= 1
+func (b *Buffer) H(amount int) {
+	if b.cursor.ofset-amount > 0 {
+		b.cursor.ofset -= amount
+	} else {
+		b.cursor.ofset = 0
 	}
 }
 
-func (b *Buffer) J() {
-	if b.cursor.line < len(b.lines)-1 {
-		b.cursor.line += 1
+func (b *Buffer) J(amount int) {
+	if b.cursor.line+amount < len(b.lines)-1 {
+		b.cursor.line += amount
 		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
 			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
 			if b.cursor.ofset < 0 {
 				b.cursor.ofset = 0
 			}
 		}
+	} else {
+		b.cursor.line = len(b.lines) - 1
 	}
 }
 
-func (b *Buffer) K() {
-	if b.cursor.line > 0 {
-		b.cursor.line -= 1
+func (b *Buffer) K(amount int) {
+	if b.cursor.line-amount > 0 {
+		b.cursor.line -= amount
 		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
 			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
 			if b.cursor.ofset < 0 {
 				b.cursor.ofset = 0
 			}
 		}
+	} else {
+		b.cursor.line = 0
 	}
 }
 
-func (b *Buffer) L() {
-	if b.cursor.ofset < len(b.lines[b.cursor.line].data)-1 {
-		b.cursor.ofset += 1
+func (b *Buffer) L(amount int) {
+	if b.cursor.ofset+amount < len(b.lines[b.cursor.line].data)-1 {
+		b.cursor.ofset += amount
+	} else {
+		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
 	}
 }
 

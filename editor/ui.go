@@ -94,37 +94,13 @@ func (e *Editor) buildLowerBar(curdata string) string {
 	var data = ""
 	data += fmt.Sprintf(" %d-%d ", e.b.cursor.line+1, e.b.cursor.ofset+1)
 	data += fmt.Sprintf("%s %s%s%s", curdata, redFg, e.message, resetFg)
+
+	if e.subCmd != "" {
+		data += fmt.Sprintf("<%s>", e.subCmd)
+	}
+
 	return data
 }
-
-// // NOTE: NGL, I made this with AI coz I'm to dumb to figure this out by myself. Yeah, shame on me T-T
-// func visibleSubString(text string, start int, end int) string {
-// 	var res []rune
-// 	visibleCount := 0
-// 	inEscape := false
-// 	escapeStart := -1
-// 	//TODO: recalc diff if symols aren't on screen
-
-// 	for i := 0; i < len(text); i++ {
-// 		if text[i] == '\033' {
-// 			inEscape = true
-// 			escapeStart = i
-// 		} else if inEscape && text[i] == 'm' {
-// 			inEscape = false
-// 			if visibleCount >= start && visibleCount < start+end {
-// 				res = append(res, text[escapeStart:i+1]...)
-// 			}
-// 			escapeStart = -1
-// 		} else if !inEscape {
-// 			if visibleCount >= start && visibleCount < start+end {
-// 				res = append(res, rune(text[i]))
-// 			}
-// 			visibleCount++
-// 		}
-// 	}
-
-// 	return string(res) + "\033[0m"
-// }
 
 func visibleSubString(text string, start int, end int) string {
 	var res strings.Builder
@@ -176,7 +152,7 @@ func (ui *UI) Draw(e *Editor) {
 			isCurLine := e.b.cursor.line == i
 
 			start := e.ui.xScroll
-			end := ui.w - initialOfset - 2 // I don't rly know why -2 is working here, but i'll keep for now, ig
+			end := ui.w - initialOfset - maxNumLen
 
 			str := e.b.lines[i].data
 			if len(str) <= end {
@@ -215,15 +191,11 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, cursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	case command:
-		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.curCommand, ui.h, len(e.curCommand)+initialOfset)
+		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.command, ui.h, len(e.command)+initialOfset)
 		fmt.Fprintf(&data, cursorBloc)
 	case normal:
 		cursorPos := fmt.Sprintf("[%s]", e.file)
 		fmt.Fprintf(&data, "%s", e.buildLowerBar(cursorPos))
-		fmt.Fprintf(&data, cursorBloc)
-		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
-	case visual, visual_line:
-		fmt.Fprintf(&data, "%s", e.buildLowerBar(string(e.curMode)))
 		fmt.Fprintf(&data, cursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
