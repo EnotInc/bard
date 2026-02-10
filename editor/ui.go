@@ -172,7 +172,8 @@ func (ui *UI) Draw(e *Editor) {
 				if isCurLine {
 					diff = 0
 				}
-				l = visibleSubString(l, start, end-diff)
+				l = visibleSubString(l, start, end-diff-1) //?
+				l += string(resetFg)
 			} else {
 				l = string(str[start:end])
 			}
