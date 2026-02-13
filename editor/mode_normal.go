@@ -74,6 +74,17 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
 		e.moveLeft()
+	case 'D':
+		e.b.ClearLiine()
+		e.b.cursor.ofset = 0
+		e.moveLeft()
+	case 'd':
+		e.subCmd += "d"
+		if e.subCmd == "dd" {
+			e.subCmd = ""
+			e.b.RemoveLine()
+			e.moveLeft()
+		}
 	case 'x':
 		//e.b.Yank()
 		e.b.Delkey()

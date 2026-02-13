@@ -146,13 +146,16 @@ func (ui *UI) Draw(e *Editor) {
 	var data strings.Builder
 	fmt.Fprintf(&data, "%s%s%s", clearView, clearHistory, moveToStart)
 
-	for i := ui.yScroll; i < ui.yScroll+ui.h-1; i++ {
+	upperBorder := ui.yScroll
+	lowerBorder := ui.yScroll + ui.h - 1
+
+	for i := upperBorder; i < lowerBorder; i++ {
 
 		if i < len(e.b.lines) {
 			isCurLine := e.b.cursor.line == i
 
 			start := e.ui.xScroll
-			end := ui.w - initialOfset - maxNumLen
+			end := ui.w - initialOfset - len(emtpyLineSpases)
 
 			str := e.b.lines[i].data
 			if len(str) <= end {
@@ -173,6 +176,7 @@ func (ui *UI) Draw(e *Editor) {
 					diff = 0
 				}
 				l = visibleSubString(l, start, end-diff)
+				l += string(resetFg)
 			} else {
 				l = string(str[start:end])
 			}

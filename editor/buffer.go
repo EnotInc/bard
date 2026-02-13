@@ -52,28 +52,28 @@ func (b *Buffer) H(amount int) {
 func (b *Buffer) J(amount int) {
 	if b.cursor.line+amount < len(b.lines)-1 {
 		b.cursor.line += amount
-		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-			if b.cursor.ofset < 0 {
-				b.cursor.ofset = 0
-			}
-		}
 	} else {
 		b.cursor.line = len(b.lines) - 1
+	}
+	if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
+		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+		if b.cursor.ofset < 0 {
+			b.cursor.ofset = 0
+		}
 	}
 }
 
 func (b *Buffer) K(amount int) {
 	if b.cursor.line-amount > 0 {
 		b.cursor.line -= amount
-		if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-			b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-			if b.cursor.ofset < 0 {
-				b.cursor.ofset = 0
-			}
-		}
 	} else {
 		b.cursor.line = 0
+	}
+	if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
+		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+		if b.cursor.ofset < 0 {
+			b.cursor.ofset = 0
+		}
 	}
 }
 
@@ -82,6 +82,9 @@ func (b *Buffer) L(amount int) {
 		b.cursor.ofset += amount
 	} else {
 		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+		if b.cursor.ofset < 0 {
+			b.cursor.ofset = 0
+		}
 	}
 }
 
@@ -134,14 +137,25 @@ func (b *Buffer) DelAndMoveLine() {
 	if b.cursor.line > 0 {
 		shiftData := b.lines[b.cursor.line].data[b.cursor.ofset:]
 		b.RemoveLine()
-		b.cursor.line -= 1
+		//b.cursor.line -= 1
 		b.cursor.ofset = len(b.lines[b.cursor.line].data)
 		b.lines[b.cursor.line].data = append(b.lines[b.cursor.line].data, shiftData...)
 	}
 }
 
 func (b *Buffer) RemoveLine() {
+	if len(b.lines) == 1 {
+		b.ClearLiine()
+		return
+	}
 	b.lines = slices.Delete(b.lines, b.cursor.line, b.cursor.line+1)
+	if b.cursor.line >= len(b.lines) {
+		b.K(1)
+	}
+}
+
+func (b *Buffer) ClearLiine() {
+	b.lines[b.cursor.line].data = []rune{}
 }
 
 func (b *Buffer) moveToFirst() {
