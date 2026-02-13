@@ -18,17 +18,8 @@ type cursor struct {
 	ofset int
 }
 
-type yankLine struct {
-	data        []rune
-	start_line  int
-	start_ofset int
-	end_line    int
-	end_ofset   int
-}
-
 type Buffer struct {
 	lines  []*line
-	yank   []*yankLine
 	cursor *cursor
 }
 

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 
 	"golang.org/x/term"
 )
@@ -34,6 +35,7 @@ type Editor struct {
 	file     string
 	message  string
 	isMdFile bool
+	fdOut    int
 	fdIn     int
 }
 
@@ -61,10 +63,39 @@ func InitEditor() *Editor {
 		isMdFile: false,
 		command:  "",
 		subCmd:   "",
+		fdOut:    _fdOut,
 		fdIn:     _fdIn,
 	}
 
 	return e
+}
+
+func (e *Editor) TermSizeMonitor() {
+	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
+
+	var last_w, last_h = e.ui.w, e.ui.h
+
+	for range ticker.C {
+		w, h, err := term.GetSize(e.fdOut)
+		if err != nil {
+			continue
+		}
+
+		if last_w != w || last_h != h {
+			last_w = w
+			last_h = h
+
+			e.resize(w, h)
+			e.ui.Draw(e)
+		}
+	}
+}
+
+func (e *Editor) resize(w int, h int) {
+	e.ui.w = w
+	e.ui.h = h
+	e.setUiCursor()
 }
 
 func (e *Editor) Run() {

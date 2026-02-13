@@ -10,10 +10,16 @@ To navigate through text, you must use Vim motions, and if you not familiar with
 ## **Instalation**
 It is not available in any package managers yet, so to install Bard you can do this:
 ```bash
-git clone https://github.com/EnotInc/bard
+git clone https://github.com/EnotInc/bard.git
 cd bard/cmd/bard
 go install
 ```
 
-The `go install` command will build project and add `Bard` to the $PATH
+The `go install` command will build project and add `Bard` to the `$PATH`
 And, yeah, you need `go` to build this project
+
+## **Supported modes**
+- `Normal`
+- `Insert`
+- `Command`
+

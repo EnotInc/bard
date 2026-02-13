@@ -39,15 +39,11 @@ const (
 
 type Renderer struct {
 	curAttr asciiCode
-	w, h    int
 	l       *lexer
 }
 
 func InitReder(w, h int) *Renderer {
-	r := &Renderer{
-		w: w,
-		h: h,
-	}
+	r := &Renderer{}
 	//TODO: create a new lexer, for code, and separate it form default markdown lexer and renderer
 	r.l = NewLexer()
 	return r

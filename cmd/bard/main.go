@@ -15,5 +15,7 @@ func main() {
 		}
 		e.LoadFile(file)
 	}
+
+	go e.TermSizeMonitor()
 	e.Run()
 }
