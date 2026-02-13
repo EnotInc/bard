@@ -86,7 +86,6 @@ func (e *Editor) caseNormal(key rune) {
 			e.moveLeft()
 		}
 	case 'x':
-		//e.b.Yank()
 		e.b.Delkey()
 		if e.b.cursor.ofset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.ofset > 0 {
 			e.b.cursor.ofset -= 1
@@ -95,6 +94,10 @@ func (e *Editor) caseNormal(key rune) {
 	case 's':
 		e.b.Delkey()
 		e.curMode = insert
+	case 'v':
+		e.curMode = visual
+		e.b.visual.line = e.b.cursor.line
+		e.b.visual.ofset = e.b.cursor.ofset
 	default:
 		e.subCmd = ""
 	}

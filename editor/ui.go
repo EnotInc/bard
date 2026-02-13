@@ -15,6 +15,8 @@ const (
 	grayFg     color = "\033[90m"
 	yellowFg   color = "\033[33m"
 	cyanFg     color = "\033[36m"
+	startSel   color = "\033[46m"
+	endSel     color = "\033[49m"
 	cursorBloc       = "\x1b[0 q"
 	cursorLine       = "\x1b[5 q"
 )
@@ -133,6 +135,30 @@ func visibleSubString(text string, start int, end int) string {
 	return res.String()
 }
 
+func (e *Editor) addVisual(l string, i int) string {
+	var line string
+
+	//TODO: rewrite this shit with better calculations
+	startOfset := min(e.b.cursor.ofset, e.b.visual.ofset)
+	startLine := min(e.b.cursor.line, e.b.visual.line)
+	endOfset := max(e.b.cursor.ofset, e.b.visual.ofset+1)
+	endLine := max(e.b.cursor.line, e.b.visual.line)
+
+	if startLine == i && i == endLine {
+		line = l[:startOfset] + string(startSel) + l[startOfset:endOfset] + string(endSel) + l[endOfset:]
+	} else if startLine < i && i < endLine {
+		line = string(startSel) + l + string(endSel)
+	} else if startLine == i {
+		line = l[:startOfset] + string(startSel) + l[startOfset:]
+	} else if endLine == i {
+		line = string(startSel) + l[:endOfset] + string(endSel) + l[endOfset:]
+	} else {
+		line = l
+	}
+
+	return line
+}
+
 func (ui *UI) Draw(e *Editor) {
 	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
@@ -143,10 +169,12 @@ func (ui *UI) Draw(e *Editor) {
 	upperBorder := ui.yScroll
 	lowerBorder := ui.yScroll + ui.h - 1
 
+	isVisual := e.curMode == visual
+
 	for i := upperBorder; i < lowerBorder; i++ {
 
 		if i < len(e.b.lines) {
-			isCurLine := e.b.cursor.line == i
+			show := e.b.cursor.line == i || isVisual
 
 			start := ui.xScroll
 			end := ui.w - initialOfset - len(emtpyLineSpases)
@@ -165,11 +193,14 @@ func (ui *UI) Draw(e *Editor) {
 			var l = ""
 			var diff = 0
 			if e.isMdFile {
-				l, diff = ui.render.RednerMarkdownLine(str, isCurLine)
-				if isCurLine {
+				l, diff = ui.render.RednerMarkdownLine(str, show)
+				if show {
 					diff = 0
 				}
 				l = visibleSubString(l, start, end-diff)
+				if e.curMode == visual {
+					l = e.addVisual(l, i)
+				}
 				l += string(resetFg)
 			} else {
 				l = string(str[start:end])
@@ -194,6 +225,10 @@ func (ui *UI) Draw(e *Editor) {
 	case normal:
 		cursorPos := fmt.Sprintf("[%s]", e.file)
 		fmt.Fprintf(&data, "%s", e.buildLowerBar(cursorPos))
+		fmt.Fprintf(&data, cursorBloc)
+		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
+	case visual:
+		fmt.Fprintf(&data, "%s", e.buildLowerBar("-- VISUAL --"))
 		fmt.Fprintf(&data, cursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}

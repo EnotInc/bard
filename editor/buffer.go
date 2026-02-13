@@ -21,12 +21,15 @@ type cursor struct {
 type Buffer struct {
 	lines  []*line
 	cursor *cursor
+	visual *cursor
 }
 
 func InitBuffer() *Buffer {
 	c := &cursor{line: 0, ofset: 0}
+	v := &cursor{line: 0, ofset: 0}
 	b := &Buffer{
 		cursor: c,
+		visual: v,
 	}
 	b.lines = append(b.lines, &line{data: []rune("")})
 	return b
@@ -128,7 +131,7 @@ func (b *Buffer) DelAndMoveLine() {
 	if b.cursor.line > 0 {
 		shiftData := b.lines[b.cursor.line].data[b.cursor.ofset:]
 		b.RemoveLine()
-		//b.cursor.line -= 1
+		b.cursor.line -= 1
 		b.cursor.ofset = len(b.lines[b.cursor.line].data)
 		b.lines[b.cursor.line].data = append(b.lines[b.cursor.line].data, shiftData...)
 	}
