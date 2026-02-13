@@ -9,8 +9,7 @@ func (a asciiCode) str() string {
 }
 
 const (
-	reset       asciiCode = "\033[0m"
-	resetColor  asciiCode = "\033[39m"
+	reset       asciiCode = "\033[39m"
 	symbolColor asciiCode = "\033[90m"
 
 	bold        asciiCode = "\033[1m"
@@ -21,14 +20,11 @@ const (
 	quote       asciiCode = "\033[32m"
 	quoteSymbol asciiCode = "\u2503"
 
-	startSel asciiCode = "\033[100m"
-	endSel   asciiCode = "\033[49m"
-
-	codeLine asciiCode = "\033[48;5;236m\033[33m"
+	codeLine asciiCode = "\033[33m"
 	header   asciiCode = "\033[34m"
 
 	listColor asciiCode = "\033[35m"
-	tagColor  asciiCode = "\033[48;5;60m\033[38;5;219m"
+	tagColor  asciiCode = "\033[35m"
 	tagS                = "["
 	tagE                = "]"
 	shield    asciiCode = "\\"
@@ -49,9 +45,7 @@ func InitReder(w, h int) *Renderer {
 	return r
 }
 
-func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) (string, int) {
-	//here is reset lexer, so it can read a new line. Prev I was creating a new instance of a lexer, which is not rly good, ig
-
+func (r *Renderer) RednerMarkdownLine(line []rune, show bool) (string, int) {
 	r.l.input = line
 	r.l.position = 0
 	r.l.readPosition = 0
@@ -71,25 +65,25 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) (string, int) {
 			}
 		case ListBoxField:
 			if i == 0 {
-				data += r.renderBoxField(&tok, isCur)
+				data += r.renderBoxField(&tok, show)
 			} else {
 				data += string(tok.Literal)
 			}
 		case ListBoxEmpty:
 			if i == 0 {
-				data += r.renderBoxEmpty(&tok, isCur)
+				data += r.renderBoxEmpty(&tok, show)
 			} else {
 				data += string(tok.Literal)
 			}
 		case ListDash:
 			if i == 0 {
-				data += r.renderListDash(&tok, isCur)
+				data += r.renderListDash(&tok, show)
 			} else {
 				data += string(tok.Literal)
 			}
 		case Quote:
 			if i == 0 {
-				data += r.renderQuote(&tok, isCur)
+				data += r.renderQuote(&tok, show)
 			} else {
 				data += string(tok.Literal)
 			}
@@ -100,27 +94,27 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) (string, int) {
 				data += string(tok.Literal)
 			}
 		case CodeLine:
-			data += r.simpleAttrRender(codeLine, string(tok.Literal), isCur)
+			data += r.simpleAttrRender(codeLine, string(tok.Literal), show)
 			diff += 1
 		case TEXT:
 			data += r.renderText(&tok)
 		case Shield:
-			data += r.renderShield(&tok, isCur)
+			data += r.renderShield(&tok, show)
 			diff += 1
 		case Tag:
-			data += r.renderTag(&tok, isCur)
+			data += r.renderTag(&tok, show)
 			diff -= 1
 		case OneStar, OneUnderline:
-			data += r.simpleAttrRender(italic, string(tok.Literal), isCur)
+			data += r.simpleAttrRender(italic, string(tok.Literal), show)
 			diff += 1
 		case TwoStars, TwoUnderlines:
-			data += r.simpleAttrRender(bold, string(tok.Literal), isCur)
+			data += r.simpleAttrRender(bold, string(tok.Literal), show)
 			diff += 2
 		case ThreeStars, ThreeUnderlines:
-			data += r.simpleAttrRender(boldItalic, string(tok.Literal), isCur)
+			data += r.simpleAttrRender(boldItalic, string(tok.Literal), show)
 			diff += 3
 		case Stricked:
-			data += r.simpleAttrRender(stricked, string(tok.Literal), isCur)
+			data += r.simpleAttrRender(stricked, string(tok.Literal), show)
 			diff += 2
 		case WhiteSpace:
 			data += " "
@@ -137,7 +131,7 @@ func (r *Renderer) RednerMarkdownLine(line []rune, isCur bool) (string, int) {
 
 func painAsAttr(symbol string) string {
 	sym := paintString(symbolColor, symbol)
-	return sym + resetColor.str()
+	return sym + reset.str()
 }
 
 func paintString(ascii asciiCode, str string) string {
@@ -148,9 +142,9 @@ func paintString(ascii asciiCode, str string) string {
 	return s
 }
 
-func (r *Renderer) renderBoxEmpty(t *Token, isCur bool) string {
+func (r *Renderer) renderBoxEmpty(t *Token, show bool) string {
 	var s = ""
-	if isCur {
+	if show {
 		s += painAsAttr(string(t.Literal))
 	} else {
 		s += boxEmpty.str()
@@ -158,9 +152,9 @@ func (r *Renderer) renderBoxEmpty(t *Token, isCur bool) string {
 	return s
 }
 
-func (r *Renderer) renderBoxField(t *Token, isCur bool) string {
+func (r *Renderer) renderBoxField(t *Token, show bool) string {
 	var s = ""
-	if isCur {
+	if show {
 		s += painAsAttr(string(t.Literal))
 	} else {
 		s += boxField.str()
@@ -176,9 +170,9 @@ func (r *Renderer) renderListNumber(t *Token) string {
 	return s
 }
 
-func (r *Renderer) renderListDash(t *Token, isCur bool) string {
+func (r *Renderer) renderListDash(t *Token, show bool) string {
 	var s = ""
-	if isCur {
+	if show {
 		s += painAsAttr(string(t.Literal))
 	} else {
 		s += listDash.str()
@@ -186,19 +180,19 @@ func (r *Renderer) renderListDash(t *Token, isCur bool) string {
 	return s
 }
 
-func (r *Renderer) renderShield(t *Token, isCur bool) string {
+func (r *Renderer) renderShield(t *Token, show bool) string {
 	var s = ""
-	if isCur {
+	if show {
 		s += painAsAttr(string(t.Literal))
 	}
 	s += string(t.Value)
 	return s
 }
 
-func (r *Renderer) renderQuote(t *Token, isCur bool) string {
+func (r *Renderer) renderQuote(t *Token, show bool) string {
 	var s = ""
 	s += quote.str()
-	if isCur {
+	if show {
 		s += painAsAttr(string(t.Literal))
 	} else {
 		s += quoteSymbol.str()
@@ -214,9 +208,9 @@ func (r *Renderer) renderText(t *Token) string {
 	return string(t.Value)
 }
 
-func (r *Renderer) renderTag(t *Token, isCur bool) string {
+func (r *Renderer) renderTag(t *Token, show bool) string {
 	var s = ""
-	if !isCur {
+	if !show {
 		s += tagColor.str()
 		s += tagS
 		s += paintString(tagColor, string(t.Literal))
@@ -240,18 +234,18 @@ func (r *Renderer) renderHeader(t *Token) string {
 	return s
 }
 
-func (r *Renderer) simpleAttrRender(mode asciiCode, attr string, isCur bool) string {
+func (r *Renderer) simpleAttrRender(mode asciiCode, attr string, show bool) string {
 	var s = ""
 	if r.curAttr == mode {
 		r.curAttr = reset
-		if isCur {
+		if show {
 			s += painAsAttr(attr)
 		}
 		s += r.curAttr.str()
 	} else {
 		r.curAttr = mode
 		s += r.curAttr.str()
-		if isCur {
+		if show {
 			s += painAsAttr(attr)
 		}
 	}
