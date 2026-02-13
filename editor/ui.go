@@ -22,7 +22,6 @@ const (
 const (
 	cursorLineOfset = 1
 	initialOfset    = 3
-	cursorDataOfset = 20
 )
 
 type UI struct {
@@ -134,11 +133,6 @@ func visibleSubString(text string, start int, end int) string {
 	return res.String()
 }
 
-// foobar
-// 10
-// 6 - diff
-// isCurLine
-
 func (ui *UI) Draw(e *Editor) {
 	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
@@ -146,13 +140,16 @@ func (ui *UI) Draw(e *Editor) {
 	var data strings.Builder
 	fmt.Fprintf(&data, "%s%s%s", clearView, clearHistory, moveToStart)
 
-	for i := ui.yScroll; i < ui.yScroll+ui.h-1; i++ {
+	upperBorder := ui.yScroll
+	lowerBorder := ui.yScroll + ui.h - 1
+
+	for i := upperBorder; i < lowerBorder; i++ {
 
 		if i < len(e.b.lines) {
 			isCurLine := e.b.cursor.line == i
 
-			start := e.ui.xScroll
-			end := ui.w - initialOfset - maxNumLen
+			start := ui.xScroll
+			end := ui.w - initialOfset - len(emtpyLineSpases)
 
 			str := e.b.lines[i].data
 			if len(str) <= end {
@@ -172,7 +169,7 @@ func (ui *UI) Draw(e *Editor) {
 				if isCurLine {
 					diff = 0
 				}
-				l = visibleSubString(l, start, end-diff-1) //?
+				l = visibleSubString(l, start, end-diff)
 				l += string(resetFg)
 			} else {
 				l = string(str[start:end])
