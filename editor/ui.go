@@ -10,13 +10,12 @@ import (
 type color string
 
 const (
-	resetFg    color = "\033[0m"
+	reset      color = "\033[0m"
 	redFg      color = "\033[31m"
 	grayFg     color = "\033[90m"
 	yellowFg   color = "\033[33m"
 	cyanFg     color = "\033[36m"
-	startSel   color = "\033[46m"
-	endSel     color = "\033[49m"
+	startSel   color = "\033[40m"
 	cursorBloc       = "\x1b[0 q"
 	cursorLine       = "\x1b[5 q"
 )
@@ -52,7 +51,7 @@ func InitUI(h int, w int) *UI {
 }
 
 func colorise(data string, c color) string {
-	return fmt.Sprintf("%s%s%s", c, data, resetFg)
+	return fmt.Sprintf("%s%s%s", c, data, reset)
 }
 
 func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
@@ -94,7 +93,7 @@ func buildSpaces(maxOfset int) string {
 func (e *Editor) buildLowerBar(curdata string) string {
 	var data = ""
 	data += fmt.Sprintf(" %d-%d ", e.b.cursor.line+1, e.b.cursor.ofset+1)
-	data += fmt.Sprintf("%s %s%s%s", curdata, redFg, e.message, resetFg)
+	data += fmt.Sprintf("%s %s%s%s", curdata, redFg, e.message, reset)
 
 	if e.subCmd != "" {
 		data += fmt.Sprintf("<%s>", e.subCmd)
@@ -138,20 +137,25 @@ func visibleSubString(text string, start int, end int) string {
 func (e *Editor) addVisual(l string, i int) string {
 	var line string
 
-	//TODO: rewrite this shit with better calculations
-	startOfset := min(e.b.cursor.ofset, e.b.visual.ofset)
-	startLine := min(e.b.cursor.line, e.b.visual.line)
-	endOfset := max(e.b.cursor.ofset, e.b.visual.ofset+1)
-	endLine := max(e.b.cursor.line, e.b.visual.line)
+	startOfset := e.b.visual.ofset
+	startLine := e.b.visual.line
+
+	endOfset := e.b.cursor.ofset
+	endLine := e.b.cursor.line
+
+	if startLine*e.ui.w+startOfset > endLine*e.ui.w+endOfset {
+		startLine, endLine = endLine, startLine
+		startOfset, endOfset = endOfset, startOfset
+	}
 
 	if startLine == i && i == endLine {
-		line = l[:startOfset] + string(startSel) + l[startOfset:endOfset] + string(endSel) + l[endOfset:]
+		line = l[:startOfset] + string(startSel) + l[startOfset:endOfset] + string(reset) + l[endOfset:]
 	} else if startLine < i && i < endLine {
-		line = string(startSel) + l + string(endSel)
+		line = string(startSel) + l + string(reset)
 	} else if startLine == i {
-		line = l[:startOfset] + string(startSel) + l[startOfset:]
+		line = l[:startOfset] + string(startSel) + l[startOfset:] + string(reset)
 	} else if endLine == i {
-		line = string(startSel) + l[:endOfset] + string(endSel) + l[endOfset:]
+		line = string(startSel) + l[:endOfset] + string(reset) + l[endOfset:]
 	} else {
 		line = l
 	}
@@ -192,18 +196,19 @@ func (ui *UI) Draw(e *Editor) {
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
 			var l = ""
 			var diff = 0
-			if e.isMdFile {
+			if e.isMdFile && !isVisual {
 				l, diff = ui.render.RednerMarkdownLine(str, show)
 				if show {
 					diff = 0
 				}
 				l = visibleSubString(l, start, end-diff)
-				if e.curMode == visual {
-					l = e.addVisual(l, i)
-				}
-				l += string(resetFg)
+				// if e.curMode == visual {
+				// 	l = e.addVisual(l, i)
+				// }
+				l += string(reset)
 			} else {
-				l = string(str[start:end])
+				l = e.addVisual(string(str[start:end]), i)
+				//l = string(str[start:end])
 			}
 
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
