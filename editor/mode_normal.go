@@ -98,6 +98,9 @@ func (e *Editor) caseNormal(key rune) {
 		e.curMode = visual
 		e.b.visual.line = e.b.cursor.line
 		e.b.visual.ofset = e.b.cursor.ofset
+	case 'V':
+		e.curMode = visual_line
+		e.b.visual.line = e.b.cursor.line
 	default:
 		e.subCmd = ""
 	}

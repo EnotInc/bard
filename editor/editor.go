@@ -20,10 +20,11 @@ const (
 type Mode string
 
 const (
-	normal  Mode = "NORMAL"
-	command Mode = "COMMAND"
-	insert  Mode = "INSERT"
-	visual  Mode = "VISUAL"
+	normal      Mode = "NORMAL"
+	command     Mode = "COMMAND"
+	insert      Mode = "INSERT"
+	visual      Mode = "VISUAL"
+	visual_line Mode = "VISUAL LINE"
 )
 
 type Editor struct {
@@ -117,6 +118,8 @@ func (e *Editor) Run() {
 			e.caseInsert(key)
 		case visual:
 			e.caseVisual(key)
+		case visual_line:
+			e.caseVisualLine(key)
 		}
 
 		e.ui.Draw(e)

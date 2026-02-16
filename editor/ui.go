@@ -15,7 +15,7 @@ const (
 	grayFg     color = "\033[90m"
 	yellowFg   color = "\033[33m"
 	cyanFg     color = "\033[36m"
-	startSel   color = "\033[40m"
+	startSel   color = "\033[100m"
 	cursorBloc       = "\x1b[0 q"
 	cursorLine       = "\x1b[5 q"
 )
@@ -137,30 +137,55 @@ func visibleSubString(text string, start int, end int) string {
 func (e *Editor) addVisual(l string, i int) string {
 	var line string
 
-	startOfset := e.b.visual.ofset
-	startLine := e.b.visual.line
+	switch e.curMode {
+	case visual:
+		startOfset := e.b.visual.ofset
+		startLine := e.b.visual.line
 
-	endOfset := e.b.cursor.ofset
-	endLine := e.b.cursor.line
+		endOfset := e.b.cursor.ofset
+		endLine := e.b.cursor.line
 
-	if startLine*e.ui.w+startOfset > endLine*e.ui.w+endOfset {
-		startLine, endLine = endLine, startLine
-		startOfset, endOfset = endOfset, startOfset
-	}
+		if startLine*e.ui.w+startOfset > endLine*e.ui.w+endOfset {
+			startLine, endLine = endLine, startLine
+			startOfset, endOfset = endOfset, startOfset
+		}
 
-	if startLine == i && i == endLine {
-		line = l[:startOfset] + string(startSel) + l[startOfset:endOfset] + string(reset) + l[endOfset:]
-	} else if startLine < i && i < endLine {
+		if startLine == i && i == endLine {
+			line = l[:startOfset] + string(startSel) + l[startOfset:endOfset] + string(reset) + l[endOfset:]
+		} else if startLine < i && i < endLine {
+			line = string(startSel) + l + string(reset)
+		} else if startLine == i {
+			line = l[:startOfset] + string(startSel) + l[startOfset:] + string(reset)
+		} else if endLine == i {
+			line = string(startSel) + l[:endOfset] + string(reset) + l[endOfset:]
+		} else {
+			line = l
+		}
+
+	case visual_line:
+		startLine := e.b.visual.line
+		endLine := e.b.cursor.line
+
+		if startLine > endLine {
+			startLine, endLine = endLine, startLine
+		}
+
 		line = string(startSel) + l + string(reset)
-	} else if startLine == i {
-		line = l[:startOfset] + string(startSel) + l[startOfset:] + string(reset)
-	} else if endLine == i {
-		line = string(startSel) + l[:endOfset] + string(reset) + l[endOfset:]
-	} else {
-		line = l
 	}
 
 	return line
+}
+
+func (ui *UI) buildLine(str []rune, show bool, start, end int) string {
+	var l = ""
+	var diff = 0
+	l, diff = ui.render.RednerMarkdownLine(str, show)
+	if show {
+		diff = 0
+	}
+	l = visibleSubString(l, start, end-diff)
+
+	return l
 }
 
 func (ui *UI) Draw(e *Editor) {
@@ -195,20 +220,21 @@ func (ui *UI) Draw(e *Editor) {
 
 			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
 			var l = ""
-			var diff = 0
-			if e.isMdFile && !isVisual {
-				l, diff = ui.render.RednerMarkdownLine(str, show)
-				if show {
-					diff = 0
+			if e.isMdFile {
+				switch e.curMode {
+				case visual, visual_line:
+					if (i >= e.b.visual.line && i <= e.b.cursor.line) || (i <= e.b.visual.line && i >= e.b.cursor.line) {
+						l = e.addVisual(string(str[start:end]), i)
+					} else {
+						l = ui.buildLine(str, show, start, end)
+					}
+				default:
+					l = ui.buildLine(str, show, start, end)
 				}
-				l = visibleSubString(l, start, end-diff)
-				// if e.curMode == visual {
-				// 	l = e.addVisual(l, i)
-				// }
+
 				l += string(reset)
 			} else {
-				l = e.addVisual(string(str[start:end]), i)
-				//l = string(str[start:end])
+				l = string(str[start:end])
 			}
 
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
@@ -232,8 +258,8 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, "%s", e.buildLowerBar(cursorPos))
 		fmt.Fprintf(&data, cursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
-	case visual:
-		fmt.Fprintf(&data, "%s", e.buildLowerBar("-- VISUAL --"))
+	case visual, visual_line:
+		fmt.Fprintf(&data, "%s", e.buildLowerBar(fmt.Sprintf("-- %s --", e.curMode)))
 		fmt.Fprintf(&data, cursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
