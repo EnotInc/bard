@@ -75,7 +75,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.ScrollUp()
 		e.moveLeft()
 	case 'D':
-		e.b.ClearLiine()
+		e.b.ClearLine()
 		e.b.cursor.ofset = 0
 		e.moveLeft()
 	case 'd':

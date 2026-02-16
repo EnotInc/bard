@@ -14,9 +14,9 @@ type line struct {
 }
 
 type copyed struct {
-	data     []rune
-	is_start bool
-	is_end   bool
+	data  []rune
+	start int
+	end   int
 }
 
 type cursor struct {
@@ -114,6 +114,33 @@ func (b *Buffer) Delkey() {
 	}
 }
 
+func (b *Buffer) DelRangeKey(startLine int, endLine int, startOfset int, endOfset int, i int) {
+	if i < 0 || i >= len(b.lines) {
+		return
+	}
+
+	curLine := b.lines[i]
+	if len(curLine.data) == 0 {
+		return
+	}
+
+	if startOfset < 0 {
+		startOfset = 0
+	}
+	if endOfset > len(curLine.data) {
+		endOfset = len(curLine.data)
+	}
+
+	curLine.data = slices.Delete(curLine.data, startOfset, endOfset)
+
+	if len(curLine.data) == 0 {
+		b.RemoveLineAt(i)
+		if i == endLine {
+			b.DelAndMoveLineAt(startLine, endLine, endOfset)
+		}
+	}
+}
+
 func (b *Buffer) InsertEmptyLine(lineShift int) {
 	index := b.cursor.line + lineShift
 	newLine := make([]*line, 0)
@@ -138,10 +165,16 @@ func (b *Buffer) DelAndMoveLine() {
 	if b.cursor.line > 0 {
 		shiftData := b.lines[b.cursor.line].data[b.cursor.ofset:]
 		b.RemoveLine()
-		//b.cursor.line -= 1
 		b.cursor.ofset = len(b.lines[b.cursor.line].data)
 		b.lines[b.cursor.line].data = append(b.lines[b.cursor.line].data, shiftData...)
 	}
+}
+
+func (b *Buffer) DelAndMoveLineAt(startLine int, endLine int, endOfset int) {
+	shiftData := b.lines[endLine].data[endOfset:]
+	b.RemoveLineAt(endLine)
+	b.cursor.ofset = len(b.lines[startLine].data)
+	b.lines[startLine].data = append(b.lines[startLine].data, shiftData...)
 }
 
 func (b *Buffer) RemoveLine() {
@@ -179,6 +212,68 @@ func (b *Buffer) moveToFirst() {
 	}
 }
 
-func (b *Buffer) copyLine(l *line) *copyed {
-	return &copyed{data: l.data}
+func (b *Buffer) copyLine(l *line, startOfset int, endOfset int) *copyed {
+	if l == nil {
+		return &copyed{data: []rune(""), start: 0, end: 0}
+	}
+
+	if startOfset < 0 {
+		startOfset = 0
+	}
+	if endOfset > len(l.data) {
+		endOfset = len(l.data)
+	}
+	if startOfset > endOfset {
+		startOfset, endOfset = endOfset, startOfset
+	}
+
+	data := append([]rune(nil), l.data[startOfset:endOfset]...)
+	return &copyed{data: data, end: endOfset, start: startOfset}
+}
+
+func (b *Buffer) copySelected() {
+	b.copyes = []*copyed{}
+
+	startOfset := b.visual.ofset
+	startLine := b.visual.line
+	endOfset := b.cursor.ofset
+	endLine := b.cursor.line
+
+	if startLine > endLine || (startLine == endLine && startOfset > endOfset) {
+		startLine, endLine = endLine, startLine
+		startOfset, endOfset = endOfset, startOfset
+	}
+
+	lineCount := 0
+	lineSelected := endLine - startLine
+
+	for i := startLine; i <= endLine; i++ {
+		curLineStart := startOfset
+		curLineEnd := endOfset + 1
+
+		if i != startLine && lineCount != 0 {
+			curLineStart = 0
+		}
+		if i != endLine && lineCount != lineSelected {
+			curLineEnd = len(b.lines[i].data)
+		}
+
+		line := b.copyLine(b.lines[i], curLineStart, curLineEnd)
+		b.copyes = append(b.copyes, line)
+	}
+
+	b.cursor.line = startLine
+	b.cursor.ofset = startOfset
+}
+
+func (b *Buffer) deleteSelected() {
+	startOfset := b.visual.ofset
+	startLine := b.visual.line
+	endOfset := b.cursor.ofset
+	endLine := b.cursor.line
+
+	if startLine > endLine || (startLine == endLine && startOfset > endOfset) {
+		startLine, endLine = endLine, startLine
+		startOfset, endOfset = endOfset, startOfset
+	}
 }

@@ -145,9 +145,13 @@ func (e *Editor) addVisual(l string, i int) string {
 		endOfset := e.b.cursor.ofset
 		endLine := e.b.cursor.line
 
-		if startLine*e.ui.w+startOfset > endLine*e.ui.w+endOfset {
+		if startLine > endLine || (startLine == endLine && startOfset > endOfset) {
 			startLine, endLine = endLine, startLine
 			startOfset, endOfset = endOfset, startOfset
+		}
+
+		if len(e.b.lines[endLine].data) > 0 {
+			endOfset++
 		}
 
 		if startLine == i && i == endLine {
