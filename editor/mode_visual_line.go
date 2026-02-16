@@ -19,6 +19,15 @@ func (e *Editor) caseVisualLine(key rune) {
 	case 'l':
 		e.moveWithSubCommand(e.b.L)
 		e.ScrollRight()
+	case 'y':
+		e.b.copySelected(false, true)
+		e.curMode = normal
+	case 'x':
+		e.b.copySelected(true, true)
+		e.curMode = normal
+	case 'd':
+		e.b.copySelected(true, true)
+		e.curMode = normal
 	case '\033':
 		e.curMode = normal
 		if e.b.cursor.ofset > 0 {

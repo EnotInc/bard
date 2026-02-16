@@ -20,11 +20,13 @@ func (e *Editor) caseVisual(key rune) {
 		e.moveWithSubCommand(e.b.L)
 		e.ScrollRight()
 	case 'y':
-		e.b.copySelected()
+		e.b.copySelected(false, false)
 		e.curMode = normal
 	case 'x':
-		e.b.copySelected()
-		e.b.deleteSelected()
+		e.b.copySelected(true, false)
+		e.curMode = normal
+	case 'd':
+		e.b.copySelected(true, false)
 		e.curMode = normal
 	case '\033':
 		e.curMode = normal

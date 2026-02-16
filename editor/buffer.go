@@ -114,37 +114,16 @@ func (b *Buffer) Delkey() {
 	}
 }
 
-func (b *Buffer) DelRangeKey(startLine int, endLine int, startOfset int, endOfset int, i int) {
-	if i < 0 || i >= len(b.lines) {
-		return
-	}
-
-	curLine := b.lines[i]
-	if len(curLine.data) == 0 {
-		return
-	}
-
-	if startOfset < 0 {
-		startOfset = 0
-	}
-	if endOfset > len(curLine.data) {
-		endOfset = len(curLine.data)
-	}
-
-	curLine.data = slices.Delete(curLine.data, startOfset, endOfset)
-
-	if len(curLine.data) == 0 {
-		b.RemoveLineAt(i)
-		if i == endLine {
-			b.DelAndMoveLineAt(startLine, endLine, endOfset)
-		}
-	}
-}
-
 func (b *Buffer) InsertEmptyLine(lineShift int) {
 	index := b.cursor.line + lineShift
 	newLine := make([]*line, 0)
 	newLine = append(newLine, &line{data: []rune("")})
+	b.lines = append(b.lines[:index], append(newLine, b.lines[index:]...)...)
+}
+
+func (b *Buffer) InsertLineWithData(index int, data []rune) {
+	newLine := make([]*line, 0)
+	newLine = append(newLine, &line{data: data})
 	b.lines = append(b.lines[:index], append(newLine, b.lines[index:]...)...)
 }
 
@@ -231,7 +210,7 @@ func (b *Buffer) copyLine(l *line, startOfset int, endOfset int) *copyed {
 	return &copyed{data: data, end: endOfset, start: startOfset}
 }
 
-func (b *Buffer) copySelected() {
+func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
 	b.copyes = []*copyed{}
 
 	startOfset := b.visual.ofset
@@ -244,36 +223,53 @@ func (b *Buffer) copySelected() {
 		startOfset, endOfset = endOfset, startOfset
 	}
 
+	var tempLine []rune
+
 	lineCount := 0
 	lineSelected := endLine - startLine
-
-	for i := startLine; i <= endLine; i++ {
-		curLineStart := startOfset
-		curLineEnd := endOfset + 1
-
-		if i != startLine && lineCount != 0 {
-			curLineStart = 0
-		}
-		if i != endLine && lineCount != lineSelected {
-			curLineEnd = len(b.lines[i].data)
+	for i := startLine; i <= endLine; {
+		curOfsetStart := 0
+		if lineCount == 0 {
+			curOfsetStart = startOfset
 		}
 
-		line := b.copyLine(b.lines[i], curLineStart, curLineEnd)
+		curOfsetEnd := len(b.lines[i].data)
+		if !isVisualLine && i == endLine {
+			curOfsetEnd = endOfset
+			if len(b.lines[i].data) > 0 {
+				curOfsetEnd++
+			}
+		}
+
+		line := b.copyLine(b.lines[i], curOfsetStart, curOfsetEnd)
 		b.copyes = append(b.copyes, line)
+
+		if isDelete {
+			if lineCount == 0 {
+				tempLine = b.lines[i].data[:curOfsetStart]
+			}
+			if lineCount == lineSelected {
+				tempLine = append(tempLine, b.lines[i].data[curOfsetEnd:]...)
+			}
+			b.RemoveLineAt(i)
+			endLine--
+		} else {
+			i++
+		}
+
+		lineCount++
 	}
 
+	if isDelete && len(tempLine) > 0 {
+		b.InsertLineWithData(startLine, tempLine)
+	}
 	b.cursor.line = startLine
+	if b.cursor.line > len(b.lines)-1 {
+		b.cursor.line = len(b.lines) - 1
+	}
+
 	b.cursor.ofset = startOfset
-}
-
-func (b *Buffer) deleteSelected() {
-	startOfset := b.visual.ofset
-	startLine := b.visual.line
-	endOfset := b.cursor.ofset
-	endLine := b.cursor.line
-
-	if startLine > endLine || (startLine == endLine && startOfset > endOfset) {
-		startLine, endLine = endLine, startLine
-		startOfset, endOfset = endOfset, startOfset
+	if b.cursor.ofset > len(b.lines[b.cursor.line].data) {
+		b.cursor.ofset = len(b.lines[b.cursor.line].data)
 	}
 }

@@ -122,6 +122,7 @@ func (e *Editor) Run() {
 			e.caseVisualLine(key)
 		}
 
+		e.setUiCursor()
 		e.ui.Draw(e)
 	}
 }
