@@ -42,6 +42,15 @@ func InitBuffer() *Buffer {
 	return b
 }
 
+func (b *Buffer) fixOfset() {
+	if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
+		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+	}
+	if b.cursor.ofset < 0 {
+		b.cursor.ofset = 0
+	}
+}
+
 func (b *Buffer) H(amount int) {
 	if b.cursor.ofset-amount > 0 {
 		b.cursor.ofset -= amount
@@ -56,12 +65,7 @@ func (b *Buffer) J(amount int) {
 	} else {
 		b.cursor.line = len(b.lines) - 1
 	}
-	if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-		if b.cursor.ofset < 0 {
-			b.cursor.ofset = 0
-		}
-	}
+	b.fixOfset()
 }
 
 func (b *Buffer) K(amount int) {
@@ -70,12 +74,7 @@ func (b *Buffer) K(amount int) {
 	} else {
 		b.cursor.line = 0
 	}
-	if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-		if b.cursor.ofset < 0 {
-			b.cursor.ofset = 0
-		}
-	}
+	b.fixOfset()
 }
 
 func (b *Buffer) L(amount int) {
@@ -83,9 +82,7 @@ func (b *Buffer) L(amount int) {
 		b.cursor.ofset += amount
 	} else {
 		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-		if b.cursor.ofset < 0 {
-			b.cursor.ofset = 0
-		}
+		b.fixOfset()
 	}
 }
 
@@ -266,10 +263,11 @@ func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
 	b.cursor.line = startLine
 	if b.cursor.line > len(b.lines)-1 {
 		b.cursor.line = len(b.lines) - 1
+		if b.cursor.line < 0 {
+			b.cursor.line = 0
+		}
 	}
 
 	b.cursor.ofset = startOfset
-	if b.cursor.ofset > len(b.lines[b.cursor.line].data) {
-		b.cursor.ofset = len(b.lines[b.cursor.line].data)
-	}
+	b.fixOfset()
 }
