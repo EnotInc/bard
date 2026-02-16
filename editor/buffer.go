@@ -13,12 +13,19 @@ type line struct {
 	data []rune
 }
 
+type copyed struct {
+	data     []rune
+	is_start bool
+	is_end   bool
+}
+
 type cursor struct {
 	line  int
 	ofset int
 }
 
 type Buffer struct {
+	copyes []*copyed
 	lines  []*line
 	cursor *cursor
 	visual *cursor
@@ -131,7 +138,7 @@ func (b *Buffer) DelAndMoveLine() {
 	if b.cursor.line > 0 {
 		shiftData := b.lines[b.cursor.line].data[b.cursor.ofset:]
 		b.RemoveLine()
-		b.cursor.line -= 1
+		//b.cursor.line -= 1
 		b.cursor.ofset = len(b.lines[b.cursor.line].data)
 		b.lines[b.cursor.line].data = append(b.lines[b.cursor.line].data, shiftData...)
 	}
@@ -139,7 +146,7 @@ func (b *Buffer) DelAndMoveLine() {
 
 func (b *Buffer) RemoveLine() {
 	if len(b.lines) == 1 {
-		b.ClearLiine()
+		b.ClearLine()
 		return
 	}
 	b.lines = slices.Delete(b.lines, b.cursor.line, b.cursor.line+1)
@@ -148,7 +155,18 @@ func (b *Buffer) RemoveLine() {
 	}
 }
 
-func (b *Buffer) ClearLiine() {
+func (b *Buffer) RemoveLineAt(lineIndex int) {
+	if len(b.lines) == 1 {
+		b.ClearLine()
+		return
+	}
+	b.lines = slices.Delete(b.lines, lineIndex, lineIndex+1)
+	if b.cursor.line >= len(b.lines) {
+		b.K(1)
+	}
+}
+
+func (b *Buffer) ClearLine() {
 	b.lines[b.cursor.line].data = []rune{}
 }
 
@@ -159,4 +177,8 @@ func (b *Buffer) moveToFirst() {
 			break
 		}
 	}
+}
+
+func (b *Buffer) copyLine(l *line) *copyed {
+	return &copyed{data: l.data}
 }
