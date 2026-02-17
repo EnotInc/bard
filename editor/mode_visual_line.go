@@ -25,9 +25,14 @@ func (e *Editor) caseVisualLine(key rune) {
 	case 'x':
 		e.b.copySelected(true, true)
 		e.curMode = normal
-	case 'd':
+	case 'd', 'D':
 		e.b.copySelected(true, true)
 		e.curMode = normal
+	case 's':
+		e.b.copySelected(true, true)
+		e.b.InsertEmptyLine(above)
+		e.b.moveToFirst()
+		e.curMode = insert
 	case '\033':
 		e.curMode = normal
 		if e.b.cursor.ofset > 0 {

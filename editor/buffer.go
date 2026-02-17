@@ -4,19 +4,14 @@ import (
 	"slices"
 )
 
-const (
-	head = true
-	tail = false
-)
-
 type line struct {
 	data []rune
 }
 
 type copyed struct {
-	data  []rune
-	start int
-	end   int
+	data    []rune
+	isEnd   bool
+	isStart bool
 }
 
 type cursor struct {
@@ -107,6 +102,8 @@ func (b *Buffer) Delkey() {
 	if len(b.lines[b.cursor.line].data) > 0 {
 		curLine := b.lines[b.cursor.line]
 		index := b.cursor.ofset
+		ch := curLine.data[index]
+		b.copyes = append([]*copyed{}, &copyed{data: []rune{ch}, isStart: false, isEnd: false})
 		curLine.data = slices.Delete(curLine.data, index, index+1)
 	}
 }
@@ -189,22 +186,32 @@ func (b *Buffer) moveToFirst() {
 }
 
 func (b *Buffer) copyLine(l *line, startOfset int, endOfset int) *copyed {
-	if l == nil {
-		return &copyed{data: []rune(""), start: 0, end: 0}
-	}
+	_isStart := startOfset == 0
+	_isEnd := endOfset == len(l.data)
 
 	if startOfset < 0 {
 		startOfset = 0
 	}
-	if endOfset > len(l.data) {
+	if endOfset > len(l.data)-1 {
 		endOfset = len(l.data)
+	}
+	if endOfset < 0 {
+		endOfset = 0
 	}
 	if startOfset > endOfset {
 		startOfset, endOfset = endOfset, startOfset
 	}
-
-	data := append([]rune(nil), l.data[startOfset:endOfset]...)
-	return &copyed{data: data, end: endOfset, start: startOfset}
+	var newData []rune
+	// if startOfset == endOfset || len(l.data) == 0 {
+	// 	newData = []rune("")
+	//} else {
+	newData = l.data[startOfset:endOfset]
+	if len(newData) == 0 {
+		newData = []rune("")
+	}
+	//}
+	data := append([]rune{}, newData...)
+	return &copyed{data: data, isEnd: _isEnd, isStart: _isStart}
 }
 
 func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
@@ -230,12 +237,12 @@ func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
 			curOfsetStart = startOfset
 		}
 
-		curOfsetEnd := len(b.lines[i].data)
-		if !isVisualLine && i == endLine {
+		curOfsetEnd := max(len(b.lines[i].data)-1, 0)
+		if i == endLine && !isVisualLine {
 			curOfsetEnd = endOfset
-			if len(b.lines[i].data) > 0 {
-				curOfsetEnd++
-			}
+		}
+		if len(b.lines[i].data) > 0 {
+			curOfsetEnd++
 		}
 
 		line := b.copyLine(b.lines[i], curOfsetStart, curOfsetEnd)
@@ -262,12 +269,62 @@ func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
 	}
 	b.cursor.line = startLine
 	if b.cursor.line > len(b.lines)-1 {
-		b.cursor.line = len(b.lines) - 1
-		if b.cursor.line < 0 {
-			b.cursor.line = 0
-		}
+		b.cursor.line = max(len(b.lines)-1, 0)
 	}
 
 	b.cursor.ofset = startOfset
+	b.fixOfset()
+}
+
+func (b *Buffer) paste(shift int) {
+	initialOfset := b.cursor.ofset + shift
+	if len(b.lines[b.cursor.line].data) == 0 || b.cursor.ofset < 0 {
+		initialOfset = 0
+	}
+
+	dataFirst := append([]rune(nil), b.lines[b.cursor.line].data[:initialOfset]...)
+	dataSecond := append([]rune(nil), b.lines[b.cursor.line].data[initialOfset:]...)
+
+	isFisrtStart := b.copyes[0].isStart
+	isLastEnd := b.copyes[len(b.copyes)-1].isEnd
+
+	lineIndex := b.cursor.line
+	//ofsetIndex := len(dataSecond)
+	for i, l := range b.copyes {
+		lineIndex = b.cursor.line + i
+		if lineIndex >= len(b.lines) {
+			lineIndex = len(b.lines) - 1
+		}
+		curLine := b.lines[lineIndex]
+		switch i {
+		case 0:
+			if len(b.copyes) == 1 {
+				if !isFisrtStart && !isLastEnd {
+					curLine.data = slices.Concat(dataFirst, l.data, dataSecond)
+				} else {
+					b.InsertLineWithData(lineIndex+shift, l.data)
+				}
+				//ofsetIndex = len(dataFirst) + len(l.data)
+			} else {
+				if isFisrtStart && isLastEnd {
+					b.InsertLineWithData(lineIndex+shift, l.data)
+				} else {
+					curLine.data = slices.Concat(dataFirst, l.data)
+				}
+			}
+		case len(b.copyes) - 1:
+			if isLastEnd && isFisrtStart {
+				b.InsertLineWithData(lineIndex+shift, l.data)
+			} else {
+				savedData := slices.Concat(l.data, dataSecond)
+				b.InsertLineWithData(lineIndex+shift, savedData)
+			}
+		default:
+			b.InsertLineWithData(lineIndex+shift, l.data)
+		}
+	}
+
+	//b.cursor.line = min(lineIndex, len(b.lines)-1)
+	//b.cursor.ofset = ofsetIndex
 	b.fixOfset()
 }

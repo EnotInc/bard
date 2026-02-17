@@ -9,6 +9,11 @@ const (
 	below
 )
 
+const (
+	before = iota
+	after
+)
+
 func (e *Editor) moveWithSubCommand(move func(int)) {
 	if e.subCmd == "" {
 		move(1)
@@ -101,6 +106,10 @@ func (e *Editor) caseNormal(key rune) {
 	case 'V':
 		e.curMode = visual_line
 		e.b.visual.line = e.b.cursor.line
+	case 'p':
+		e.b.paste(after)
+	case 'P':
+		e.b.paste(before)
 	default:
 		e.subCmd = ""
 	}

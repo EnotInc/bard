@@ -13,7 +13,6 @@ const (
 	clearView    = "\033[2J"
 	clearHistory = "\033[3J"
 	moveToStart  = "\033[0H"
-	cursorYellow = "\033]12;yellow\x07"
 	cursorReset  = "\033]112\a"
 )
 
