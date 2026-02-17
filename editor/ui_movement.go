@@ -4,6 +4,7 @@ const (
 	ScrollBorder = 5
 )
 
+// Making sure that visual cursor is alright
 func (e *Editor) setUiCursor() {
 	if e.ui.xScroll > e.b.cursor.ofset {
 		e.ui.xScroll = e.b.cursor.ofset

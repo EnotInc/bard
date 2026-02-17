@@ -30,9 +30,6 @@ func (e *Editor) caseVisual(key rune) {
 		e.curMode = normal
 	case 's':
 		e.b.copySelected(true, false)
-		if len(e.b.lines[e.b.cursor.line].data) > 0 {
-			e.b.cursor.ofset += 1
-		}
 		e.curMode = insert
 	case '\033':
 		e.curMode = normal

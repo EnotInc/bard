@@ -49,7 +49,7 @@ func InitEditor() *Editor {
 		panic(err)
 	}
 	_w, _h, _ := term.GetSize(_fdOut)
-	if _w < 80 || _h < 20 { //standart terminal size
+	if _w < 80 || _h < 20 { // standard terminal size
 		panic(fmt.Sprintf("\nUnable to run in this terminal, window is too small: (%d %d)", _w, _h))
 	}
 
@@ -71,6 +71,8 @@ func InitEditor() *Editor {
 	return e
 }
 
+// This function is called in the main.go file in a goroutine.
+// Here I just recalculate the terminal size and adjust Bard to it
 func (e *Editor) TermSizeMonitor() {
 	ticker := time.NewTicker(500 * time.Millisecond)
 	defer ticker.Stop()
@@ -99,6 +101,7 @@ func (e *Editor) resize(w int, h int) {
 	e.setUiCursor()
 }
 
+// Main loop
 func (e *Editor) Run() {
 	e.ui.Draw(e)
 	reader := bufio.NewReader(os.Stdin)

@@ -102,6 +102,14 @@ func (e *Editor) buildLowerBar(curdata string) string {
 	return data
 }
 
+/*
+* So here is where I build the actual line, including the ASCII escape sequences
+* If I just use line.data[start:end], I'll get something like this:
+*
+* 033[0m and some text
+*
+* Here I just ignore the escape sequences and don't count them, so I can use them
+ */
 func visibleSubString(text string, start int, end int) string {
 	var res strings.Builder
 	visibleCount := 0
@@ -134,6 +142,7 @@ func visibleSubString(text string, start int, end int) string {
 	return res.String()
 }
 
+// This function is used to add visual highlight to the selected lines
 func (e *Editor) addVisual(l string, i int) string {
 	var line string
 
@@ -182,6 +191,7 @@ func (e *Editor) addVisual(l string, i int) string {
 
 func (ui *UI) buildLine(str []rune, show bool, start, end int) string {
 	var l = ""
+	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
 	l, diff = ui.render.RednerMarkdownLine(str, show)
 	if show {
@@ -196,7 +206,10 @@ func (ui *UI) Draw(e *Editor) {
 	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
 
+	// data - is one long string that turns into the TUI
 	var data strings.Builder
+
+	// Clearing the terminal
 	fmt.Fprintf(&data, "%s%s%s", clearView, clearHistory, moveToStart)
 
 	upperBorder := ui.yScroll
@@ -204,11 +217,12 @@ func (ui *UI) Draw(e *Editor) {
 
 	isVisual := e.curMode == visual
 
+	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
-
 		if i < len(e.b.lines) {
 			show := e.b.cursor.line == i || isVisual
 
+			// This 2 variables is used to get the horizontal borders of visible content
 			start := ui.xScroll
 			end := ui.w - initialOfset - len(emtpyLineSpases)
 
@@ -227,28 +241,39 @@ func (ui *UI) Draw(e *Editor) {
 			if e.isMdFile {
 				switch e.curMode {
 				case visual, visual_line:
+					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
 					if (i >= e.b.visual.line && i <= e.b.cursor.line) || (i <= e.b.visual.line && i >= e.b.cursor.line) {
 						l = e.addVisual(string(str[start:end]), i)
 					} else {
 						l = ui.buildLine(str, show, start, end)
 					}
+				// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 				default:
 					l = ui.buildLine(str, show, start, end)
 				}
 
 				l += string(reset)
 			} else {
-				l = string(str[start:end])
+				if e.curMode == visual || e.curMode == visual_line {
+					l = e.addVisual(string(str[start:end]), i)
+				} else {
+					l = string(str[start:end])
+				}
 			}
 
+			// Here is where I add the line to the main data string
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
+			// If the line is empty, I just add the '~' symbol
 			fmt.Fprintf(&data, "%s\n\r", colorise("~", cyanFg))
 		}
 	}
+
+	// Calculation the visual position of cursor
 	x := e.ui.curOff + initialOfset + len(emtpyLineSpases)
 	y := e.ui.curRow + cursorLineOfset
 
+	//Different modes have different information on the last line
 	switch e.curMode {
 	case insert:
 		fmt.Fprintf(&data, "%s", e.buildLowerBar("-- INSERT --"))
@@ -267,5 +292,7 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, cursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
+
+	// And at the end - print the data
 	fmt.Print(data.String())
 }

@@ -9,7 +9,7 @@ func (a asciiCode) str() string {
 }
 
 const (
-	reset       asciiCode = "\033[39m"
+	reset       asciiCode = "\033[0m"
 	symbolColor asciiCode = "\033[90m"
 
 	bold        asciiCode = "\033[1m"
@@ -40,7 +40,7 @@ type Renderer struct {
 
 func InitReder(w, h int) *Renderer {
 	r := &Renderer{}
-	//TODO: create a new lexer, for code, and separate it form default markdown lexer and renderer
+	// TODO: create a new lexer for code and separate it from the default markdown lexer and renderer
 	r.l = NewLexer()
 	return r
 }

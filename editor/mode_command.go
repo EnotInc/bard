@@ -28,6 +28,8 @@ func (e *Editor) caseCommand(key rune) {
 	}
 }
 
+// For now I just compare commands, and run them
+// Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
 	switch e.command {
 	case "q":
