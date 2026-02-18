@@ -21,8 +21,8 @@ const (
 )
 
 const (
-	cursorLineOfset = 1
-	initialOfset    = 3
+	cursorLineOffset = 1
+	initialOffset    = 3
 )
 
 type UI struct {
@@ -54,7 +54,7 @@ func colorise(data string, c color) string {
 	return fmt.Sprintf("%s%s", c, data /*, reset*/)
 }
 
-func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
+func (b *Buffer) buildNumber(n int, maxOffset int, rln bool) string {
 	rn := n
 	if rln && rn != b.cursor.line+1 {
 		rn = b.cursor.line - n + 1
@@ -66,10 +66,10 @@ func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
 	numLen := len(numStr)
 	num := ""
 
-	if maxOfset <= initialOfset {
-		maxOfset = initialOfset
+	if maxOffset <= initialOffset {
+		maxOffset = initialOffset
 	}
-	num = strings.Repeat(" ", maxOfset-numLen)
+	num = strings.Repeat(" ", maxOffset-numLen)
 	num = fmt.Sprintf("%s%s", num, numStr)
 
 	if b.cursor.line+1 == n {
@@ -82,18 +82,18 @@ func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
 	return num
 }
 
-func buildSpaces(maxOfset int) string {
+func buildSpaces(maxOffset int) string {
 	space := ""
-	if maxOfset <= initialOfset {
-		maxOfset = initialOfset
+	if maxOffset <= initialOffset {
+		maxOffset = initialOffset
 	}
-	space = strings.Repeat(" ", maxOfset-1)
+	space = strings.Repeat(" ", maxOffset-1)
 	return space
 }
 
 func (e *Editor) buildLowerBar(curdata string) string {
 	var data = ""
-	data += fmt.Sprintf(" %d-%d ", e.b.cursor.line+1, e.b.cursor.ofset+1)
+	data += fmt.Sprintf(" %d-%d ", e.b.cursor.line+1, e.b.cursor.offset+1)
 	data += fmt.Sprintf("%s %s%s%s", curdata, redFg, e.message, reset)
 
 	if e.subCmd != "" {
@@ -149,29 +149,29 @@ func (e *Editor) addVisual(l string, i int) string {
 
 	switch e.curMode {
 	case visual:
-		startOfset := e.b.visual.ofset
+		startOffset := e.b.visual.offset
 		startLine := e.b.visual.line
 
-		endOfset := e.b.cursor.ofset
+		endOffset := e.b.cursor.offset
 		endLine := e.b.cursor.line
 
-		if startLine > endLine || (startLine == endLine && startOfset > endOfset) {
+		if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 			startLine, endLine = endLine, startLine
-			startOfset, endOfset = endOfset, startOfset
+			startOffset, endOffset = endOffset, startOffset
 		}
 
 		if len(e.b.lines[endLine].data) > 0 {
-			endOfset++
+			endOffset++
 		}
 
 		if startLine == i && i == endLine {
-			line = l[:startOfset] + string(startSel) + l[startOfset:endOfset] + string(reset) + l[endOfset:]
+			line = l[:startOffset] + string(startSel) + l[startOffset:endOffset] + string(reset) + l[endOffset:]
 		} else if startLine < i && i < endLine {
 			line = string(startSel) + l + string(reset)
 		} else if startLine == i {
-			line = l[:startOfset] + string(startSel) + l[startOfset:] + string(reset)
+			line = l[:startOffset] + string(startSel) + l[startOffset:] + string(reset)
 		} else if endLine == i {
-			line = string(startSel) + l[:endOfset] + string(reset) + l[endOfset:]
+			line = string(startSel) + l[:endOffset] + string(reset) + l[endOffset:]
 		} else {
 			line = l
 		}
@@ -194,7 +194,7 @@ func (ui *UI) buildLine(str []rune, show bool, start, end int, i int) string {
 	var l = ""
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
-	l, diff = ui.render.RednerMarkdownLine(str, i, show)
+	l, diff = ui.render.RenderMarkdownLine(str, i, show)
 	if show {
 		diff = 0
 	}
@@ -225,7 +225,7 @@ func (ui *UI) Draw(e *Editor) {
 
 			// This 2 variables is used to get the horizontal borders of visible content
 			start := ui.xScroll
-			end := ui.w - initialOfset - len(emtpyLineSpases)
+			end := ui.w - initialOffset - len(emtpyLineSpases)
 
 			str := e.b.lines[i].data
 			if len(str) <= end {
@@ -271,8 +271,8 @@ func (ui *UI) Draw(e *Editor) {
 	}
 
 	// Calculation the visual position of cursor
-	x := e.ui.curOff + initialOfset + len(emtpyLineSpases)
-	y := e.ui.curRow + cursorLineOfset
+	x := e.ui.curOff + initialOffset + len(emtpyLineSpases)
+	y := e.ui.curRow + cursorLineOffset
 
 	//Different modes have different information on the last line
 	switch e.curMode {
@@ -281,7 +281,7 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, cursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	case command:
-		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.command, ui.h, len(e.command)+initialOfset)
+		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.command, ui.h, len(e.command)+initialOffset)
 		fmt.Fprintf(&data, cursorBloc)
 	case normal:
 		cursorPos := fmt.Sprintf("[%s]", e.file)

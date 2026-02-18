@@ -8,8 +8,8 @@ func (e *Editor) caseInsert(key rune) {
 		e.moveLeft()
 	case '\033':
 		e.curMode = normal
-		if e.b.cursor.ofset > 0 {
-			e.b.cursor.ofset -= 1
+		if e.b.cursor.offset > 0 {
+			e.b.cursor.offset -= 1
 		}
 		e.ScrollLeft()
 	case '\x7f':

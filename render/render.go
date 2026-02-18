@@ -51,10 +51,10 @@ func InitReder(w, h int) *Renderer {
 	return r
 }
 
-func (r *Renderer) RednerMarkdownLine(line []rune, lineIndex int, show bool) (string, int) {
+func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int) {
 
-	if !show && r.b.isCashed(lineIndex) {
-		l := r.b.getCashed(lineIndex)
+	if !show && r.b.isCached(lineIndex) {
+		l := r.b.getCached(lineIndex)
 		if slices.Equal(l.raw, line) {
 			return l.render, l.diff
 		}
@@ -64,6 +64,8 @@ func (r *Renderer) RednerMarkdownLine(line []rune, lineIndex int, show bool) (st
 	r.l.position = 0
 	r.l.readPosition = 0
 	r.l.readChar()
+
+	isWhiteSpace := true
 
 	var data = ""
 	var diff = 0
@@ -89,23 +91,23 @@ func (r *Renderer) RednerMarkdownLine(line []rune, lineIndex int, show bool) (st
 			} else {
 				data += string(tok.Literal)
 			}
-		case ListDash:
-			if i == 0 {
-				data += r.renderListDash(&tok, show)
-			} else {
-				data += string(tok.Literal)
-			}
 		case Quote:
 			if i == 0 {
 				data += r.renderQuote(&tok, show)
 			} else {
 				data += string(tok.Literal)
 			}
-		case ListNumberB, ListNumberDot:
-			if i == 0 {
-				data += r.renderListNumber(&tok)
+		case ListDash:
+			if isWhiteSpace {
+				data += r.renderListDash(&tok, show)
 			} else {
 				data += string(tok.Literal)
+			}
+		case ListNumberB, ListNumberDot:
+			if isWhiteSpace {
+				data += r.renderListNumber(&tok)
+			} else {
+				data += string(tok.Value) + string(tok.Literal)
 			}
 		case Link:
 			data += r.renderLink(&tok, show)
@@ -140,12 +142,15 @@ func (r *Renderer) RednerMarkdownLine(line []rune, lineIndex int, show bool) (st
 			data += string(tok.Value)
 		}
 		i += 1
+		if isWhiteSpace && tok.Type != WhiteSpace {
+			isWhiteSpace = false
+		}
 	}
 
 	data += reset.str()
 	r.curAttr = reset
 	if !show {
-		r.b.casheLine(line, data, diff, lineIndex)
+		r.b.cacheLine(line, data, diff, lineIndex)
 	}
 	return data, diff
 }

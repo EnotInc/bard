@@ -35,8 +35,8 @@ func (e *Editor) caseVisualLine(key rune) {
 		e.curMode = insert
 	case '\033':
 		e.curMode = normal
-		if e.b.cursor.ofset > 0 {
-			e.b.cursor.ofset -= 1
+		if e.b.cursor.offset > 0 {
+			e.b.cursor.offset -= 1
 		}
 		e.ScrollLeft()
 	}

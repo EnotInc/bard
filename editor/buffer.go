@@ -16,19 +16,19 @@ type copied struct {
 
 type cursor struct {
 	line  int
-	ofset int
+	offset int
 }
 
 type Buffer struct {
-	copyes []*copied
+	copies []*copied
 	lines  []*line
 	cursor *cursor
 	visual *cursor
 }
 
 func InitBuffer() *Buffer {
-	c := &cursor{line: 0, ofset: 0}
-	v := &cursor{line: 0, ofset: 0}
+	c := &cursor{line: 0, offset: 0}
+	v := &cursor{line: 0, offset: 0}
 	b := &Buffer{
 		cursor: c,
 		visual: v,
@@ -37,21 +37,21 @@ func InitBuffer() *Buffer {
 	return b
 }
 
-func (b *Buffer) fixOfset() {
-	if b.cursor.ofset > len(b.lines[b.cursor.line].data)-1 {
-		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
+func (b *Buffer) fixOffset() {
+	if b.cursor.offset > len(b.lines[b.cursor.line].data)-1 {
+		b.cursor.offset = len(b.lines[b.cursor.line].data) - 1
 	}
-	if b.cursor.ofset < 0 {
-		b.cursor.ofset = 0
+	if b.cursor.offset < 0 {
+		b.cursor.offset = 0
 	}
 }
 
 // Move cursor left
 func (b *Buffer) H(amount int) {
-	if b.cursor.ofset-amount > 0 {
-		b.cursor.ofset -= amount
+	if b.cursor.offset-amount > 0 {
+		b.cursor.offset -= amount
 	} else {
-		b.cursor.ofset = 0
+		b.cursor.offset = 0
 	}
 }
 
@@ -62,7 +62,7 @@ func (b *Buffer) J(amount int) {
 	} else {
 		b.cursor.line = len(b.lines) - 1
 	}
-	b.fixOfset()
+	b.fixOffset()
 }
 
 // Move cursor up
@@ -72,32 +72,32 @@ func (b *Buffer) K(amount int) {
 	} else {
 		b.cursor.line = 0
 	}
-	b.fixOfset()
+	b.fixOffset()
 }
 
 // Move cursor right
 func (b *Buffer) L(amount int) {
-	if b.cursor.ofset+amount < len(b.lines[b.cursor.line].data)-1 {
-		b.cursor.ofset += amount
+	if b.cursor.offset+amount < len(b.lines[b.cursor.line].data)-1 {
+		b.cursor.offset += amount
 	} else {
-		b.cursor.ofset = len(b.lines[b.cursor.line].data) - 1
-		b.fixOfset()
+		b.cursor.offset = len(b.lines[b.cursor.line].data) - 1
+		b.fixOffset()
 	}
 }
 
 func (b *Buffer) InsertKey(key rune) {
 	curLine := b.lines[b.cursor.line]
-	curLine.data = append(curLine.data[:b.cursor.ofset], append([]rune{key}, curLine.data[b.cursor.ofset:]...)...)
-	b.cursor.ofset += 1
+	curLine.data = append(curLine.data[:b.cursor.offset], append([]rune{key}, curLine.data[b.cursor.offset:]...)...)
+	b.cursor.offset += 1
 }
 
 // Called when the user presses [backspace] and just removes the character in front of it
 func (b *Buffer) RemoveKey(keyShift int) {
-	if b.cursor.ofset > 0 {
+	if b.cursor.offset > 0 {
 		curLine := b.lines[b.cursor.line]
-		index := keyShift + b.cursor.ofset
+		index := keyShift + b.cursor.offset
 		curLine.data = slices.Delete(curLine.data, index-1, index)
-		b.cursor.ofset -= 1
+		b.cursor.offset -= 1
 	} else {
 		b.DelAndMoveLine()
 	}
@@ -107,9 +107,9 @@ func (b *Buffer) RemoveKey(keyShift int) {
 func (b *Buffer) Delkey() {
 	if len(b.lines[b.cursor.line].data) > 0 {
 		curLine := b.lines[b.cursor.line]
-		index := b.cursor.ofset
+		index := b.cursor.offset
 		ch := curLine.data[index]
-		b.copyes = append([]*copied{}, &copied{data: []rune{ch}, isStart: false, isEnd: false})
+		b.copies = append([]*copied{}, &copied{data: []rune{ch}, isStart: false, isEnd: false})
 		curLine.data = slices.Delete(curLine.data, index, index+1)
 	}
 }
@@ -130,13 +130,13 @@ func (b *Buffer) InsertLineWithData(index int, data []rune) {
 // Called when the user presses [enter] in the middle of a line. This function shifts data from the right to the new line
 func (b *Buffer) InsertLine() {
 	index := b.cursor.line + 1
-	shiftData := b.lines[b.cursor.line].data[b.cursor.ofset:]
-	b.lines[b.cursor.line].data = b.lines[b.cursor.line].data[:b.cursor.ofset]
+	shiftData := b.lines[b.cursor.line].data[b.cursor.offset:]
+	b.lines[b.cursor.line].data = b.lines[b.cursor.line].data[:b.cursor.offset]
 
 	newLine := line{}
 	b.lines = append(b.lines[:index], append([]*line{&newLine}, b.lines[index:]...)...)
 	b.cursor.line += 1
-	b.cursor.ofset = 0
+	b.cursor.offset = 0
 
 	b.lines[b.cursor.line].data = append(b.lines[b.cursor.line].data, shiftData...)
 }
@@ -144,18 +144,18 @@ func (b *Buffer) InsertLine() {
 // Called when the user deletes the 0th character in a line. The line is deleted and data is moved to the line above
 func (b *Buffer) DelAndMoveLine() {
 	if b.cursor.line > 0 {
-		shiftData := b.lines[b.cursor.line].data[b.cursor.ofset:]
+		shiftData := b.lines[b.cursor.line].data[b.cursor.offset:]
 		b.RemoveLine()
 		b.cursor.line -= 1
-		b.cursor.ofset = len(b.lines[b.cursor.line].data)
+		b.cursor.offset = len(b.lines[b.cursor.line].data)
 		b.lines[b.cursor.line].data = append(b.lines[b.cursor.line].data, shiftData...)
 	}
 }
 
-func (b *Buffer) DelAndMoveLineAt(startLine int, endLine int, endOfset int) {
-	shiftData := b.lines[endLine].data[endOfset:]
+func (b *Buffer) DelAndMoveLineAt(startLine int, endLine int, endOffset int) {
+	shiftData := b.lines[endLine].data[endOffset:]
 	b.RemoveLineAt(endLine)
-	b.cursor.ofset = len(b.lines[startLine].data)
+	b.cursor.offset = len(b.lines[startLine].data)
 	b.lines[startLine].data = append(b.lines[startLine].data, shiftData...)
 }
 
@@ -192,31 +192,31 @@ func (b *Buffer) ClearLine() {
 func (b *Buffer) moveToFirst() {
 	for i := range len(b.lines[b.cursor.line].data) {
 		if b.lines[b.cursor.line].data[i] != ' ' {
-			b.cursor.ofset = i
+			b.cursor.offset = i
 			break
 		}
 	}
 }
 
 // Create a new line for the buffer.copied list
-func (b *Buffer) copyLine(l *line, startOfset int, endOfset int) *copied {
-	_isStart := startOfset == 0
-	_isEnd := endOfset == len(l.data)
+func (b *Buffer) copyLine(l *line, startOffset int, endOffset int) *copied {
+	_isStart := startOffset == 0
+	_isEnd := endOffset == len(l.data)
 
-	if startOfset < 0 {
-		startOfset = 0
+	if startOffset < 0 {
+		startOffset = 0
 	}
-	if endOfset > len(l.data)-1 {
-		endOfset = len(l.data)
+	if endOffset > len(l.data)-1 {
+		endOffset = len(l.data)
 	}
-	if endOfset < 0 {
-		endOfset = 0
+	if endOffset < 0 {
+		endOffset = 0
 	}
-	if startOfset > endOfset {
-		startOfset, endOfset = endOfset, startOfset
+	if startOffset > endOffset {
+		startOffset, endOffset = endOffset, startOffset
 	}
 	var newData []rune
-	newData = l.data[startOfset:endOfset]
+	newData = l.data[startOffset:endOffset]
 	if len(newData) == 0 {
 		newData = []rune("")
 	}
@@ -225,16 +225,16 @@ func (b *Buffer) copyLine(l *line, startOfset int, endOfset int) *copied {
 }
 
 func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
-	b.copyes = []*copied{}
+	b.copies = []*copied{}
 
-	startOfset := b.visual.ofset
+	startOffset := b.visual.offset
 	startLine := b.visual.line
-	endOfset := b.cursor.ofset
+	endOffset := b.cursor.offset
 	endLine := b.cursor.line
 
-	if startLine > endLine || (startLine == endLine && startOfset > endOfset) {
+	if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 		startLine, endLine = endLine, startLine
-		startOfset, endOfset = endOfset, startOfset
+		startOffset, endOffset = endOffset, startOffset
 	}
 
 	var tempLine []rune
@@ -242,28 +242,28 @@ func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
 	lineCount := 0
 	lineSelected := endLine - startLine
 	for i := startLine; i <= endLine; {
-		curOfsetStart := 0
+		curOffsetStart := 0
 		if lineCount == 0 {
-			curOfsetStart = startOfset
+			curOffsetStart = startOffset
 		}
 
-		curOfsetEnd := max(len(b.lines[i].data)-1, 0)
+		curOffsetEnd := max(len(b.lines[i].data)-1, 0)
 		if i == endLine && !isVisualLine {
-			curOfsetEnd = endOfset
+			curOffsetEnd = endOffset
 		}
 		if len(b.lines[i].data) > 0 {
-			curOfsetEnd++
+			curOffsetEnd++
 		}
 
-		line := b.copyLine(b.lines[i], curOfsetStart, curOfsetEnd)
-		b.copyes = append(b.copyes, line)
+		line := b.copyLine(b.lines[i], curOffsetStart, curOffsetEnd)
+		b.copies = append(b.copies, line)
 
 		if isDelete {
 			if lineCount == 0 {
-				tempLine = b.lines[i].data[:curOfsetStart]
+				tempLine = b.lines[i].data[:curOffsetStart]
 			}
 			if lineCount == lineSelected {
-				tempLine = append(tempLine, b.lines[i].data[curOfsetEnd:]...)
+				tempLine = append(tempLine, b.lines[i].data[curOffsetEnd:]...)
 			}
 			b.RemoveLineAt(i)
 			endLine--
@@ -282,49 +282,49 @@ func (b *Buffer) copySelected(isDelete bool, isVisualLine bool) {
 		b.cursor.line = max(len(b.lines)-1, 0)
 	}
 
-	b.cursor.ofset = startOfset
-	b.fixOfset()
+	b.cursor.offset = startOffset
+	b.fixOffset()
 }
 
 func (b *Buffer) paste(shift int) {
-	initialOfset := b.cursor.ofset + shift
-	if len(b.lines[b.cursor.line].data) == 0 || b.cursor.ofset < 0 {
-		initialOfset = 0
+	initialOffset := b.cursor.offset + shift
+	if len(b.lines[b.cursor.line].data) == 0 || b.cursor.offset < 0 {
+		initialOffset = 0
 	}
 
-	dataFirst := append([]rune(nil), b.lines[b.cursor.line].data[:initialOfset]...)
-	dataSecond := append([]rune(nil), b.lines[b.cursor.line].data[initialOfset:]...)
+	dataFirst := append([]rune(nil), b.lines[b.cursor.line].data[:initialOffset]...)
+	dataSecond := append([]rune(nil), b.lines[b.cursor.line].data[initialOffset:]...)
 
-	isFisrtStart := b.copyes[0].isStart
-	isLastEnd := b.copyes[len(b.copyes)-1].isEnd
+	isFirstStart := b.copies[0].isStart
+	isLastEnd := b.copies[len(b.copies)-1].isEnd
 
 	lineIndex := b.cursor.line
-	for i, line := range b.copyes {
+	for i, line := range b.copies {
 		data := append([]rune{}, line.data...)
 
-		lineIndex = b.cursor.line + i //Moving index while wolking on copied lines
+		lineIndex = b.cursor.line + i // Moving index while walking on copied lines
 		if lineIndex >= len(b.lines) {
 			lineIndex = len(b.lines) - 1
 		}
 		curLine := b.lines[lineIndex]
 
 		switch i {
-		case 0: // Workgin with 1st line
-			if len(b.copyes) == 1 {
-				if !isFisrtStart && !isLastEnd {
+		case 0: // Working with 1st line
+			if len(b.copies) == 1 {
+				if !isFirstStart && !isLastEnd {
 					curLine.data = slices.Concat(dataFirst, data, dataSecond)
 				} else {
 					b.InsertLineWithData(lineIndex+shift, data)
 				}
 			} else {
-				if isFisrtStart && isLastEnd {
+				if isFirstStart && isLastEnd {
 					b.InsertLineWithData(lineIndex+shift, data)
 				} else {
 					curLine.data = slices.Concat(dataFirst, data)
 				}
 			}
-		case len(b.copyes) - 1: // Wrokgin with last line
-			if isLastEnd && isFisrtStart {
+		case len(b.copies) - 1: // Working with last line
+			if isLastEnd && isFirstStart {
 				b.InsertLineWithData(lineIndex+shift, data)
 			} else {
 				savedData := slices.Concat(data, dataSecond)
@@ -335,5 +335,5 @@ func (b *Buffer) paste(shift int) {
 		}
 	}
 
-	b.fixOfset()
+	b.fixOffset()
 }

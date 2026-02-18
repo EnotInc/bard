@@ -53,7 +53,7 @@ func (e *Editor) caseNormal(key rune) {
 	case 'a':
 		e.curMode = insert
 		if len(e.b.lines[e.b.cursor.line].data) > 0 {
-			e.b.cursor.ofset += 1
+			e.b.cursor.offset += 1
 		}
 		e.ScrollRight()
 	case 'I':
@@ -62,26 +62,26 @@ func (e *Editor) caseNormal(key rune) {
 		e.moveLeft()
 	case 'A':
 		e.curMode = insert
-		e.b.cursor.ofset = len(e.b.lines[e.b.cursor.line].data)
+		e.b.cursor.offset = len(e.b.lines[e.b.cursor.line].data)
 		e.moveRight()
 	case ':':
 		e.curMode = command
 	case 'o':
 		e.curMode = insert
-		e.b.cursor.ofset = 0
+		e.b.cursor.offset = 0
 		e.b.InsertEmptyLine(below)
 		e.b.cursor.line += 1
 		e.ScrollDown()
 		e.moveLeft()
 	case 'O':
 		e.curMode = insert
-		e.b.cursor.ofset = 0
+		e.b.cursor.offset = 0
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
 		e.moveLeft()
 	case 'D':
 		e.b.ClearLine()
-		e.b.cursor.ofset = 0
+		e.b.cursor.offset = 0
 		e.moveLeft()
 	case 'd':
 		e.subCmd += "d"
@@ -92,8 +92,8 @@ func (e *Editor) caseNormal(key rune) {
 		}
 	case 'x':
 		e.b.Delkey()
-		if e.b.cursor.ofset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.ofset > 0 {
-			e.b.cursor.ofset -= 1
+		if e.b.cursor.offset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.offset > 0 {
+			e.b.cursor.offset -= 1
 		}
 		e.ScrollLeft()
 	case 's':
@@ -102,7 +102,7 @@ func (e *Editor) caseNormal(key rune) {
 	case 'v':
 		e.curMode = visual
 		e.b.visual.line = e.b.cursor.line
-		e.b.visual.ofset = e.b.cursor.ofset
+		e.b.visual.offset = e.b.cursor.offset
 	case 'V':
 		e.curMode = visual_line
 		e.b.visual.line = e.b.cursor.line

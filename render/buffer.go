@@ -1,6 +1,6 @@
 package render
 
-type cashedLine struct {
+type cachedLine struct {
 	raw    []rune
 	render string
 	diff   int
@@ -8,24 +8,24 @@ type cashedLine struct {
 }
 
 type buffer struct {
-	lines map[int]*cashedLine
+	lines map[int]*cachedLine
 }
 
 func initBuffer() *buffer {
-	return &buffer{lines: make(map[int]*cashedLine)}
+	return &buffer{lines: make(map[int]*cachedLine)}
 }
 
-func (b *buffer) isCashed(index int) bool {
+func (b *buffer) isCached(index int) bool {
 	_, ok := b.lines[index]
 	return ok
 }
 
-func (b *buffer) getCashed(index int) *cashedLine {
+func (b *buffer) getCached(index int) *cachedLine {
 	l, _ := b.lines[index]
 	return l
 }
 
-func (b *buffer) casheLine(raw []rune, render string, diff int, index int) {
+func (b *buffer) cacheLine(raw []rune, render string, diff int, index int) {
 	if _, ok := b.lines[index]; ok {
 		l := b.lines[index]
 		l.raw = raw
@@ -33,12 +33,13 @@ func (b *buffer) casheLine(raw []rune, render string, diff int, index int) {
 		l.diff = diff
 		l.index = index
 	} else {
-		new := &cashedLine{}
-		new.raw = raw
-		new.render = render
-		new.diff = diff
-		new.index = index
+		newLine := &cachedLine{}
+		newLine.raw = raw
+		newLine.render = render
+		newLine.diff = diff
+		newLine.index = index
 
-		b.lines[index] = new
+		b.lines[index] = newLine
 	}
 }
+

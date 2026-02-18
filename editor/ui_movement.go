@@ -6,10 +6,10 @@ const (
 
 // Making sure that visual cursor is alright
 func (e *Editor) setUiCursor() {
-	if e.ui.xScroll > e.b.cursor.ofset {
-		e.ui.xScroll = e.b.cursor.ofset
-	} else if e.ui.xScroll < e.b.cursor.ofset-e.ui.w+ScrollBorder*2 {
-		e.ui.xScroll = e.b.cursor.ofset - e.ui.w + ScrollBorder*2
+	if e.ui.xScroll > e.b.cursor.offset {
+		e.ui.xScroll = e.b.cursor.offset
+	} else if e.ui.xScroll < e.b.cursor.offset-e.ui.w+ScrollBorder*2 {
+		e.ui.xScroll = e.b.cursor.offset - e.ui.w + ScrollBorder*2
 	}
 	if e.ui.yScroll > e.b.cursor.line-ScrollBorder {
 		e.ui.yScroll = e.b.cursor.line - ScrollBorder
@@ -21,7 +21,7 @@ func (e *Editor) setUiCursor() {
 	}
 
 	e.ui.curRow = e.b.cursor.line - e.ui.yScroll
-	e.ui.curOff = e.b.cursor.ofset - e.ui.xScroll
+	e.ui.curOff = e.b.cursor.offset - e.ui.xScroll
 }
 
 func (e *Editor) ScrollUp() {
@@ -44,7 +44,7 @@ func (e *Editor) ScrollDown() {
 
 func (e *Editor) ScrollRight() {
 	if e.ui.curOff >= e.ui.w-ScrollBorder*2 {
-		if e.ui.xScroll+e.ui.w-initialOfset != len(e.b.lines[e.b.cursor.line].data)+ScrollBorder {
+		if e.ui.xScroll+e.ui.w-initialOffset != len(e.b.lines[e.b.cursor.line].data)+ScrollBorder {
 			e.ui.xScroll += 1
 		}
 	}
@@ -74,8 +74,8 @@ func (e *Editor) moveRight() {
 }
 
 func (e *Editor) shiftLeft() {
-	if e.ui.xScroll > e.b.cursor.ofset {
-		e.ui.xScroll = e.b.cursor.ofset - ScrollBorder
+	if e.ui.xScroll > e.b.cursor.offset {
+		e.ui.xScroll = e.b.cursor.offset - ScrollBorder
 		if e.ui.xScroll < 0 {
 			e.ui.xScroll = 0
 		}
