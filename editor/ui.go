@@ -274,6 +274,8 @@ func (ui *UI) Draw(e *Editor) {
 	x := e.ui.curOff + initialOffset + len(emtpyLineSpases)
 	y := e.ui.curRow + cursorLineOffset
 
+	fmt.Fprintf(&data, "%s", reset)
+
 	//Different modes have different information on the last line
 	switch e.curMode {
 	case insert:
@@ -281,7 +283,7 @@ func (ui *UI) Draw(e *Editor) {
 		fmt.Fprintf(&data, cursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	case command:
-		fmt.Fprintf(&data, "%s%s\033[%d;%dH", colorise(" :", yellowFg), e.command, ui.h, len(e.command)+initialOffset)
+		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", colorise(" :", yellowFg), reset, e.command, ui.h, len(e.command)+initialOffset)
 		fmt.Fprintf(&data, cursorBloc)
 	case normal:
 		cursorPos := fmt.Sprintf("[%s]", e.file)

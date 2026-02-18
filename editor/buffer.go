@@ -15,8 +15,12 @@ type copied struct {
 }
 
 type cursor struct {
-	line  int
+	line   int
 	offset int
+
+	//keepOffset is uset to keep the ccursor in one place
+	// on the X-axis when moving betweeen lines
+	keepOffset int
 }
 
 type Buffer struct {
@@ -38,6 +42,9 @@ func InitBuffer() *Buffer {
 }
 
 func (b *Buffer) fixOffset() {
+	if b.cursor.offset != b.cursor.keepOffset {
+		b.cursor.offset = b.cursor.keepOffset
+	}
 	if b.cursor.offset > len(b.lines[b.cursor.line].data)-1 {
 		b.cursor.offset = len(b.lines[b.cursor.line].data) - 1
 	}
@@ -53,6 +60,7 @@ func (b *Buffer) H(amount int) {
 	} else {
 		b.cursor.offset = 0
 	}
+	b.cursor.keepOffset = b.cursor.offset
 }
 
 // Move cursor down
@@ -83,6 +91,7 @@ func (b *Buffer) L(amount int) {
 		b.cursor.offset = len(b.lines[b.cursor.line].data) - 1
 		b.fixOffset()
 	}
+	b.cursor.keepOffset = b.cursor.offset
 }
 
 func (b *Buffer) InsertKey(key rune) {

@@ -17,5 +17,5 @@ cd bard/cmd/bard
 go install
 ```
 
-The `go install` command will build the project and add `bard` to the `$PATH`
+The `go install` command will build the project and add `bard` to the `$PATH`.
 And, yeah, you need `Go` to build this project
