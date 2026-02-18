@@ -167,7 +167,7 @@ func (b *Buffer) RemoveLine() {
 	}
 	b.lines = slices.Delete(b.lines, b.cursor.line, b.cursor.line+1)
 	if b.cursor.line >= len(b.lines) {
-		b.K(1)
+		b.cursor.line = len(b.lines)
 	}
 }
 

@@ -1,6 +1,9 @@
 package render
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type asciiCode string
 
@@ -36,17 +39,27 @@ const (
 
 type Renderer struct {
 	curAttr asciiCode
+	b       *buffer
 	l       *lexer
 }
 
 func InitReder(w, h int) *Renderer {
-	r := &Renderer{}
+	b := initBuffer()
+	r := &Renderer{b: b}
 	// TODO: create a new lexer for code and separate it from the default markdown lexer and renderer
 	r.l = NewLexer()
 	return r
 }
 
-func (r *Renderer) RednerMarkdownLine(line []rune, show bool) (string, int) {
+func (r *Renderer) RednerMarkdownLine(line []rune, lineIndex int, show bool) (string, int) {
+
+	if !show && r.b.isCashed(lineIndex) {
+		l := r.b.getCashed(lineIndex)
+		if slices.Equal(l.raw, line) {
+			return l.render, l.diff
+		}
+	}
+
 	r.l.input = line
 	r.l.position = 0
 	r.l.readPosition = 0
@@ -131,6 +144,9 @@ func (r *Renderer) RednerMarkdownLine(line []rune, show bool) (string, int) {
 
 	data += reset.str()
 	r.curAttr = reset
+	if !show {
+		r.b.casheLine(line, data, diff, lineIndex)
+	}
 	return data, diff
 }
 

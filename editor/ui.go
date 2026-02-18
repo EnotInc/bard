@@ -190,11 +190,11 @@ func (e *Editor) addVisual(l string, i int) string {
 	return line
 }
 
-func (ui *UI) buildLine(str []rune, show bool, start, end int) string {
+func (ui *UI) buildLine(str []rune, show bool, start, end int, i int) string {
 	var l = ""
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
-	l, diff = ui.render.RednerMarkdownLine(str, show)
+	l, diff = ui.render.RednerMarkdownLine(str, i, show)
 	if show {
 		diff = 0
 	}
@@ -216,12 +216,12 @@ func (ui *UI) Draw(e *Editor) {
 	upperBorder := ui.yScroll
 	lowerBorder := ui.yScroll + ui.h - 1
 
-	isVisual := e.curMode == visual
+	//isVisual := e.curMode == visual
 
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
 		if i < len(e.b.lines) {
-			show := e.b.cursor.line == i || isVisual
+			show := e.b.cursor.line == i //|| isVisual
 
 			// This 2 variables is used to get the horizontal borders of visible content
 			start := ui.xScroll
@@ -246,11 +246,11 @@ func (ui *UI) Draw(e *Editor) {
 					if (i >= e.b.visual.line && i <= e.b.cursor.line) || (i <= e.b.visual.line && i >= e.b.cursor.line) {
 						l = e.addVisual(string(str[start:end]), i)
 					} else {
-						l = ui.buildLine(str, show, start, end)
+						l = ui.buildLine(str, show, start, end, i)
 					}
 				// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 				default:
-					l = ui.buildLine(str, show, start, end)
+					l = ui.buildLine(str, show, start, end, i)
 				}
 
 				l += string(reset)
