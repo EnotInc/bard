@@ -45,4 +45,7 @@ const (
 
 	CodeLine  = "`"
 	CodeBlock = "```"
+
+	Link  = "[text](link)"
+	Image = "![text](link)"
 )

@@ -1,4 +1,4 @@
-![](cmd/bard/BardLogo256.png)
+![BardLogo](cmd/bard/BardLogo256.png)
 
 # **Bard**
 ## **What is Bard**

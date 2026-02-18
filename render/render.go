@@ -12,23 +12,24 @@ const (
 	reset       asciiCode = "\033[0m"
 	symbolColor asciiCode = "\033[90m"
 
-	bold        asciiCode = "\033[1m"
-	italic      asciiCode = "\033[3m"
-	boldItalic  asciiCode = "\033[1m\033[3m"
-	underline   asciiCode = "\033[4m"
-	stricked    asciiCode = "\033[9m"
+	bold       asciiCode = "\033[1m"
+	italic     asciiCode = "\033[3m"
+	boldItalic asciiCode = "\033[1m\033[3m"
+	underline  asciiCode = "\033[4m"
+	stricked   asciiCode = "\033[9m"
+
 	quote       asciiCode = "\033[32m"
 	quoteSymbol asciiCode = "\u2503"
-
-	codeLine asciiCode = "\033[33m"
-	header   asciiCode = "\033[34m"
+	codeLine    asciiCode = "\033[33m"
+	header      asciiCode = "\033[94m"
+	shield      asciiCode = "\\"
+	link        asciiCode = "\033[4;36m"
 
 	listColor asciiCode = "\033[35m"
 	tagColor  asciiCode = "\033[35m"
 	tagS                = "["
 	tagE                = "]"
-	shield    asciiCode = "\\"
-	listDash  asciiCode = "\u2981 "
+	listDash  asciiCode = "\u2981"
 	boxEmpty  asciiCode = " \u25a1"
 	boxField  asciiCode = " \u25a0"
 )
@@ -93,6 +94,10 @@ func (r *Renderer) RednerMarkdownLine(line []rune, show bool) (string, int) {
 			} else {
 				data += string(tok.Literal)
 			}
+		case Link:
+			data += r.renderLink(&tok, show)
+		case Image:
+			data += r.renderImage(&tok, show)
 		case CodeLine:
 			data += r.simpleAttrRender(codeLine, string(tok.Literal), show)
 			diff += 1
@@ -143,23 +148,19 @@ func paintString(ascii asciiCode, str string) string {
 }
 
 func (r *Renderer) renderBoxEmpty(t *Token, show bool) string {
-	var s = ""
 	if show {
-		s += painAsAttr(string(t.Literal))
+		return painAsAttr(string(t.Literal))
 	} else {
-		s += boxEmpty.str()
+		return boxEmpty.str()
 	}
-	return s
 }
 
 func (r *Renderer) renderBoxField(t *Token, show bool) string {
-	var s = ""
 	if show {
-		s += painAsAttr(string(t.Literal))
+		return painAsAttr(string(t.Literal))
 	} else {
-		s += boxField.str()
+		return boxField.str()
 	}
-	return s
 }
 
 func (r *Renderer) renderListNumber(t *Token) string {
@@ -171,13 +172,11 @@ func (r *Renderer) renderListNumber(t *Token) string {
 }
 
 func (r *Renderer) renderListDash(t *Token, show bool) string {
-	var s = ""
 	if show {
-		s += painAsAttr(string(t.Literal))
+		return painAsAttr(string(t.Literal))
 	} else {
-		s += listDash.str()
+		return listDash.str()
 	}
-	return s
 }
 
 func (r *Renderer) renderShield(t *Token, show bool) string {
@@ -232,6 +231,22 @@ func (r *Renderer) renderHeader(t *Token) string {
 	r.curAttr = header
 	s += string(t.Literal)
 	return s
+}
+
+func (r *Renderer) renderLink(t *Token, show bool) string {
+	if show {
+		return link.str() + string(t.Literal) + reset.str()
+	} else {
+		return link.str() + string(t.Value) + reset.str()
+	}
+}
+
+func (r *Renderer) renderImage(t *Token, show bool) string {
+	if show {
+		return link.str() + string(t.Literal) + reset.str()
+	} else {
+		return link.str() + string(t.Value) + reset.str()
+	}
 }
 
 func (r *Renderer) simpleAttrRender(mode asciiCode, attr string, show bool) string {

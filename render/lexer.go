@@ -25,43 +25,27 @@ func (l *lexer) readChar() {
 
 func (l *lexer) NextToken() Token {
 	var t Token
+
 	switch l.ch {
-	case '-':
-		// NOTE: I know that this does not look good. I'll figure this out later, maybe...
-		str := "-"
-		if l.peekChar() == ' ' {
+	case '[':
+		t = l.readLink()
+	case '!':
+		if l.peekChar() == '[' {
 			l.readChar()
-			str += " "
-			isField := false
-			t = Token{Type: ListDash, Literal: []rune{l.ch}}
-			if l.peekChar() == '[' {
-				l.readChar()
-				str += "["
-				if l.peekChar() == ' ' || isLetter(l.peekChar()) || l.peekChar() == '?' {
-					isField = ' ' != l.peekChar()
-					l.readChar()
-					str += string(l.ch)
-					if l.peekChar() == ']' {
-						str += "]"
-						l.readChar()
-						if isField {
-							t = Token{Type: ListBoxField, Literal: []rune(str)}
-						} else {
-							t = Token{Type: ListBoxEmpty, Literal: []rune(str)}
-						}
-					} else {
-						t = Token{Type: TEXT, Value: []rune(str)}
-					}
-				} else {
-					t = Token{Type: TEXT, Value: []rune(str)}
-				}
+			t = l.readLink()
+			if t.Type == Symbol {
+				t.Value = append([]rune{'!'}, t.Value...)
 			} else {
-				t = Token{Type: ListDash, Literal: []rune(str)}
+				t.Type = Image
+				t.Literal = append([]rune{'!'}, t.Literal...)
+				t.Value = append([]rune{'!'}, t.Value...)
 			}
 		} else {
-			t = Token{Type: Symbol, Value: []rune(str)}
+			t = Token{Type: Symbol, Value: []rune("!")}
+			l.readChar()
 		}
-		l.readChar()
+	case '-':
+		t = l.readListOrCheckBox()
 	case '\\':
 		if isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
 			t = Token{Type: Symbol, Value: []rune{l.ch}}
@@ -216,7 +200,7 @@ func (l *lexer) getAttrToken(ch rune, types []TokenType) Token {
 	}
 
 	end := l.position + 1
-	if count > 3 /*|| l.peekChar() == ' '*/ {
+	if count > 3 {
 		t = Token{Type: Symbol, Value: []rune(l.input[pos:end])}
 	} else {
 		switch count {
@@ -231,4 +215,85 @@ func (l *lexer) getAttrToken(ch rune, types []TokenType) Token {
 
 	l.readChar()
 	return t
+}
+
+func (l *lexer) readLink() Token {
+	text := l.position
+	l.readChar()
+	start := l.position
+	for l.ch != ']' && l.ch != 0 {
+		if l.ch == '\\' && l.peekChar() == ']' {
+			l.readChar()
+			l.readChar()
+			continue
+		}
+		l.readChar()
+	}
+	if l.ch == ']' {
+		l.readChar()
+
+		if l.ch == '(' {
+			txt := l.input[text+1 : l.position-1]
+			l.readChar()
+
+			for l.ch != ')' && l.ch != 0 {
+				if l.ch == '\\' && l.peekChar() == ')' {
+					l.readChar()
+					l.readChar()
+					continue
+				}
+				l.readChar()
+			}
+			if l.ch == ')' {
+				l.readChar()
+				lnk := l.input[text:l.position]
+				return Token{Type: Link, Value: txt, Literal: lnk}
+			}
+		}
+	}
+
+	l.position = start
+	l.readPosition = start
+	l.readChar()
+	return Token{Type: Symbol, Value: []rune("[")}
+}
+
+func (l *lexer) readListOrCheckBox() Token {
+	pos := l.position
+	if l.peekChar() != ' ' {
+		l.readChar()
+		return Token{Type: Symbol, Value: []rune{'-'}}
+	}
+
+	l.readChar()
+	start := l.position
+
+	if l.peekChar() == '[' {
+		l.readChar()
+
+		ch := l.peekChar()
+		if ch == ' ' || isLetter(ch) || ch == '?' {
+			l.readChar()
+			isField := ch != ' '
+
+			if l.peekChar() == ']' {
+				l.readChar() // reading the ']' symbol
+				l.readChar() // reading next symbol for lexer
+				literal := l.input[pos:l.position]
+
+				if isField {
+					return Token{Type: ListBoxField, Literal: literal}
+				} else {
+					return Token{Type: ListBoxEmpty, Literal: literal}
+				}
+			}
+		}
+
+		l.position = start
+		l.readPosition = start
+		l.readChar()
+		return Token{Type: ListDash, Literal: []rune("-")}
+	}
+
+	return Token{Type: ListDash, Literal: []rune("-")}
 }

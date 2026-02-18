@@ -51,7 +51,7 @@ func InitUI(h int, w int) *UI {
 }
 
 func colorise(data string, c color) string {
-	return fmt.Sprintf("%s%s%s", c, data, reset)
+	return fmt.Sprintf("%s%s", c, data /*, reset*/)
 }
 
 func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
@@ -77,6 +77,7 @@ func (b *Buffer) buildNumber(n int, maxOfset int, rln bool) string {
 	} else {
 		num = colorise(num, grayFg)
 	}
+	num += string(reset)
 
 	return num
 }
@@ -103,12 +104,12 @@ func (e *Editor) buildLowerBar(curdata string) string {
 }
 
 /*
-* So here is where I build the actual line, including the ASCII escape sequences
-* If I just use line.data[start:end], I'll get something like this:
-*
-* 033[0m and some text
-*
-* Here I just ignore the escape sequences and don't count them, so I can use them
+ * So here is where I build the actual line, including the ASCII escape sequences
+ * If I just use line.data[start:end], I'll get something like this:
+ *
+ * 033[0m and some text
+ *
+ * Here I just ignore the escape sequences and don't count them, so I can use them
  */
 func visibleSubString(text string, start int, end int) string {
 	var res strings.Builder
