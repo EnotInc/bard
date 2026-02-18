@@ -1,3 +1,5 @@
+![](cmd/bard/BardLogo256.png)
+
 # **Bard**
 ## **What is Bard**
 Bard is a little TUI text editor for markdown files, with vim-like keybindings
@@ -16,4 +18,4 @@ go install
 ```
 
 The `go install` command will build the project and add `bard` to the `$PATH`
-And, yeah, you need `go` to build this project
+And, yeah, you need `Go` to build this project
