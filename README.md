@@ -1,13 +1,18 @@
-![BardLogo](cmd/bard/BardLogo256.png)
+![BardLogo](docs/BardLogo256.png)
 
 # **Bard**
 ## **What is Bard**
 Bard is a little TUI text editor for markdown files, with vim-like keybindings
 I wrote Bard because I wanted to have beautiful markdown rendering, similar to Obsidian, but in the terminal with Vim's motions efficiency
 
+![WelcomePage](docs/WelcomePage.png)
+
 ## **Usage**
 To run Bard, just type `bard` in the terminal. You can provide a file name to open it or create a new one
 To navigate through text, you must use Vim motions, and if you are not familiar with any of this, it's a good time to learn so you can say "*I use vim, btw*" (and Bard, ofc)
+
+Quick render example:
+![MarkdownRender](docs/MarkdownRender.png)
 
 ## **Installation**
 It is not available in any package managers yet, so to install Bard you can do this:

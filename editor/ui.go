@@ -32,6 +32,7 @@ type UI struct {
 	curRow  int
 	curOff  int
 	w, h    int
+	info    [][]rune
 	render  *render.Renderer
 }
 
@@ -203,6 +204,15 @@ func (ui *UI) buildLine(str []rune, show bool, start, end int, i int) string {
 	return l
 }
 
+func (e *Editor) center(l []rune) string {
+	center := (e.ui.w - len(l)) / 2
+	if center < 0 {
+		center = 0
+	}
+	tabs := strings.Repeat(" ", center)
+	return tabs + string(l)
+}
+
 func (ui *UI) Draw(e *Editor) {
 	emtpyLineSpases := buildSpaces(len(fmt.Sprint(len(e.b.lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b.lines)))
@@ -266,7 +276,11 @@ func (ui *UI) Draw(e *Editor) {
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
 			// If the line is empty, I just add the '~' symbol
-			fmt.Fprintf(&data, "%s\n\r", colorise("~", cyanFg))
+			if e.showInfo {
+				fmt.Fprintf(&data, "%s%s%s\n\r", colorise("~", cyanFg), reset, e.center(ui.getASCIIInfo(i)))
+			} else {
+				fmt.Fprintf(&data, "%s\n\r", colorise("~", cyanFg))
+			}
 		}
 	}
 

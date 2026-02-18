@@ -50,20 +50,24 @@ func (e *Editor) caseNormal(key rune) {
 	case 'i':
 		e.curMode = insert
 		e.ScrollLeft()
+		e.showInfo = false
 	case 'a':
 		e.curMode = insert
 		if len(e.b.lines[e.b.cursor.line].data) > 0 {
 			e.b.cursor.offset += 1
 		}
 		e.ScrollRight()
+		e.showInfo = false
 	case 'I':
 		e.curMode = insert
 		e.b.moveToFirst()
 		e.moveLeft()
+		e.showInfo = false
 	case 'A':
 		e.curMode = insert
 		e.b.cursor.offset = len(e.b.lines[e.b.cursor.line].data)
 		e.moveRight()
+		e.showInfo = false
 	case ':':
 		e.curMode = command
 	case 'o':
@@ -73,12 +77,14 @@ func (e *Editor) caseNormal(key rune) {
 		e.b.cursor.line += 1
 		e.ScrollDown()
 		e.moveLeft()
+		e.showInfo = false
 	case 'O':
 		e.curMode = insert
 		e.b.cursor.offset = 0
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
 		e.moveLeft()
+		e.showInfo = false
 	case 'D':
 		e.b.ClearLine()
 		e.b.cursor.offset = 0
@@ -103,13 +109,17 @@ func (e *Editor) caseNormal(key rune) {
 		e.curMode = visual
 		e.b.visual.line = e.b.cursor.line
 		e.b.visual.offset = e.b.cursor.offset
+		e.showInfo = false
 	case 'V':
 		e.curMode = visual_line
 		e.b.visual.line = e.b.cursor.line
+		e.showInfo = false
 	case 'p':
 		e.b.paste(after)
+		e.showInfo = false
 	case 'P':
 		e.b.paste(before)
+		e.showInfo = false
 	default:
 		e.subCmd = ""
 	}

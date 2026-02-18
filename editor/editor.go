@@ -2,7 +2,6 @@ package editor
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"time"
 
@@ -35,6 +34,8 @@ type Editor struct {
 	subCmd   string
 	file     string
 	message  string
+	showInfo bool
+	save     bool
 	isMdFile bool
 	fdOut    int
 	fdIn     int
@@ -49,9 +50,6 @@ func InitEditor() *Editor {
 		panic(err)
 	}
 	_w, _h, _ := term.GetSize(_fdOut)
-	if _w < 80 || _h < 20 { // standard terminal size
-		panic(fmt.Sprintf("\nUnable to run in this terminal, window is too small: (%d %d)", _w, _h))
-	}
 
 	_b := InitBuffer()
 	_ui := InitUI(_h, _w)
@@ -62,11 +60,18 @@ func InitEditor() *Editor {
 		ui:       _ui,
 		curMode:  normal,
 		isMdFile: false,
+		showInfo: true,
+		save:     true,
 		command:  "",
 		subCmd:   "",
 		fdOut:    _fdOut,
 		fdIn:     _fdIn,
 	}
+
+	if _w < 80 || _h < 30 { // standard terminal size
+		e.save = false
+	}
+	e.buidASCII()
 
 	return e
 }
