@@ -43,7 +43,7 @@ type Renderer struct {
 	l       *lexer
 }
 
-func InitReder(w, h int) *Renderer {
+func InitRender(w, h int) *Renderer {
 	b := initBuffer()
 	r := &Renderer{b: b}
 	// TODO: create a new lexer for code and separate it from the default markdown lexer and renderer

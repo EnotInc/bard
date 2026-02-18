@@ -8,6 +8,10 @@ import (
 )
 
 func (e *Editor) LoadFile(file string) {
+	if _, err := os.Stat(file); err != nil {
+		e.CreateFile(file)
+	}
+
 	f, err := os.Open(file)
 	if err != nil {
 		panic(err)
@@ -35,6 +39,11 @@ func (e *Editor) LoadFile(file string) {
 	e.file = file
 }
 
+func (e *Editor) CreateFile(fileName string) {
+	//TODO: check if fileName is legit
+	os.Create(fileName)
+}
+
 func (e *Editor) SaveFile() {
 	if !(e.file == "" || len(e.file) == 0) {
 		var data []byte
@@ -49,6 +58,9 @@ func (e *Editor) SaveFile() {
 		if err != nil {
 			e.message = err.Error()
 		} else {
+			ext := filepath.Ext(e.file)
+			e.isMdFile = (ext == ".md" || ext == ".MD")
+
 			e.message = "file saved"
 		}
 	} else {

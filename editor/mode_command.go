@@ -46,6 +46,17 @@ func (e *Editor) execCommand() {
 	case "rln":
 		e.ui.rln = !e.ui.rln
 	default:
+		if len(e.command) > 3 {
+			if e.command[0] == 'w' && e.command[1] == ' ' {
+				fileName := e.command[2:]
+				e.CreateFile(fileName)
+				e.file = fileName
+				e.SaveFile()
+			} else {
+				e.message = "unknown command"
+			}
+			return
+		}
 		e.message = "unknown command"
 	}
 }

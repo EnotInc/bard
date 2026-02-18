@@ -36,7 +36,7 @@ type UI struct {
 }
 
 func InitUI(h int, w int) *UI {
-	r := render.InitReder(w, h)
+	r := render.InitRender(w, h)
 	ui := &UI{
 		rln:     false,
 		xScroll: 0,

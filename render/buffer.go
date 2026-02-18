@@ -1,10 +1,19 @@
 package render
 
 type cachedLine struct {
-	raw    []rune
+	// raw is used for string comparison
+	raw []rune
+
+	// render stores the rendered string
+	// without Markdown symbols, but with ANSI characters
 	render string
-	diff   int
-	index  int
+
+	// diff stores the difference in visible
+	// characters and original string length
+	diff int
+
+	// index - the line number
+	index int
 }
 
 type buffer struct {
@@ -26,13 +35,14 @@ func (b *buffer) getCached(index int) *cachedLine {
 }
 
 func (b *buffer) cacheLine(raw []rune, render string, diff int, index int) {
+	// If the line exists in the map, update it
 	if _, ok := b.lines[index]; ok {
 		l := b.lines[index]
 		l.raw = raw
 		l.render = render
 		l.diff = diff
 		l.index = index
-	} else {
+	} else { // Otherwise, create a new one
 		newLine := &cachedLine{}
 		newLine.raw = raw
 		newLine.render = render
@@ -42,4 +52,3 @@ func (b *buffer) cacheLine(raw []rune, render string, diff int, index int) {
 		b.lines[index] = newLine
 	}
 }
-
