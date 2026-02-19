@@ -25,6 +25,9 @@ func (e *Editor) caseVisual(key rune) {
 	case 'x':
 		e.b.copySelected(true, false)
 		e.curMode = normal
+	case 'o', 'O':
+		e.b.visual.offset, e.b.cursor.offset = e.b.cursor.offset, e.b.visual.offset
+		e.b.visual.line, e.b.cursor.line = e.b.cursor.line, e.b.visual.line
 	case 'd', 'D':
 		e.b.copySelected(true, false)
 		e.curMode = normal

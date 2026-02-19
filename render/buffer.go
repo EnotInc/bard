@@ -1,5 +1,7 @@
 package render
 
+import "slices"
+
 type cachedLine struct {
 	// raw is used for string comparison
 	raw []rune
@@ -36,15 +38,14 @@ func (b *buffer) getCached(index int) *cachedLine {
 
 func (b *buffer) cacheLine(raw []rune, render string, diff int, index int) {
 	// If the line exists in the map, update it
-	if _, ok := b.lines[index]; ok {
-		l := b.lines[index]
-		l.raw = raw
+	if l, ok := b.lines[index]; ok {
+		l.raw = slices.Clone(raw)
 		l.render = render
 		l.diff = diff
 		l.index = index
 	} else { // Otherwise, create a new one
 		newLine := &cachedLine{}
-		newLine.raw = raw
+		newLine.raw = slices.Clone(raw)
 		newLine.render = render
 		newLine.diff = diff
 		newLine.index = index

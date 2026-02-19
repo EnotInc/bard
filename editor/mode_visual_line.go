@@ -33,6 +33,9 @@ func (e *Editor) caseVisualLine(key rune) {
 		e.b.InsertEmptyLine(above)
 		e.b.moveToFirst()
 		e.curMode = insert
+	case 'o', 'O':
+		e.b.visual.offset, e.b.cursor.offset = e.b.cursor.offset, e.b.visual.offset
+		e.b.visual.line, e.b.cursor.line = e.b.cursor.line, e.b.visual.line
 	case '\033':
 		e.curMode = normal
 		if e.b.cursor.offset > 0 {

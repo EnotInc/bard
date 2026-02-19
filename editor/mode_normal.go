@@ -105,6 +105,12 @@ func (e *Editor) caseNormal(key rune) {
 	case 's':
 		e.b.Delkey()
 		e.curMode = insert
+	case 'S':
+		e.b.ClearLine()
+		e.curMode = insert
+	case 'G':
+		e.b.moveToLastLine()
+		e.setUiCursor()
 	case 'v':
 		e.curMode = visual
 		e.b.visual.line = e.b.cursor.line

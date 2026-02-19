@@ -85,7 +85,7 @@ func (b *Buffer) K(amount int) {
 
 // Move cursor right
 func (b *Buffer) L(amount int) {
-	if b.cursor.offset+amount < len(b.lines[b.cursor.line].data)-1 {
+	if b.cursor.offset+amount < len(b.lines[b.cursor.line].data) {
 		b.cursor.offset += amount
 	} else {
 		b.cursor.offset = len(b.lines[b.cursor.line].data) - 1
@@ -195,6 +195,11 @@ func (b *Buffer) RemoveLineAt(lineIndex int) {
 // Set line.data = ""
 func (b *Buffer) ClearLine() {
 	b.lines[b.cursor.line].data = []rune{}
+}
+
+func (b *Buffer) moveToLastLine() {
+	b.cursor.line = len(b.lines) - 1
+	b.fixOffset()
 }
 
 // Move buffer.cursor to the first non-space character in the line

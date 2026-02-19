@@ -3,6 +3,7 @@ package editor
 import (
 	"Enot/Bard/render"
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -145,8 +146,8 @@ func visibleSubString(text string, start int, end int) string {
 }
 
 // This function is used to add visual highlight to the selected lines
-func (e *Editor) addVisual(l string, i int) string {
-	var line string
+func (e *Editor) addVisual(l []rune, i int) string {
+	var line []rune
 
 	switch e.curMode {
 	case visual:
@@ -166,13 +167,17 @@ func (e *Editor) addVisual(l string, i int) string {
 		}
 
 		if startLine == i && i == endLine {
-			line = l[:startOffset] + string(startSel) + l[startOffset:endOffset] + string(reset) + l[endOffset:]
+			//line = l[:startOffset] + string(startSel) + l[startOffset:endOffset] + string(reset) + l[endOffset:]
+			line = slices.Concat(l[:startOffset], []rune(startSel), l[startOffset:endOffset], []rune(reset), l[endOffset:])
 		} else if startLine < i && i < endLine {
-			line = string(startSel) + l + string(reset)
+			//line = string(startSel) + l + string(reset)
+			line = slices.Concat([]rune(startSel), l, []rune(reset))
 		} else if startLine == i {
-			line = l[:startOffset] + string(startSel) + l[startOffset:] + string(reset)
+			//line = l[:startOffset] + string(startSel) + l[startOffset:] + string(reset)
+			line = slices.Concat(l[:startOffset], []rune(startSel), l[startOffset:], []rune(reset))
 		} else if endLine == i {
-			line = string(startSel) + l[:endOffset] + string(reset) + l[endOffset:]
+			//line = string(startSel) + l[:endOffset] + string(reset) + l[endOffset:]
+			line = slices.Concat([]rune(startSel), l[:endOffset], []rune(reset), l[endOffset:])
 		} else {
 			line = l
 		}
@@ -185,10 +190,11 @@ func (e *Editor) addVisual(l string, i int) string {
 			startLine, endLine = endLine, startLine
 		}
 
-		line = string(startSel) + l + string(reset)
+		//line = string(startSel) + l + string(reset)
+		line = slices.Concat([]rune(startSel), l, []rune(reset))
 	}
 
-	return line
+	return string(line)
 }
 
 func (ui *UI) buildLine(str []rune, show bool, start, end int, i int) string {
@@ -254,7 +260,7 @@ func (ui *UI) Draw(e *Editor) {
 				case visual, visual_line:
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
 					if (i >= e.b.visual.line && i <= e.b.cursor.line) || (i <= e.b.visual.line && i >= e.b.cursor.line) {
-						l = e.addVisual(string(str[start:end]), i)
+						l = e.addVisual(str[start:end], i)
 					} else {
 						l = ui.buildLine(str, show, start, end, i)
 					}
@@ -266,7 +272,7 @@ func (ui *UI) Draw(e *Editor) {
 				l += string(reset)
 			} else {
 				if e.curMode == visual || e.curMode == visual_line {
-					l = e.addVisual(string(str[start:end]), i)
+					l = e.addVisual(str[start:end], i)
 				} else {
 					l = string(str[start:end])
 				}
