@@ -70,6 +70,7 @@ func (e *Editor) moveRight() {
 	if e.ui.xScroll < 0 {
 		e.ui.xScroll = 0
 	}
+	e.b.cursor.keepOffset = e.b.cursor.offset
 	e.setUiCursor()
 }
 

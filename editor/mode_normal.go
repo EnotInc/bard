@@ -108,6 +108,13 @@ func (e *Editor) caseNormal(key rune) {
 	case 'S':
 		e.b.ClearLine()
 		e.curMode = insert
+	case 'g':
+		e.subCmd += "g"
+		if e.subCmd == "gg" {
+			e.b.moveToFirstLine()
+			e.setUiCursor()
+			e.subCmd = ""
+		}
 	case 'G':
 		e.b.moveToLastLine()
 		e.setUiCursor()

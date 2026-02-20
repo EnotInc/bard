@@ -2,6 +2,7 @@ package editor
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"time"
 
@@ -13,6 +14,9 @@ const (
 	clearHistory = "\033[3J"
 	moveToStart  = "\033[0H"
 	cursorReset  = "\033]112\a"
+
+	saveTerminal  = "\033[?1049h"
+	resetTerminal = "\033[?1049l"
 )
 
 type Mode string
@@ -108,6 +112,7 @@ func (e *Editor) resize(w int, h int) {
 
 // Main loop
 func (e *Editor) Run() {
+	fmt.Print(saveTerminal)
 	e.ui.Draw(e)
 	reader := bufio.NewReader(os.Stdin)
 	for {

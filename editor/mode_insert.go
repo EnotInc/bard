@@ -26,5 +26,6 @@ func (e *Editor) caseInsert(key rune) {
 		e.b.InsertKey(key)
 		e.ScrollRight()
 	}
+	e.b.cursor.keepOffset = e.b.cursor.offset
 	e.setUiCursor()
 }

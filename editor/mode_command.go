@@ -33,14 +33,14 @@ func (e *Editor) caseCommand(key rune) {
 func (e *Editor) execCommand() {
 	switch e.command {
 	case "q":
-		fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
+		fmt.Print(clearView, clearHistory, moveToStart, cursorReset, resetTerminal)
 		term.Restore(e.fdIn, e.oldState)
 		os.Exit(0)
 	case "w":
 		e.SaveFile()
 	case "x", "wq":
 		e.SaveFile()
-		fmt.Print(clearView, clearHistory, moveToStart, cursorReset)
+		fmt.Print(clearView, clearHistory, moveToStart, cursorReset, resetTerminal)
 		term.Restore(e.fdIn, e.oldState)
 		os.Exit(0)
 	case "rln":

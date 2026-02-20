@@ -197,6 +197,11 @@ func (b *Buffer) ClearLine() {
 	b.lines[b.cursor.line].data = []rune{}
 }
 
+func (b *Buffer) moveToFirstLine() {
+	b.cursor.line = 0
+	b.fixOffset()
+}
+
 func (b *Buffer) moveToLastLine() {
 	b.cursor.line = len(b.lines) - 1
 	b.fixOffset()
@@ -210,6 +215,7 @@ func (b *Buffer) moveToFirst() {
 			break
 		}
 	}
+	b.cursor.keepOffset = b.cursor.offset
 }
 
 // Create a new line for the buffer.copied list
