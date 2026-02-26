@@ -110,6 +110,7 @@ func (b *Buffer) ReplaceKeys(key rune, amount int) {
 	} else {
 		b.InsertKey(key)
 	}
+	b.fixOffset()
 }
 
 // Called when the user presses [backspace] and just removes the character in front of it
