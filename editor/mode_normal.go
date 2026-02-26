@@ -28,9 +28,30 @@ func (e *Editor) moveWithSubCommand(move func(int)) {
 	e.subCmd = ""
 }
 
+func (e *Editor) replaceWithAmount(key rune) {
+	if e.subCmd == "r" {
+		e.caseReplaceChar(key, 1)
+		return
+	}
+
+	amount, err := strconv.Atoi(e.subCmd[:len(e.subCmd)-1])
+	if err != nil {
+		e.subCmd = ""
+		return
+	}
+	e.caseReplaceChar(key, amount)
+	e.subCmd = ""
+}
+
 func (e *Editor) caseNormal(key rune) {
+	cmd := []byte(e.subCmd)
+	if len(cmd) > 0 && cmd[len(cmd)-1] == 'r' {
+		e.replaceWithAmount(key)
+		return
+	}
+
 	switch key {
-	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'r':
 		e.subCmd += string(key)
 	case 'h':
 		e.moveWithSubCommand(e.b.H)
@@ -102,6 +123,8 @@ func (e *Editor) caseNormal(key rune) {
 			e.b.RemoveLine()
 			e.moveLeft()
 		}
+	case 'R':
+		e.curMode = replace
 	case 'x':
 		e.b.Delkey()
 		if e.b.cursor.offset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.offset > 0 {

@@ -11,14 +11,16 @@ import (
 type color string
 
 const (
-	reset      color = "\033[0m"
-	redFg      color = "\033[31m"
-	grayFg     color = "\033[90m"
-	yellowFg   color = "\033[33m"
-	cyanFg     color = "\033[36m"
-	startSel   color = "\033[100m"
-	cursorBloc       = "\x1b[0 q"
-	cursorLine       = "\x1b[5 q"
+	reset    color = "\033[0m"
+	redFg    color = "\033[31m"
+	grayFg   color = "\033[90m"
+	yellowFg color = "\033[33m"
+	cyanFg   color = "\033[36m"
+	startSel color = "\033[100m"
+
+	cursorBloc      = "\x1b[2 q"
+	cursorLine      = "\x1b[6 q"
+	cursorUnderline = "\x1b[4 q"
 )
 
 const (
@@ -298,8 +300,12 @@ func (ui *UI) Draw(e *Editor) {
 	// Different modes have different information on the last line
 	switch e.curMode {
 	case insert:
-		fmt.Fprintf(&data, "%s", e.buildLowerBar("-- INSERT --"))
+		fmt.Fprintf(&data, "%s", e.buildLowerBar(fmt.Sprintf("-- %s --", e.curMode)))
 		fmt.Fprintf(&data, cursorLine)
+		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
+	case replace:
+		fmt.Fprintf(&data, "%s", e.buildLowerBar(fmt.Sprintf("-- %s --", e.curMode)))
+		fmt.Fprintf(&data, cursorUnderline)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	case command:
 		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", colorise(" :", yellowFg), reset, e.command, ui.h, len(e.command)+initialOffset)

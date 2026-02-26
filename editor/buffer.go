@@ -100,6 +100,18 @@ func (b *Buffer) InsertKey(key rune) {
 	b.cursor.offset += 1
 }
 
+func (b *Buffer) ReplaceKeys(key rune, amount int) {
+	curLine := b.lines[b.cursor.line]
+	if b.cursor.offset < len(curLine.data) {
+		if b.cursor.offset+amount <= len(curLine.data) {
+			curLine.data = slices.Delete(curLine.data, b.cursor.offset, b.cursor.offset+amount-1)
+			curLine.data[b.cursor.offset] = key
+		}
+	} else {
+		b.InsertKey(key)
+	}
+}
+
 // Called when the user presses [backspace] and just removes the character in front of it
 func (b *Buffer) RemoveKey(keyShift int) {
 	if b.cursor.offset > 0 {

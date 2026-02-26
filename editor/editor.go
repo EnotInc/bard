@@ -27,6 +27,7 @@ const (
 	insert      Mode = "INSERT"
 	visual      Mode = "VISUAL"
 	visual_line Mode = "VISUAL LINE"
+	replace     Mode = "REPLACE"
 )
 
 type Editor struct {
@@ -144,6 +145,10 @@ func (e *Editor) Run() {
 			e.caseVisual(key)
 		case visual_line:
 			e.caseVisualLine(key)
+		case replace:
+			e.caseReplaceMode(key)
+		default:
+			e.Exit(1)
 		}
 
 		e.setUiCursor()
