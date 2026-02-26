@@ -31,9 +31,8 @@ type UI struct {
 	yScroll int
 	curRow  int
 	curOff  int
-	wShift  int // wrap shift
 	w, h    int
-	hello   [][]rune
+	hello   [][]rune // ascii art in empty Bard
 	render  *render.Renderer
 }
 
@@ -238,7 +237,7 @@ func (ui *UI) Draw(e *Editor) {
 		if i < len(e.b.lines) {
 			show := e.b.cursor.line == i || e.c.ShowMD
 
-			// This 2 variables is used to get the horizontal borders of visible content
+			// This 2 variables are used to get the horizontal borders of the visible content
 			start := ui.xScroll
 			end := ui.w - initialOffset - len(emtpyLineSpases)
 
@@ -290,13 +289,13 @@ func (ui *UI) Draw(e *Editor) {
 		}
 	}
 
-	// Calculation the visual position of cursor
+	// Calculation the visual position of the cursor
 	x := e.ui.curOff + initialOffset + len(emtpyLineSpases)
 	y := e.ui.curRow + cursorLineOffset
 
 	fmt.Fprintf(&data, "%s", reset)
 
-	//Different modes have different information on the last line
+	// Different modes have different information on the last line
 	switch e.curMode {
 	case insert:
 		fmt.Fprintf(&data, "%s", e.buildLowerBar("-- INSERT --"))

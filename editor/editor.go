@@ -35,15 +35,16 @@ type Editor struct {
 	ui        *UI
 	c         *Config
 	curMode   Mode
-	command   string
-	subCmd    string
+	command   string // used in command mode
+	subCmd    string // sub command, line 12j
 	file      string
 	message   string
-	showHello bool
-	save      bool
+	showHello bool // show ascii art in empty Bard
+	save      bool // is terminal save to work (depends on window size)
 	isMdFile  bool
 	fdOut     int
 	fdIn      int
+	pairs     []rune // paired brackets
 }
 
 func InitEditor() *Editor {
@@ -72,6 +73,7 @@ func InitEditor() *Editor {
 		subCmd:   "",
 		fdOut:    _fdOut,
 		fdIn:     _fdIn,
+		pairs:    []rune{},
 	}
 
 	if _w < 80 || _h < 30 { // standard terminal size
