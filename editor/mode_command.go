@@ -1,12 +1,5 @@
 package editor
 
-import (
-	"fmt"
-	"os"
-
-	"golang.org/x/term"
-)
-
 func (e *Editor) caseCommand(key rune) {
 	switch key {
 	case '\033':
@@ -33,18 +26,18 @@ func (e *Editor) caseCommand(key rune) {
 func (e *Editor) execCommand() {
 	switch e.command {
 	case "q":
-		fmt.Print(clearView, clearHistory, moveToStart, cursorReset, resetTerminal)
-		term.Restore(e.fdIn, e.oldState)
-		os.Exit(0)
+		e.Exit(0)
 	case "w":
 		e.SaveFile()
 	case "x", "wq":
 		e.SaveFile()
-		fmt.Print(clearView, clearHistory, moveToStart, cursorReset, resetTerminal)
-		term.Restore(e.fdIn, e.oldState)
-		os.Exit(0)
+		e.Exit(0)
 	case "rln":
-		e.ui.rln = !e.ui.rln
+		e.c.RLN = !e.c.RLN
+	case "showmd":
+		e.c.ShowMD = !e.c.ShowMD
+	case "render", "rnd":
+		e.c.Render = !e.c.Render
 	default:
 		if len(e.command) > 3 {
 			if e.command[0] == 'w' && e.command[1] == ' ' {

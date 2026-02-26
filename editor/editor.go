@@ -30,19 +30,20 @@ const (
 )
 
 type Editor struct {
-	oldState *term.State
-	b        *Buffer
-	ui       *UI
-	curMode  Mode
-	command  string
-	subCmd   string
-	file     string
-	message  string
-	showInfo bool
-	save     bool
-	isMdFile bool
-	fdOut    int
-	fdIn     int
+	oldState  *term.State
+	b         *Buffer
+	ui        *UI
+	c         *Config
+	curMode   Mode
+	command   string
+	subCmd    string
+	file      string
+	message   string
+	showHello bool
+	save      bool
+	isMdFile  bool
+	fdOut     int
+	fdIn      int
 }
 
 func InitEditor() *Editor {
@@ -57,14 +58,15 @@ func InitEditor() *Editor {
 
 	_b := InitBuffer()
 	_ui := InitUI(_h, _w)
+	_c := InitConfig()
 
 	e := &Editor{
 		oldState: old,
 		b:        _b,
 		ui:       _ui,
+		c:        _c,
 		curMode:  normal,
 		isMdFile: false,
-		showInfo: true,
 		save:     true,
 		command:  "",
 		subCmd:   "",
@@ -108,6 +110,14 @@ func (e *Editor) resize(w int, h int) {
 	e.ui.w = w
 	e.ui.h = h
 	e.setUiCursor()
+}
+
+func (e *Editor) Exit(code int) {
+	e.c.Save()
+
+	fmt.Print(clearView, clearHistory, moveToStart, cursorReset, resetTerminal)
+	term.Restore(e.fdIn, e.oldState)
+	os.Exit(code)
 }
 
 // Main loop

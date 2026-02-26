@@ -45,14 +45,14 @@ func (e *Editor) buidASCII() {
 	data = append(data, []rune(info))
 	data = append(data, []rune(motions))
 
-	e.ui.info = data
+	e.ui.hello = data
 }
 
 func (ui *UI) getASCIIInfo(index int) []rune {
 
-	if index >= len(ui.info) {
+	if index >= len(ui.hello) {
 		return []rune{}
 	}
 
-	return ui.info[index]
+	return ui.hello[index]
 }

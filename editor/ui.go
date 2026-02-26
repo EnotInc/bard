@@ -27,20 +27,19 @@ const (
 )
 
 type UI struct {
-	rln     bool
 	xScroll int
 	yScroll int
 	curRow  int
 	curOff  int
+	wShift  int // wrap shift
 	w, h    int
-	info    [][]rune
+	hello   [][]rune
 	render  *render.Renderer
 }
 
 func InitUI(h int, w int) *UI {
 	r := render.InitRender(w, h)
 	ui := &UI{
-		rln:     false,
 		xScroll: 0,
 		yScroll: 0,
 		curRow:  0,
@@ -237,7 +236,7 @@ func (ui *UI) Draw(e *Editor) {
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
 		if i < len(e.b.lines) {
-			show := e.b.cursor.line == i //|| isVisual
+			show := e.b.cursor.line == i || e.c.ShowMD
 
 			// This 2 variables is used to get the horizontal borders of visible content
 			start := ui.xScroll
@@ -253,11 +252,12 @@ func (ui *UI) Draw(e *Editor) {
 				str = []rune{}
 			}
 
-			n := e.b.buildNumber(i+1, maxNumLen, ui.rln)
+			n := e.b.buildNumber(i+1, maxNumLen, e.c.RLN)
 			var l = ""
-			if e.isMdFile {
+			if e.isMdFile && e.c.Render {
 				switch e.curMode {
 				case visual, visual_line:
+
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
 					if (i >= e.b.visual.line && i <= e.b.cursor.line) || (i <= e.b.visual.line && i >= e.b.cursor.line) {
 						l = e.addVisual(str[start:end], i)
@@ -282,7 +282,7 @@ func (ui *UI) Draw(e *Editor) {
 			fmt.Fprintf(&data, "%s %s\n\r", n, l)
 		} else {
 			// If the line is empty, I just add the '~' symbol
-			if e.showInfo {
+			if e.showHello {
 				fmt.Fprintf(&data, "%s%s%s\n\r", colorise("~", cyanFg), reset, e.center(ui.getASCIIInfo(i)))
 			} else {
 				fmt.Fprintf(&data, "%s\n\r", colorise("~", cyanFg))

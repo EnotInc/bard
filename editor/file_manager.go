@@ -8,10 +8,9 @@ import (
 )
 
 func (e *Editor) LoadFile(file string) {
-	e.showInfo = false
 	if _, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
-		e.showInfo = true
+		e.showHello = true
 	}
 
 	f, err := os.Open(file)
