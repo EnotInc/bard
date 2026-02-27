@@ -42,7 +42,7 @@ func InitBuffer() *Buffer {
 }
 
 func (b *Buffer) fixOffset() {
-	if b.cursor.offset != b.cursor.keepOffset {
+	if b.cursor.offset < b.cursor.keepOffset {
 		b.cursor.offset = b.cursor.keepOffset
 	}
 	if b.cursor.offset > len(b.lines[b.cursor.line].data)-1 {
@@ -369,4 +369,78 @@ func (b *Buffer) paste(shift int) {
 	}
 
 	b.fixOffset()
+}
+
+func (b *Buffer) moveBack(amount int) {}
+
+func (b *Buffer) moveWord(amount int) {
+	curLine := b.lines[b.cursor.line]
+	offset := b.cursor.offset
+	ch := curLine.data[offset]
+	isSymbol := !isLetterOrNumber(ch)
+
+	for range amount {
+		if offset == len(curLine.data)-1 { // moving to the next line
+			b.J(1)
+			b.cursor.offset = 0
+			b.cursor.keepOffset = 0
+			return
+		}
+
+		if isSymbol {
+			symbol := ch
+			for symbol == ch && offset < len(curLine.data)-1 {
+				offset += 1
+				ch = curLine.data[offset]
+			}
+		} else {
+			for offset < len(curLine.data)-1 && isLetterOrNumber(ch) && ch != ' ' {
+				offset += 1
+				ch = curLine.data[offset]
+			}
+		}
+		for ch == ' ' { // skipping all spaces after the word
+			offset += 1
+			ch = curLine.data[offset]
+		}
+	}
+
+	b.cursor.offset = offset
+	b.cursor.keepOffset = offset
+	b.fixOffset()
+}
+
+func (b *Buffer) moveWORD(amount int) {
+	curLine := b.lines[b.cursor.line]
+	offset := b.cursor.offset
+	ch := curLine.data[offset]
+
+	for range amount {
+		if offset == len(curLine.data)-1 { // moving to the next line
+			b.J(1)
+			b.cursor.offset = 0
+			b.cursor.keepOffset = 0
+			return
+		}
+
+		// skipping everything until we find scpace
+		for offset < len(curLine.data)-1 && ch != ' ' {
+			offset += 1
+			ch = curLine.data[offset]
+		}
+		for ch == ' ' { // skipping all spaces after the WORD
+			offset += 1
+			ch = curLine.data[offset]
+		}
+	}
+
+	b.cursor.offset = offset
+	b.cursor.keepOffset = offset
+	b.fixOffset()
+}
+
+func (b *Buffer) moveEnd(amount int) {}
+
+func isLetterOrNumber(ch rune) bool {
+	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_' || ('0' <= ch && ch <= '9') || ch == '-'
 }

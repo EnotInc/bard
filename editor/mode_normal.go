@@ -147,6 +147,18 @@ func (e *Editor) caseNormal(key rune) {
 	case 'G':
 		e.b.moveToLastLine()
 		e.setUiCursor()
+	case 'w':
+		e.b.moveWord(1)
+		e.setUiCursor()
+	case 'W':
+		e.b.moveWORD(1)
+		e.setUiCursor()
+	case 'b':
+		e.b.moveBack(1)
+		e.setUiCursor()
+	case 'e':
+		e.b.moveEnd(1)
+		e.setUiCursor()
 	case 'v':
 		e.curMode = visual
 		e.b.visual.line = e.b.cursor.line
