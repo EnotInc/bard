@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Enot/Bard/editor"
+	"Enot/Bard/internal/editor"
 	"os"
 )
 

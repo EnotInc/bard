@@ -1,5 +1,7 @@
 package editor
 
+import "Enot/Bard/internal/mode"
+
 // map of paired runes. Markdown symbols are included
 var openPairs map[rune]rune = map[rune]rune{
 	'(':  ')',
@@ -20,9 +22,9 @@ func (e *Editor) caseInsert(key rune) {
 		e.ScrollDown()
 		e.moveLeft()
 	case '\033':
-		e.curMode = normal
-		if e.b.cursor.offset > 0 {
-			e.b.cursor.offset -= 1
+		e.curMode = mode.Normal
+		if e.b.Cursor.Offset > 0 {
+			e.b.Cursor.Offset -= 1
 		}
 		e.pairs = []rune{}
 		e.ScrollLeft()
@@ -43,7 +45,7 @@ func (e *Editor) caseInsert(key rune) {
 			topOpen := e.pairs[len(e.pairs)-1]
 			if openPairs[topOpen] == key { // if present paired key, skip pair
 				e.pairs = e.pairs[:len(e.pairs)-1]
-				e.b.cursor.offset += 1
+				e.b.Cursor.Offset += 1
 				e.ScrollRight()
 			} else {
 				e.insertPair(key)
@@ -53,7 +55,7 @@ func (e *Editor) caseInsert(key rune) {
 		e.b.InsertKey(key)
 		e.ScrollRight()
 	}
-	e.b.cursor.keepOffset = e.b.cursor.offset
+	e.b.Cursor.KeepOffset = e.b.Cursor.Offset
 	e.setUiCursor()
 }
 

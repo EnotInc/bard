@@ -1,5 +1,7 @@
 package editor
 
+import "Enot/Bard/internal/mode"
+
 func (e *Editor) caseReplaceChar(key rune, amount int) {
 	switch key {
 	case '\013', '\r', '\n':
@@ -7,9 +9,9 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 		e.ScrollDown()
 		e.moveLeft()
 	case '\033':
-		e.curMode = normal
-		if e.b.cursor.offset > 0 {
-			e.b.cursor.offset -= 1
+		e.curMode = mode.Normal
+		if e.b.Cursor.Offset > 0 {
+			e.b.Cursor.Offset -= 1
 		}
 		e.ScrollLeft()
 	case '\x7f': // just do nothing if backspace is pressed
@@ -33,9 +35,9 @@ func (e *Editor) caseReplaceMode(key rune) {
 		e.ScrollDown()
 		e.moveLeft()
 	case '\033':
-		e.curMode = normal
-		if e.b.cursor.offset > 0 {
-			e.b.cursor.offset -= 1
+		e.curMode = mode.Normal
+		if e.b.Cursor.Offset > 0 {
+			e.b.Cursor.Offset -= 1
 		}
 		e.ScrollLeft()
 	case '\x7f':

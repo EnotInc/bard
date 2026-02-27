@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"Enot/Bard/internal/buffer"
 	"bufio"
 	"os"
 	"path/filepath"
@@ -10,7 +11,7 @@ import (
 func (e *Editor) LoadFile(file string) {
 	if _, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
-		e.showHello = true
+		e.tui.ShowHello = true
 	}
 
 	f, err := os.Open(file)
@@ -25,17 +26,17 @@ func (e *Editor) LoadFile(file string) {
 	scanner := bufio.NewScanner(f)
 
 	//clearing the list of lines, coz I make one line in InitEditor() func
-	e.b.lines = []*line{}
+	e.b.Lines = []*buffer.Line{}
 	for scanner.Scan() {
-		l := &line{}
+		l := &buffer.Line{}
 
 		scannedLine := scanner.Text()
 		scannedLine = strings.ReplaceAll(scannedLine, "\t", "    ")
-		e.b.lines = append(e.b.lines, l)
-		e.b.lines[len(e.b.lines)-1].data = []rune(scannedLine)
+		e.b.Lines = append(e.b.Lines, l)
+		e.b.Lines[len(e.b.Lines)-1].Data = []rune(scannedLine)
 	}
-	if len(e.b.lines) == 0 {
-		e.b.lines = append(e.b.lines, &line{})
+	if len(e.b.Lines) == 0 {
+		e.b.Lines = append(e.b.Lines, &buffer.Line{})
 	}
 	e.file = file
 }
@@ -49,22 +50,22 @@ func (e *Editor) SaveFile() {
 	if !(e.file == "" || len(e.file) == 0) {
 		var data []byte
 
-		for _, v := range e.b.lines {
-			byteLine := []byte(string(v.data))
+		for _, v := range e.b.Lines {
+			byteLine := []byte(string(v.Data))
 			data = append(data, byteLine...)
 			data = append(data, byte('\n'))
 		}
 
 		err := os.WriteFile(e.file, data, 0644)
 		if err != nil {
-			e.message = err.Error()
+			e.tui.Message = err.Error()
 		} else {
 			ext := filepath.Ext(e.file)
 			e.isMdFile = (ext == ".md" || ext == ".MD")
 
-			e.message = "file saved"
+			e.tui.Message = "file saved"
 		}
 	} else {
-		e.message = "file name was not provided"
+		e.tui.Message = "file name was not provided"
 	}
 }

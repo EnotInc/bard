@@ -1,6 +1,8 @@
 package editor
 
-func (e *Editor) caseVisual(key rune) {
+import "Enot/Bard/internal/mode"
+
+func (e *Editor) caseVisualLine(key rune) {
 	switch key {
 	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':
 		e.subCmd += string(key)
@@ -20,22 +22,26 @@ func (e *Editor) caseVisual(key rune) {
 		e.moveWithSubCommand(e.b.L)
 		e.ScrollRight()
 	case 'y':
-		e.b.copySelected(false, false)
-		e.curMode = normal
+		e.b.CopySelected(false, true)
+		e.curMode = mode.Normal
 	case 'x':
-		e.b.copySelected(true, false)
-		e.curMode = normal
-	case 'o', 'O':
-		e.b.visual.offset, e.b.cursor.offset = e.b.cursor.offset, e.b.visual.offset
-		e.b.visual.line, e.b.cursor.line = e.b.cursor.line, e.b.visual.line
+		e.b.CopySelected(true, true)
+		e.curMode = mode.Normal
 	case 'd', 'D':
-		e.b.copySelected(true, false)
-		e.curMode = normal
+		e.b.CopySelected(true, true)
+		e.curMode = mode.Normal
 	case 's':
-		e.b.copySelected(true, false)
-		e.curMode = insert
+		e.b.CopySelected(true, true)
+		e.b.InsertEmptyLine(above)
+		e.b.MoveToFirst()
+		e.curMode = mode.Insert
+	case 'o', 'O':
+		e.b.SwapTail()
 	case '\033':
-		e.curMode = normal
+		e.curMode = mode.Normal
+		if e.b.Cursor.Offset > 0 {
+			e.b.Cursor.Offset -= 1
+		}
 		e.ScrollLeft()
 	}
 }

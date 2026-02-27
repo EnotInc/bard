@@ -1,44 +1,13 @@
 package render
 
 import (
+	"Enot/Bard/internal/ascii"
 	"fmt"
 	"slices"
 )
 
-type asciiCode string
-
-func (a asciiCode) str() string {
-	return string(a)
-}
-
-const (
-	reset       asciiCode = "\033[0m"
-	symbolColor asciiCode = "\033[90m"
-
-	bold       asciiCode = "\033[1m"
-	italic     asciiCode = "\033[3m"
-	boldItalic asciiCode = "\033[1m\033[3m"
-	underline  asciiCode = "\033[4m"
-	stricked   asciiCode = "\033[9m"
-
-	quote       asciiCode = "\033[32m"
-	quoteSymbol asciiCode = "\u2503"
-	codeLine    asciiCode = "\033[33m"
-	header      asciiCode = "\033[94m"
-	shield      asciiCode = "\\"
-	link        asciiCode = "\033[4;36m"
-
-	listColor asciiCode = "\033[35m"
-	tagColor  asciiCode = "\033[35m"
-	tagS                = "["
-	tagE                = "]"
-	listDash  asciiCode = "\u2981"
-	boxEmpty  asciiCode = " \u25a1"
-	boxField  asciiCode = " \u25a0"
-)
-
 type Renderer struct {
-	curAttr asciiCode
+	curAttr string
 	b       *buffer
 	l       *lexer
 }
@@ -114,7 +83,7 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 		case Image:
 			data += r.renderImage(&tok, show)
 		case CodeLine:
-			data += r.simpleAttrRender(codeLine, string(tok.Literal), show)
+			data += r.simpleAttrRender(ascii.CodeLine.Str(), string(tok.Literal), show)
 			diff += 1
 		case TEXT:
 			data += r.renderText(&tok)
@@ -125,16 +94,16 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 			data += r.renderTag(&tok, show)
 			diff -= 1
 		case OneStar, OneUnderline:
-			data += r.simpleAttrRender(italic, string(tok.Literal), show)
+			data += r.simpleAttrRender(ascii.Italic.Str(), string(tok.Literal), show)
 			diff += 1
 		case TwoStars, TwoUnderlines:
-			data += r.simpleAttrRender(bold, string(tok.Literal), show)
+			data += r.simpleAttrRender(ascii.Bold.Str(), string(tok.Literal), show)
 			diff += 2
 		case ThreeStars, ThreeUnderlines:
-			data += r.simpleAttrRender(boldItalic, string(tok.Literal), show)
+			data += r.simpleAttrRender(ascii.BoldItalic.Str(), string(tok.Literal), show)
 			diff += 3
 		case Stricked:
-			data += r.simpleAttrRender(stricked, string(tok.Literal), show)
+			data += r.simpleAttrRender(ascii.Stricked.Str(), string(tok.Literal), show)
 			diff += 2
 		case WhiteSpace:
 			data += " "
@@ -147,8 +116,8 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 		}
 	}
 
-	data += reset.str()
-	r.curAttr = reset
+	data += ascii.Reset.Str()
+	r.curAttr = ascii.Reset.Str()
 	if !show {
 		r.b.cacheLine(line, data, diff, lineIndex)
 	}
@@ -156,14 +125,14 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 }
 
 func painAsAttr(symbol string) string {
-	sym := paintString(symbolColor, symbol)
-	return sym + reset.str()
+	sym := paintString(ascii.SymbolColor, symbol)
+	return sym + ascii.Reset.Str()
 }
 
-func paintString(ascii asciiCode, str string) string {
+func paintString(c ascii.Color, str string) string {
 	var s = ""
 	for _, x := range str {
-		s += fmt.Sprintf("%s%c", ascii, x)
+		s += fmt.Sprintf("%s%c", c, x)
 	}
 	return s
 }
@@ -172,7 +141,7 @@ func (r *Renderer) renderBoxEmpty(t *Token, show bool) string {
 	if show {
 		return painAsAttr(string(t.Literal))
 	} else {
-		return boxEmpty.str()
+		return ascii.BoxEmpty.Str()
 	}
 }
 
@@ -180,15 +149,15 @@ func (r *Renderer) renderBoxField(t *Token, show bool) string {
 	if show {
 		return painAsAttr(string(t.Literal))
 	} else {
-		return boxField.str()
+		return ascii.BoxField.Str()
 	}
 }
 
 func (r *Renderer) renderListNumber(t *Token) string {
 	var s = ""
-	s += paintString(listColor, string(t.Value))
-	s += paintString(listColor, string(t.Literal))
-	s += reset.str()
+	s += paintString(ascii.ListColor, string(t.Value))
+	s += paintString(ascii.ListColor, string(t.Literal))
+	s += ascii.Reset.Str()
 	return s
 }
 
@@ -196,7 +165,7 @@ func (r *Renderer) renderListDash(t *Token, show bool) string {
 	if show {
 		return painAsAttr(string(t.Literal))
 	} else {
-		return listDash.str()
+		return ascii.ListDash.Str()
 	}
 }
 
@@ -211,19 +180,19 @@ func (r *Renderer) renderShield(t *Token, show bool) string {
 
 func (r *Renderer) renderQuote(t *Token, show bool) string {
 	var s = ""
-	s += quote.str()
+	s += ascii.Quote.Str()
 	if show {
 		s += painAsAttr(string(t.Literal))
 	} else {
-		s += quoteSymbol.str()
+		s += ascii.QuoteSymbol.Str()
 	}
-	s += reset.str()
+	s += ascii.Reset.Str()
 	return s
 }
 
 func (r *Renderer) renderText(t *Token) string {
-	if r.curAttr != reset {
-		return paintString(r.curAttr, string(t.Value))
+	if r.curAttr != ascii.Reset.Str() {
+		return paintString(ascii.Color(r.curAttr), string(t.Value))
 	}
 	return string(t.Value)
 }
@@ -231,56 +200,56 @@ func (r *Renderer) renderText(t *Token) string {
 func (r *Renderer) renderTag(t *Token, show bool) string {
 	var s = ""
 	if !show {
-		s += tagColor.str()
-		s += tagS
-		s += paintString(tagColor, string(t.Literal))
-		s += paintString(tagColor, string(t.Value))
-		s += tagE
-		s += reset.str()
+		s += ascii.TagColor.Str()
+		s += ascii.TagS.Str()
+		s += paintString(ascii.TagColor, string(t.Literal))
+		s += paintString(ascii.TagColor, string(t.Value))
+		s += ascii.TagE.Str()
+		s += ascii.Reset.Str()
 	} else {
-		s += paintString(tagColor, string(t.Literal))
-		s += paintString(tagColor, string(t.Value))
+		s += paintString(ascii.TagColor, string(t.Literal))
+		s += paintString(ascii.TagColor, string(t.Value))
 	}
-	s += reset.str()
+	s += ascii.Reset.Str()
 	return s
 }
 
 func (r *Renderer) renderHeader(t *Token) string {
 	var s = ""
-	s += header.str()
-	s += underline.str()
-	r.curAttr = header
+	s += ascii.Header.Str()
+	s += ascii.Underline.Str()
+	r.curAttr = ascii.Header.Str()
 	s += string(t.Literal)
 	return s
 }
 
 func (r *Renderer) renderLink(t *Token, show bool) string {
 	if show {
-		return link.str() + string(t.Literal) + reset.str()
+		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
 	} else {
-		return link.str() + string(t.Value) + reset.str()
+		return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 	}
 }
 
 func (r *Renderer) renderImage(t *Token, show bool) string {
 	if show {
-		return link.str() + string(t.Literal) + reset.str()
+		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
 	} else {
-		return link.str() + string(t.Value) + reset.str()
+		return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 	}
 }
 
-func (r *Renderer) simpleAttrRender(mode asciiCode, attr string, show bool) string {
+func (r *Renderer) simpleAttrRender(mode string, attr string, show bool) string {
 	var s = ""
 	if r.curAttr == mode {
-		r.curAttr = reset
+		r.curAttr = ascii.Reset.Str()
 		if show {
 			s += painAsAttr(attr)
 		}
-		s += r.curAttr.str()
+		s += r.curAttr
 	} else {
 		r.curAttr = mode
-		s += r.curAttr.str()
+		s += r.curAttr
 		if show {
 			s += painAsAttr(attr)
 		}

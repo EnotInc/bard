@@ -1,21 +1,23 @@
 package editor
 
+import "Enot/Bard/internal/mode"
+
 func (e *Editor) caseCommand(key rune) {
 	switch key {
 	case '\033':
 		e.command = ""
-		e.curMode = normal
+		e.curMode = mode.Normal
 	case '\127', '\x7f':
 		if len(e.command) > 0 {
 			e.command = e.command[:len(e.command)-1]
 		} else {
 			e.command = ""
-			e.curMode = normal
+			e.curMode = mode.Normal
 		}
 	case '\013', '\r', '\n':
 		e.execCommand()
 		e.command = ""
-		e.curMode = normal
+		e.curMode = mode.Normal
 	default:
 		e.command += string(key)
 	}
@@ -46,10 +48,10 @@ func (e *Editor) execCommand() {
 				e.file = fileName
 				e.SaveFile()
 			} else {
-				e.message = "unknown command"
+				e.tui.Message = "unknown command"
 			}
 			return
 		}
-		e.message = "unknown command"
+		e.tui.Message = "unknown command"
 	}
 }

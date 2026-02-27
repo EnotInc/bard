@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"Enot/Bard/internal/mode"
 	"strconv"
 )
 
@@ -69,52 +70,52 @@ func (e *Editor) caseNormal(key rune) {
 		e.moveWithSubCommand(e.b.L)
 		e.ScrollRight()
 	case 'i':
-		e.curMode = insert
+		e.curMode = mode.Insert
 		e.ScrollLeft()
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'a':
-		e.curMode = insert
-		if len(e.b.lines[e.b.cursor.line].data) > 0 {
-			e.b.cursor.offset += 1
+		e.curMode = mode.Insert
+		if len(e.b.Lines[e.b.Cursor.Line].Data) > 0 {
+			e.b.Cursor.Offset += 1
 		}
 		e.ScrollRight()
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'I':
-		e.curMode = insert
-		e.b.moveToFirst()
+		e.curMode = mode.Insert
+		e.b.MoveToFirst()
 		e.moveLeft()
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'A':
-		e.curMode = insert
-		e.b.cursor.offset = len(e.b.lines[e.b.cursor.line].data)
+		e.curMode = mode.Insert
+		e.b.Cursor.Offset = len(e.b.Lines[e.b.Cursor.Line].Data)
 		e.moveRight()
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case ':':
-		e.curMode = command
+		e.curMode = mode.Command
 	case 'o':
-		e.curMode = insert
-		e.b.cursor.offset = 0
+		e.curMode = mode.Insert
+		e.b.Cursor.Offset = 0
 		e.b.InsertEmptyLine(below)
-		e.b.cursor.line += 1
+		e.b.Cursor.Line += 1
 		e.ScrollDown()
 		e.moveLeft()
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'O':
-		e.curMode = insert
-		e.b.cursor.offset = 0
+		e.curMode = mode.Insert
+		e.b.Cursor.Offset = 0
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
 		e.moveLeft()
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'D':
 		e.b.ClearLine()
-		e.b.cursor.offset = 0
+		e.b.Cursor.Offset = 0
 		e.moveLeft()
 	case 'd':
 		e.subCmd += "d"
@@ -124,60 +125,58 @@ func (e *Editor) caseNormal(key rune) {
 			e.moveLeft()
 		}
 	case 'R':
-		e.curMode = replace
+		e.curMode = mode.Replace
 	case 'x':
 		e.b.Delkey()
-		if e.b.cursor.offset >= len(e.b.lines[e.b.cursor.line].data) && e.b.cursor.offset > 0 {
-			e.b.cursor.offset -= 1
-		}
+		e.b.H(1)
 		e.ScrollLeft()
 	case 's':
 		e.b.Delkey()
-		e.curMode = insert
+		e.curMode = mode.Insert
 	case 'S':
 		e.b.ClearLine()
-		e.curMode = insert
+		e.curMode = mode.Insert
 	case 'g':
 		e.subCmd += "g"
 		if e.subCmd == "gg" {
-			e.b.moveToFirstLine()
+			e.b.MoveToFirstLine()
 			e.setUiCursor()
 			e.subCmd = ""
 		}
 	case 'G':
-		e.b.moveToLastLine()
+		e.b.MoveToLastLine()
 		e.setUiCursor()
 	case 'w':
-		e.b.moveWord(1)
+		e.b.MoveWord(1)
 		e.setUiCursor()
 	case 'W':
-		e.b.moveWORD(1)
+		e.b.MoveWORD(1)
 		e.setUiCursor()
 	case 'b':
-		e.b.moveBack(1)
+		e.b.MoveBack(1)
 		e.setUiCursor()
 	case 'e':
-		e.b.moveEnd(1)
+		e.b.MoveEnd(1)
 		e.setUiCursor()
 	case 'v':
-		e.curMode = visual
-		e.b.visual.line = e.b.cursor.line
-		e.b.visual.offset = e.b.cursor.offset
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.curMode = mode.Visual
+		e.b.Visual.Line = e.b.Cursor.Line
+		e.b.Visual.Offset = e.b.Cursor.Offset
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'V':
-		e.curMode = visual_line
-		e.b.visual.line = e.b.cursor.line
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.curMode = mode.Visual_line
+		e.b.Visual.Line = e.b.Cursor.Line
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'p':
-		e.b.paste(after)
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.b.Paste(after)
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	case 'P':
-		e.b.paste(before)
-		e.showHello = false
-		e.ui.hello = [][]rune{}
+		e.b.Paste(before)
+		e.tui.ShowHello = false
+		e.tui.Hello = [][]rune{}
 	default:
 		e.subCmd = ""
 	}

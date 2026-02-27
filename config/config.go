@@ -1,4 +1,4 @@
-package editor
+package config
 
 import (
 	"encoding/json"
