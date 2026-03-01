@@ -43,7 +43,7 @@ func (e *Editor) caseInsert(key rune) {
 			e.insertPair(key)
 		} else {
 			topOpen := e.pairs[len(e.pairs)-1]
-			if openPairs[topOpen] == key { // if present paired key, skip pair
+			if openPairs[topOpen] == key { // if pressed paired key, skip pair
 				e.pairs = e.pairs[:len(e.pairs)-1]
 				e.b.Cursor.Offset += 1
 				e.ScrollRight()

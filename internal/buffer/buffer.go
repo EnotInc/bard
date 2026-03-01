@@ -132,7 +132,53 @@ func (b *Buffer) MoveWORD(amount int) {
 	b.fixOffset()
 }
 
-func (b *Buffer) MoveEnd(amount int) {}
+func (b *Buffer) MoveEnd(amount int) {
+	curLine := b.Lines[b.Cursor.Line]
+	offset := b.Cursor.Offset
+	if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 {
+		b.J(1)
+		b.Cursor.Offset = 0
+		b.Cursor.KeepOffset = 0
+		return
+	}
+
+	ch := curLine.Data[offset]
+
+	if offset+1 < len(curLine.Data)-1 {
+		offset += 1
+		ch = curLine.Data[offset]
+		for ch == ' ' && offset < len(curLine.Data)-1 {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+	}
+
+	isSymbol := !isLetterOrNumber(ch) && ch != ' '
+
+	if isSymbol {
+		symbol := ch
+		for (ch == symbol || ch == ' ') && offset < len(curLine.Data)-1 {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+		if offset > 1 {
+			offset -= 1
+		}
+	} else {
+		for isLetterOrNumber(ch) && offset < len(curLine.Data)-1 {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+		for ch == ' ' || !isLetterOrNumber(ch) {
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+	}
+
+	b.Cursor.Offset = offset
+	b.Cursor.KeepOffset = offset
+	b.fixOffset()
+}
 
 func isLetterOrNumber(ch rune) bool {
 	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_' || ('0' <= ch && ch <= '9') || ch == '-'
