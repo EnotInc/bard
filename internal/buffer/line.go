@@ -7,7 +7,7 @@ type Line struct {
 }
 
 func (b *Buffer) InsertEmptyLine(lineShift int) {
-	index := b.Cursor.Line + lineShift
+	index := b.Cursor.line + lineShift
 	newLine := make([]*Line, 0)
 	newLine = append(newLine, &Line{Data: []rune("")})
 	b.Lines = append(b.Lines[:index], append(newLine, b.Lines[index:]...)...)
@@ -21,33 +21,33 @@ func (b *Buffer) InsertLineWithData(index int, data []rune) {
 
 // Called when the user presses [enter] in the middle of a line. This function shifts data from the right to the new line
 func (b *Buffer) InsertLine() {
-	index := b.Cursor.Line + 1
-	shiftData := b.Lines[b.Cursor.Line].Data[b.Cursor.Offset:]
-	b.Lines[b.Cursor.Line].Data = b.Lines[b.Cursor.Line].Data[:b.Cursor.Offset]
+	index := b.Cursor.line + 1
+	shiftData := b.Lines[b.Cursor.line].Data[b.Cursor.offset:]
+	b.Lines[b.Cursor.line].Data = b.Lines[b.Cursor.line].Data[:b.Cursor.offset]
 
 	newLine := Line{}
 	b.Lines = append(b.Lines[:index], append([]*Line{&newLine}, b.Lines[index:]...)...)
-	b.Cursor.Line += 1
-	b.Cursor.Offset = 0
+	b.Cursor.line += 1
+	b.Cursor.offset = 0
 
-	b.Lines[b.Cursor.Line].Data = append(b.Lines[b.Cursor.Line].Data, shiftData...)
+	b.Lines[b.Cursor.line].Data = append(b.Lines[b.Cursor.line].Data, shiftData...)
 }
 
 // Called when the user deletes the 0th character in a line. The line is deleted and data is moved to the line above
 func (b *Buffer) DelAndMoveLine() {
-	if b.Cursor.Line > 0 {
-		shiftData := b.Lines[b.Cursor.Line].Data[b.Cursor.Offset:]
+	if b.Cursor.line > 0 {
+		shiftData := b.Lines[b.Cursor.line].Data[b.Cursor.offset:]
 		b.RemoveLine()
-		b.Cursor.Line -= 1
-		b.Cursor.Offset = len(b.Lines[b.Cursor.Line].Data)
-		b.Lines[b.Cursor.Line].Data = append(b.Lines[b.Cursor.Line].Data, shiftData...)
+		b.Cursor.line -= 1
+		b.Cursor.offset = len(b.Lines[b.Cursor.line].Data)
+		b.Lines[b.Cursor.line].Data = append(b.Lines[b.Cursor.line].Data, shiftData...)
 	}
 }
 
 func (b *Buffer) DelAndMoveLineAt(startLine int, endLine int, endOffset int) {
 	shiftData := b.Lines[endLine].Data[endOffset:]
 	b.RemoveLineAt(endLine)
-	b.Cursor.Offset = len(b.Lines[startLine].Data)
+	b.Cursor.offset = len(b.Lines[startLine].Data)
 	b.Lines[startLine].Data = append(b.Lines[startLine].Data, shiftData...)
 }
 
@@ -57,9 +57,9 @@ func (b *Buffer) RemoveLine() {
 		b.ClearLine()
 		return
 	}
-	b.Lines = slices.Delete(b.Lines, b.Cursor.Line, b.Cursor.Line+1)
-	if b.Cursor.Line >= len(b.Lines) {
-		b.Cursor.Line = len(b.Lines)
+	b.Lines = slices.Delete(b.Lines, b.Cursor.line, b.Cursor.line+1)
+	if b.Cursor.line >= len(b.Lines) {
+		b.Cursor.line = len(b.Lines)
 	}
 }
 
@@ -70,12 +70,12 @@ func (b *Buffer) RemoveLineAt(lineIndex int) {
 		return
 	}
 	b.Lines = slices.Delete(b.Lines, lineIndex, lineIndex+1)
-	if b.Cursor.Line >= len(b.Lines) {
+	if b.Cursor.line >= len(b.Lines) {
 		b.K(1)
 	}
 }
 
 // Set line.data = ""
 func (b *Buffer) ClearLine() {
-	b.Lines[b.Cursor.Line].Data = []rune{}
+	b.Lines[b.Cursor.line].Data = []rune{}
 }

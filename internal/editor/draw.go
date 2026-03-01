@@ -26,7 +26,7 @@ func (e *Editor) Draw() {
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
 		if i < len(e.b.Lines) {
-			show := e.b.Cursor.Line == i || e.c.ShowMD
+			show := e.b.Cursor.Line() == i || e.c.ShowMD
 
 			// This 2 variables are used to get the horizontal borders of the visible content
 			start := e.tui.XScroll
@@ -42,14 +42,14 @@ func (e *Editor) Draw() {
 				str = []rune{}
 			}
 
-			n := tui.BuildNumber(e.b.Cursor.Line, i+1, maxNumLen, e.c.RLN)
+			n := tui.BuildNumber(e.b.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
 			var l = ""
 			if e.isMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
 
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
-					if (i >= e.b.Visual.Line && i <= e.b.Cursor.Line) || (i <= e.b.Visual.Line && i >= e.b.Cursor.Line) {
+					if (i >= e.b.Visual.Line() && i <= e.b.Cursor.Line()) || (i <= e.b.Visual.Line() && i >= e.b.Cursor.Line()) {
 						l = e.b.AddVisual(e.curMode, str[start:end], i)
 					} else {
 						l = e.tui.BuildLine(str, show, start, end, i)

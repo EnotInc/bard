@@ -33,15 +33,13 @@ func (e *Editor) caseVisualLine(key rune) {
 	case 's':
 		e.b.CopySelected(true, true)
 		e.b.InsertEmptyLine(above)
-		e.b.MoveToFirst()
+		e.b.MoveToFirstChar()
 		e.curMode = mode.Insert
 	case 'o', 'O':
 		e.b.SwapTail()
 	case '\033':
 		e.curMode = mode.Normal
-		if e.b.Cursor.Offset > 0 {
-			e.b.Cursor.Offset -= 1
-		}
+		e.b.EscapeToNormal()
 		e.ScrollLeft()
 	}
 }

@@ -12,11 +12,11 @@ func (b *Buffer) AddVisual(curMode mode.Mode, l []rune, i int) string {
 
 	switch curMode {
 	case mode.Visual:
-		startOffset := b.Visual.Offset
-		startLine := b.Visual.Line
+		startOffset := b.Visual.offset
+		startLine := b.Visual.line
 
-		endOffset := b.Cursor.Offset
-		endLine := b.Cursor.Line
+		endOffset := b.Cursor.offset
+		endLine := b.Cursor.line
 
 		if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 			startLine, endLine = endLine, startLine
@@ -44,8 +44,8 @@ func (b *Buffer) AddVisual(curMode mode.Mode, l []rune, i int) string {
 		}
 
 	case mode.Visual_line:
-		startLine := b.Visual.Line
-		endLine := b.Cursor.Line
+		startLine := b.Visual.line
+		endLine := b.Cursor.line
 
 		if startLine > endLine {
 			startLine, endLine = endLine, startLine

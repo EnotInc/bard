@@ -1,84 +1,183 @@
 package buffer
 
 type cursor struct {
-	Line   int
-	Offset int
+	line   int
+	offset int
 
 	//keepOffset is uset to keep the cCursor in one place
 	// on the X-axis when moving betweeen lines
-	KeepOffset int
+	keepOffset int
 }
 
-func (b *Buffer) fixOffset() {
-	if b.Cursor.Offset < b.Cursor.KeepOffset {
-		b.Cursor.Offset = b.Cursor.KeepOffset
+// ============= So, next 3 functions is like getters =============
+
+func (c *cursor) Offset() int {
+	return c.offset
+}
+
+func (c *cursor) Line() int {
+	return c.line
+}
+
+func (c *cursor) KeepOffset() int {
+	return c.keepOffset
+}
+
+// ================================================================
+
+func (b *Buffer) FixOffset() {
+	if b.Cursor.offset < b.Cursor.keepOffset {
+		b.Cursor.offset = b.Cursor.keepOffset
 	}
-	if b.Cursor.Offset > len(b.Lines[b.Cursor.Line].Data)-1 {
-		b.Cursor.Offset = len(b.Lines[b.Cursor.Line].Data) - 1
+	if b.Cursor.offset > len(b.Lines[b.Cursor.line].Data)-1 {
+		b.Cursor.offset = len(b.Lines[b.Cursor.line].Data) - 1
 	}
-	if b.Cursor.Offset < 0 {
-		b.Cursor.Offset = 0
+	if b.Cursor.offset < 0 {
+		b.Cursor.offset = 0
 	}
 }
 
 // Move Cursor left
 func (b *Buffer) H(amount int) {
-	if b.Cursor.Offset-amount > 0 {
-		b.Cursor.Offset -= amount
+	if b.Cursor.offset-amount > 0 {
+		b.Cursor.offset -= amount
 	} else {
-		b.Cursor.Offset = 0
+		b.Cursor.offset = 0
 	}
-	b.Cursor.KeepOffset = b.Cursor.Offset
+	b.Cursor.keepOffset = b.Cursor.offset
 }
 
 // Move Cursor down
 func (b *Buffer) J(amount int) {
-	if b.Cursor.Line+amount < len(b.Lines)-1 {
-		b.Cursor.Line += amount
+	if b.Cursor.line+amount < len(b.Lines)-1 {
+		b.Cursor.line += amount
 	} else {
-		b.Cursor.Line = len(b.Lines) - 1
+		b.Cursor.line = len(b.Lines) - 1
 	}
-	b.fixOffset()
+	b.FixOffset()
 }
 
 // Move Cursor up
 func (b *Buffer) K(amount int) {
-	if b.Cursor.Line-amount > 0 {
-		b.Cursor.Line -= amount
+	if b.Cursor.line-amount > 0 {
+		b.Cursor.line -= amount
 	} else {
-		b.Cursor.Line = 0
+		b.Cursor.line = 0
 	}
-	b.fixOffset()
+	b.FixOffset()
 }
 
 // Move Cursor right
 func (b *Buffer) L(amount int) {
-	if b.Cursor.Offset+amount < len(b.Lines[b.Cursor.Line].Data) {
-		b.Cursor.Offset += amount
+	if b.Cursor.offset+amount < len(b.Lines[b.Cursor.line].Data) {
+		b.Cursor.offset += amount
 	} else {
-		b.Cursor.Offset = len(b.Lines[b.Cursor.Line].Data) - 1
-		b.fixOffset()
+		b.Cursor.offset = len(b.Lines[b.Cursor.line].Data) - 1
+		b.FixOffset()
 	}
-	b.Cursor.KeepOffset = b.Cursor.Offset
+	b.Cursor.keepOffset = b.Cursor.offset
 }
 
 func (b *Buffer) MoveToFirstLine() {
-	b.Cursor.Line = 0
-	b.fixOffset()
+	b.Cursor.line = 0
+	b.FixOffset()
+}
+
+func (b *Buffer) MoveToFirstChar() {
+	b.Cursor.line = 0
+	b.FixOffset()
+}
+
+func (b *Buffer) MoveToLastChar() {
+	b.Cursor.offset = len(b.Lines[b.Cursor.line].Data)
 }
 
 func (b *Buffer) MoveToLastLine() {
-	b.Cursor.Line = len(b.Lines) - 1
-	b.fixOffset()
+	b.Cursor.line = len(b.Lines) - 1
+	b.FixOffset()
 }
 
 // Move buffer.Cursor to the first non-space character in the line
-func (b *Buffer) MoveToFirst() {
-	for i := range len(b.Lines[b.Cursor.Line].Data) {
-		if b.Lines[b.Cursor.Line].Data[i] != ' ' {
-			b.Cursor.Offset = i
+func (b *Buffer) MoveToFirstVisible() {
+	for i := range len(b.Lines[b.Cursor.line].Data) {
+		if b.Lines[b.Cursor.line].Data[i] != ' ' {
+			b.Cursor.offset = i
 			break
 		}
 	}
-	b.Cursor.KeepOffset = b.Cursor.Offset
+	b.Cursor.keepOffset = b.Cursor.offset
+}
+
+func (b *Buffer) MoveBack(amount int) {}
+
+func (b *Buffer) MoveWord(amount int) {
+	curLine := b.Lines[b.Cursor.line]
+	offset := b.Cursor.offset
+	ch := curLine.Data[offset]
+	isSymbol := !isLetterOrNumber(ch)
+
+	for range amount {
+		if offset == len(curLine.Data)-1 { // moving to the next line
+			b.J(1)
+			b.Cursor.offset = 0
+			b.Cursor.keepOffset = 0
+			return
+		}
+
+		if isSymbol {
+			symbol := ch
+			for symbol == ch && offset < len(curLine.Data)-1 {
+				offset += 1
+				ch = curLine.Data[offset]
+			}
+		} else {
+			for offset < len(curLine.Data)-1 && isLetterOrNumber(ch) && ch != ' ' {
+				offset += 1
+				ch = curLine.Data[offset]
+			}
+		}
+		for ch == ' ' { // skipping all spaces after the word
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+	}
+
+	b.Cursor.offset = offset
+	b.Cursor.keepOffset = offset
+	b.FixOffset()
+}
+
+func (b *Buffer) MoveWORD(amount int) {
+	curLine := b.Lines[b.Cursor.line]
+	offset := b.Cursor.offset
+	ch := curLine.Data[offset]
+
+	for range amount {
+		if offset == len(curLine.Data)-1 { // moving to the next line
+			b.J(1)
+			b.Cursor.offset = 0
+			b.Cursor.keepOffset = 0
+			return
+		}
+
+		// skipping everything until we find scpace
+		for offset < len(curLine.Data)-1 && ch != ' ' {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+		for ch == ' ' { // skipping all spaces after the WORD
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+	}
+
+	b.Cursor.offset = offset
+	b.Cursor.keepOffset = offset
+	b.FixOffset()
+}
+
+func (b *Buffer) MoveEnd(amount int) {}
+
+func isLetterOrNumber(ch rune) bool {
+	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_' || ('0' <= ch && ch <= '9') || ch == '-'
 }

@@ -8,9 +8,18 @@ type copied struct {
 	isStart bool
 }
 
+func (b *Buffer) StartVisual() {
+	b.Visual.line = b.Cursor.line
+	b.Visual.offset = b.Cursor.offset
+}
+
+func (b *Buffer) StartVisualLine() {
+	b.Visual.line = b.Cursor.line
+}
+
 func (b *Buffer) SwapTail() {
-	b.Visual.Offset, b.Cursor.Offset = b.Cursor.Offset, b.Visual.Offset
-	b.Visual.Line, b.Cursor.Line = b.Cursor.Line, b.Visual.Line
+	b.Visual.offset, b.Cursor.offset = b.Cursor.offset, b.Visual.offset
+	b.Visual.line, b.Cursor.line = b.Cursor.line, b.Visual.line
 
 }
 
@@ -43,10 +52,10 @@ func (b *Buffer) CopyLine(l *Line, startOffset int, endOffset int) *copied {
 func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	b.copies = []*copied{}
 
-	startOffset := b.Visual.Offset
-	startLine := b.Visual.Line
-	endOffset := b.Cursor.Offset
-	endLine := b.Cursor.Line
+	startOffset := b.Visual.offset
+	startLine := b.Visual.line
+	endOffset := b.Cursor.offset
+	endLine := b.Cursor.line
 
 	if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 		startLine, endLine = endLine, startLine
@@ -93,32 +102,32 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	if isDelete && len(tempLine) > 0 {
 		b.InsertLineWithData(startLine, tempLine)
 	}
-	b.Cursor.Line = startLine
-	if b.Cursor.Line > len(b.Lines)-1 {
-		b.Cursor.Line = max(len(b.Lines)-1, 0)
+	b.Cursor.line = startLine
+	if b.Cursor.line > len(b.Lines)-1 {
+		b.Cursor.line = max(len(b.Lines)-1, 0)
 	}
 
-	b.Cursor.Offset = startOffset
-	b.fixOffset()
+	b.Cursor.offset = startOffset
+	b.FixOffset()
 }
 
 func (b *Buffer) Paste(shift int) {
-	initialOffset := b.Cursor.Offset + shift
-	if len(b.Lines[b.Cursor.Line].Data) == 0 || b.Cursor.Offset < 0 {
+	initialOffset := b.Cursor.offset + shift
+	if len(b.Lines[b.Cursor.line].Data) == 0 || b.Cursor.offset < 0 {
 		initialOffset = 0
 	}
 
-	DataFirst := append([]rune(nil), b.Lines[b.Cursor.Line].Data[:initialOffset]...)
-	DataSecond := append([]rune(nil), b.Lines[b.Cursor.Line].Data[initialOffset:]...)
+	DataFirst := append([]rune(nil), b.Lines[b.Cursor.line].Data[:initialOffset]...)
+	DataSecond := append([]rune(nil), b.Lines[b.Cursor.line].Data[initialOffset:]...)
 
 	isFirstStart := b.copies[0].isStart
 	isLastEnd := b.copies[len(b.copies)-1].isEnd
 
-	lineIndex := b.Cursor.Line
+	lineIndex := b.Cursor.line
 	for i, line := range b.copies {
 		Data := append([]rune{}, line.data...)
 
-		lineIndex = b.Cursor.Line + i // Moving index while walking on copied lines
+		lineIndex = b.Cursor.line + i // Moving index while walking on copied lines
 		if lineIndex >= len(b.Lines) {
 			lineIndex = len(b.Lines) - 1
 		}
@@ -151,5 +160,5 @@ func (b *Buffer) Paste(shift int) {
 		}
 	}
 
-	b.fixOffset()
+	b.FixOffset()
 }

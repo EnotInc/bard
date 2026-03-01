@@ -76,21 +76,19 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.Hello = [][]rune{}
 	case 'a':
 		e.curMode = mode.Insert
-		if len(e.b.Lines[e.b.Cursor.Line].Data) > 0 {
-			e.b.Cursor.Offset += 1
-		}
+		e.b.FixOffset()
 		e.ScrollRight()
 		e.tui.ShowHello = false
 		e.tui.Hello = [][]rune{}
 	case 'I':
 		e.curMode = mode.Insert
-		e.b.MoveToFirst()
+		e.b.MoveToFirstVisible()
 		e.moveLeft()
 		e.tui.ShowHello = false
 		e.tui.Hello = [][]rune{}
 	case 'A':
 		e.curMode = mode.Insert
-		e.b.Cursor.Offset = len(e.b.Lines[e.b.Cursor.Line].Data)
+		e.b.MoveToLastChar()
 		e.moveRight()
 		e.tui.ShowHello = false
 		e.tui.Hello = [][]rune{}
@@ -98,16 +96,17 @@ func (e *Editor) caseNormal(key rune) {
 		e.curMode = mode.Command
 	case 'o':
 		e.curMode = mode.Insert
-		e.b.Cursor.Offset = 0
+		// e.b.Cursor.Offset = 0
+		// e.b.Cursor.Line += 1
+		e.b.J(1)
 		e.b.InsertEmptyLine(below)
-		e.b.Cursor.Line += 1
 		e.ScrollDown()
 		e.moveLeft()
 		e.tui.ShowHello = false
 		e.tui.Hello = [][]rune{}
 	case 'O':
 		e.curMode = mode.Insert
-		e.b.Cursor.Offset = 0
+		e.b.MoveToFirstChar()
 		e.b.InsertEmptyLine(above)
 		e.ScrollUp()
 		e.moveLeft()
@@ -115,7 +114,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.Hello = [][]rune{}
 	case 'D':
 		e.b.ClearLine()
-		e.b.Cursor.Offset = 0
+		e.b.MoveToFirstChar()
 		e.moveLeft()
 	case 'd':
 		e.subCmd += "d"
@@ -160,13 +159,12 @@ func (e *Editor) caseNormal(key rune) {
 		e.setUiCursor()
 	case 'v':
 		e.curMode = mode.Visual
-		e.b.Visual.Line = e.b.Cursor.Line
-		e.b.Visual.Offset = e.b.Cursor.Offset
+		e.b.StartVisual()
 		e.tui.ShowHello = false
 		e.tui.Hello = [][]rune{}
 	case 'V':
 		e.curMode = mode.Visual_line
-		e.b.Visual.Line = e.b.Cursor.Line
+		e.b.StartVisualLine()
 		e.tui.ShowHello = false
 		e.tui.Hello = [][]rune{}
 	case 'p':

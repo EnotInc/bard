@@ -26,7 +26,6 @@ type Editor struct {
 	isMdFile bool
 	fdOut    int
 	fdIn     int
-	pairs    []rune // paired brackets
 }
 
 func InitEditor() *Editor {
@@ -55,7 +54,6 @@ func InitEditor() *Editor {
 		subCmd:   "",
 		fdOut:    _fdOut,
 		fdIn:     _fdIn,
-		pairs:    []rune{},
 	}
 
 	if _w < 80 || _h < 30 { // standard terminal size

@@ -10,9 +10,7 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 		e.moveLeft()
 	case '\033':
 		e.curMode = mode.Normal
-		if e.b.Cursor.Offset > 0 {
-			e.b.Cursor.Offset -= 1
-		}
+		e.b.EscapeToNormal()
 		e.ScrollLeft()
 	case '\x7f': // just do nothing if backspace is pressed
 		return
@@ -36,9 +34,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 		e.moveLeft()
 	case '\033':
 		e.curMode = mode.Normal
-		if e.b.Cursor.Offset > 0 {
-			e.b.Cursor.Offset -= 1
-		}
+		e.b.EscapeToNormal()
 		e.ScrollLeft()
 	case '\x7f':
 		e.b.RemoveKey(0)
