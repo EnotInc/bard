@@ -13,6 +13,6 @@ func main() {
 		e.LoadFile(file)
 	}
 
-	go e.TermSizeMonitor()
+	e.TermSizeMonitor()
 	e.Run()
 }

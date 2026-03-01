@@ -38,9 +38,9 @@ func InitEditor() *Editor {
 	}
 	_w, _h, _ := term.GetSize(_fdOut)
 
+	_c := config.InitConfig()
 	_b := buffer.InitBuffer()
 	_tui := tui.InitTUI(_h, _w)
-	_c := config.InitConfig()
 
 	e := &Editor{
 		oldState: old,
@@ -49,22 +49,32 @@ func InitEditor() *Editor {
 		c:        _c,
 		curMode:  mode.Normal,
 		isMdFile: false,
-		save:     true,
 		command:  "",
 		subCmd:   "",
 		fdOut:    _fdOut,
 		fdIn:     _fdIn,
 	}
 
-	if _w < 80 || _h < 30 { // standard terminal size
-		e.save = false
+	if _w < 80 || _h < 30 {
+		e.tui.Save = false
 	}
 
+	e.tui.BuidASCII()
 	return e
 }
 
 func (e *Editor) TermSizeMonitor() {
-	e.tui.TermSizeMonitor(e.fdOut)
+	go e.tui.TermSizeMonitor(e.fdOut)
+	go e.listenResize()
+}
+
+func (e *Editor) listenResize() {
+	for {
+		value := <-e.tui.Redraw
+		if value {
+			e.Draw()
+		}
+	}
 }
 
 func (e *Editor) Exit(code int) {

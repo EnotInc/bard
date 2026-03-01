@@ -73,37 +73,30 @@ func (e *Editor) caseNormal(key rune) {
 		e.curMode = mode.Insert
 		e.ScrollLeft()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'a':
 		e.curMode = mode.Insert
 		e.b.FixOffset()
 		e.ScrollRight()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'I':
 		e.curMode = mode.Insert
 		e.b.MoveToFirstVisible()
 		e.moveLeft()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'A':
 		e.curMode = mode.Insert
 		e.b.MoveToLastChar()
 		e.moveRight()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case ':':
 		e.curMode = mode.Command
 	case 'o':
 		e.curMode = mode.Insert
-		// e.b.Cursor.Offset = 0
-		// e.b.Cursor.Line += 1
-		e.b.J(1)
 		e.b.InsertEmptyLine(below)
+		e.b.J(1)
 		e.ScrollDown()
 		e.moveLeft()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'O':
 		e.curMode = mode.Insert
 		e.b.MoveToFirstChar()
@@ -111,7 +104,6 @@ func (e *Editor) caseNormal(key rune) {
 		e.ScrollUp()
 		e.moveLeft()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'D':
 		e.b.ClearLine()
 		e.b.MoveToFirstChar()
@@ -161,20 +153,16 @@ func (e *Editor) caseNormal(key rune) {
 		e.curMode = mode.Visual
 		e.b.StartVisual()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'V':
 		e.curMode = mode.Visual_line
 		e.b.StartVisualLine()
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'p':
 		e.b.Paste(after)
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	case 'P':
 		e.b.Paste(before)
 		e.tui.ShowHello = false
-		e.tui.Hello = [][]rune{}
 	default:
 		e.subCmd = ""
 	}

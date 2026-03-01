@@ -33,6 +33,7 @@ type TUI struct {
 	Hello     [][]rune // ascii art in empty Bard
 	visual    *visual
 	render    *render.Renderer
+	Redraw    chan bool
 }
 
 func InitTUI(h int, w int) *TUI {
@@ -43,12 +44,13 @@ func InitTUI(h int, w int) *TUI {
 		YScroll: 0,
 		CurRow:  0,
 		CurOff:  0,
+		Save:    true,
 		W:       w,
 		H:       h,
 		visual:  v,
 		render:  r,
+		Redraw:  make(chan bool, 1),
 	}
-	ui.buidASCII()
 	return ui
 }
 
@@ -71,15 +73,15 @@ func (tui *TUI) TermSizeMonitor(fdOut int) {
 			last_h = h
 
 			tui.resize(w, h)
-			//tui.Draw(e)
 		}
+		tui.Redraw <- false
 	}
 }
 
 func (tui *TUI) resize(w int, h int) {
 	tui.W = w
 	tui.H = h
-	//setUiCursor()
+	tui.Redraw <- true
 }
 
 func Colorise(data string, c ascii.Color) string {

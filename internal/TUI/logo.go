@@ -8,7 +8,7 @@ const (
 	motions = "If you didn't know this, well, it's time to learn some vim motions"
 )
 
-func (tui *TUI) buidASCII() {
+func (tui *TUI) BuidASCII() {
 
 	data := [][]rune{}
 	data = append(data, []rune(""))

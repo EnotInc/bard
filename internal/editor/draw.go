@@ -21,8 +21,6 @@ func (e *Editor) Draw() {
 	upperBorder := e.tui.YScroll
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
 
-	//isVisual := e.curMode == visual
-
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
 		if i < len(e.b.Lines) {
