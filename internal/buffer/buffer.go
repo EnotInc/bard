@@ -95,6 +95,7 @@ func (b *Buffer) InsertPair(key rune) {
 
 func (b *Buffer) insertBoth(key rune) {
 	if v, ok := openPairs[key]; ok { // if the key is in openPairs, insert the matching pair
+		b.InsertKey(key)
 		b.InsertKey(v)
 		b.H(1)
 		b.pairs = append(b.pairs, key)
