@@ -50,9 +50,6 @@ func (e *Editor) execCommand() {
 		e.c.ShowMD = !e.c.ShowMD
 	case "render", "rnd":
 		e.c.Render = !e.c.Render
-	case "help", "h":
-		e.newBuffer()
-		e.LoadFile("docs/help/help.md")
 	default:
 		if len(e.command) > 3 {
 			if e.command[0] == 'w' && e.command[1] == ' ' {
