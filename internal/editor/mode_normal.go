@@ -55,19 +55,19 @@ func (e *Editor) caseNormal(key rune) {
 	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'r':
 		e.subCmd += string(key)
 	case 'h':
-		e.moveWithSubCommand(e.b.H)
+		e.moveWithSubCommand(e.b[e.curBuffer].H)
 		e.setUiCursor()
 		e.ScrollLeft()
 	case 'j':
-		e.moveWithSubCommand(e.b.J)
+		e.moveWithSubCommand(e.b[e.curBuffer].J)
 		e.ScrollDown()
 		e.shiftLeft()
 	case 'k':
-		e.moveWithSubCommand(e.b.K)
+		e.moveWithSubCommand(e.b[e.curBuffer].K)
 		e.ScrollUp()
 		e.shiftLeft()
 	case 'l':
-		e.moveWithSubCommand(e.b.L)
+		e.moveWithSubCommand(e.b[e.curBuffer].L)
 		e.ScrollRight()
 	case 'i':
 		e.curMode = mode.Insert
@@ -75,93 +75,93 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'a':
 		e.curMode = mode.Insert
-		e.b.FixOffset()
+		e.b[e.curBuffer].FixOffset()
 		e.ScrollRight()
 		e.tui.ShowHello = false
 	case 'I':
 		e.curMode = mode.Insert
-		e.b.MoveToFirstVisible()
+		e.b[e.curBuffer].MoveToFirstVisible()
 		e.moveLeft()
 		e.tui.ShowHello = false
 	case 'A':
 		e.curMode = mode.Insert
-		e.b.MoveToLastChar()
+		e.b[e.curBuffer].MoveToLastChar()
 		e.moveRight()
 		e.tui.ShowHello = false
 	case ':':
 		e.curMode = mode.Command
 	case 'o':
 		e.curMode = mode.Insert
-		e.b.InsertEmptyLine(below)
-		e.b.J(1)
+		e.b[e.curBuffer].InsertEmptyLine(below)
+		e.b[e.curBuffer].J(1)
 		e.ScrollDown()
 		e.moveLeft()
 		e.tui.ShowHello = false
 	case 'O':
 		e.curMode = mode.Insert
-		e.b.MoveToFirstChar()
-		e.b.InsertEmptyLine(above)
+		e.b[e.curBuffer].MoveToFirstChar()
+		e.b[e.curBuffer].InsertEmptyLine(above)
 		e.ScrollUp()
 		e.moveLeft()
 		e.tui.ShowHello = false
 	case 'D':
-		e.b.ClearLine()
-		e.b.MoveToFirstChar()
+		e.b[e.curBuffer].ClearLine()
+		e.b[e.curBuffer].MoveToFirstChar()
 		e.moveLeft()
 	case 'd':
 		e.subCmd += "d"
 		if e.subCmd == "dd" {
 			e.subCmd = ""
-			e.b.RemoveLine()
+			e.b[e.curBuffer].RemoveLine()
 			e.moveLeft()
 		}
 	case 'R':
 		e.curMode = mode.Replace
 	case 'x':
-		e.b.Delkey()
-		e.b.H(1)
+		e.b[e.curBuffer].Delkey()
+		e.b[e.curBuffer].H(1)
 		e.ScrollLeft()
 	case 's':
-		e.b.Delkey()
+		e.b[e.curBuffer].Delkey()
 		e.curMode = mode.Insert
 	case 'S':
-		e.b.ClearLine()
+		e.b[e.curBuffer].ClearLine()
 		e.curMode = mode.Insert
 	case 'g':
 		e.subCmd += "g"
 		if e.subCmd == "gg" {
-			e.b.MoveToFirstLine()
+			e.b[e.curBuffer].MoveToFirstLine()
 			e.setUiCursor()
 			e.subCmd = ""
 		}
 	case 'G':
-		e.b.MoveToLastLine()
+		e.b[e.curBuffer].MoveToLastLine()
 		e.setUiCursor()
 	case 'w':
-		e.b.MoveWord(1)
+		e.b[e.curBuffer].MoveWord(1)
 		e.setUiCursor()
 	case 'W':
-		e.b.MoveWORD(1)
+		e.b[e.curBuffer].MoveWORD(1)
 		e.setUiCursor()
 	case 'b':
-		e.b.MoveBack(1)
+		e.b[e.curBuffer].MoveBack(1)
 		e.setUiCursor()
 	case 'e':
-		e.b.MoveEnd(1)
+		e.b[e.curBuffer].MoveEnd(1)
 		e.setUiCursor()
 	case 'v':
 		e.curMode = mode.Visual
-		e.b.StartVisual()
+		e.b[e.curBuffer].StartVisual()
 		e.tui.ShowHello = false
 	case 'V':
 		e.curMode = mode.Visual_line
-		e.b.StartVisualLine()
+		e.b[e.curBuffer].StartVisualLine()
 		e.tui.ShowHello = false
 	case 'p':
-		e.b.Paste(after)
+		e.b[e.curBuffer].Paste(after)
 		e.tui.ShowHello = false
 	case 'P':
-		e.b.Paste(before)
+		e.b[e.curBuffer].Paste(before)
 		e.tui.ShowHello = false
 	default:
 		e.subCmd = ""
