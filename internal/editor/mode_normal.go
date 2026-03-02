@@ -75,7 +75,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'a':
 		e.curMode = mode.Insert
-		e.b.FixOffset()
+		e.b.Insert_a()
 		e.ScrollRight()
 		e.tui.ShowHello = false
 	case 'I':
@@ -146,8 +146,14 @@ func (e *Editor) caseNormal(key rune) {
 	case 'b':
 		e.b.MoveBack(1)
 		e.setUiCursor()
+	case 'B':
+		e.b.MoveBACK(1)
+		e.setUiCursor()
 	case 'e':
 		e.b.MoveEnd(1)
+		e.setUiCursor()
+	case 'E':
+		e.b.MoveEND(1)
 		e.setUiCursor()
 	case 'v':
 		e.curMode = mode.Visual

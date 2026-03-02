@@ -4,12 +4,12 @@ type cursor struct {
 	line   int
 	offset int
 
-	//keepOffset is uset to keep the cCursor in one place
+	//keepOffset is uset to keep the Cursor in one place
 	// on the X-axis when moving betweeen lines
 	keepOffset int
 }
 
-// ============= So, next 3 functions is like getters =============
+// ============= So next 3 functions are like getters =============
 
 func (c *cursor) Offset() int {
 	return c.offset
@@ -78,6 +78,10 @@ func (b *Buffer) L(amount int) {
 	b.Cursor.keepOffset = b.Cursor.offset
 }
 
+func (b *Buffer) Insert_a() {
+	b.Cursor.offset += 1
+}
+
 func (b *Buffer) MoveToFirstLine() {
 	b.Cursor.line = 0
 	b.FixOffset()
@@ -110,19 +114,23 @@ func (b *Buffer) MoveToFirstVisible() {
 
 func (b *Buffer) MoveBack(amount int) {}
 
+func (b *Buffer) MoveBACK(amount int) {}
+
 func (b *Buffer) MoveWord(amount int) {
 	curLine := b.Lines[b.Cursor.line]
 	offset := b.Cursor.offset
-	ch := curLine.Data[offset]
-	isSymbol := !isLetterOrNumber(ch)
 
 	for range amount {
-		if offset == len(curLine.Data)-1 { // moving to the next line
+
+		if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 { // moving to the next line
 			b.J(1)
 			b.Cursor.offset = 0
 			b.Cursor.keepOffset = 0
 			return
 		}
+
+		ch := curLine.Data[offset]
+		isSymbol := !isLetterOrNumber(ch)
 
 		if isSymbol {
 			symbol := ch
@@ -150,15 +158,17 @@ func (b *Buffer) MoveWord(amount int) {
 func (b *Buffer) MoveWORD(amount int) {
 	curLine := b.Lines[b.Cursor.line]
 	offset := b.Cursor.offset
-	ch := curLine.Data[offset]
 
 	for range amount {
-		if offset == len(curLine.Data)-1 { // moving to the next line
+
+		if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 { // moving to the next line
 			b.J(1)
 			b.Cursor.offset = 0
 			b.Cursor.keepOffset = 0
 			return
 		}
+
+		ch := curLine.Data[offset]
 
 		// skipping everything until we find scpace
 		for offset < len(curLine.Data)-1 && ch != ' ' {
@@ -177,6 +187,46 @@ func (b *Buffer) MoveWORD(amount int) {
 }
 
 func (b *Buffer) MoveEnd(amount int) {}
+
+func (b *Buffer) MoveEND(amount int) {
+	curLine := b.Lines[b.Cursor.line]
+	offset := b.Cursor.offset
+
+	for range amount {
+
+		if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 { // moving to the next line
+			b.J(1)
+			b.Cursor.offset = 0
+			b.Cursor.keepOffset = 0
+			return
+		}
+
+		ch := curLine.Data[offset]
+		// skipping all white spaces
+		if len(curLine.Data) != 0 {
+			offset += 1
+			ch = curLine.Data[offset]
+			for offset < len(curLine.Data)-1 && ch == ' ' {
+				offset += 1
+				ch = curLine.Data[offset]
+			}
+		}
+
+		// skipping everything until we find scpace
+		for offset < len(curLine.Data)-1 && ch != ' ' {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+		for ch == ' ' { // skipping all spaces after the WORD
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+	}
+
+	b.Cursor.offset = offset
+	b.Cursor.keepOffset = offset
+	b.FixOffset()
+}
 
 func isLetterOrNumber(ch rune) bool {
 	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_' || ('0' <= ch && ch <= '9') || ch == '-'
