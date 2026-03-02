@@ -28,24 +28,37 @@ func (e *Editor) caseCommand(key rune) {
 func (e *Editor) execCommand() {
 	switch e.command {
 	case "q":
+		if len(e.b) > 1 {
+			e.delBuffer(e.curBuffer)
+		} else {
+			e.Exit(0)
+		}
+	case "qa":
 		e.Exit(0)
 	case "w":
 		e.SaveFile()
 	case "x", "wq":
-		e.SaveFile()
-		e.Exit(0)
+		if len(e.b) > 1 {
+			e.delBuffer(e.curBuffer)
+		} else {
+			e.SaveFile()
+			e.Exit(0)
+		}
 	case "rln":
 		e.c.RLN = !e.c.RLN
 	case "showmd":
 		e.c.ShowMD = !e.c.ShowMD
 	case "render", "rnd":
 		e.c.Render = !e.c.Render
+	case "help", "h":
+		e.newBuffer()
+		e.LoadFile("docs/help/help.md")
 	default:
 		if len(e.command) > 3 {
 			if e.command[0] == 'w' && e.command[1] == ' ' {
 				fileName := e.command[2:]
 				e.CreateFile(fileName)
-				e.file = fileName
+				e.b[e.curBuffer].Title = fileName
 				e.SaveFile()
 			} else {
 				e.tui.Message = "unknown command"
