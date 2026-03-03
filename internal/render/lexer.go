@@ -73,6 +73,14 @@ func (l *lexer) NextToken() Token {
 			t = Token{Type: Symbol, Value: []rune{l.ch}}
 		}
 		l.readChar()
+	case '=':
+		if l.peekChar() == '=' {
+			l.readChar()
+			t = Token{Type: Hightlight, Value: []rune("==")}
+		} else {
+			t = Token{Type: Symbol, Value: []rune("=")}
+		}
+		l.readChar()
 	case '#':
 		pos := l.position
 		count := 1

@@ -5,6 +5,7 @@ import (
 	"Enot/Bard/internal/buffer"
 	"Enot/Bard/internal/enums"
 	"bufio"
+	"fmt"
 	"iter"
 	"os"
 	"path/filepath"
@@ -69,8 +70,10 @@ func (e *Editor) LoadFile(file string) {
 }
 
 func (e *Editor) CreateFile(fileName string) {
-	//TODO: check if fileName is legit
-	os.Create(fileName)
+	_, err := os.Create(fileName)
+	if err != nil {
+		e.tui.Message = fmt.Sprintf("Unable to create file %s", fileName)
+	}
 }
 
 func (e *Editor) SaveFile() {

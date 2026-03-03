@@ -8,13 +8,13 @@ import (
 
 type Renderer struct {
 	curAttr string
-	b       *buffer
+	c       *cache
 	l       *lexer
 }
 
 func InitRender(w, h int) *Renderer {
-	b := initBuffer()
-	r := &Renderer{b: b}
+	_c := initCache()
+	r := &Renderer{c: _c}
 	// TODO: create a new lexer for code and separate it from the default markdown lexer and renderer
 	r.l = NewLexer()
 	return r
@@ -22,8 +22,8 @@ func InitRender(w, h int) *Renderer {
 
 func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int) {
 
-	if !show && r.b.isCached(lineIndex) {
-		l := r.b.getCached(lineIndex)
+	if !show && r.c.isCached(lineIndex) {
+		l := r.c.getCached(lineIndex)
 		if slices.Equal(l.raw, line) {
 			return l.render, l.diff
 		}
@@ -78,6 +78,10 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 			} else {
 				data += string(tok.Value) + string(tok.Literal)
 			}
+		case Separator:
+			data += r.renderSeparator()
+		case Hightlight:
+			data += r.simpleAttrRender(ascii.Hightlight.Str(), string(tok.Value), show)
 		case Link:
 			data += r.renderLink(&tok, show)
 		case Image:
@@ -119,7 +123,7 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 	data += ascii.Reset.Str()
 	r.curAttr = ascii.Reset.Str()
 	if !show {
-		r.b.cacheLine(line, data, diff, lineIndex)
+		r.c.cacheLine(line, data, diff, lineIndex)
 	}
 	return data, diff
 }
@@ -135,6 +139,10 @@ func paintString(c ascii.Color, str string) string {
 		s += fmt.Sprintf("%s%c", c, x)
 	}
 	return s
+}
+
+func (r *Renderer) renderSeparator() string {
+	return painAsAttr("---")
 }
 
 func (r *Renderer) renderBoxEmpty(t *Token, show bool) string {

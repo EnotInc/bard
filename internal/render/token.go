@@ -31,7 +31,9 @@ const (
 	TwoUnderlines   = "__"
 	ThreeUnderlines = "___"
 
-	Stricked = "~~"
+	Stricked   = "~~"
+	Hightlight = "=="
+	Separator  = "---"
 
 	Header_1 = "#"
 	Header_2 = "##"

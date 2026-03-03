@@ -20,6 +20,7 @@ const (
 	BoldItalic Color = "\033[1m\033[3m"
 	Underline  Color = "\033[4m"
 	Stricked   Color = "\033[9m"
+	Hightlight Color = "\033[43m"
 
 	SymbolColor Color = "\033[90m"
 	Quote       Color = "\033[32m"

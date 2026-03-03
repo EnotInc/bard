@@ -18,25 +18,25 @@ type cachedLine struct {
 	index int
 }
 
-type buffer struct {
+type cache struct {
 	lines map[int]*cachedLine
 }
 
-func initBuffer() *buffer {
-	return &buffer{lines: make(map[int]*cachedLine)}
+func initCache() *cache {
+	return &cache{lines: make(map[int]*cachedLine)}
 }
 
-func (b *buffer) isCached(index int) bool {
+func (b *cache) isCached(index int) bool {
 	_, ok := b.lines[index]
 	return ok
 }
 
-func (b *buffer) getCached(index int) *cachedLine {
+func (b *cache) getCached(index int) *cachedLine {
 	l, _ := b.lines[index]
 	return l
 }
 
-func (b *buffer) cacheLine(raw []rune, render string, diff int, index int) {
+func (b *cache) cacheLine(raw []rune, render string, diff int, index int) {
 	// If the line exists in the map, update it
 	if l, ok := b.lines[index]; ok {
 		l.raw = slices.Clone(raw)

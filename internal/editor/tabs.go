@@ -14,7 +14,6 @@ func (e *Editor) newBuffer() {
 
 func (e *Editor) delBuffer(index int) {
 	if len(e.b) > 1 {
-		//e.SaveFile()
 		e.b = slices.Delete(e.b, index, index+1)
 		e.curBuffer = 0
 		e.tui.Message = fmt.Sprintf("Buffer '%s' closed", e.b[e.curBuffer].Title)
