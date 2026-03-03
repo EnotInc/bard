@@ -61,6 +61,8 @@ func (e *Editor) execCommand() {
 		e.nextTab()
 	case "gT":
 		e.prevTab()
+	case "newtab":
+		e.newBuffer()
 	default:
 		if len(e.command) > 3 {
 			if e.command[0] == 'w' && e.command[1] == ' ' {
