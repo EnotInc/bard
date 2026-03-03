@@ -25,6 +25,10 @@ func (c *cursor) KeepOffset() int {
 
 // ================================================================
 
+func (b *Buffer) insert_a() {
+	b.Cursor.offset += 1
+}
+
 func (b *Buffer) FixOffset() {
 	if b.Cursor.offset < b.Cursor.keepOffset {
 		b.Cursor.offset = b.Cursor.keepOffset
@@ -88,7 +92,7 @@ func (b *Buffer) MoveToFirstLine() {
 }
 
 func (b *Buffer) MoveToFirstChar() {
-	b.Cursor.line = 0
+	b.Cursor.offset = 0
 	b.FixOffset()
 }
 
@@ -126,7 +130,7 @@ func (b *Buffer) MoveWord(amount int) {
 			b.J(1)
 			b.Cursor.offset = 0
 			b.Cursor.keepOffset = 0
-			return
+			continue
 		}
 
 		ch := curLine.Data[offset]
@@ -165,7 +169,7 @@ func (b *Buffer) MoveWORD(amount int) {
 			b.J(1)
 			b.Cursor.offset = 0
 			b.Cursor.keepOffset = 0
-			return
+			continue
 		}
 
 		ch := curLine.Data[offset]
@@ -198,7 +202,7 @@ func (b *Buffer) MoveEND(amount int) {
 			b.J(1)
 			b.Cursor.offset = 0
 			b.Cursor.keepOffset = 0
-			return
+			continue
 		}
 
 		ch := curLine.Data[offset]

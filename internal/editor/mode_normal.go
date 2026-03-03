@@ -67,6 +67,7 @@ func (e *Editor) caseNormal(key rune) {
 	case 'a':
 		e.curMode = mode.Insert
 		e.b[e.curBuffer].FixOffset()
+		e.b[e.curBuffer].Insert_a()
 		e.ScrollRight()
 		e.tui.ShowHello = false
 	case 'I':
