@@ -88,30 +88,36 @@ func (e *Editor) Draw() {
 	// Different modes have different information on the last line
 	switch e.curMode {
 	case mode.Insert:
-		fmt.Fprintf(&data, "%s", tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Replace:
-		fmt.Fprintf(&data, "%s", tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorUnderline)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Command:
-		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", tui.Colorise(" :", ascii.YellowFg), ascii.Reset, e.command, e.tui.H, len(e.command)+enums.InitialOffset)
+		fmt.Fprintf(&data, "%s", e.tui.BuildCommandBar(string(e.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
-		cursorPos := fmt.Sprintf("[%s]", e.b[e.curBuffer].Title)
-		fmt.Fprintf(&data, "%s", tui.BuildLowerBar(x, y, cursorPos, e.tui.Message, e.subCmd))
+		var tabs []string
+		for _, t := range e.b {
+			tabs = append(tabs, t.Title)
+		}
+		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, e.c.TabNames)
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, cursorPos, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Visual, mode.Visual_line:
-		fmt.Fprintf(&data, "%s", tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
+
+	fmt.Fprintf(&data, "%s", ascii.Reset)
 
 	// And at the end - print the data
 	fmt.Print(data.String())

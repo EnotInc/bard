@@ -5,6 +5,7 @@ import (
 	"Enot/Bard/internal/buffer"
 	"Enot/Bard/internal/enums"
 	"bufio"
+	"fmt"
 	"iter"
 	"os"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 func (e *Editor) OpenHelp(topic enums.Help) {
 	e.newBuffer()
 	e.b[e.curBuffer].IsMdFile = true
+	e.b[e.curBuffer].Title = fmt.Sprintf("Help: %s", topic)
 
 	var lines iter.Seq[string]
 	switch topic {

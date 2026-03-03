@@ -8,6 +8,7 @@ func (a Color) Str() string {
 
 const (
 	Reset    Color = "\033[0m"
+	ResetFg  Color = "\033[39"
 	RedFg    Color = "\033[31m"
 	GrayFg   Color = "\033[90m"
 	YellowFg Color = "\033[33m"
@@ -27,4 +28,7 @@ const (
 	Link        Color = "\033[4;36m"
 	ListColor   Color = "\033[35m"
 	TagColor    Color = "\033[35m"
+
+	StatusBar Color = "\033[100m"
+	Tab       Color = "\033[94m"
 )

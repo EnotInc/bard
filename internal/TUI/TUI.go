@@ -85,7 +85,7 @@ func (tui *TUI) resize(w int, h int) {
 }
 
 func Colorise(data string, c ascii.Color) string {
-	return fmt.Sprintf("%s%s", c, data /*, reset*/)
+	return fmt.Sprintf("%s%s", c, data)
 }
 
 func BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
@@ -125,14 +125,22 @@ func BuildSpaces(maxOffset int) string {
 	return space
 }
 
-func BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
+func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
 	var data = ""
 	data += fmt.Sprintf(" %d-%d ", x, y)
-	data += fmt.Sprintf("%s %s%s%s", curdata, ascii.RedFg, message, ascii.Reset)
+	data += fmt.Sprintf("%s %s %s%s", curdata, ascii.RedFg, message, ascii.StatusBar)
 
 	if cmd != "" {
 		data += fmt.Sprintf("<%s>", cmd)
 	}
+
+	return data
+}
+
+func (ui *TUI) BuildCommandBar(curdata string) string {
+	var data = ""
+	cmd := Colorise(" :", ascii.YellowFg) + string(ascii.Reset)
+	data += fmt.Sprintf("%s%s\033[%d;%dH%s", cmd, curdata, ui.H, len(curdata)+initialOffset, ascii.StatusBar)
 
 	return data
 }
@@ -197,4 +205,21 @@ func (ui *TUI) Center(l []rune) string {
 	}
 	tabs := strings.Repeat(" ", center)
 	return tabs + string(l)
+}
+
+func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
+	var s strings.Builder
+	for i, tab := range tabs {
+		data := ""
+		if show {
+			data = fmt.Sprintf("[%d|%s]", i+1, tab)
+		} else {
+			data = fmt.Sprintf("[%d]", i+1)
+		}
+		if i == curTab {
+			data = Colorise(data, ascii.Tab) + string(ascii.ResetFg)
+		}
+		fmt.Fprintf(&s, "%s", data)
+	}
+	return s.String()
 }

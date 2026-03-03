@@ -55,6 +55,8 @@ func (e *Editor) execCommand() {
 		e.c.ShowMD = !e.c.ShowMD
 	case "render", "rnd":
 		e.c.Render = !e.c.Render
+	case "tn", "tabnames":
+		e.c.TabNames = !e.c.TabNames
 	default:
 		if len(e.command) > 3 {
 			if e.command[0] == 'w' && e.command[1] == ' ' {

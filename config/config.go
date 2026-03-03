@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	RLN    bool `json:"rln"`    // relative line number
-	ShowMD bool `json:"showmd"` // always show markdown symbols
-	Render bool `json:"render"` // enable or disable render
+	RLN      bool `json:"rln"`       // relative line number
+	ShowMD   bool `json:"showmd"`    // always show markdown symbols
+	Render   bool `json:"render"`    // enable or disable render
+	TabNames bool `json:"tab_names"` // show file name in iabs
 }
 
 func getCongfigPath() string {
@@ -21,7 +22,7 @@ func getCongfigPath() string {
 }
 
 func InitConfig() *Config {
-	defaultConfing := &Config{RLN: false, ShowMD: false, Render: true}
+	defaultConfing := &Config{RLN: false, ShowMD: false, Render: true, TabNames: true}
 	config := getCongfigPath()
 
 	// creating a default config if bard.json is not found
