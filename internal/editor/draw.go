@@ -3,14 +3,15 @@ package editor
 import (
 	tui "Enot/Bard/internal/TUI"
 	"Enot/Bard/internal/ascii"
+	"Enot/Bard/internal/enums"
 	"Enot/Bard/internal/mode"
 	"fmt"
 	"strings"
 )
 
 func (e *Editor) Draw() {
-	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b.Lines))))
-	maxNumLen := len(fmt.Sprint(len(e.b.Lines)))
+	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
+	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
 
 	// data - is one long string that turns into the TUI
 	var data strings.Builder
@@ -23,14 +24,14 @@ func (e *Editor) Draw() {
 
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
-		if i < len(e.b.Lines) {
-			show := e.b.Cursor.Line() == i || e.c.ShowMD
+		if i < len(e.b[e.curBuffer].Lines) {
+			show := e.b[e.curBuffer].Cursor.Line() == i || e.c.ShowMD
 
 			// This 2 variables are used to get the horizontal borders of the visible content
 			start := e.tui.XScroll
-			end := e.tui.W - initialOffset - len(emtpyLineSpases)
+			end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
 
-			str := e.b.Lines[i].Data
+			str := e.b[e.curBuffer].Lines[i].Data
 			if len(str) <= end {
 				end = len(str)
 			}
@@ -40,15 +41,15 @@ func (e *Editor) Draw() {
 				str = []rune{}
 			}
 
-			n := tui.BuildNumber(e.b.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
+			n := tui.BuildNumber(e.b[e.curBuffer].Cursor.Line(), i+1, maxNumLen, e.c.RLN)
 			var l = ""
-			if e.isMdFile && e.c.Render {
+			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
 
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
-					if (i >= e.b.Visual.Line() && i <= e.b.Cursor.Line()) || (i <= e.b.Visual.Line() && i >= e.b.Cursor.Line()) {
-						l = e.b.AddVisual(e.curMode, str[start:end], i)
+					if (i >= e.b[e.curBuffer].Visual.Line() && i <= e.b[e.curBuffer].Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
+						l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
 					} else {
 						l = e.tui.BuildLine(str, show, start, end, i)
 					}
@@ -60,7 +61,7 @@ func (e *Editor) Draw() {
 				l += ascii.Reset.Str()
 			} else {
 				if e.curMode == mode.Visual || e.curMode == mode.Visual_line {
-					l = e.b.AddVisual(e.curMode, str[start:end], i)
+					l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
 				} else {
 					l = string(str[start:end])
 				}
@@ -79,8 +80,8 @@ func (e *Editor) Draw() {
 	}
 
 	// Calculation the visual position of the cursor
-	x := e.tui.CurOff + initialOffset + len(emtpyLineSpases)
-	y := e.tui.CurRow + cursorLineOffset
+	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
+	y := e.tui.CurRow + enums.CursorLineOffset
 
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
@@ -97,11 +98,11 @@ func (e *Editor) Draw() {
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Command:
-		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", tui.Colorise(" :", ascii.YellowFg), ascii.Reset, e.command, e.tui.H, len(e.command)+initialOffset)
+		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", tui.Colorise(" :", ascii.YellowFg), ascii.Reset, e.command, e.tui.H, len(e.command)+enums.InitialOffset)
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
-		cursorPos := fmt.Sprintf("[%s]", e.file)
+		cursorPos := fmt.Sprintf("[%s]", e.b[e.curBuffer].Title)
 		fmt.Fprintf(&data, "%s", tui.BuildLowerBar(x, y, cursorPos, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)

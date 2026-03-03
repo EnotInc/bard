@@ -14,18 +14,17 @@ import (
 )
 
 type Editor struct {
-	oldState *term.State
-	b        *buffer.Buffer
-	tui      *tui.TUI
-	c        *config.Config
-	curMode  mode.Mode
-	command  string // used in command mode
-	subCmd   string // sub command, line 12j
-	file     string
-	save     bool // is terminal save to work (depends on window size)
-	isMdFile bool
-	fdOut    int
-	fdIn     int
+	oldState  *term.State
+	b         []*buffer.Buffer //list of buffers
+	tui       *tui.TUI
+	c         *config.Config
+	curMode   mode.Mode
+	command   string // used in command mode
+	subCmd    string // sub command, line 12j
+	save      bool   // is terminal save to work (depends on window size)
+	fdOut     int
+	fdIn      int
+	curBuffer int // current buffer index
 }
 
 func InitEditor() *Editor {
@@ -43,16 +42,16 @@ func InitEditor() *Editor {
 	_tui := tui.InitTUI(_h, _w)
 
 	e := &Editor{
-		oldState: old,
-		b:        _b,
-		tui:      _tui,
-		c:        _c,
-		curMode:  mode.Normal,
-		isMdFile: false,
-		command:  "",
-		subCmd:   "",
-		fdOut:    _fdOut,
-		fdIn:     _fdIn,
+		oldState:  old,
+		b:         _b,
+		tui:       _tui,
+		c:         _c,
+		curMode:   mode.Normal,
+		command:   "",
+		subCmd:    "",
+		fdOut:     _fdOut,
+		fdIn:      _fdIn,
+		curBuffer: 0,
 	}
 
 	if _w < 80 || _h < 30 {

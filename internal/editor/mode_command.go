@@ -1,6 +1,9 @@
 package editor
 
-import "Enot/Bard/internal/mode"
+import (
+	"Enot/Bard/internal/enums"
+	"Enot/Bard/internal/mode"
+)
 
 func (e *Editor) caseCommand(key rune) {
 	switch key {
@@ -28,12 +31,24 @@ func (e *Editor) caseCommand(key rune) {
 func (e *Editor) execCommand() {
 	switch e.command {
 	case "q":
+		if len(e.b) > 1 {
+			e.delBuffer(e.curBuffer)
+		} else {
+			e.Exit(0)
+		}
+	case "qa":
 		e.Exit(0)
 	case "w":
 		e.SaveFile()
 	case "x", "wq":
-		e.SaveFile()
-		e.Exit(0)
+		if len(e.b) > 1 {
+			e.delBuffer(e.curBuffer)
+		} else {
+			e.SaveFile()
+			e.Exit(0)
+		}
+	case "help", "h":
+		e.OpenHelp(enums.About)
 	case "rln":
 		e.c.RLN = !e.c.RLN
 	case "showmd":
@@ -45,7 +60,7 @@ func (e *Editor) execCommand() {
 			if e.command[0] == 'w' && e.command[1] == ' ' {
 				fileName := e.command[2:]
 				e.CreateFile(fileName)
-				e.file = fileName
+				e.b[e.curBuffer].Title = fileName
 				e.SaveFile()
 			} else {
 				e.tui.Message = "unknown command"
