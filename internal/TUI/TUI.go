@@ -140,7 +140,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	var data = ""
 	cmd := Colorise(" :", ascii.YellowFg) + string(ascii.Reset)
-	data += fmt.Sprintf("%s%s\033[%d;%dH%s", cmd, curdata, ui.H, len(curdata)+initialOffset, ascii.StatusBar)
+	data += fmt.Sprintf("%s%s\033[%d;%dH%s", cmd, curdata, ui.H, len(curdata)+initialOffset, ascii.Reset)
 
 	return data
 }

@@ -17,3 +17,5 @@ Contains main logic for every vim motion
 ## `ui_movement.go`
 Here is where visual cursor position is changed
 
+## `tabs.go`
+Uset to work with multible tabs (buffers)

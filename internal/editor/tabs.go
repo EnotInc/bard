@@ -22,3 +22,20 @@ func (e *Editor) delBuffer(index int) {
 		e.tui.Message = "Last buffer can't be removed"
 	}
 }
+
+func (e *Editor) nextTab() {
+	if e.curBuffer+1 >= len(e.b) {
+		e.curBuffer = 0
+	} else {
+		e.curBuffer += 1
+	}
+}
+
+func (e *Editor) prevTab() {
+	if e.curBuffer-1 <= 0 {
+		e.curBuffer = len(e.b) - 1
+	} else {
+
+		e.curBuffer -= 1
+	}
+}

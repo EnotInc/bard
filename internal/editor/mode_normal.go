@@ -91,8 +91,8 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'O':
 		e.curMode = mode.Insert
-		e.b[e.curBuffer].MoveToFirstChar()
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
+		e.b[e.curBuffer].MoveToFirstChar()
 		e.ScrollUp()
 		e.moveLeft()
 		e.tui.ShowHello = false

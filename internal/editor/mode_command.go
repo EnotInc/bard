@@ -57,6 +57,10 @@ func (e *Editor) execCommand() {
 		e.c.Render = !e.c.Render
 	case "tn", "tabnames":
 		e.c.TabNames = !e.c.TabNames
+	case "gt":
+		e.nextTab()
+	case "gT":
+		e.prevTab()
 	default:
 		if len(e.command) > 3 {
 			if e.command[0] == 'w' && e.command[1] == ' ' {
