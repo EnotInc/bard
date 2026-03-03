@@ -1,12 +1,25 @@
 package editor
 
 import (
+	"Enot/Bard/docs/help"
 	"Enot/Bard/internal/buffer"
 	"bufio"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+func (e *Editor) OpenHelp() {
+	e.newBuffer()
+	lines := strings.SplitSeq(help.About, "\n")
+	for line := range lines {
+		l := &buffer.Line{}
+
+		line = strings.ReplaceAll(line, "\t", "    ")
+		e.b[e.curBuffer].Lines = append(e.b[e.curBuffer].Lines, l)
+		e.b[e.curBuffer].Lines[len(e.b[e.curBuffer].Lines)-1].Data = []rune(line)
+	}
+}
 
 func (e *Editor) LoadFile(file string) {
 	if _, err := os.Stat(file); err != nil {

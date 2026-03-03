@@ -44,6 +44,8 @@ func (e *Editor) execCommand() {
 			e.SaveFile()
 			e.Exit(0)
 		}
+	case "help", "h":
+		e.OpenHelp()
 	case "rln":
 		e.c.RLN = !e.c.RLN
 	case "showmd":
