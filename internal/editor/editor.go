@@ -22,7 +22,6 @@ type Editor struct {
 	command   string // used in command mode
 	subCmd    string // sub command, line 12j
 	save      bool   // is terminal save to work (depends on window size)
-	isMdFile  bool
 	fdOut     int
 	fdIn      int
 	curBuffer int // current buffer index
@@ -48,7 +47,6 @@ func InitEditor() *Editor {
 		tui:       _tui,
 		c:         _c,
 		curMode:   mode.Normal,
-		isMdFile:  false,
 		command:   "",
 		subCmd:    "",
 		fdOut:     _fdOut,

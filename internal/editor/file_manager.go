@@ -13,6 +13,7 @@ import (
 
 func (e *Editor) OpenHelp(topic enums.Help) {
 	e.newBuffer()
+	e.b[e.curBuffer].IsMdFile = true
 
 	var lines iter.Seq[string]
 	switch topic {
@@ -45,7 +46,7 @@ func (e *Editor) LoadFile(file string) {
 	defer f.Close()
 
 	ext := filepath.Ext(file)
-	e.isMdFile = (ext == ".md" || ext == ".MD")
+	e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
 
 	scanner := bufio.NewScanner(f)
 
@@ -85,7 +86,7 @@ func (e *Editor) SaveFile() {
 			e.tui.Message = err.Error()
 		} else {
 			ext := filepath.Ext(e.b[e.curBuffer].Title)
-			e.isMdFile = (ext == ".md" || ext == ".MD")
+			e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
 
 			e.tui.Message = "file saved"
 		}

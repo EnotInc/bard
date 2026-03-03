@@ -18,21 +18,23 @@ var openPairs map[rune]rune = map[rune]rune{
 }
 
 type Buffer struct {
-	Title  string
-	pairs  []rune // paired brackets
-	copies []*copied
-	Lines  []*Line
-	Cursor *cursor
-	Visual *cursor
+	Title    string
+	pairs    []rune // paired brackets
+	copies   []*copied
+	Lines    []*Line
+	Cursor   *cursor
+	Visual   *cursor
+	IsMdFile bool
 }
 
 func InitBuffer() []*Buffer {
 	c := &cursor{line: 0, offset: 0}
 	v := &cursor{line: 0, offset: 0}
 	b := &Buffer{
-		Cursor: c,
-		Visual: v,
-		pairs:  []rune{},
+		Cursor:   c,
+		Visual:   v,
+		pairs:    []rune{},
+		IsMdFile: false,
 	}
 	b.Lines = append(b.Lines, &Line{Data: []rune("")})
 	var bfs []*Buffer

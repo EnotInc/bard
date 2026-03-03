@@ -43,7 +43,7 @@ func (e *Editor) Draw() {
 
 			n := tui.BuildNumber(e.b[e.curBuffer].Cursor.Line(), i+1, maxNumLen, e.c.RLN)
 			var l = ""
-			if e.isMdFile && e.c.Render {
+			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
 
