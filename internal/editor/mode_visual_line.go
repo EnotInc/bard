@@ -1,6 +1,9 @@
 package editor
 
-import "Enot/Bard/internal/mode"
+import (
+	"Enot/Bard/internal/enums"
+	"Enot/Bard/internal/mode"
+)
 
 func (e *Editor) caseVisualLine(key rune) {
 	switch key {
@@ -32,7 +35,7 @@ func (e *Editor) caseVisualLine(key rune) {
 		e.curMode = mode.Normal
 	case 's':
 		e.b[e.curBuffer].CopySelected(true, true)
-		e.b[e.curBuffer].InsertEmptyLine(above)
+		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
 		e.b[e.curBuffer].MoveToFirstChar()
 		e.curMode = mode.Insert
 	case 'o', 'O':

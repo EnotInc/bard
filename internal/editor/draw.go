@@ -3,6 +3,7 @@ package editor
 import (
 	tui "Enot/Bard/internal/TUI"
 	"Enot/Bard/internal/ascii"
+	"Enot/Bard/internal/enums"
 	"Enot/Bard/internal/mode"
 	"fmt"
 	"strings"
@@ -28,7 +29,7 @@ func (e *Editor) Draw() {
 
 			// This 2 variables are used to get the horizontal borders of the visible content
 			start := e.tui.XScroll
-			end := e.tui.W - initialOffset - len(emtpyLineSpases)
+			end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
 
 			str := e.b[e.curBuffer].Lines[i].Data
 			if len(str) <= end {
@@ -79,8 +80,8 @@ func (e *Editor) Draw() {
 	}
 
 	// Calculation the visual position of the cursor
-	x := e.tui.CurOff + initialOffset + len(emtpyLineSpases)
-	y := e.tui.CurRow + cursorLineOffset
+	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
+	y := e.tui.CurRow + enums.CursorLineOffset
 
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
@@ -97,7 +98,7 @@ func (e *Editor) Draw() {
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Command:
-		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", tui.Colorise(" :", ascii.YellowFg), ascii.Reset, e.command, e.tui.H, len(e.command)+initialOffset)
+		fmt.Fprintf(&data, "%s%s%s\033[%d;%dH", tui.Colorise(" :", ascii.YellowFg), ascii.Reset, e.command, e.tui.H, len(e.command)+enums.InitialOffset)
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:

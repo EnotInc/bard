@@ -1,25 +1,21 @@
 package editor
 
-const (
-	ScrollBorder     = 5
-	cursorLineOffset = 1
-	initialOffset    = 3
-)
+import "Enot/Bard/internal/enums"
 
 // Making sure that visual Cursor is alright
 func (e *Editor) setUiCursor() {
 	if e.tui.XScroll > e.b[e.curBuffer].Cursor.Offset() {
 		e.tui.XScroll = e.b[e.curBuffer].Cursor.Offset()
-	} else if e.tui.XScroll < e.b[e.curBuffer].Cursor.Offset()-e.tui.W+ScrollBorder*2 {
-		e.tui.XScroll = e.b[e.curBuffer].Cursor.Offset() - e.tui.W + ScrollBorder*2
+	} else if e.tui.XScroll < e.b[e.curBuffer].Cursor.Offset()-e.tui.W+enums.ScrollBorder*2 {
+		e.tui.XScroll = e.b[e.curBuffer].Cursor.Offset() - e.tui.W + enums.ScrollBorder*2
 	}
-	if e.tui.YScroll > e.b[e.curBuffer].Cursor.Line()-ScrollBorder {
-		e.tui.YScroll = e.b[e.curBuffer].Cursor.Line() - ScrollBorder
+	if e.tui.YScroll > e.b[e.curBuffer].Cursor.Line()-enums.ScrollBorder {
+		e.tui.YScroll = e.b[e.curBuffer].Cursor.Line() - enums.ScrollBorder
 		if e.tui.YScroll < 0 {
 			e.tui.YScroll = 0
 		}
-	} else if e.tui.YScroll < e.b[e.curBuffer].Cursor.Line()-e.tui.H+ScrollBorder {
-		e.tui.YScroll = e.b[e.curBuffer].Cursor.Line() - e.tui.H + ScrollBorder
+	} else if e.tui.YScroll < e.b[e.curBuffer].Cursor.Line()-e.tui.H+enums.ScrollBorder {
+		e.tui.YScroll = e.b[e.curBuffer].Cursor.Line() - e.tui.H + enums.ScrollBorder
 	}
 
 	e.tui.CurRow = e.b[e.curBuffer].Cursor.Line() - e.tui.YScroll
@@ -27,7 +23,7 @@ func (e *Editor) setUiCursor() {
 }
 
 func (e *Editor) ScrollUp() {
-	if e.tui.CurRow == ScrollBorder {
+	if e.tui.CurRow == enums.ScrollBorder {
 		if e.tui.YScroll != 0 {
 			e.tui.YScroll -= 1
 		}
@@ -36,8 +32,8 @@ func (e *Editor) ScrollUp() {
 }
 
 func (e *Editor) ScrollDown() {
-	if e.tui.CurRow == e.tui.H-ScrollBorder {
-		if e.tui.YScroll+e.tui.H != len(e.b[e.curBuffer].Lines)+ScrollBorder {
+	if e.tui.CurRow == e.tui.H-enums.ScrollBorder {
+		if e.tui.YScroll+e.tui.H != len(e.b[e.curBuffer].Lines)+enums.ScrollBorder {
 			e.tui.YScroll += 1
 		}
 	}
@@ -45,8 +41,8 @@ func (e *Editor) ScrollDown() {
 }
 
 func (e *Editor) ScrollRight() {
-	if e.tui.CurOff >= e.tui.W-ScrollBorder*2 {
-		if e.tui.XScroll+e.tui.W-initialOffset != len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data)+ScrollBorder {
+	if e.tui.CurOff >= e.tui.W-enums.ScrollBorder*2 {
+		if e.tui.XScroll+e.tui.W-enums.InitialOffset != len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data)+enums.ScrollBorder {
 			e.tui.XScroll += 1
 		}
 	}
@@ -54,7 +50,7 @@ func (e *Editor) ScrollRight() {
 }
 
 func (e *Editor) ScrollLeft() {
-	if e.tui.CurOff <= ScrollBorder {
+	if e.tui.CurOff <= enums.ScrollBorder {
 		if e.tui.XScroll != 0 {
 			e.tui.XScroll -= 1
 		}
@@ -68,7 +64,7 @@ func (e *Editor) moveLeft() {
 }
 
 func (e *Editor) moveRight() {
-	e.tui.XScroll = len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data) - e.tui.W + ScrollBorder*2
+	e.tui.XScroll = len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data) - e.tui.W + enums.ScrollBorder*2
 	if e.tui.XScroll < 0 {
 		e.tui.XScroll = 0
 	}
@@ -78,7 +74,7 @@ func (e *Editor) moveRight() {
 
 func (e *Editor) shiftLeft() {
 	if e.tui.XScroll > e.b[e.curBuffer].Cursor.Offset() {
-		e.tui.XScroll = e.b[e.curBuffer].Cursor.Offset() - ScrollBorder
+		e.tui.XScroll = e.b[e.curBuffer].Cursor.Offset() - enums.ScrollBorder
 		if e.tui.XScroll < 0 {
 			e.tui.XScroll = 0
 		}

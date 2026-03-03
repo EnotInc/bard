@@ -1,6 +1,9 @@
 package editor
 
-import "Enot/Bard/internal/mode"
+import (
+	"Enot/Bard/internal/enums"
+	"Enot/Bard/internal/mode"
+)
 
 func (e *Editor) caseCommand(key rune) {
 	switch key {
@@ -45,7 +48,7 @@ func (e *Editor) execCommand() {
 			e.Exit(0)
 		}
 	case "help", "h":
-		e.OpenHelp()
+		e.OpenHelp(enums.About)
 	case "rln":
 		e.c.RLN = !e.c.RLN
 	case "showmd":

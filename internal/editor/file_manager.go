@@ -3,15 +3,26 @@ package editor
 import (
 	"Enot/Bard/docs/help"
 	"Enot/Bard/internal/buffer"
+	"Enot/Bard/internal/enums"
 	"bufio"
+	"iter"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func (e *Editor) OpenHelp() {
+func (e *Editor) OpenHelp(topic enums.Help) {
 	e.newBuffer()
-	lines := strings.SplitSeq(help.About, "\n")
+
+	var lines iter.Seq[string]
+	switch topic {
+	case enums.About:
+		lines = strings.SplitSeq(help.About, "\n")
+	default:
+		e.tui.Message = "Unable to open this help topic"
+		return
+	}
+
 	for line := range lines {
 		l := &buffer.Line{}
 

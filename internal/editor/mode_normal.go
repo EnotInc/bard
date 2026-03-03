@@ -1,18 +1,9 @@
 package editor
 
 import (
+	"Enot/Bard/internal/enums"
 	"Enot/Bard/internal/mode"
 	"strconv"
-)
-
-const (
-	above = iota
-	below
-)
-
-const (
-	before = iota
-	after
 )
 
 func (e *Editor) moveWithSubCommand(move func(int)) {
@@ -92,7 +83,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.curMode = mode.Command
 	case 'o':
 		e.curMode = mode.Insert
-		e.b[e.curBuffer].InsertEmptyLine(below)
+		e.b[e.curBuffer].InsertEmptyLine(enums.Below)
 		e.b[e.curBuffer].J(1)
 		e.ScrollDown()
 		e.moveLeft()
@@ -100,7 +91,7 @@ func (e *Editor) caseNormal(key rune) {
 	case 'O':
 		e.curMode = mode.Insert
 		e.b[e.curBuffer].MoveToFirstChar()
-		e.b[e.curBuffer].InsertEmptyLine(above)
+		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
 		e.ScrollUp()
 		e.moveLeft()
 		e.tui.ShowHello = false
@@ -158,10 +149,10 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].StartVisualLine()
 		e.tui.ShowHello = false
 	case 'p':
-		e.b[e.curBuffer].Paste(after)
+		e.b[e.curBuffer].Paste(enums.After)
 		e.tui.ShowHello = false
 	case 'P':
-		e.b[e.curBuffer].Paste(before)
+		e.b[e.curBuffer].Paste(enums.Before)
 		e.tui.ShowHello = false
 	default:
 		e.subCmd = ""
