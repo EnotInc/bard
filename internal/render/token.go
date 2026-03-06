@@ -33,7 +33,6 @@ const (
 
 	Stricked   = "~~"
 	Hightlight = "=="
-	Separator  = "---"
 
 	Header_1 = "#"
 	Header_2 = "##"

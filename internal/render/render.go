@@ -2,19 +2,22 @@ package render
 
 import (
 	"Enot/Bard/internal/ascii"
+	"Enot/Bard/internal/enums"
 	"fmt"
 	"slices"
+	"strings"
 )
 
 type Renderer struct {
 	curAttr string
 	c       *cache
 	l       *lexer
+	w       int
 }
 
 func InitRender(w, h int) *Renderer {
 	_c := initCache()
-	r := &Renderer{c: _c}
+	r := &Renderer{c: _c, w: w}
 	// TODO: create a new lexer for code and separate it from the default markdown lexer and renderer
 	r.l = NewLexer()
 	return r
@@ -27,6 +30,13 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 		if slices.Equal(l.raw, line) {
 			return l.render, l.diff
 		}
+	}
+
+	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
+		if show {
+			return painAsAttr("---"), 0
+		}
+		return painAsAttr(strings.Repeat("\u2015", r.w)), 3 - r.w + enums.InitialOffset*2
 	}
 
 	r.l.input = line
@@ -78,8 +88,6 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 			} else {
 				data += string(tok.Value) + string(tok.Literal)
 			}
-		case Separator:
-			data += r.renderSeparator()
 		case Hightlight:
 			data += r.simpleAttrRender(ascii.Hightlight.Str(), string(tok.Value), show)
 		case Link:
@@ -139,10 +147,6 @@ func paintString(c ascii.Color, str string) string {
 		s += fmt.Sprintf("%s%c", c, x)
 	}
 	return s
-}
-
-func (r *Renderer) renderSeparator() string {
-	return painAsAttr("---")
 }
 
 func (r *Renderer) renderBoxEmpty(t *Token, show bool) string {
