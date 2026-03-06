@@ -217,7 +217,7 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 			data = fmt.Sprintf("[%d]", i+1)
 		}
 		if i == curTab {
-			data = Colorise(data, ascii.Tab) + string(ascii.ResetFg)
+			data = Colorise(data, ascii.Tab) + string(ascii.Reset)
 		}
 		fmt.Fprintf(&s, "%s", data)
 	}
