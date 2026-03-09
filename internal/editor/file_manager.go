@@ -15,6 +15,7 @@ import (
 func (e *Editor) OpenHelp(topic enums.Help) {
 	e.newBuffer()
 	e.b[e.curBuffer].Lines = []*buffer.Line{}
+	e.b[e.curBuffer].IsReadOnly = true
 	e.b[e.curBuffer].IsMdFile = true
 	e.b[e.curBuffer].Title = string(topic)
 
@@ -77,25 +78,27 @@ func (e *Editor) CreateFile(fileName string) {
 }
 
 func (e *Editor) SaveFile() {
-	if !(e.b[e.curBuffer].Title == "" || len(e.b[e.curBuffer].Title) == 0) {
-		var data []byte
+	if !e.b[e.curBuffer].IsReadOnly {
+		if !(e.b[e.curBuffer].Title == "" || len(e.b[e.curBuffer].Title) == 0) {
+			var data []byte
 
-		for _, v := range e.b[e.curBuffer].Lines {
-			byteLine := []byte(string(v.Data))
-			data = append(data, byteLine...)
-			data = append(data, byte('\n'))
-		}
+			for _, v := range e.b[e.curBuffer].Lines {
+				byteLine := []byte(string(v.Data))
+				data = append(data, byteLine...)
+				data = append(data, byte('\n'))
+			}
 
-		err := os.WriteFile(e.b[e.curBuffer].Title, data, 0644)
-		if err != nil {
-			e.tui.Message = err.Error()
+			err := os.WriteFile(e.b[e.curBuffer].Title, data, 0644)
+			if err != nil {
+				e.tui.Message = err.Error()
+			} else {
+				ext := filepath.Ext(e.b[e.curBuffer].Title)
+				e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
+
+				e.tui.Message = "file saved"
+			}
 		} else {
-			ext := filepath.Ext(e.b[e.curBuffer].Title)
-			e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
-
-			e.tui.Message = "file saved"
+			e.tui.Message = "file name was not provided"
 		}
-	} else {
-		e.tui.Message = "file name was not provided"
 	}
 }

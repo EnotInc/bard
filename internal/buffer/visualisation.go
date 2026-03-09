@@ -28,16 +28,12 @@ func (b *Buffer) AddVisual(curMode mode.Mode, l []rune, i int) string {
 		}
 
 		if startLine == i && i == endLine {
-			//line = l[:startOffset] + string(startSel) + l[startOffset:endOffset] + string(reset) + l[endOffset:]
 			line = slices.Concat(l[:startOffset], []rune(ascii.StartSel), l[startOffset:endOffset], []rune(ascii.Reset), l[endOffset:])
 		} else if startLine < i && i < endLine {
-			//line = string(startSel) + l + string(reset)
 			line = slices.Concat([]rune(ascii.StartSel), l, []rune(ascii.Reset))
 		} else if startLine == i {
-			//line = l[:startOffset] + string(startSel) + l[startOffset:] + string(reset)
 			line = slices.Concat(l[:startOffset], []rune(ascii.StartSel), l[startOffset:], []rune(ascii.Reset))
 		} else if endLine == i {
-			//line = string(startSel) + l[:endOffset] + string(reset) + l[endOffset:]
 			line = slices.Concat([]rune(ascii.StartSel), l[:endOffset], []rune(ascii.Reset), l[endOffset:])
 		} else {
 			line = l

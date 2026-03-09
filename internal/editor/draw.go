@@ -85,6 +85,10 @@ func (e *Editor) Draw() {
 
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
+	if e.b[e.curBuffer].IsReadOnly && e.tui.Message == "" {
+		e.tui.Message = "read only"
+	}
+
 	// Different modes have different information on the last line
 	switch e.curMode {
 	case mode.Insert:

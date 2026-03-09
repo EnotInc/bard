@@ -61,36 +61,48 @@ func (e *Editor) caseNormal(key rune) {
 		e.moveWithSubCommand(e.b[e.curBuffer].L)
 		e.ScrollRight()
 	case 'i':
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 		e.ScrollLeft()
 		e.tui.ShowHello = false
 	case 'a':
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 		e.b[e.curBuffer].FixOffset()
 		e.b[e.curBuffer].Insert_a()
 		e.ScrollRight()
 		e.tui.ShowHello = false
 	case 'I':
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 		e.b[e.curBuffer].MoveToFirstVisible()
 		e.moveLeft()
 		e.tui.ShowHello = false
 	case 'A':
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 		e.b[e.curBuffer].MoveToLastChar()
 		e.moveRight()
 		e.tui.ShowHello = false
 	case ':':
 		e.curMode = mode.Command
 	case 'o':
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Below)
 		e.b[e.curBuffer].J(1)
 		e.ScrollDown()
 		e.moveLeft()
 		e.tui.ShowHello = false
 	case 'O':
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
 		e.b[e.curBuffer].MoveToFirstChar()
 		e.ScrollUp()
@@ -108,17 +120,23 @@ func (e *Editor) caseNormal(key rune) {
 			e.moveLeft()
 		}
 	case 'R':
-		e.curMode = mode.Replace
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Replace
+		}
 	case 'x':
 		e.b[e.curBuffer].Delkey()
 		e.b[e.curBuffer].H(1)
 		e.ScrollLeft()
 	case 's':
 		e.b[e.curBuffer].Delkey()
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 	case 'S':
 		e.b[e.curBuffer].ClearLine()
-		e.curMode = mode.Insert
+		if !e.b[e.curBuffer].IsReadOnly {
+			e.curMode = mode.Insert
+		}
 	case 'g':
 		e.subCmd += "g"
 		if e.subCmd == "gg" {

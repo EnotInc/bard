@@ -128,7 +128,7 @@ func BuildSpaces(maxOffset int) string {
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
 	var data = ""
 	data += fmt.Sprintf(" %d-%d ", x, y)
-	data += fmt.Sprintf("%s %s %s%s", curdata, ascii.RedFg, message, ascii.StatusBar)
+	data += fmt.Sprintf("%s %s %s%s", curdata, ascii.RedFg, message, ascii.Reset)
 
 	if cmd != "" {
 		data += fmt.Sprintf("<%s>", cmd)
@@ -190,7 +190,7 @@ func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int) string {
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
 	l, diff = ui.render.RenderMarkdownLine(str, i, show)
-	if show {
+	if show || end < len(str) {
 		diff = 0
 	}
 	l = VisibleSubString(l, start, end-diff)
