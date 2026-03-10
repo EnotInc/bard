@@ -13,20 +13,27 @@ import (
 )
 
 func (e *Editor) OpenHelp(topic enums.Help) {
-	e.newBuffer()
-	e.b[e.curBuffer].Lines = []*buffer.Line{}
-	e.b[e.curBuffer].IsReadOnly = true
-	e.b[e.curBuffer].IsMdFile = true
-	e.b[e.curBuffer].Title = string(topic)
 
 	var lines iter.Seq[string]
 	switch topic {
 	case enums.About:
 		lines = strings.SplitSeq(help.About, "\n")
+	case enums.Modes:
+		lines = strings.SplitSeq(help.Modes, "\n")
+	case enums.Normal:
+		lines = strings.SplitSeq(help.Noraml, "\n")
+	case enums.Command:
+		lines = strings.SplitSeq(help.Command, "\n")
 	default:
-		e.tui.Message = "Unable to open this help topic"
+		e.tui.Message = "Unknown topic"
 		return
 	}
+
+	e.newBuffer()
+	e.b[e.curBuffer].Lines = []*buffer.Line{}
+	e.b[e.curBuffer].IsReadOnly = true
+	e.b[e.curBuffer].IsMdFile = true
+	e.b[e.curBuffer].Title = string(topic)
 
 	for line := range lines {
 		l := &buffer.Line{}

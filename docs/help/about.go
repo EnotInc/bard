@@ -11,6 +11,7 @@ Anyways, there are some modes available:
 - ***VISUAL*** / *VISUAL-LINE* - mode for text selection
 
 When you run bart you start in *NORMAL* mode, and in any other mode you can press *ESC* to get back to here
+For more information run ` + "`" + `:h[elp] <topic>` + "`" + `, for example ` + "`" + `:h command` + "`" + ` to get list of available command in ***Command*** mode
 
 Anyways, here is some main vim keys.
 You can also find more information about some specific mode by running *:help <mode>* (not yet tho)

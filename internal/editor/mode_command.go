@@ -3,6 +3,7 @@ package editor
 import (
 	"Enot/Bard/internal/enums"
 	"Enot/Bard/internal/mode"
+	"strings"
 )
 
 func (e *Editor) caseCommand(key rune) {
@@ -41,10 +42,10 @@ func (e *Editor) execCommand() {
 	case "w":
 		e.SaveFile()
 	case "x", "wq":
+		e.SaveFile()
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)
 		} else {
-			e.SaveFile()
 			e.Exit(0)
 		}
 	case "help", "h":
@@ -61,20 +62,39 @@ func (e *Editor) execCommand() {
 		e.nextTab()
 	case "gT":
 		e.prevTab()
-	case "newtab":
+	case "newtab", "nt":
 		e.newBuffer()
 	default:
-		if len(e.command) > 3 {
-			if e.command[0] == 'w' && e.command[1] == ' ' {
-				fileName := e.command[2:]
-				e.CreateFile(fileName)
-				e.b[e.curBuffer].Title = fileName
-				e.SaveFile()
-			} else {
-				e.tui.Message = "unknown command"
-			}
+		e.parceCommand()
+	}
+}
+
+func (e *Editor) parceCommand() {
+	if len(e.command) >= 3 {
+		parts := strings.Split(e.command, " ")
+		if len(parts) != 2 {
+			e.tui.Message = "bad syntax"
 			return
 		}
-		e.tui.Message = "unknown command"
+
+		cmd := parts[0]
+		arg := parts[1]
+
+		switch cmd {
+		case "w":
+			e.CreateFile(arg)
+			e.b[e.curBuffer].Title = arg
+			e.SaveFile()
+		case "newtab", "nt":
+			e.newBuffer()
+			e.CreateFile(arg)
+			e.b[e.curBuffer].Title = arg
+		case "help", "h":
+			e.tui.Message = "not implemented yet"
+			var topic enums.Help = enums.Help(arg)
+			e.OpenHelp(topic)
+		default:
+			e.tui.Message = "unknown command"
+		}
 	}
 }
