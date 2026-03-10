@@ -116,6 +116,54 @@ func (b *Buffer) MoveToFirstVisible() {
 	b.Cursor.keepOffset = b.Cursor.offset
 }
 
+func (b *Buffer) FindNext(ch rune) {
+	i := b.Cursor.offset + 1
+	for i < len(b.Lines[b.Cursor.line].Data)-1 && b.Lines[b.Cursor.line].Data[i] != ch {
+		i += 1
+	}
+	if i < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
+		b.Cursor.offset = i
+		b.Cursor.keepOffset = i
+	}
+	b.FixOffset()
+}
+
+func (b *Buffer) FindPrev(ch rune) {
+	i := b.Cursor.offset + 1
+	for i > 0 && b.Lines[b.Cursor.line].Data[i] != ch {
+		i -= 1
+	}
+	if i > 0 && i != b.Cursor.offset {
+		b.Cursor.offset = i
+		b.Cursor.keepOffset = i
+	}
+	b.FixOffset()
+}
+
+func (b *Buffer) FindBeforeNext(ch rune) {
+	i := b.Cursor.offset + 1
+	for i < len(b.Lines[b.Cursor.line].Data)-1 && b.Lines[b.Cursor.line].Data[i] != ch {
+		i += 1
+	}
+	if i-1 >= 0 && i-1 < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
+		b.Cursor.offset = i - 1
+		b.Cursor.keepOffset = i - 1
+	}
+	b.FixOffset()
+}
+
+func (b *Buffer) FindBeforePrev(ch rune) {
+	i := b.Cursor.offset + 1
+	for i > 0 && b.Lines[b.Cursor.line].Data[i] != ch {
+		i -= 1
+	}
+	if i+1 > 0 && i+1 < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
+		b.Cursor.offset = i + 1
+		b.Cursor.keepOffset = i + 1
+	}
+	b.FixOffset()
+}
+
 func (b *Buffer) MoveBack(amount int) {}
 
 func (b *Buffer) MoveBACK(amount int) {}

@@ -3,8 +3,30 @@ package editor
 import "Enot/Bard/internal/mode"
 
 func (e *Editor) caseVisual(key rune) {
+	cmd := []byte(e.subCmd)
+	if len(cmd) > 0 {
+		switch cmd[len(cmd)-1] {
+		case 'f':
+			e.b[e.curBuffer].FindNext(key)
+			e.subCmd = ""
+			return
+		case 'F':
+			e.b[e.curBuffer].FindPrev(key)
+			e.subCmd = ""
+			return
+		case 't':
+			e.b[e.curBuffer].FindBeforeNext(key)
+			e.subCmd = ""
+			return
+		case 'T':
+			e.b[e.curBuffer].FindBeforePrev(key)
+			e.subCmd = ""
+			return
+		}
+	}
+
 	switch key {
-	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':
+	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'f', 'F', 't', 'T':
 		e.subCmd += string(key)
 	case 'h':
 		e.moveWithSubCommand(e.b[e.curBuffer].H)
