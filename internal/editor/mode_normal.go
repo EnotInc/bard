@@ -1,8 +1,8 @@
 package editor
 
 import (
-	"Enot/Bard/internal/enums"
-	"Enot/Bard/internal/mode"
+	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/mode"
 )
 
 func (e *Editor) caseNormal(key rune) {

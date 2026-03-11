@@ -1,6 +1,6 @@
 package editor
 
-import "Enot/Bard/internal/enums"
+import "github.com/EnotInc/Bard/internal/enums"
 
 // Making sure that visual Cursor is alright
 func (e *Editor) setUiCursor() {

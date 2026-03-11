@@ -1,9 +1,10 @@
 package buffer
 
 import (
-	"Enot/Bard/internal/ascii"
-	"Enot/Bard/internal/mode"
 	"slices"
+
+	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/mode"
 )
 
 // This function is used to add visual highlight to the selected lines

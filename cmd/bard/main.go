@@ -1,8 +1,9 @@
 package main
 
 import (
-	"Enot/Bard/internal/editor"
 	"os"
+
+	"github.com/EnotInc/Bard/internal/editor"
 )
 
 func main() {

@@ -1,12 +1,14 @@
 package editor
 
 import (
-	tui "Enot/Bard/internal/TUI"
-	"Enot/Bard/internal/ascii"
-	"Enot/Bard/internal/enums"
-	"Enot/Bard/internal/mode"
 	"fmt"
 	"strings"
+
+	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/mode"
+
+	tui "github.com/EnotInc/Bard/internal/TUI"
 )
 
 func (e *Editor) Draw() {

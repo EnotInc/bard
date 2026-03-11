@@ -1,17 +1,19 @@
 package editor
 
 import (
-	"Enot/Bard/config"
-	tui "Enot/Bard/internal/TUI"
-	"Enot/Bard/internal/ascii"
-	"Enot/Bard/internal/buffer"
-	"Enot/Bard/internal/mode"
 	"bufio"
 	"fmt"
 	"os"
 	"strconv"
 
 	"golang.org/x/term"
+
+	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/buffer"
+	"github.com/EnotInc/Bard/internal/mode"
+
+	tui "github.com/EnotInc/Bard/internal/TUI"
 )
 
 type Editor struct {

@@ -1,15 +1,16 @@
 package editor
 
 import (
-	"Enot/Bard/docs/help"
-	"Enot/Bard/internal/buffer"
-	"Enot/Bard/internal/enums"
 	"bufio"
 	"fmt"
 	"iter"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/EnotInc/Bard/docs/help"
+	"github.com/EnotInc/Bard/internal/buffer"
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 func (e *Editor) OpenHelp(topic enums.Help) {

@@ -1,6 +1,6 @@
 package editor
 
-import "Enot/Bard/internal/mode"
+import "github.com/EnotInc/Bard/internal/mode"
 
 func (e *Editor) caseVisual(key rune) {
 	cmd := []byte(e.subCmd)

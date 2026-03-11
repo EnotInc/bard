@@ -1,9 +1,10 @@
 package editor
 
 import (
-	"Enot/Bard/internal/buffer"
 	"fmt"
 	"slices"
+
+	"github.com/EnotInc/Bard/internal/buffer"
 )
 
 func (e *Editor) newBuffer() {

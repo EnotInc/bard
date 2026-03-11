@@ -1,13 +1,13 @@
 package tui
 
 import (
-	"Enot/Bard/internal/ascii"
-	"Enot/Bard/internal/render"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/render"
 	"golang.org/x/term"
 )
 

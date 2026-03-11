@@ -1,11 +1,12 @@
 package render
 
 import (
-	"Enot/Bard/internal/ascii"
-	"Enot/Bard/internal/enums"
 	"fmt"
 	"slices"
 	"strings"
+
+	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 type Renderer struct {

@@ -1,6 +1,6 @@
 package tui
 
-import "Enot/Bard/internal/ascii"
+import "github.com/EnotInc/Bard/internal/ascii"
 
 const (
 	hello   = "Oh, hello there!"

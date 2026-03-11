@@ -17,6 +17,11 @@ Quick render example:
 ## **Installation**
 It is not available in any package managers yet, so to install Bard you can do this:
 ```bash
+
+go install github.com/EnotInc/Bard/cmd/bard@latest
+
+#or manually
+
 git clone https://github.com/EnotInc/bard.git
 cd bard/cmd/bard
 go install
