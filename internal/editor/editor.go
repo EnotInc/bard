@@ -9,6 +9,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 
 	"golang.org/x/term"
 )
@@ -82,6 +83,35 @@ func (e *Editor) Exit(code int) {
 	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal)
 	term.Restore(e.fdIn, e.oldState)
 	os.Exit(code)
+}
+
+func (e *Editor) moveWithSubCommand(move func(int)) {
+	if e.subCmd == "" {
+		move(1)
+		return
+	}
+	amount, err := strconv.Atoi(e.subCmd)
+	if err != nil {
+		e.subCmd = ""
+		return
+	}
+	move(amount)
+	e.subCmd = ""
+}
+
+func (e *Editor) replaceWithAmount(key rune) {
+	if e.subCmd == "r" {
+		e.caseReplaceChar(key, 1)
+		return
+	}
+
+	amount, err := strconv.Atoi(e.subCmd[:len(e.subCmd)-1])
+	if err != nil {
+		e.subCmd = ""
+		return
+	}
+	e.caseReplaceChar(key, amount)
+	e.subCmd = ""
 }
 
 // Main loop

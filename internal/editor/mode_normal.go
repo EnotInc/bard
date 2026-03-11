@@ -3,37 +3,7 @@ package editor
 import (
 	"Enot/Bard/internal/enums"
 	"Enot/Bard/internal/mode"
-	"strconv"
 )
-
-func (e *Editor) moveWithSubCommand(move func(int)) {
-	if e.subCmd == "" {
-		move(1)
-		return
-	}
-	amount, err := strconv.Atoi(e.subCmd)
-	if err != nil {
-		e.subCmd = ""
-		return
-	}
-	move(amount)
-	e.subCmd = ""
-}
-
-func (e *Editor) replaceWithAmount(key rune) {
-	if e.subCmd == "r" {
-		e.caseReplaceChar(key, 1)
-		return
-	}
-
-	amount, err := strconv.Atoi(e.subCmd[:len(e.subCmd)-1])
-	if err != nil {
-		e.subCmd = ""
-		return
-	}
-	e.caseReplaceChar(key, amount)
-	e.subCmd = ""
-}
 
 func (e *Editor) caseNormal(key rune) {
 	cmd := []byte(e.subCmd)
