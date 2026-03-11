@@ -1,4 +1,4 @@
-module Enot/Bard
+module github.com/EnotInc/Bard
 
 go 1.25.5
 
