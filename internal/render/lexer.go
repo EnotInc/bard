@@ -119,25 +119,26 @@ func (l *lexer) NextToken() Token {
 		}
 	case '`':
 		pos := l.position
+		l.readChar()
 		count := 1
-
-		for l.peekChar() == '`' {
-			count += 1
+		for l.ch == '`' {
 			l.readChar()
+			count += 1
 		}
-
-		end := l.position + 1
-		lit := []rune(l.input[pos:end])
+		lit := l.input[pos:l.position]
 
 		switch count {
 		case 1:
 			t = Token{Type: CodeLine, Literal: lit}
-		// case 3:
-		// 	t = Token{Type: CodeBlock, Literal: lit}
+		case 2:
+			t = Token{Type: Symbol, Value: lit}
+		case 3:
+			t = Token{Type: CodeBlock, Literal: lit, Value: l.input[l.position:]}
+			l.position = len(l.input)
+			l.readPosition = len(l.input)
 		default:
 			t = Token{Type: Symbol, Value: lit}
 		}
-		l.readChar()
 	case 0:
 		t = Token{Type: EOL, Literal: []rune("")}
 	default:

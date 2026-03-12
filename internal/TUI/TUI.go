@@ -189,13 +189,17 @@ func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int) string {
 	var l = ""
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
-	l, diff = ui.render.RenderMarkdownLine(str, i, show)
+	l, diff = ui.render.Render(str, i, show)
 	if show || end < len(str) {
 		diff = 0
 	}
 	l = VisibleSubString(l, start, end-diff)
 
 	return l
+}
+
+func (ui *TUI) ResetRender() {
+	ui.render.Reset()
 }
 
 func (ui *TUI) Center(l []rune) string {

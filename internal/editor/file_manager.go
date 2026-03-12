@@ -46,13 +46,9 @@ func (e *Editor) OpenHelp(topic enums.Help) {
 }
 
 func (e *Editor) LoadFile(file string) {
-	if info, err := os.Stat(file); err != nil {
-		if !info.IsDir() {
-			e.CreateFile(file)
-			e.tui.ShowHello = true
-		} else {
-			panic("Can't work with dir, file is required")
-		}
+	if _, err := os.Stat(file); err != nil {
+		e.CreateFile(file)
+		e.tui.ShowHello = true
 	}
 
 	f, err := os.Open(file)

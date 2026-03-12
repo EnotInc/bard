@@ -20,6 +20,7 @@ func (e *Editor) Draw() {
 
 	// Clearing the terminal
 	fmt.Fprintf(&data, "%s%s%s", ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart)
+	e.tui.ResetRender()
 
 	upperBorder := e.tui.YScroll
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
