@@ -15,6 +15,7 @@ func (b *Buffer) StartVisual() {
 
 func (b *Buffer) StartVisualLine() {
 	b.Visual.line = b.Cursor.line
+	b.Visual.offset = 0
 }
 
 func (b *Buffer) SwapTail() {

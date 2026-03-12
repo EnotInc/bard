@@ -91,7 +91,6 @@ func (e *Editor) parceCommand() {
 			e.CreateFile(arg)
 			e.b[e.curBuffer].Title = arg
 		case "help", "h":
-			e.tui.Message = "not implemented yet"
 			var topic enums.Help = enums.Help(arg)
 			e.OpenHelp(topic)
 		default:

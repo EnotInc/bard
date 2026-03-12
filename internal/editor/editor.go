@@ -39,6 +39,9 @@ func InitEditor() *Editor {
 		panic(err)
 	}
 	_w, _h, _ := term.GetSize(_fdOut)
+	if _w <= 40 || _h < 15 {
+		panic("Unable to run Bard. Window size is too small!")
+	}
 
 	_c := config.InitConfig()
 	_b := buffer.InitBuffer()
