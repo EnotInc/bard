@@ -92,6 +92,7 @@ func (b *Buffer) RemoveLineAt(lineIndex int) {
 // Set line.data = ""
 func (b *Buffer) ClearLine() {
 	if !b.IsReadOnly {
+		b.Cursor.offset = 0
 		b.Lines[b.Cursor.line].Data = []rune{}
 	}
 }

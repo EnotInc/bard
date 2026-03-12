@@ -1,6 +1,10 @@
 package render
 
-import "slices"
+import (
+	"slices"
+
+	"github.com/EnotInc/Bard/internal/enums"
+)
 
 type cachedLine struct {
 	// raw is used for string comparison
@@ -18,28 +22,24 @@ type cachedLine struct {
 	index int
 
 	// mode that was used when cache is saved
-	mode mode
+	mode enums.Render
 }
 
 type cache struct {
 	lines map[int]*cachedLine
+	dirty bool
 }
 
 func initCache() *cache {
-	return &cache{lines: make(map[int]*cachedLine)}
+	return &cache{lines: make(map[int]*cachedLine), dirty: false}
 }
 
-func (b *cache) isCached(index int) bool {
-	_, ok := b.lines[index]
-	return ok
+func (c *cache) getCached(index int) (*cachedLine, bool) {
+	l, ok := c.lines[index]
+	return l, ok && !c.dirty
 }
 
-func (b *cache) getCached(index int) (*cachedLine, bool) {
-	l, ok := b.lines[index]
-	return l, ok
-}
-
-func (b *cache) cacheLine(raw []rune, render string, diff int, index int, m mode) {
+func (b *cache) cacheLine(raw []rune, render string, diff int, index int, m enums.Render) {
 	// If the line exists in the map, update it
 	if l, ok := b.lines[index]; ok {
 		l.raw = slices.Clone(raw)

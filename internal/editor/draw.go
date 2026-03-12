@@ -15,6 +15,8 @@ func (e *Editor) Draw() {
 	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
 
+	buf := e.b[e.curBuffer]
+
 	// data - is one long string that turns into the TUI
 	var data strings.Builder
 
@@ -27,14 +29,14 @@ func (e *Editor) Draw() {
 
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
-		if i < len(e.b[e.curBuffer].Lines) {
-			show := e.b[e.curBuffer].Cursor.Line() == i || e.c.ShowMD
+		if i < len(buf.Lines) {
+			show := buf.Cursor.Line() == i || e.c.ShowMD
 
 			// This 2 variables are used to get the horizontal borders of the visible content
 			start := e.tui.XScroll
 			end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
 
-			str := e.b[e.curBuffer].Lines[i].Data
+			str := buf.Lines[i].Data
 			if len(str) <= end {
 				end = len(str)
 			}
@@ -44,15 +46,17 @@ func (e *Editor) Draw() {
 				str = []rune{}
 			}
 
-			n := tui.BuildNumber(e.b[e.curBuffer].Cursor.Line(), i+1, maxNumLen, e.c.RLN)
+			n := tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
 			var l = ""
 			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
 
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
-					if (i >= e.b[e.curBuffer].Visual.Line() && i <= e.b[e.curBuffer].Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
+					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
+						//	l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
+						l = tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+						l = tui.VisibleSubString(l, start, end)
 					} else {
 						l = e.tui.BuildLine(str, show, start, end, i)
 					}
@@ -64,7 +68,7 @@ func (e *Editor) Draw() {
 				l += ascii.Reset.Str()
 			} else {
 				if e.curMode == mode.Visual || e.curMode == mode.Visual_line {
-					l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
+					l = tui.AddVisual(e.curMode, str[start:end], i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
 				} else {
 					l = string(str[start:end])
 				}

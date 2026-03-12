@@ -1,19 +1,19 @@
-package render
+package markdown
 
-type lexer struct {
+type Lexer struct {
 	input        []rune
 	position     int
 	readPosition int
 	ch           rune
 }
 
-func NewLexer() *lexer {
-	l := &lexer{}
+func newLexer() *Lexer {
+	l := &Lexer{}
 	l.readChar()
 	return l
 }
 
-func (l *lexer) readChar() {
+func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
 	} else {
@@ -23,7 +23,7 @@ func (l *lexer) readChar() {
 	l.readPosition += 1
 }
 
-func (l *lexer) NextToken() Token {
+func (l *Lexer) NextToken() Token {
 	var t Token
 
 	switch l.ch {
@@ -166,7 +166,7 @@ func (l *lexer) NextToken() Token {
 	return t
 }
 
-func (l *lexer) readNumber() []rune {
+func (l *Lexer) readNumber() []rune {
 	pos := l.position
 	for isNumber(l.ch) {
 		l.readChar()
@@ -174,7 +174,7 @@ func (l *lexer) readNumber() []rune {
 	return l.input[pos:l.position]
 }
 
-func (l *lexer) readText() []rune {
+func (l *Lexer) readText() []rune {
 	pos := l.position
 	for isLetter(l.ch) || isNumber(l.ch) {
 		l.readChar()
@@ -190,7 +190,7 @@ func isNumber(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
 
-func (l *lexer) peekChar() rune {
+func (l *Lexer) peekChar() rune {
 	if l.readPosition >= len(l.input) {
 		return 0
 	} else {
@@ -198,7 +198,7 @@ func (l *lexer) peekChar() rune {
 	}
 }
 
-func (l *lexer) getAttrToken(ch rune, types []TokenType) Token {
+func (l *Lexer) getAttrToken(ch rune, types []TokenType) Token {
 	var t Token
 	pos := l.position
 	count := 1
@@ -226,7 +226,7 @@ func (l *lexer) getAttrToken(ch rune, types []TokenType) Token {
 	return t
 }
 
-func (l *lexer) readLink() Token {
+func (l *Lexer) readLink() Token {
 	text := l.position
 	l.readChar()
 	start := l.position
@@ -267,7 +267,7 @@ func (l *lexer) readLink() Token {
 	return Token{Type: Symbol, Value: []rune("[")}
 }
 
-func (l *lexer) readListOrCheckBox() Token {
+func (l *Lexer) readListOrCheckBox() Token {
 	pos := l.position
 	if l.peekChar() != ' ' {
 		l.readChar()

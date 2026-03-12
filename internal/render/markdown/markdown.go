@@ -1,20 +1,39 @@
-package render
+package markdown
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/render/general"
 )
 
-func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int) {
+type Render struct {
+	curAttr string
+	w       int
+	l       *Lexer
+}
+
+func NewRender(w int) *Render {
+	r := &Render{w: w}
+	r.l = newLexer()
+	return r
+}
+
+func (r *Render) Reset() {
+	r.l.input = []rune{}
+	r.l.position = 0
+	r.l.readPosition = 0
+}
+
+func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int, enums.Render) {
+	var renderMode enums.Render = enums.Markdown
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
-			return painAsAttr("---"), 0
+			return general.PainAsAttr("---"), 0, renderMode
 		}
-		return painAsAttr(strings.Repeat("\u2015", r.w)), 3 - r.w + enums.InitialOffset*2
+		return general.PainAsAttr(strings.Repeat("\u2015", r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
 	}
 
 	r.l.input = line
@@ -60,6 +79,7 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 			} else {
 				data += string(tok.Literal) + string(tok.Value)
 			}
+			renderMode = enums.Code
 		case ListDash:
 			if isWhiteSpace {
 				data += r.renderListDash(&tok, show)
@@ -111,77 +131,64 @@ func (r *Renderer) RenderMarkdownLine(line []rune, lineIndex int, show bool) (st
 	// if !show {
 	// 	r.c.cacheLine(line, data, diff, lineIndex)
 	// }
-	return data, 0
+	return data, 0, renderMode
 }
 
-func painAsAttr(symbol string) string {
-	sym := paintString(ascii.SymbolColor, symbol)
-	return sym + ascii.Reset.Str()
-}
-
-func paintString(c ascii.Color, str string) string {
-	var s = ""
-	for _, x := range str {
-		s += fmt.Sprintf("%s%c", c, x)
-	}
-	return s
-}
-
-func (r *Renderer) renderCodeBlock(t *Token, show bool) string {
-	r.mode = code
+func (r *Render) renderCodeBlock(t *Token, show bool) string {
+	//r.change = true
 	if show {
-		return painAsAttr(string(t.Literal)) + paintString(ascii.CodeLine, string(t.Value))
+		return general.PainAsAttr(string(t.Literal)) + general.PaintString(ascii.CodeLine, string(t.Value))
 	} else {
-		return paintString(ascii.CodeLine, string(t.Value))
+		return general.PaintString(ascii.CodeLine, string(t.Value))
 	}
 }
 
-func (r *Renderer) renderBoxEmpty(t *Token, show bool) string {
+func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	if show {
-		return painAsAttr(string(t.Literal))
+		return general.PainAsAttr(string(t.Literal))
 	} else {
 		return ascii.BoxEmpty.Str()
 	}
 }
 
-func (r *Renderer) renderBoxField(t *Token, show bool) string {
+func (r *Render) renderBoxField(t *Token, show bool) string {
 	if show {
-		return painAsAttr(string(t.Literal))
+		return general.PainAsAttr(string(t.Literal))
 	} else {
 		return ascii.BoxField.Str()
 	}
 }
 
-func (r *Renderer) renderListNumber(t *Token) string {
+func (r *Render) renderListNumber(t *Token) string {
 	var s = ""
-	s += paintString(ascii.ListColor, string(t.Value))
-	s += paintString(ascii.ListColor, string(t.Literal))
+	s += general.PaintString(ascii.ListColor, string(t.Value))
+	s += general.PaintString(ascii.ListColor, string(t.Literal))
 	s += ascii.Reset.Str()
 	return s
 }
 
-func (r *Renderer) renderListDash(t *Token, show bool) string {
+func (r *Render) renderListDash(t *Token, show bool) string {
 	if show {
-		return painAsAttr(string(t.Literal))
+		return general.PainAsAttr(string(t.Literal))
 	} else {
 		return ascii.ListDash.Str()
 	}
 }
 
-func (r *Renderer) renderShield(t *Token, show bool) string {
+func (r *Render) renderShield(t *Token, show bool) string {
 	var s = ""
 	if show {
-		s += painAsAttr(string(t.Literal))
+		s += general.PainAsAttr(string(t.Literal))
 	}
 	s += string(t.Value)
 	return s
 }
 
-func (r *Renderer) renderQuote(t *Token, show bool) string {
+func (r *Render) renderQuote(t *Token, show bool) string {
 	var s = ""
 	s += ascii.Quote.Str()
 	if show {
-		s += painAsAttr(string(t.Literal))
+		s += general.PainAsAttr(string(t.Literal))
 	} else {
 		s += ascii.QuoteSymbol.Str()
 	}
@@ -189,31 +196,31 @@ func (r *Renderer) renderQuote(t *Token, show bool) string {
 	return s
 }
 
-func (r *Renderer) renderText(t *Token) string {
+func (r *Render) renderText(t *Token) string {
 	if r.curAttr != ascii.Reset.Str() {
-		return paintString(ascii.Color(r.curAttr), string(t.Value))
+		return general.PaintString(ascii.Color(r.curAttr), string(t.Value))
 	}
 	return string(t.Value)
 }
 
-func (r *Renderer) renderTag(t *Token, show bool) string {
+func (r *Render) renderTag(t *Token, show bool) string {
 	var s = ""
 	if !show {
 		s += ascii.TagColor.Str()
 		s += ascii.TagS.Str()
-		s += paintString(ascii.TagColor, string(t.Literal))
-		s += paintString(ascii.TagColor, string(t.Value))
+		s += general.PaintString(ascii.TagColor, string(t.Literal))
+		s += general.PaintString(ascii.TagColor, string(t.Value))
 		s += ascii.TagE.Str()
 		s += ascii.Reset.Str()
 	} else {
-		s += paintString(ascii.TagColor, string(t.Literal))
-		s += paintString(ascii.TagColor, string(t.Value))
+		s += general.PaintString(ascii.TagColor, string(t.Literal))
+		s += general.PaintString(ascii.TagColor, string(t.Value))
 	}
 	s += ascii.Reset.Str()
 	return s
 }
 
-func (r *Renderer) renderHeader(t *Token) string {
+func (r *Render) renderHeader(t *Token) string {
 	var s = ""
 	s += ascii.Header.Str()
 	s += ascii.Underline.Str()
@@ -222,7 +229,7 @@ func (r *Renderer) renderHeader(t *Token) string {
 	return s
 }
 
-func (r *Renderer) renderLink(t *Token, show bool) string {
+func (r *Render) renderLink(t *Token, show bool) string {
 	if show {
 		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
 	} else {
@@ -230,7 +237,7 @@ func (r *Renderer) renderLink(t *Token, show bool) string {
 	}
 }
 
-func (r *Renderer) renderImage(t *Token, show bool) string {
+func (r *Render) renderImage(t *Token, show bool) string {
 	if show {
 		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
 	} else {
@@ -238,19 +245,19 @@ func (r *Renderer) renderImage(t *Token, show bool) string {
 	}
 }
 
-func (r *Renderer) simpleAttrRender(mode string, attr string, show bool) string {
+func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {
 	var s = ""
 	if r.curAttr == mode {
 		r.curAttr = ascii.Reset.Str()
 		if show {
-			s += painAsAttr(attr)
+			s += general.PainAsAttr(attr)
 		}
 		s += r.curAttr
 	} else {
 		r.curAttr = mode
 		s += r.curAttr
 		if show {
-			s += painAsAttr(attr)
+			s += general.PainAsAttr(attr)
 		}
 	}
 	return s

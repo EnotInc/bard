@@ -1,4 +1,4 @@
-package render
+package markdown
 
 type TokenType string
 
