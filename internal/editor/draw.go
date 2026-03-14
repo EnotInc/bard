@@ -21,8 +21,7 @@ func (e *Editor) Draw() {
 	var data strings.Builder
 
 	// Clearing the terminal
-	fmt.Fprintf(&data, "%s%s%s", ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart)
-	e.tui.ResetRender()
+	fmt.Fprint(&data, ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart)
 
 	upperBorder := e.tui.YScroll
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
@@ -47,7 +46,7 @@ func (e *Editor) Draw() {
 			}
 
 			n := tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
-			var l = ""
+			var l strings.Builder
 			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
@@ -55,33 +54,34 @@ func (e *Editor) Draw() {
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
 						//	l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
-						l = tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
-						l = tui.VisibleSubString(l, start, end)
+						fmt.Fprint(&l, tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data)))
+						fmt.Fprint(&l, tui.VisibleSubString(l.String(), start, end))
 					} else {
-						l = e.tui.BuildLine(str, show, start, end, i)
+						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i))
 					}
 				// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 				default:
-					l = e.tui.BuildLine(str, show, start, end, i)
+					fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i))
 				}
 
-				l += ascii.Reset.Str()
+				fmt.Fprint(&l, ascii.Reset.Str())
 			} else {
 				if e.curMode == mode.Visual || e.curMode == mode.Visual_line {
-					l = tui.AddVisual(e.curMode, str[start:end], i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+					fmt.Fprint(&l, tui.AddVisual(e.curMode, str[start:end], i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data)))
 				} else {
-					l = string(str[start:end])
+					fmt.Fprint(&l, string(str[start:end]))
 				}
 			}
 
 			// Here is where I add the line to the main data string
-			fmt.Fprintf(&data, "%s %s\n\r", n, l)
+			fmt.Fprint(&data, n, l.String(), "\n\r")
+			l.Reset()
 		} else {
 			// If the line is empty, I just add the '~' symbol
 			if e.tui.ShowHello {
-				fmt.Fprintf(&data, "%s%s%s\n\r", tui.Colorise("~", ascii.CyanFg), ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)))
+				fmt.Fprint(&data, ascii.CyanFg, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)), "\n\r")
 			} else {
-				fmt.Fprintf(&data, "%s\n\r", tui.Colorise("~", ascii.CyanFg))
+				fmt.Fprint(&data, ascii.CyanFg, "~", "\n\r")
 			}
 		}
 	}
@@ -109,7 +109,7 @@ func (e *Editor) Draw() {
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Command:
-		fmt.Fprintf(&data, "%s", e.tui.BuildCommandBar(string(e.command)))
+		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
@@ -128,8 +128,10 @@ func (e *Editor) Draw() {
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
 
+	e.tui.ResetRender()
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
 	// And at the end - print the data
 	fmt.Print(data.String())
+	data.Reset()
 }

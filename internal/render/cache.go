@@ -1,14 +1,12 @@
 package render
 
 import (
-	"slices"
-
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
 type cachedLine struct {
-	// raw is used for string comparison
-	raw []rune
+	// Now I store hash instead the whole line
+	hash uint32
 
 	// render stores the rendered string
 	// without Markdown symbols, but with ANSI characters
@@ -39,22 +37,23 @@ func (c *cache) getCached(index int) (*cachedLine, bool) {
 	return l, ok && !c.dirty
 }
 
-func (b *cache) cacheLine(raw []rune, render string, diff int, index int, m enums.Render) {
+func (c *cache) cacheLine(h uint32, render string, diff int, index int, m enums.Render) {
 	// If the line exists in the map, update it
-	if l, ok := b.lines[index]; ok {
-		l.raw = slices.Clone(raw)
+	//var foo uint32
+	if l, ok := c.lines[index]; ok {
+		l.hash = h
 		l.render = render
 		l.diff = diff
 		l.index = index
 		l.mode = m
 	} else { // Otherwise, create a new one
 		newLine := &cachedLine{}
-		newLine.raw = slices.Clone(raw)
+		newLine.hash = h
 		newLine.render = render
 		newLine.diff = diff
 		newLine.index = index
 		newLine.mode = m
 
-		b.lines[index] = newLine
+		c.lines[index] = newLine
 	}
 }

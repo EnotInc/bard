@@ -7,13 +7,9 @@ import (
 	"time"
 
 	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render"
 	"golang.org/x/term"
-)
-
-const (
-	cursorLineOffset = 1
-	initialOffset    = 3
 )
 
 type visual struct {
@@ -84,10 +80,6 @@ func (tui *TUI) resize(w int, h int) {
 	tui.Redraw <- true
 }
 
-func Colorise(data string, c ascii.Color) string {
-	return fmt.Sprintf("%s%s", c, data)
-}
-
 func BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 	rn := n
 	if rln && rn != curLine+1 {
@@ -96,53 +88,50 @@ func BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 			rn *= -1
 		}
 	}
-	numStr := strconv.Itoa(rn)
+	var numStr = strconv.Itoa(rn)
 	numLen := len(numStr)
-	num := ""
+	var num strings.Builder
 
-	if maxOffset <= initialOffset {
-		maxOffset = initialOffset
+	if maxOffset <= enums.InitialOffset {
+		maxOffset = enums.InitialOffset
 	}
-	num = strings.Repeat(" ", maxOffset-numLen)
-	num = fmt.Sprintf("%s%s", num, numStr)
+	fmt.Fprint(&num, strings.Repeat(" ", maxOffset-numLen))
 
 	if curLine+1 == n {
-		num = Colorise(num, ascii.YellowFg)
+		fmt.Fprint(&num, ascii.YellowFg, numStr)
 	} else {
-		num = Colorise(num, ascii.GrayFg)
+		fmt.Fprint(&num, ascii.GrayFg, numStr)
 	}
-	num += ascii.Reset.Str()
+	fmt.Fprint(&num, ascii.Reset, " ")
 
-	return num
+	return num.String()
 }
 
 func BuildSpaces(maxOffset int) string {
-	space := ""
-	if maxOffset <= initialOffset {
-		maxOffset = initialOffset
+	if maxOffset <= enums.InitialOffset {
+		maxOffset = enums.InitialOffset
 	}
-	space = strings.Repeat(" ", maxOffset-1)
-	return space
+	return strings.Repeat(" ", maxOffset-1)
 }
 
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
-	var data = ""
-	data += fmt.Sprintf(" %d-%d ", x, y)
-	data += fmt.Sprintf("%s %s %s%s", curdata, ascii.RedFg, message, ascii.Reset)
+	var data strings.Builder
+	fmt.Fprintf(&data, " %d-%d ", x, y)
+	fmt.Fprintf(&data, "%s %s %s%s", curdata, ascii.RedFg, message, ascii.Reset)
 
 	if cmd != "" {
-		data += fmt.Sprintf("<%s>", cmd)
+		fmt.Fprintf(&data, "<%s>", cmd)
 	}
 
-	return data
+	return data.String()
 }
 
 func (ui *TUI) BuildCommandBar(curdata string) string {
-	var data = ""
-	cmd := Colorise(" :", ascii.YellowFg) + string(ascii.Reset)
-	data += fmt.Sprintf("%s%s\033[%d;%dH%s", cmd, curdata, ui.H, len(curdata)+initialOffset, ascii.Reset)
+	var data strings.Builder
+	cmd := ascii.YellowFg.Str() + " :" + ascii.Reset.Str()
+	fmt.Fprintf(&data, "%s%s\033[%d;%dH%s", cmd, curdata, ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
 
-	return data
+	return data.String()
 }
 
 /*
@@ -214,16 +203,14 @@ func (ui *TUI) Center(l []rune) string {
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	var s strings.Builder
 	for i, tab := range tabs {
-		data := ""
-		if show {
-			data = fmt.Sprintf("[%d|%s]", i+1, tab)
-		} else {
-			data = fmt.Sprintf("[%d]", i+1)
-		}
 		if i == curTab {
-			data = Colorise(data, ascii.Tab) + string(ascii.Reset)
+			fmt.Fprint(&s, ascii.Tab, ascii.Reset)
 		}
-		fmt.Fprintf(&s, "%s", data)
+		if show {
+			fmt.Fprintf(&s, "[%d|%s]", i+1, tab)
+		} else {
+			fmt.Fprintf(&s, "[%d]", i+1)
+		}
 	}
 	return s.String()
 }
