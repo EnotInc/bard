@@ -9,7 +9,6 @@ import (
 )
 
 // This function is used to add visual highlight to the selected lines
-// TODO: move to TUI
 func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
 	var line []rune
 

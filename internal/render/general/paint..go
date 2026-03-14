@@ -2,6 +2,7 @@ package general
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/EnotInc/Bard/internal/ascii"
 )
@@ -12,9 +13,9 @@ func PainAsAttr(symbol string) string {
 }
 
 func PaintString(c ascii.Color, str string) string {
-	var s = ""
+	var s strings.Builder
 	for _, x := range str {
-		s += fmt.Sprintf("%s%c", c, x)
+		fmt.Fprint(&s, c, string(x))
 	}
-	return s
+	return s.String()
 }

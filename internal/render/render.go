@@ -46,7 +46,6 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool) (string, int) {
 	case enums.Markdown:
 		data, diff, mode = r.md.RenderMarkdownLine(line, lineIndex, show)
 	case enums.Code:
-		//TODO: move out to `code` folder. Expend with it's own lexer, tokens and other stuff
 		data, mode = r.code.RenderCodeLine(line)
 		diff = 0
 

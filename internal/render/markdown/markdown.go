@@ -43,7 +43,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 
 	isWhiteSpace := true
 
-	var data = ""
+	var data strings.Builder
 	var diff = 0
 
 	var i = 0
@@ -51,74 +51,74 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 		switch tok.Type {
 		case Header_1, Header_2, Header_3, Header_4, Header_5, Header_6:
 			if i == 0 {
-				data += r.renderHeader(&tok)
+				data.WriteString(r.renderHeader(&tok))
 			} else {
-				data += string(tok.Literal)
+				data.WriteString(string(tok.Literal))
 			}
 		case ListBoxField:
 			if i == 0 {
-				data += r.renderBoxField(&tok, show)
+				data.WriteString(r.renderBoxField(&tok, show))
 			} else {
-				data += string(tok.Literal)
+				data.WriteString(string(tok.Literal))
 			}
 		case ListBoxEmpty:
 			if i == 0 {
-				data += r.renderBoxEmpty(&tok, show)
+				data.WriteString(r.renderBoxEmpty(&tok, show))
 			} else {
-				data += string(tok.Literal)
+				data.WriteString(string(tok.Literal))
 			}
 		case Quote:
 			if i == 0 {
-				data += r.renderQuote(&tok, show)
+				data.WriteString(r.renderQuote(&tok, show))
 			} else {
-				data += string(tok.Literal)
+				data.WriteString(string(tok.Literal))
 			}
 		case CodeBlock:
 			if i == 0 {
-				data += r.renderCodeBlock(&tok, show)
+				data.WriteString(r.renderCodeBlock(&tok, show))
 			} else {
-				data += string(tok.Literal) + string(tok.Value)
+				data.WriteString(string(tok.Literal) + string(tok.Value))
 			}
 			renderMode = enums.Code
 		case ListDash:
 			if isWhiteSpace {
-				data += r.renderListDash(&tok, show)
+				data.WriteString(r.renderListDash(&tok, show))
 			} else {
-				data += string(tok.Literal)
+				data.WriteString(string(tok.Literal))
 			}
 		case ListNumberB, ListNumberDot:
 			if isWhiteSpace {
-				data += r.renderListNumber(&tok)
+				data.WriteString(r.renderListNumber(&tok))
 			} else {
-				data += string(tok.Value) + string(tok.Literal)
+				data.WriteString(string(tok.Value) + string(tok.Literal))
 			}
 		case Hightlight:
-			data += r.simpleAttrRender(ascii.Hightlight.Str(), string(tok.Value), show)
+			data.WriteString(r.simpleAttrRender(ascii.Hightlight.Str(), string(tok.Value), show))
 		case Link:
-			data += r.renderLink(&tok, show)
+			data.WriteString(r.renderLink(&tok, show))
 		case Image:
-			data += r.renderImage(&tok, show)
+			data.WriteString(r.renderImage(&tok, show))
 		case CodeLine:
-			data += r.simpleAttrRender(ascii.CodeLine.Str(), string(tok.Literal), show)
+			data.WriteString(r.simpleAttrRender(ascii.CodeLine.Str(), string(tok.Literal), show))
 		case TEXT:
-			data += r.renderText(&tok)
+			data.WriteString(r.renderText(&tok))
 		case Shield:
-			data += r.renderShield(&tok, show)
+			data.WriteString(r.renderShield(&tok, show))
 		case Tag:
-			data += r.renderTag(&tok, show)
+			data.WriteString(r.renderTag(&tok, show))
 			diff -= 1
 		case OneStar, OneUnderline:
-			data += r.simpleAttrRender(ascii.Italic.Str(), string(tok.Literal), show)
+			data.WriteString(r.simpleAttrRender(ascii.Italic.Str(), string(tok.Literal), show))
 		case TwoStars, TwoUnderlines:
-			data += r.simpleAttrRender(ascii.Bold.Str(), string(tok.Literal), show)
+			data.WriteString(r.simpleAttrRender(ascii.Bold.Str(), string(tok.Literal), show))
 		case ThreeStars, ThreeUnderlines:
-			data += r.simpleAttrRender(ascii.BoldItalic.Str(), string(tok.Literal), show)
+			data.WriteString(r.simpleAttrRender(ascii.BoldItalic.Str(), string(tok.Literal), show))
 		case Stricked:
-			data += r.simpleAttrRender(ascii.Stricked.Str(), string(tok.Literal), show)
+			data.WriteString(r.simpleAttrRender(ascii.Stricked.Str(), string(tok.Literal), show))
 		case WhiteSpace:
-			data += " "
+			data.WriteString(" ")
 		case Symbol:
-			data += string(tok.Value)
+			data.WriteString(string(tok.Value))
 		}
 		i += 1
 		if isWhiteSpace && tok.Type != WhiteSpace {
@@ -126,12 +126,12 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 		}
 	}
 
-	data += ascii.Reset.Str()
+	data.WriteString(ascii.Reset.Str())
 	r.curAttr = ascii.Reset.Str()
 	// if !show {
 	// 	r.c.cacheLine(line, data, diff, lineIndex)
 	// }
-	return data, 0, renderMode
+	return data.String(), 0, renderMode
 }
 
 func (r *Render) renderCodeBlock(t *Token, show bool) string {
@@ -160,11 +160,11 @@ func (r *Render) renderBoxField(t *Token, show bool) string {
 }
 
 func (r *Render) renderListNumber(t *Token) string {
-	var s = ""
-	s += general.PaintString(ascii.ListColor, string(t.Value))
-	s += general.PaintString(ascii.ListColor, string(t.Literal))
-	s += ascii.Reset.Str()
-	return s
+	var s strings.Builder
+	s.WriteString(general.PaintString(ascii.ListColor, string(t.Value)))
+	s.WriteString(general.PaintString(ascii.ListColor, string(t.Literal)))
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
 }
 
 func (r *Render) renderListDash(t *Token, show bool) string {
@@ -176,24 +176,24 @@ func (r *Render) renderListDash(t *Token, show bool) string {
 }
 
 func (r *Render) renderShield(t *Token, show bool) string {
-	var s = ""
+	var s strings.Builder
 	if show {
-		s += general.PainAsAttr(string(t.Literal))
+		s.WriteString(general.PainAsAttr(string(t.Literal)))
 	}
-	s += string(t.Value)
-	return s
+	s.WriteString(string(t.Value))
+	return s.String()
 }
 
 func (r *Render) renderQuote(t *Token, show bool) string {
-	var s = ""
-	s += ascii.Quote.Str()
+	var s strings.Builder
+	s.WriteString(ascii.Quote.Str())
 	if show {
-		s += general.PainAsAttr(string(t.Literal))
+		s.WriteString(general.PainAsAttr(string(t.Literal)))
 	} else {
-		s += ascii.QuoteSymbol.Str()
+		s.WriteString(ascii.QuoteSymbol.Str())
 	}
-	s += ascii.Reset.Str()
-	return s
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
 }
 
 func (r *Render) renderText(t *Token) string {
@@ -204,29 +204,29 @@ func (r *Render) renderText(t *Token) string {
 }
 
 func (r *Render) renderTag(t *Token, show bool) string {
-	var s = ""
+	var s strings.Builder
 	if !show {
-		s += ascii.TagColor.Str()
-		s += ascii.TagS.Str()
-		s += general.PaintString(ascii.TagColor, string(t.Literal))
-		s += general.PaintString(ascii.TagColor, string(t.Value))
-		s += ascii.TagE.Str()
-		s += ascii.Reset.Str()
+		s.WriteString(ascii.TagColor.Str())
+		s.WriteString(ascii.TagS.Str())
+		s.WriteString(general.PaintString(ascii.TagColor, string(t.Literal)))
+		s.WriteString(general.PaintString(ascii.TagColor, string(t.Value)))
+		s.WriteString(ascii.TagE.Str())
+		s.WriteString(ascii.Reset.Str())
 	} else {
-		s += general.PaintString(ascii.TagColor, string(t.Literal))
-		s += general.PaintString(ascii.TagColor, string(t.Value))
+		s.WriteString(general.PaintString(ascii.TagColor, string(t.Literal)))
+		s.WriteString(general.PaintString(ascii.TagColor, string(t.Value)))
 	}
-	s += ascii.Reset.Str()
-	return s
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
 }
 
 func (r *Render) renderHeader(t *Token) string {
-	var s = ""
-	s += ascii.Header.Str()
-	s += ascii.Underline.Str()
+	var s strings.Builder
+	s.WriteString(ascii.Header.Str())
+	s.WriteString(ascii.Underline.Str())
 	r.curAttr = ascii.Header.Str()
-	s += string(t.Literal)
-	return s
+	s.WriteString(string(t.Literal))
+	return s.String()
 }
 
 func (r *Render) renderLink(t *Token, show bool) string {
@@ -246,19 +246,19 @@ func (r *Render) renderImage(t *Token, show bool) string {
 }
 
 func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {
-	var s = ""
+	var s strings.Builder
 	if r.curAttr == mode {
 		r.curAttr = ascii.Reset.Str()
 		if show {
-			s += general.PainAsAttr(attr)
+			s.WriteString(general.PainAsAttr(attr))
 		}
-		s += r.curAttr
+		s.WriteString(r.curAttr)
 	} else {
 		r.curAttr = mode
-		s += r.curAttr
+		s.WriteString(r.curAttr)
 		if show {
-			s += general.PainAsAttr(attr)
+			s.WriteString(general.PainAsAttr(attr))
 		}
 	}
-	return s
+	return s.String()
 }
