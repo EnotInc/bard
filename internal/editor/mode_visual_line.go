@@ -5,6 +5,8 @@ import (
 	"github.com/EnotInc/Bard/internal/mode"
 )
 
+// About caseVisualLine()
+// Called from [Run()] func when current mode is Visual LIne
 func (e *Editor) caseVisualLine(key rune) {
 	switch key {
 	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0':

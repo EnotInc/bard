@@ -8,6 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/mode"
 )
 
+// About AddVisual()
 // This function is used to add visual highlight to the selected lines
 func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
 	var line []rune
@@ -49,6 +50,9 @@ func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOf
 	return string(line)
 }
 
+// About paint()
+// used to colorise every single char in line
+// is just inserts selected ascii.StarSel [Color] before the char
 func paint(line []rune) []rune {
 	var s = ""
 	for _, x := range line {

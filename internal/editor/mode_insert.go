@@ -2,6 +2,10 @@ package editor
 
 import "github.com/EnotInc/Bard/internal/mode"
 
+// About caseInsert()
+// Called from [Run()] func
+// Used to insert (or delete) key in buffer
+// Some specific keys (like paired symbols) can be treated differently
 func (e *Editor) caseInsert(key rune) {
 	switch key {
 	case '\013', '\r', '\n':

@@ -25,10 +25,6 @@ func (c *cursor) KeepOffset() int {
 
 // ================================================================
 
-func (b *Buffer) insert_a() {
-	b.Cursor.offset += 1
-}
-
 func (b *Buffer) FixOffset() {
 	if b.Cursor.offset < b.Cursor.keepOffset {
 		b.Cursor.offset = b.Cursor.keepOffset

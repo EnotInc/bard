@@ -13,8 +13,9 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
+// About OpenHelp()
+// Used to create hew [Buffer] in [Editor] with selected help topic
 func (e *Editor) OpenHelp(topic enums.Help) {
-
 	var lines iter.Seq[string]
 	switch topic {
 	case enums.About:
@@ -45,6 +46,8 @@ func (e *Editor) OpenHelp(topic enums.Help) {
 	}
 }
 
+// About LoadFile()
+// Used to read file data, and write it into current [Buffer]
 func (e *Editor) LoadFile(file string) {
 	if _, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
@@ -78,6 +81,8 @@ func (e *Editor) LoadFile(file string) {
 	e.b[e.curBuffer].Title = file
 }
 
+// About CreateFile()
+// Called when new file is opened or created in Bard
 func (e *Editor) CreateFile(fileName string) {
 	_, err := os.Create(fileName)
 	if err != nil {
@@ -85,6 +90,8 @@ func (e *Editor) CreateFile(fileName string) {
 	}
 }
 
+// About SaveFile()
+// saves current [Buffer] into file
 func (e *Editor) SaveFile() {
 	if !e.b[e.curBuffer].IsReadOnly {
 		if !(e.b[e.curBuffer].Title == "" || len(e.b[e.curBuffer].Title) == 0) {

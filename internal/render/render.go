@@ -6,6 +6,13 @@ import (
 	md "github.com/EnotInc/Bard/internal/render/markdown"
 )
 
+// About |Renderer|
+// struct is used to work with different renders
+// mode - current [render mode]
+// c - [cache]
+// md - markdown redner
+// code - code redner
+// w - screen width
 type Renderer struct {
 	mode enums.Render
 	c    *cache

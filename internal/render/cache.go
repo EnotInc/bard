@@ -4,25 +4,23 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
+// About |cachedLine|
+// hash - hash of the raw text in line
+// render - stores the rendered string, without Markdown symbols, but with ANSI characters
+// diff - stores the difference in visible characters and original string length
+// index - the line number
+// mode - [render mode] that was used when cache is saved
 type cachedLine struct {
-	// Now I store hash instead the whole line
-	hash uint32
-
-	// render stores the rendered string
-	// without Markdown symbols, but with ANSI characters
+	hash   uint32
 	render string
-
-	// diff stores the difference in visible
-	// characters and original string length
-	diff int
-
-	// index - the line number
-	index int
-
-	// mode that was used when cache is saved
-	mode enums.Render
+	diff   int
+	index  int
+	mode   enums.Render
 }
 
+// About |cache|
+// lines - list of [chchedLine]
+// dirty - now it's just a `bool` value. Used to check if whole screen is needed to be randered again
 type cache struct {
 	lines map[int]*cachedLine
 	dirty bool

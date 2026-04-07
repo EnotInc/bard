@@ -1,5 +1,7 @@
 package enums
 
+// About |Help|
+// Used to work with `:h <topic>` command
 type Help string
 
 const (

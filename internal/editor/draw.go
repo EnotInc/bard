@@ -11,6 +11,11 @@ import (
 	tui "github.com/EnotInc/Bard/internal/TUI"
 )
 
+// About |Draw()|
+// Main func to build tui and display it
+// Line by line this function collects data from buffer, render raw text into markdown, accumulates it and prints it
+// by collection all lines into one variable, I can avoid cursor blinking
+// Curcor position is changed wish ascii escape sequence, and it calculates every time when this function is called
 func (e *Editor) Draw() {
 	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
@@ -86,7 +91,7 @@ func (e *Editor) Draw() {
 		}
 	}
 
-	// Calculation the visual position of the cursor
+	// Calculating the visual position of the cursor
 	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
 	y := e.tui.CurRow + enums.CursorLineOffset
 

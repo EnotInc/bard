@@ -5,6 +5,9 @@ import (
 	"github.com/EnotInc/Bard/internal/mode"
 )
 
+// About caseNormal()
+// Called from [Run()] func
+// used to move cursor, change move or do other stuff, depending on given key
 func (e *Editor) caseNormal(key rune) {
 	cmd := []byte(e.subCmd)
 	if len(cmd) > 0 {

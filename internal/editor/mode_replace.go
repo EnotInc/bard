@@ -2,6 +2,8 @@ package editor
 
 import "github.com/EnotInc/Bard/internal/mode"
 
+// About caseReplaceChar()
+// Unless `escape` key is pressed, replaces 1 chat (given key) at the time
 func (e *Editor) caseReplaceChar(key rune, amount int) {
 	switch key {
 	case '\013', '\r', '\n':
@@ -26,6 +28,9 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 	e.subCmd = ""
 }
 
+// About caseReplaceMode()
+// Called from [Run()] func
+// Untin `escape` key is pressed, replaces char and moves curosr forward
 func (e *Editor) caseReplaceMode(key rune) {
 	switch key {
 	case '\013', '\r', '\n':

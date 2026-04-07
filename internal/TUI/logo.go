@@ -8,6 +8,10 @@ const (
 	motions = "If you didn't know this, well, it's time to learn some vim motions"
 )
 
+// About |BuildASCII()|
+// Called when used starts emtpy editor
+// used to get ascii art ot display it in the middle of screen
+// result will be saved at tui.Hello field
 func (tui *TUI) BuidASCII() {
 
 	data := [][]rune{}
@@ -24,6 +28,8 @@ func (tui *TUI) BuidASCII() {
 	tui.Hello = data
 }
 
+// About |GetASIIInfo()|
+// Called to get one line at the time from tui.Hello (by given index)
 func (tui *TUI) GetASCIIInfo(index int) []rune {
 
 	if index >= len(tui.Hello) {

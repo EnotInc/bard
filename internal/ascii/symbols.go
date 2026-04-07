@@ -1,5 +1,7 @@
 package ascii
 
+// About |Symbol|
+// Used simply to store some specific unicode symbols
 type Symbol string
 
 func (s Symbol) Str() string {

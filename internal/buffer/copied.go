@@ -24,6 +24,7 @@ func (b *Buffer) SwapTail() {
 
 }
 
+// About CopyLine()
 // Create a new line for the buffer.copied list
 func (b *Buffer) CopyLine(l *Line, startOffset int, endOffset int) *copied {
 	if !b.IsReadOnly {
@@ -53,6 +54,8 @@ func (b *Buffer) CopyLine(l *Line, startOffset int, endOffset int) *copied {
 	return nil
 }
 
+// About CopySelected
+// copies selected area into [copied], betven [Cursor] and [Visual] points
 func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	if !b.IsReadOnly {
 		b.copies = []*copied{}

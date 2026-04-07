@@ -2,6 +2,8 @@ package editor
 
 import "github.com/EnotInc/Bard/internal/mode"
 
+// About caseVisual()
+// kinda similar to caseVisulLine
 func (e *Editor) caseVisual(key rune) {
 	cmd := []byte(e.subCmd)
 	if len(cmd) > 0 {

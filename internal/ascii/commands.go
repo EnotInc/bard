@@ -1,5 +1,7 @@
 package ascii
 
+// About commands.go
+// List of ascii escape sequences, that used across whole project to work wiht termilan
 const (
 	ClearView    = "\033[2J"
 	ClearHistory = "\033[3J"

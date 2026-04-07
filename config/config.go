@@ -6,11 +6,16 @@ import (
 	"path/filepath"
 )
 
+// About |Config|
+// |RLN| - relative line munber
+// |ShowMD| - always show markdown symbols
+// |Render| - enable or disable render
+// |TabNames| - show file name is tabs or not
 type Config struct {
-	RLN      bool `json:"rln"`       // relative line number
-	ShowMD   bool `json:"showmd"`    // always show markdown symbols
-	Render   bool `json:"render"`    // enable or disable render
-	TabNames bool `json:"tab_names"` // show file name in iabs
+	RLN      bool `json:"rln"`
+	ShowMD   bool `json:"showmd"`
+	Render   bool `json:"render"`
+	TabNames bool `json:"tab_names"`
 }
 
 func getCongfigPath() string {

@@ -2,6 +2,7 @@ package buffer
 
 import "slices"
 
+// About openPairs
 // map of paired runes. Markdown symbols are included
 var openPairs map[rune]rune = map[rune]rune{
 	'(':  ')',
