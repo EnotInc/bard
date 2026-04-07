@@ -56,8 +56,7 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 	case enums.Markdown:
 		data, diff, mode = r.md.RenderMarkdownLine(line, lineIndex, show)
 	case enums.Code:
-		data, mode = r.code.RenderCodeLine(line)
-		diff = 0
+		data, diff, mode = r.code.RenderCodeLine(line)
 	}
 
 	// If mode has changed, lines below becomes dirty

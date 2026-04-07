@@ -129,7 +129,8 @@ func (l *Lexer) NextToken() Token {
 
 		switch count {
 		case 1:
-			t = Token{Type: CodeLine, Literal: lit}
+			s := l.readCodeLine()
+			t = Token{Type: CodeLine, Literal: []rune{'`'}, Value: s}
 		case 2:
 			t = Token{Type: Symbol, Value: lit}
 		case 3:
@@ -179,6 +180,16 @@ func (l *Lexer) readText() []rune {
 	for isLetter(l.ch) || isNumber(l.ch) {
 		l.readChar()
 	}
+	return l.input[pos:l.position]
+}
+
+func (l *Lexer) readCodeLine() []rune {
+	pos := l.position
+	l.readChar()
+	for l.ch != '`' && l.ch != 0 {
+		l.readChar()
+	}
+	l.readChar()
 	return l.input[pos:l.position]
 }
 

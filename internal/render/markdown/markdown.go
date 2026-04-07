@@ -75,7 +75,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			}
 		case CodeBlock:
 			if i == 0 {
-				data.WriteString(r.renderCodeBlock(&tok, show))
+				data.WriteString(r.renderCodeBlock(&tok))
+				diff = -r.w - len(r.l.input)
 			} else {
 				data.WriteString(string(tok.Literal) + string(tok.Value))
 			}
@@ -99,7 +100,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 		case Image:
 			data.WriteString(r.renderImage(&tok, show))
 		case CodeLine:
-			data.WriteString(r.simpleAttrRender(ascii.CodeLine.Str(), string(tok.Literal), show))
+			data.WriteString(r.RenderCodeLine(&tok, show))
 		case TEXT:
 			data.WriteString(r.renderText(&tok))
 		case Shield:
@@ -131,13 +132,12 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 	return data.String(), diff, renderMode
 }
 
-func (r *Render) renderCodeBlock(t *Token, show bool) string {
-	//r.change = true
-	if show {
-		return general.PainAsAttr(string(t.Literal)) + general.PaintString(ascii.CodeLine, string(t.Value))
-	} else {
-		return general.PaintString(ascii.CodeLine, string(t.Value))
-	}
+func (r *Render) fillSpace() string {
+	return strings.Repeat(" ", r.w-len(r.l.input)-enums.InitialOffset-1)
+}
+
+func (r *Render) renderCodeBlock(t *Token) string {
+	return ascii.CodeBg.Str() + general.PainAsAttr(string(t.Literal)) + general.PaintString(ascii.CodeLine, string(t.Value)) + r.fillSpace()
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
@@ -240,6 +240,20 @@ func (r *Render) renderImage(t *Token, show bool) string {
 	} else {
 		return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 	}
+}
+
+func (r *Render) RenderCodeLine(t *Token, show bool) string {
+	var s strings.Builder
+	if show {
+		s.WriteString(string(t.Literal) + string(t.Value))
+	} else {
+		end := len(t.Value)
+		if end > 0 {
+			end -= 1
+		}
+		s.WriteString(string(t.Value[:end]))
+	}
+	return ascii.CodeBg.Str() + ascii.CodeLine.Str() + s.String() + ascii.Reset.Str()
 }
 
 func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {

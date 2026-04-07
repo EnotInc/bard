@@ -44,7 +44,7 @@ func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOf
 			startLine, endLine = endLine, startLine
 		}
 
-		line = slices.Concat([]rune(ascii.StartSel), l, []rune(ascii.Reset))
+		line = slices.Concat([]rune(ascii.GrayBg), l, []rune(ascii.Reset))
 	}
 
 	return string(line)
@@ -56,7 +56,7 @@ func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOf
 func paint(line []rune) []rune {
 	var s = ""
 	for _, x := range line {
-		s += fmt.Sprintf("%s%c", ascii.StartSel, x)
+		s += fmt.Sprintf("%s%c", ascii.GrayBg, x)
 	}
 	s += ascii.Reset.Str()
 	return []rune(s)

@@ -9,7 +9,7 @@ import (
 
 func PainAsAttr(symbol string) string {
 	sym := PaintString(ascii.SymbolColor, symbol)
-	return sym + ascii.Reset.Str()
+	return sym + ascii.ResetFg.Str()
 }
 
 func PaintString(c ascii.Color, str string) string {
