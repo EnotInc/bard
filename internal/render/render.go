@@ -35,10 +35,13 @@ func (r *Renderer) Reset() {
 	r.c.dirty = false
 }
 
-func (r *Renderer) Render(line []rune, lineIndex int, show bool) (string, int) {
+func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool) (string, int) {
 	lineHash := GetHash(&line)
-	if !show {
-		if l, ok := r.c.getCached(lineIndex); ok == true {
+	if !isCurrent {
+		if l, ok := r.c.getCached(lineIndex); ok {
+			if isFirst && l.mode == enums.Code {
+				r.mode = enums.Code
+			}
 			if lineHash == l.hash && l.mode == r.mode {
 				return l.render, l.diff
 			}
@@ -63,7 +66,7 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool) (string, int) {
 		r.c.dirty = true
 	}
 
-	if !show {
+	if !isCurrent {
 		r.c.cacheLine(lineHash, data, diff, lineIndex, r.mode)
 	}
 	return data, diff

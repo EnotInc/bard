@@ -35,6 +35,7 @@ func (e *Editor) Draw() {
 	for i := upperBorder; i < lowerBorder; i++ {
 		if i < len(buf.Lines) {
 			show := buf.Cursor.Line() == i || e.c.ShowMD
+			isFirst := i == upperBorder
 
 			// This 2 variables are used to get the horizontal borders of the visible content
 			start := e.tui.XScroll
@@ -56,16 +57,16 @@ func (e *Editor) Draw() {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
 
-					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
+					// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
 						visual := tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
 						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 					} else {
-						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i))
+						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst))
 					}
 				// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 				default:
-					fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i))
+					fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst))
 				}
 
 				fmt.Fprint(&l, ascii.Reset.Str())
@@ -74,7 +75,6 @@ func (e *Editor) Draw() {
 					visual := tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
 					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 				} else {
-					//fmt.Fprint(&l, string(str[start:end]))
 					fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
 				}
 			}

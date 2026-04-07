@@ -199,11 +199,11 @@ func VisibleSubString(text string, start int, end int) string {
 	return res.String()
 }
 
-func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int) string {
+func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool) string {
 	var l = ""
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
-	l, diff = ui.render.Render(str, i, show)
+	l, diff = ui.render.Render(str, i, show, isCurrent, isFirst)
 	if show || end < len(str) {
 		diff = 0
 	}

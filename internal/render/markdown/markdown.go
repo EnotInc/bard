@@ -128,10 +128,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 
 	data.WriteString(ascii.Reset.Str())
 	r.curAttr = ascii.Reset.Str()
-	// if !show {
-	// 	r.c.cacheLine(line, data, diff, lineIndex)
-	// }
-	return data.String(), 0, renderMode
+	return data.String(), diff, renderMode
 }
 
 func (r *Render) renderCodeBlock(t *Token, show bool) string {
