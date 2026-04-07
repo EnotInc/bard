@@ -58,9 +58,8 @@ func (e *Editor) Draw() {
 
 					// This if statement lets me render both selected lines with highlights, and not selected with markdown render
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						//	l = e.b[e.curBuffer].AddVisual(e.curMode, str[start:end], i)
-						fmt.Fprint(&l, tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data)))
-						fmt.Fprint(&l, tui.VisibleSubString(l.String(), start, end))
+						visual := tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 					} else {
 						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i))
 					}
@@ -72,9 +71,11 @@ func (e *Editor) Draw() {
 				fmt.Fprint(&l, ascii.Reset.Str())
 			} else {
 				if e.curMode == mode.Visual || e.curMode == mode.Visual_line {
-					fmt.Fprint(&l, tui.AddVisual(e.curMode, str[start:end], i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data)))
+					visual := tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 				} else {
-					fmt.Fprint(&l, string(str[start:end]))
+					//fmt.Fprint(&l, string(str[start:end]))
+					fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
 				}
 			}
 

@@ -55,7 +55,6 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool) (string, int) {
 	case enums.Code:
 		data, mode = r.code.RenderCodeLine(line)
 		diff = 0
-
 	}
 
 	// If mode has changed, lines below becomes dirty

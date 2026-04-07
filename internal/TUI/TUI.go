@@ -150,7 +150,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 	return data.String()
 }
 
-// About BuildCOmmandBar
+// About BuildCommandBar
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	var data strings.Builder
