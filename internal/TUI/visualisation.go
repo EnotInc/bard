@@ -18,9 +18,10 @@ func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOf
 		if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 			startLine, endLine = endLine, startLine
 			startOffset, endOffset = endOffset, startOffset
-		}
-
-		if lastLineLen > 0 {
+			if len(l) > 0 {
+				endOffset += 1 // too highlight the whole char
+			}
+		} else if lastLineLen > 0 {
 			endOffset += 1 // too highlight the whole char
 		}
 
