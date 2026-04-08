@@ -94,6 +94,7 @@ func (b *Buffer) MoveToFirstChar() {
 
 func (b *Buffer) MoveToLastChar() {
 	b.Cursor.offset = len(b.Lines[b.Cursor.line].Data)
+	b.FixOffset()
 }
 
 func (b *Buffer) MoveToLastLine() {
@@ -160,20 +161,98 @@ func (b *Buffer) FindBeforePrev(ch rune) {
 	b.FixOffset()
 }
 
-func (b *Buffer) MoveBack(amount int) {}
+func (b *Buffer) MoveBack(amount int) {
+	var offset int
+	for range amount {
+		curLine := b.Lines[b.Cursor.line]
+		offset = b.Cursor.offset
 
-func (b *Buffer) MoveBACK(amount int) {}
+		if len(curLine.Data) == 0 {
+			continue
+		}
+
+		diff := offset
+
+		ch := curLine.Data[offset]
+		if offset > 0 {
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+		for ch == ' ' && offset > 0 {
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+
+		isSymbol := !isLetterOrNumber(ch)
+		if !isSymbol {
+			for offset > 0 && isLetterOrNumber(ch) && ch != ' ' {
+				offset -= 1
+				ch = curLine.Data[offset]
+			}
+		} else {
+			symbol := ch
+			for offset > 0 && ch == symbol {
+				offset -= 1
+				ch = curLine.Data[offset]
+			}
+		}
+
+		if diff-offset > 1 && offset < len(curLine.Data)-1 {
+			offset += 1
+		}
+	}
+
+	b.Cursor.offset = offset
+	b.Cursor.keepOffset = offset
+	b.FixOffset()
+}
+
+func (b *Buffer) MoveBACK(amount int) {
+	var offset int
+	for range amount {
+		curLine := b.Lines[b.Cursor.line]
+		offset = b.Cursor.offset
+
+		if len(curLine.Data) == 0 {
+			continue
+		}
+
+		ch := curLine.Data[offset]
+
+		// Moving back for 1 char
+		if offset > 0 {
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+		// Until char under the cursor is spece - move back
+		for offset > 0 && ch == ' ' {
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+
+		// when we found prev word - skipping everything until we find scpace
+		for offset > 0 && ch != ' ' {
+			offset -= 1
+			ch = curLine.Data[offset]
+		}
+		for ch == ' ' && offset < len(curLine.Data)-1 { // Moving back to the first letter of ther WORD
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+	}
+
+	b.Cursor.offset = offset
+	b.Cursor.keepOffset = offset
+	b.FixOffset()
+}
 
 func (b *Buffer) MoveWord(amount int) {
-	curLine := b.Lines[b.Cursor.line]
-	offset := b.Cursor.offset
-
+	var offset int
 	for range amount {
+		curLine := b.Lines[b.Cursor.line]
+		offset = b.Cursor.offset
 
-		if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 { // moving to the next line
-			b.J(1)
-			b.Cursor.offset = 0
-			b.Cursor.keepOffset = 0
+		if len(curLine.Data) == 0 {
 			continue
 		}
 
@@ -192,7 +271,7 @@ func (b *Buffer) MoveWord(amount int) {
 				ch = curLine.Data[offset]
 			}
 		}
-		for ch == ' ' { // skipping all spaces after the word
+		for ch == ' ' && offset < len(curLine.Data)-1 { // skipping all spaces after the word
 			offset += 1
 			ch = curLine.Data[offset]
 		}
@@ -204,15 +283,12 @@ func (b *Buffer) MoveWord(amount int) {
 }
 
 func (b *Buffer) MoveWORD(amount int) {
-	curLine := b.Lines[b.Cursor.line]
-	offset := b.Cursor.offset
-
+	var offset int
 	for range amount {
+		curLine := b.Lines[b.Cursor.line]
+		offset = b.Cursor.offset
 
-		if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 { // moving to the next line
-			b.J(1)
-			b.Cursor.offset = 0
-			b.Cursor.keepOffset = 0
+		if len(curLine.Data) == 0 {
 			continue
 		}
 
@@ -223,7 +299,7 @@ func (b *Buffer) MoveWORD(amount int) {
 			offset += 1
 			ch = curLine.Data[offset]
 		}
-		for ch == ' ' { // skipping all spaces after the WORD
+		for ch == ' ' && offset < len(curLine.Data)-1 { // skipping all spaces after the WORD
 			offset += 1
 			ch = curLine.Data[offset]
 		}
@@ -234,18 +310,58 @@ func (b *Buffer) MoveWORD(amount int) {
 	b.FixOffset()
 }
 
-func (b *Buffer) MoveEnd(amount int) {}
+func (b *Buffer) MoveEnd(amount int) {
+	var offset int
+	for range amount {
+		curLine := b.Lines[b.Cursor.line]
+		offset = b.Cursor.offset
+
+		if len(curLine.Data) == 0 {
+			continue
+		}
+
+		diff := offset
+		ch := curLine.Data[offset]
+
+		if offset < len(curLine.Data)-1 {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+		for ch == ' ' && offset < len(curLine.Data)-1 {
+			offset += 1
+			ch = curLine.Data[offset]
+		}
+
+		if isLetterOrNumber(ch) {
+			for isLetterOrNumber(ch) && offset < len(curLine.Data)-1 {
+				offset += 1
+				ch = curLine.Data[offset]
+			}
+		} else {
+			symbol := ch
+			for ch == symbol && offset < len(curLine.Data)-1 {
+				offset += 1
+				ch = curLine.Data[offset]
+			}
+		}
+
+		if offset-diff > 1 && offset > 0 {
+			offset -= 1
+		}
+	}
+
+	b.Cursor.offset = offset
+	b.Cursor.keepOffset = offset
+	b.FixOffset()
+}
 
 func (b *Buffer) MoveEND(amount int) {
-	curLine := b.Lines[b.Cursor.line]
-	offset := b.Cursor.offset
-
+	var offset int
 	for range amount {
+		curLine := b.Lines[b.Cursor.line]
+		offset = b.Cursor.offset
 
-		if len(curLine.Data) == 0 || offset == len(curLine.Data)-1 { // moving to the next line
-			b.J(1)
-			b.Cursor.offset = 0
-			b.Cursor.keepOffset = 0
+		if len(curLine.Data) == 0 {
 			continue
 		}
 
@@ -265,7 +381,7 @@ func (b *Buffer) MoveEND(amount int) {
 			offset += 1
 			ch = curLine.Data[offset]
 		}
-		for ch == ' ' { // skipping all spaces after the WORD
+		for ch == ' ' && offset > 0 { // skipping all spaces after the WORD
 			offset -= 1
 			ch = curLine.Data[offset]
 		}

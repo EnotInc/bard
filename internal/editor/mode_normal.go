@@ -78,7 +78,7 @@ func (e *Editor) caseNormal(key rune) {
 			e.curMode = mode.Insert
 		}
 		e.b[e.curBuffer].MoveToLastChar()
-		e.moveRight()
+		e.b[e.curBuffer].Insert_a()
 		e.tui.ShowHello = false
 	case ':':
 		e.curMode = mode.Command
