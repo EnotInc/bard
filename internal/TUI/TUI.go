@@ -84,6 +84,7 @@ func (tui *TUI) TermSizeMonitor(fdOut int) {
 			last_h = h
 
 			tui.resize(w, h)
+			tui.render.Resize(w)
 		}
 		tui.Redraw <- false
 	}
@@ -204,7 +205,7 @@ func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0
 	l, diff = ui.render.Render(str, i, show, isCurrent, isFirst)
-	if show && end < len(str) {
+	if end < len(str) {
 		diff = 0
 	}
 	l = VisibleSubString(l, start, end-diff)

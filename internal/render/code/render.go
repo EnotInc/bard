@@ -19,6 +19,16 @@ func NewRender(w int) *Render {
 	return r
 }
 
+func (r *Render) Resize(w int) {
+	r.w = w
+}
+
+func (r *Render) Reset() {
+	r.l.input = []rune{}
+	r.l.position = 0
+	r.l.readPosition = 0
+}
+
 func PaintString(c ascii.Color, str []rune) string {
 	var s strings.Builder
 	for _, x := range str {
@@ -28,7 +38,8 @@ func PaintString(c ascii.Color, str []rune) string {
 }
 
 func (r *Render) fillSpace() string {
-	return strings.Repeat(" ", r.w-len(r.l.input)-enums.InitialOffset-1)
+	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
+	return strings.Repeat(" ", amount)
 }
 
 func (r *Render) RenderCodeLine(line []rune) (string, int, enums.Render) {
@@ -67,7 +78,7 @@ func (r *Render) RenderCodeLine(line []rune) (string, int, enums.Render) {
 		}
 	}
 	l := ascii.CodeBg.Str() + data.String() + r.fillSpace()
-	diff := -r.w - len(r.l.input)
+	diff := -r.w - len(r.l.input) - enums.InitialOffset - 1
 	return l, diff, mode
 }
 

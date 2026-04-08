@@ -9,4 +9,4 @@ Now Bard supports next vim modes:
  - ***visual*** mode - used for text selection (not described in help yet)
  - ***replace*** mode - used for char replacement (not described in help yet)
 
-For more information type ` + "`" + `:h[help] <mode>` + "`" + ``
+For more information type ` + "`" + ":h[elp] <mode>" + "`"

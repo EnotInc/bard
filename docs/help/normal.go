@@ -11,7 +11,9 @@ var Noraml = `# Normal Mode
  - r - replace 1 char
  - f/F - find char after/before and move to it
  - t/T - find char after/before amd move in front of it
- - w/e/b - work in progress...
+ - w/W - move to the next word
+ - b/B - move to the start of the prev word
+ - e/E - move to the end of the word
 
 ## Ways to change modes:
  - i/a - set mode to ***Insert*** before or after the cursor

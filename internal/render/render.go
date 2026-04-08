@@ -29,9 +29,15 @@ func InitRender(w, h int) *Renderer {
 	return r
 }
 
+func (r *Renderer) Resize(w int) {
+	r.md.Resize(w)
+	r.code.Resize(w)
+}
+
 func (r *Renderer) Reset() {
 	r.mode = enums.Markdown
 	r.md.Reset()
+	r.code.Reset()
 	r.c.dirty = false
 }
 

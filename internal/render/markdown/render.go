@@ -20,6 +20,10 @@ func NewRender(w int) *Render {
 	return r
 }
 
+func (r *Render) Resize(w int) {
+	r.w = w
+}
+
 func (r *Render) Reset() {
 	r.l.input = []rune{}
 	r.l.position = 0
@@ -133,7 +137,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 }
 
 func (r *Render) fillSpace() string {
-	return strings.Repeat(" ", r.w-len(r.l.input)-enums.InitialOffset-1)
+	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
+	return strings.Repeat(" ", amount)
 }
 
 func (r *Render) renderCodeBlock(t *Token) string {
