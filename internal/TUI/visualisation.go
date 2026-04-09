@@ -2,7 +2,7 @@ package tui
 
 import (
 	"fmt"
-	"slices"
+	"strings"
 
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/mode"
@@ -10,8 +10,12 @@ import (
 
 // About AddVisual()
 // This function is used to add visual highlight to the selected lines
-func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
+func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
 	var line []rune
+
+	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
+		return ascii.GrayBg.Str() + ascii.NewLine.Str() + ascii.Reset.Str()
+	}
 
 	switch curMode {
 	case mode.Visual:
@@ -25,19 +29,29 @@ func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOf
 			endOffset += 1 // too highlight the whole char
 		}
 
+		// TODO: refactor with string builder
+		rendered, _ := ui.render.Render(l, i, true, true, i == startLine)
 		if startLine == i && i == endLine {
 			selected := paint(l[startOffset:endOffset])
-			line = slices.Concat(l[:startOffset], selected, l[endOffset:])
+			before := VisibleSubString(rendered, 0, startOffset-1)
+			after := VisibleSubString(rendered, endOffset, len(l))
+			line = []rune(before + ascii.Reset.Str() + string(selected) + after)
+
 		} else if startLine < i && i < endLine {
-			line = paint(l)
+			line = WithEndLine(string(paint(l)))
+
 		} else if startLine == i {
 			selected := paint(l[startOffset:])
-			line = slices.Concat(l[:startOffset], selected)
+			before := VisibleSubString(rendered, 0, startOffset-1)
+			line = WithEndLine(before + ascii.Reset.Str() + string(selected))
+
 		} else if endLine == i {
 			selected := paint(l[:endOffset])
-			line = slices.Concat(selected, l[endOffset:])
+			after := VisibleSubString(rendered, endOffset, len(l))
+			line = []rune(string(selected) + after)
+
 		} else {
-			line = l
+			line = WithEndLine(rendered)
 		}
 
 	case mode.Visual_line:
@@ -45,20 +59,27 @@ func AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOf
 			startLine, endLine = endLine, startLine
 		}
 
-		line = slices.Concat([]rune(ascii.GrayBg), l, []rune(ascii.Reset))
+		l := ascii.GrayBg.Str() + string(l) + ascii.Reset.Str()
+		line = WithEndLine(l)
 	}
 
 	return string(line)
+}
+
+// About WithEndLine()
+// used to add 'new line' symbol to the givven selected line
+func WithEndLine(l string) []rune {
+	return []rune(l + ascii.GrayBg.Str() + ascii.NewLine.Str() + ascii.Reset.Str())
 }
 
 // About paint()
 // used to colorise every single char in line
 // is just inserts selected ascii.StarSel [Color] before the char
 func paint(line []rune) []rune {
-	var s = ""
-	for _, x := range line {
-		s += fmt.Sprintf("%s%c", ascii.GrayBg, x)
+	var s strings.Builder
+	for _, ch := range line {
+		fmt.Fprintf(&s, "%s%c", ascii.GrayBg, ch)
 	}
-	s += ascii.Reset.Str()
-	return []rune(s)
+	s.WriteString(ascii.Reset.Str())
+	return []rune(s.String())
 }

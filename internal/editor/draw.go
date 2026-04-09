@@ -56,14 +56,10 @@ func (e *Editor) Draw() {
 			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
-
 					// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						visual := tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
 						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
-
-						// so this line basically does nothing. All is does is renderint line in vain, but this allwos render to change between renders, if line has code block token (```)
-						e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst)
 					} else {
 						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst))
 					}
@@ -75,7 +71,7 @@ func (e *Editor) Draw() {
 				fmt.Fprint(&l, ascii.Reset.Str())
 			} else {
 				if e.curMode == mode.Visual || e.curMode == mode.Visual_line {
-					visual := tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+					visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
 					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 				} else {
 					fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))

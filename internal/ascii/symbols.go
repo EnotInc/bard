@@ -14,6 +14,7 @@ const (
 
 	ListDash Symbol = "\u2981"
 	WSEOL    Symbol = "\u00b7"
+	NewLine  Symbol = "\u21b5"
 	BoxEmpty Symbol = " \u25a1"
 	BoxField Symbol = " \u25a0"
 
