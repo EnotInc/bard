@@ -41,6 +41,16 @@ func (r *Renderer) Reset() {
 	r.c.dirty = false
 }
 
+// About Render()
+// This func is used to decide which render to use, and should you ever call a [Code] or [Markdown] render, or this line was already rendered an cached
+// First it calculates hash of current line, an if this line was cached, it does next:
+// 1. If this is a first line in render (first on the screen, on top) and if this line was c `code` line - current render mode is become `code`. This needed to avoid situation, where code block is starts above the visiable screen, and render would thing that text on the screen is a Makrdown, and node a code block
+// 2. If hash of the line is stored equal to cached line (and it is not dirty) - it returns old rendered line (with escape sequences). This way I can save some time on render line, which wasn't changed, and just return prev render of this line
+//
+// Afther that it comares current render mode, decide wich render to use
+// If rednered line has change render mode (if '```' is found), render switches modes, and makes all lines bellow dirty
+// And then - caches the result of the render
+// Basically, I render only line with the cursor on it, and dirty lines
 func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool) (string, int) {
 	lineHash := GetHash(&line)
 	if !isCurrent {
@@ -62,7 +72,7 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 	case enums.Markdown:
 		data, diff, mode = r.md.RenderMarkdownLine(line, lineIndex, show)
 	case enums.Code:
-		data, diff, mode = r.code.RenderCodeLine(line)
+		data, diff, mode = r.code.RenderCodeLine(line, show)
 	}
 
 	// If mode has changed, lines below becomes dirty

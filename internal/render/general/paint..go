@@ -7,6 +7,9 @@ import (
 	"github.com/EnotInc/Bard/internal/ascii"
 )
 
+// About general.go
+// this file contains simple helpre functions, that can be used in any render mode renders
+
 func PainAsAttr(symbol string) string {
 	sym := PaintString(ascii.SymbolColor, symbol)
 	return sym + ascii.ResetFg.Str()

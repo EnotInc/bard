@@ -100,6 +100,7 @@ var keywords = map[string]bool{
 	"c":          true,
 	"SELECT":     true,
 	"TABLE":      true,
+	"FROM":       true,
 	"VALUES":     true,
 	"INSERT":     true,
 	"UPDATE":     true,

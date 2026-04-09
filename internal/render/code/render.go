@@ -1,11 +1,11 @@
 package code
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/render/general"
 )
 
 type Render struct {
@@ -29,22 +29,17 @@ func (r *Render) Reset() {
 	r.l.readPosition = 0
 }
 
-func PaintString(c ascii.Color, str []rune) string {
-	var s strings.Builder
-	for _, x := range str {
-		fmt.Fprint(&s, c, string(x))
-	}
-	return s.String() + ascii.ResetFg.Str()
-}
-
 func (r *Render) fillSpace() string {
 	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
 	return strings.Repeat(" ", amount)
 }
 
-func (r *Render) RenderCodeLine(line []rune) (string, int, enums.Render) {
+func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Render) {
 	r.l.input = line
 	if string(line) == "```" {
+		if !show {
+			line = []rune("   ")
+		}
 		l := ascii.CodeBg.Str() + string(line) + r.fillSpace()
 		diff := -r.w
 		return l, diff, enums.Markdown
@@ -83,25 +78,25 @@ func (r *Render) RenderCodeLine(line []rune) (string, int, enums.Render) {
 }
 
 func (r *Render) renderBracket(t *Token) string {
-	return PaintString(ascii.PurpleFg, t.Literal)
+	return general.PaintString(ascii.PurpleFg, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderSymbol(t *Token) string {
-	return PaintString(ascii.YellowFg, t.Literal)
+	return general.PaintString(ascii.YellowFg, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderKeyWord(t *Token) string {
-	return PaintString(ascii.YellowFg, t.Literal)
+	return general.PaintString(ascii.YellowFg, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderNumber(t *Token) string {
-	return PaintString(ascii.PurpleFg, t.Literal)
+	return general.PaintString(ascii.PurpleFg, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderString(t *Token) string {
-	return PaintString(ascii.GreenFg, t.Literal)
+	return general.PaintString(ascii.GreenFg, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderComment(t *Token) string {
-	return PaintString(ascii.GrayFg, t.Literal)
+	return general.PaintString(ascii.GrayFg, string(t.Literal)) + ascii.ResetFg.Str()
 }

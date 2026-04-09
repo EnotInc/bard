@@ -102,7 +102,7 @@ func (e *Editor) Draw() {
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
 	if e.b[e.curBuffer].IsReadOnly && e.tui.Message == "" {
-		e.tui.Message = "read only"
+		e.tui.Message = "read only file"
 	}
 
 	// Different modes have different information on the last line

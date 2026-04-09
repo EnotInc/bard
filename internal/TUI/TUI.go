@@ -137,26 +137,39 @@ func BuildSpaces(maxOffset int) string {
 	return strings.Repeat(" ", maxOffset-1)
 }
 
-// About BUildLowerBar()
+func (ui *TUI) fillSpaceWiht(ln int) string {
+	amount := max(ui.W-ln, 0)
+	return strings.Repeat(" ", amount)
+}
+
+func (ui *TUI) fillSpace() string {
+	amount := max(ui.W, 0)
+	return strings.Repeat(" ", amount)
+}
+
+// About BuildLowerBar()
 // Little func, that used to build lower bar
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
 	var data strings.Builder
-	fmt.Fprintf(&data, " %d-%d ", x, y)
-	fmt.Fprintf(&data, "%s %s %s%s", curdata, ascii.RedFg, message, ascii.Reset)
+	pos := fmt.Sprintf(" %d-%d ", x, y)
+	fmt.Fprintf(&data, "%s%s%s %s%s%s ", ascii.LowerBarBg, pos, curdata, ascii.RedFg, message, ascii.ResetFg)
 
+	ln := 0
 	if cmd != "" {
 		fmt.Fprintf(&data, "<%s>", cmd)
+		ln += len(cmd) + 2
 	}
+	fmt.Fprintf(&data, "%s", ui.fillSpace())
 
-	return data.String()
+	return VisibleSubString(data.String(), 0, ui.W-1)
 }
 
 // About BuildCommandBar
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	var data strings.Builder
-	cmd := ascii.YellowFg.Str() + " :" + ascii.Reset.Str()
-	fmt.Fprintf(&data, "%s%s\033[%d;%dH%s", cmd, curdata, ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
+	cmd := ascii.YellowFg.Str() + " :" + ascii.ResetFg.Str()
+	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", ascii.LowerBarBg, cmd, curdata, ui.fillSpaceWiht(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
 
 	return data.String()
 }
@@ -230,13 +243,14 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	var s strings.Builder
 	for i, tab := range tabs {
 		if i == curTab {
-			fmt.Fprint(&s, ascii.Tab, ascii.Reset)
+			fmt.Fprint(&s, ascii.Tab)
 		}
 		if show {
 			fmt.Fprintf(&s, "[%d|%s]", i+1, tab)
 		} else {
 			fmt.Fprintf(&s, "[%d]", i+1)
 		}
+		fmt.Fprint(&s, ascii.ResetFg)
 	}
 	return s.String()
 }

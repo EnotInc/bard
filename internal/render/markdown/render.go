@@ -79,7 +79,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			}
 		case CodeBlock:
 			if i == 0 {
-				data.WriteString(r.renderCodeBlock(&tok))
+				data.WriteString(r.RenderCodeBlock(&tok, show))
 				diff = -r.w - len(r.l.input)
 			} else {
 				data.WriteString(string(tok.Literal) + string(tok.Value))
@@ -141,24 +141,25 @@ func (r *Render) fillSpace() string {
 	return strings.Repeat(" ", amount)
 }
 
-func (r *Render) renderCodeBlock(t *Token) string {
-	return ascii.CodeBg.Str() + general.PainAsAttr(string(t.Literal)) + general.PaintString(ascii.CodeLine, string(t.Value)) + r.fillSpace()
+func (r *Render) RenderCodeBlock(t *Token, show bool) string {
+	if !show {
+		return ascii.CodeBg.Str() + general.PainAsAttr("["+string(t.Value)+"] ") + r.fillSpace()
+	}
+	return ascii.CodeBg.Str() + general.PainAsAttr(string(t.Literal)+string(t.Value)) + r.fillSpace()
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	if show {
 		return general.PainAsAttr(string(t.Literal))
-	} else {
-		return ascii.BoxEmpty.Str()
 	}
+	return ascii.BoxEmpty.Str()
 }
 
 func (r *Render) renderBoxField(t *Token, show bool) string {
 	if show {
 		return general.PainAsAttr(string(t.Literal))
-	} else {
-		return ascii.BoxField.Str()
 	}
+	return ascii.BoxField.Str()
 }
 
 func (r *Render) renderListNumber(t *Token) string {
@@ -172,9 +173,8 @@ func (r *Render) renderListNumber(t *Token) string {
 func (r *Render) renderListDash(t *Token, show bool) string {
 	if show {
 		return general.PainAsAttr(string(t.Literal))
-	} else {
-		return ascii.ListDash.Str()
 	}
+	return ascii.ListDash.Str()
 }
 
 func (r *Render) renderShield(t *Token, show bool) string {
@@ -234,17 +234,15 @@ func (r *Render) renderHeader(t *Token) string {
 func (r *Render) renderLink(t *Token, show bool) string {
 	if show {
 		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
-	} else {
-		return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 	}
+	return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 }
 
 func (r *Render) renderImage(t *Token, show bool) string {
 	if show {
 		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
-	} else {
-		return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 	}
+	return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 }
 
 func (r *Render) RenderCodeLine(t *Token, show bool) string {
