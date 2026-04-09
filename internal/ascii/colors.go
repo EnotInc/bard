@@ -38,6 +38,7 @@ const (
 	CodeLine    Color = YellowFg
 	Header      Color = BlueFg
 	Tab         Color = BlueFg
+	WSEOLColor  Color = "\033[91m"
 	CodeBg      Color = "\033[48;5;234m"
 	Link        Color = "\033[4;36m"
 	LowerBarBg  Color = "\033[48;5;16m"

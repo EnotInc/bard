@@ -121,7 +121,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 		case Stricked:
 			data.WriteString(r.simpleAttrRender(ascii.Stricked.Str(), string(tok.Literal), show))
 		case WhiteSpace:
-			data.WriteString(" ")
+			data.WriteString(string(tok.Value))
+		case WSEOL:
+			data.WriteString(r.RenderWSEOL(&tok))
 		case Symbol:
 			data.WriteString(string(tok.Value))
 		}
@@ -139,6 +141,10 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 func (r *Render) fillSpace() string {
 	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
 	return strings.Repeat(" ", amount)
+}
+
+func (r *Render) RenderWSEOL(t *Token) string {
+	return strings.Repeat(ascii.WSEOLColor.Str()+ascii.WSEOL.Str(), len(t.Value))
 }
 
 func (r *Render) RenderCodeBlock(t *Token, show bool) string {

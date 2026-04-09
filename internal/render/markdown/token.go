@@ -12,6 +12,7 @@ const (
 	TEXT = "text"
 
 	WhiteSpace = " "
+	WSEOL      = "." // White Space at the End Of Line
 	Symbol     = "symbol"
 	Shield     = "\\"
 

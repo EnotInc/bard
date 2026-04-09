@@ -13,6 +13,7 @@ const (
 	Shield      Symbol = "\\"
 
 	ListDash Symbol = "\u2981"
+	WSEOL    Symbol = "\u00b7"
 	BoxEmpty Symbol = " \u25a1"
 	BoxField Symbol = " \u25a0"
 

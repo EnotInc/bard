@@ -59,8 +59,13 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: Quote, Literal: []rune{l.ch}}
 		l.readChar()
 	case ' ':
-		l.readChar()
-		t = Token{Type: WhiteSpace, Value: []rune{' '}}
+		spaces, isEnd := l.readWhiteSpace()
+		if isEnd {
+			t = Token{Type: WhiteSpace, Value: spaces}
+		} else {
+			t = Token{Type: WSEOL, Value: spaces}
+		}
+		//l.readChar()
 	case '*':
 		t = l.getAttrToken('*', []TokenType{OneStar, TwoStars, ThreeStars})
 	case '_':
@@ -238,6 +243,14 @@ func (l *Lexer) getAttrToken(ch rune, types []TokenType) Token {
 
 	l.readChar()
 	return t
+}
+
+func (l *Lexer) readWhiteSpace() ([]rune, bool) {
+	pos := l.position
+	for l.ch == ' ' && l.ch != 0 {
+		l.readChar()
+	}
+	return l.input[pos:l.position], l.ch != 0
 }
 
 func (l *Lexer) readLink() Token {
