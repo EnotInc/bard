@@ -69,12 +69,18 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Rend
 		case text:
 			data.WriteString(string(tok.Literal))
 		case whiteSpace:
-			data.WriteString(" ")
+			data.WriteString(string(tok.Literal))
+		case wseol:
+			data.WriteString(r.renderWSEOL(&tok))
 		}
 	}
 	l := ascii.CodeBg.Str() + data.String() + r.fillSpace()
 	diff := -r.w - len(r.l.input) - enums.InitialOffset - 1
 	return l, diff, mode
+}
+
+func (r *Render) renderWSEOL(t *Token) string {
+	return strings.Repeat(ascii.WSEOLColor.Str()+ascii.WSEOL.Str(), len(t.Literal))
 }
 
 func (r *Render) renderBracket(t *Token) string {

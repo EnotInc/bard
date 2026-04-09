@@ -58,6 +58,14 @@ func (l *Lexer) readString(q rune) []rune {
 	return str
 }
 
+func (l *Lexer) readWhiteSpace() ([]rune, bool) {
+	pos := l.position
+	for l.ch == ' ' && l.ch != 0 {
+		l.readChar()
+	}
+	return l.input[pos:l.position], l.ch != 0
+}
+
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
@@ -97,8 +105,12 @@ func (l *Lexer) NextToken() Token {
 		s := l.readString(l.ch)
 		t = Token{Type: str, Literal: s}
 	case ' ':
-		t = Token{Type: whiteSpace, Literal: []rune{' '}}
-		l.readChar()
+		spaces, isEnd := l.readWhiteSpace()
+		if isEnd {
+			t = Token{Type: whiteSpace, Literal: spaces}
+		} else {
+			t = Token{Type: wseol, Literal: spaces}
+		}
 	case 0:
 		t = Token{Type: EOL, Literal: []rune("")}
 		l.readChar()

@@ -65,7 +65,6 @@ func (l *Lexer) NextToken() Token {
 		} else {
 			t = Token{Type: WSEOL, Value: spaces}
 		}
-		//l.readChar()
 	case '*':
 		t = l.getAttrToken('*', []TokenType{OneStar, TwoStars, ThreeStars})
 	case '_':

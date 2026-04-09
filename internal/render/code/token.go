@@ -17,5 +17,6 @@ const (
 	comment    // '//' or '#'
 	text       // any other text
 	whiteSpace //
+	wseol      // white space at the end of line
 	EOL        // End of line
 )
