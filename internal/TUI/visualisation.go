@@ -29,7 +29,6 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			endOffset += 1 // too highlight the whole char
 		}
 
-		// TODO: refactor with string builder
 		rendered, _ := ui.render.Render(l, i, true, true, i == startLine)
 		if startLine == i && i == endLine {
 			selected := paint(l[startOffset:endOffset])

@@ -34,7 +34,7 @@ func (e *Editor) ScrollUp() {
 	e.setUiCursor()
 }
 
-// About ScrollUp()
+// About ScrollDown()
 // changes [YScroll] in [TUI] by adding one to it, only if [CurRow] is equal to [ScrollBorder] (at the bottom)
 func (e *Editor) ScrollDown() {
 	if e.tui.CurRow == e.tui.H-enums.ScrollBorder {
@@ -56,7 +56,7 @@ func (e *Editor) ScrollRight() {
 	e.setUiCursor()
 }
 
-// About ScrollRight()
+// About ScrollLeft()
 // changes [XScroll] if [CurOff] is toching [ScrollBorder]
 func (e *Editor) ScrollLeft() {
 	if e.tui.CurOff <= enums.ScrollBorder {
@@ -71,17 +71,6 @@ func (e *Editor) ScrollLeft() {
 // sets [XScroll] to zero
 func (e *Editor) moveLeft() {
 	e.tui.XScroll = 0
-	e.setUiCursor()
-}
-
-// About moveLeft()
-// sets [XScroll] to the right border of the screen (last char on current line)
-func (e *Editor) moveRight() {
-	e.tui.XScroll = len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data) - e.tui.W + enums.ScrollBorder*2
-	if e.tui.XScroll < 0 {
-		e.tui.XScroll = 0
-	}
-	e.b[e.curBuffer].ResetKeepOffset()
 	e.setUiCursor()
 }
 

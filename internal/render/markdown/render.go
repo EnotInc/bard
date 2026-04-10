@@ -45,12 +45,12 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 	r.l.readPosition = 0
 	r.l.readChar()
 
-	isWhiteSpace := true
-
 	var data strings.Builder
 	var diff = 0
 
+	isWhiteSpace := true
 	isFirst := true
+
 	for tok := r.l.NextToken(); tok.Type != eol; tok = r.l.NextToken() {
 		switch tok.Type {
 		case header_1, header_2, header_3, header_4, header_5, header_6:
@@ -60,25 +60,25 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 				data.WriteString(string(tok.Literal))
 			}
 		case listBoxField:
-			if isFirst {
+			if isWhiteSpace {
 				data.WriteString(r.renderBoxField(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
 		case listBoxEmpty:
-			if isFirst {
+			if isWhiteSpace {
 				data.WriteString(r.renderBoxEmpty(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
 		case quote:
-			if isFirst {
+			if isWhiteSpace {
 				data.WriteString(r.renderQuote(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
 		case codeBlock:
-			if isFirst {
+			if isWhiteSpace {
 				data.WriteString(r.renderCodeBlock(&tok, show))
 				diff = -r.w - len(r.l.input)
 			} else {

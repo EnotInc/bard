@@ -19,9 +19,10 @@ func (e *Editor) newBuffer() {
 // deletes buffer by given index, unless current buffer is the last one
 func (e *Editor) delBuffer(index int) {
 	if len(e.b) > 1 {
+		title := e.b[index].Title
 		e.b = slices.Delete(e.b, index, index+1)
 		e.curBuffer = 0
-		e.tui.Message = fmt.Sprintf("Buffer '%s' closed", e.b[e.curBuffer].Title)
+		e.tui.Message = fmt.Sprintf("Buffer '%s' closed", title)
 	} else {
 		e.tui.Message = "Last buffer can't be removed"
 	}
@@ -44,7 +45,6 @@ func (e *Editor) prevTab() {
 	if e.curBuffer-1 <= 0 {
 		e.curBuffer = len(e.b) - 1
 	} else {
-
 		e.curBuffer -= 1
 	}
 }

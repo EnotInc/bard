@@ -235,15 +235,16 @@ func (ui *TUI) ResetRender() {
 }
 
 func (ui *TUI) Center(l []rune) string {
-	center := (ui.W - len(l)) / 2
-	if center < 0 {
-		center = 0
-	}
+	center := max((ui.W-len(l))/2, 0)
 	tabs := strings.Repeat(" ", center)
 	return tabs + string(l)
 }
 
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
+	if len(tabs) == 1 {
+		return fmt.Sprintf("%s[%s]", ascii.Tab, tabs[0])
+	}
+
 	var s strings.Builder
 	for i, tab := range tabs {
 		if i == curTab {

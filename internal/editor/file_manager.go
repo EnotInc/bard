@@ -49,9 +49,12 @@ func (e *Editor) OpenHelp(topic enums.Help) {
 // About LoadFile()
 // Used to read file data, and write it into current [Buffer]
 func (e *Editor) LoadFile(file string) {
-	if _, err := os.Stat(file); err != nil {
+	if f, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
 		e.tui.ShowHello = true
+	} else if f.IsDir() {
+		fmt.Printf("'%s' is a dir, not file", file)
+		os.Exit(1)
 	}
 
 	f, err := os.Open(file)
