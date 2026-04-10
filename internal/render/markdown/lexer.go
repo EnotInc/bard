@@ -47,7 +47,7 @@ func (l *Lexer) NextToken() Token {
 	case '-':
 		t = l.readListOrCheckBox()
 	case '\\':
-		if isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
+		if (isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ') && l.peekChar() != '_' {
 			t = Token{Type: symbol, Value: []rune{l.ch}}
 		} else {
 			sh := l.ch

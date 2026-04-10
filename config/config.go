@@ -12,10 +12,11 @@ import (
 // |Render| - enable or disable render
 // |TabNames| - show file name is tabs or not
 type Config struct {
-	RLN      bool `json:"rln"`
-	ShowMD   bool `json:"showmd"`
-	Render   bool `json:"render"`
-	TabNames bool `json:"tab_names"`
+	RLN       bool `json:"rln"`
+	ShowMD    bool `json:"showmd"`
+	Render    bool `json:"render"`
+	TabNames  bool `json:"tab_names"`
+	IsChanged bool
 }
 
 func getCongfigPath() string {
@@ -27,7 +28,7 @@ func getCongfigPath() string {
 }
 
 func InitConfig() *Config {
-	defaultConfing := &Config{RLN: false, ShowMD: false, Render: true, TabNames: true}
+	defaultConfing := &Config{RLN: false, ShowMD: false, Render: true, TabNames: true, IsChanged: false}
 	config := getCongfigPath()
 
 	// creating a default config if bard.json is not found

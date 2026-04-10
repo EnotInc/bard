@@ -96,6 +96,10 @@ func (tui *TUI) resize(w int, h int) {
 	tui.Redraw <- true
 }
 
+func (tui *TUI) MakeDirty() {
+	tui.render.MakeDirty()
+}
+
 // About BuildNumber()
 // this func is used to build pretty line numbers (represented with '.'):
 // |..8  // foo func

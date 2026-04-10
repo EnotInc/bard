@@ -59,8 +59,10 @@ func (e *Editor) execCommand() {
 		e.c.RLN = !e.c.RLN
 	case "showmd":
 		e.c.ShowMD = !e.c.ShowMD
+		e.c.IsChanged = true
 	case "render", "rnd":
 		e.c.Render = !e.c.Render
+		e.c.IsChanged = true
 	case "tn", "tabnames":
 		e.c.TabNames = !e.c.TabNames
 	case "gt":

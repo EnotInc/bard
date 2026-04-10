@@ -29,6 +29,10 @@ func InitRender(w, h int) *Renderer {
 	return r
 }
 
+func (r *Renderer) MakeDirty() {
+	r.c.dirty = true
+}
+
 func (r *Renderer) Resize(w int) {
 	r.md.Resize(w)
 	r.code.Resize(w)

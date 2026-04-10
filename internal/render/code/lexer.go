@@ -53,7 +53,9 @@ func (l *Lexer) readString(q rune) []rune {
 	for l.ch != q && l.ch != 0 {
 		l.readChar()
 	}
-	l.readChar()
+	if l.ch != 0 {
+		l.readChar()
+	}
 	str := l.input[pos:l.position]
 	return str
 }
