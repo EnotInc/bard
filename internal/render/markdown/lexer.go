@@ -33,56 +33,56 @@ func (l *Lexer) NextToken() Token {
 		if l.peekChar() == '[' {
 			l.readChar()
 			t = l.readLink()
-			if t.Type == Symbol {
+			if t.Type == symbol {
 				t.Value = append([]rune{'!'}, t.Value...)
 			} else {
-				t.Type = Image
+				t.Type = image
 				t.Literal = append([]rune{'!'}, t.Literal...)
 				t.Value = append([]rune{'!'}, t.Value...)
 			}
 		} else {
-			t = Token{Type: Symbol, Value: []rune("!")}
+			t = Token{Type: symbol, Value: []rune("!")}
 			l.readChar()
 		}
 	case '-':
 		t = l.readListOrCheckBox()
 	case '\\':
 		if isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ' {
-			t = Token{Type: Symbol, Value: []rune{l.ch}}
+			t = Token{Type: symbol, Value: []rune{l.ch}}
 		} else {
 			sh := l.ch
 			l.readChar()
-			t = Token{Type: Shield, Literal: []rune{sh}, Value: []rune{l.ch}}
+			t = Token{Type: shield, Literal: []rune{sh}, Value: []rune{l.ch}}
 		}
 		l.readChar()
 	case '>':
-		t = Token{Type: Quote, Literal: []rune{l.ch}}
+		t = Token{Type: quote, Literal: []rune{l.ch}}
 		l.readChar()
 	case ' ':
 		spaces, isEnd := l.readWhiteSpace()
 		if isEnd {
-			t = Token{Type: WhiteSpace, Value: spaces}
+			t = Token{Type: whitespace, Value: spaces}
 		} else {
-			t = Token{Type: WSEOL, Value: spaces}
+			t = Token{Type: wseol, Value: spaces}
 		}
 	case '*':
-		t = l.getAttrToken('*', []TokenType{OneStar, TwoStars, ThreeStars})
+		t = l.getAttrToken('*', []TokenType{oneStar, twoStars, threeStars})
 	case '_':
-		t = l.getAttrToken('_', []TokenType{OneUnderline, TwoUnderlines, ThreeUnderlines})
+		t = l.getAttrToken('_', []TokenType{oneUnderLine, twoUnderLines, threeUnderLines})
 	case '~':
 		if l.peekChar() == '~' {
 			l.readChar()
-			t = Token{Type: Stricked, Literal: []rune("~~")}
+			t = Token{Type: stricked, Literal: []rune("~~")}
 		} else {
-			t = Token{Type: Symbol, Value: []rune{l.ch}}
+			t = Token{Type: symbol, Value: []rune{l.ch}}
 		}
 		l.readChar()
 	case '=':
 		if l.peekChar() == '=' {
 			l.readChar()
-			t = Token{Type: Hightlight, Value: []rune("==")}
+			t = Token{Type: hightlight, Value: []rune("==")}
 		} else {
-			t = Token{Type: Symbol, Value: []rune("=")}
+			t = Token{Type: symbol, Value: []rune("=")}
 		}
 		l.readChar()
 	case '#':
@@ -100,24 +100,24 @@ func (l *Lexer) NextToken() Token {
 		if count == 1 && (isLetter(l.peekChar()) || isNumber(l.peekChar())) {
 			l.readChar()
 			text := l.readText()
-			t = Token{Type: Tag, Literal: lit, Value: text}
+			t = Token{Type: tag, Literal: lit, Value: text}
 		} else if count > 6 || l.peekChar() != ' ' {
-			t = Token{Type: Symbol, Value: lit}
+			t = Token{Type: symbol, Value: lit}
 			l.readChar()
 		} else {
 			switch count {
 			case 1:
-				t = Token{Type: Header_1, Literal: lit}
+				t = Token{Type: header_1, Literal: lit}
 			case 2:
-				t = Token{Type: Header_2, Literal: lit}
+				t = Token{Type: header_2, Literal: lit}
 			case 3:
-				t = Token{Type: Header_3, Literal: lit}
+				t = Token{Type: header_3, Literal: lit}
 			case 4:
-				t = Token{Type: Header_4, Literal: lit}
+				t = Token{Type: header_4, Literal: lit}
 			case 5:
-				t = Token{Type: Header_5, Literal: lit}
+				t = Token{Type: header_5, Literal: lit}
 			case 6:
-				t = Token{Type: Header_6, Literal: lit}
+				t = Token{Type: header_6, Literal: lit}
 			}
 			l.readChar()
 		}
@@ -134,36 +134,36 @@ func (l *Lexer) NextToken() Token {
 		switch count {
 		case 1:
 			s := l.readCodeLine()
-			t = Token{Type: CodeLine, Literal: []rune{'`'}, Value: s}
+			t = Token{Type: codeLine, Literal: []rune{'`'}, Value: s}
 		case 2:
-			t = Token{Type: Symbol, Value: lit}
+			t = Token{Type: symbol, Value: lit}
 		case 3:
-			t = Token{Type: CodeBlock, Literal: lit, Value: l.input[l.position:]}
+			t = Token{Type: codeBlock, Literal: lit, Value: l.input[l.position:]}
 			l.position = len(l.input)
 			l.readPosition = len(l.input)
 		default:
-			t = Token{Type: Symbol, Value: lit}
+			t = Token{Type: symbol, Value: lit}
 		}
 	case 0:
-		t = Token{Type: EOL, Literal: []rune("")}
+		t = Token{Type: eol, Literal: []rune("")}
 	default:
 		if isNumber(l.ch) {
 			s := l.readNumber()
 			switch l.ch {
 			case ')':
-				t = Token{Type: ListNumberB, Value: s, Literal: []rune{')'}}
+				t = Token{Type: listNumberB, Value: s, Literal: []rune{')'}}
 				l.readChar()
 			case '.':
-				t = Token{Type: ListNumberDot, Value: s, Literal: []rune{'.'}}
+				t = Token{Type: listNumberDot, Value: s, Literal: []rune{'.'}}
 				l.readChar()
 			default:
-				t = Token{Type: TEXT, Value: s}
+				t = Token{Type: text, Value: s}
 			}
 		} else if isLetter(l.ch) || isNumber(l.ch) {
 			s := l.readText()
-			t = Token{Type: TEXT, Value: s}
+			t = Token{Type: text, Value: s}
 		} else {
-			t = Token{Type: Symbol, Value: []rune{l.ch}}
+			t = Token{Type: symbol, Value: []rune{l.ch}}
 			l.readChar()
 		}
 	}
@@ -228,7 +228,7 @@ func (l *Lexer) getAttrToken(ch rune, types []TokenType) Token {
 
 	end := l.position + 1
 	if count > 3 {
-		t = Token{Type: Symbol, Value: []rune(l.input[pos:end])}
+		t = Token{Type: symbol, Value: []rune(l.input[pos:end])}
 	} else {
 		switch count {
 		case 1:
@@ -282,7 +282,7 @@ func (l *Lexer) readLink() Token {
 			if l.ch == ')' {
 				l.readChar()
 				lnk := l.input[text:l.position]
-				return Token{Type: Link, Value: txt, Literal: lnk}
+				return Token{Type: link, Value: txt, Literal: lnk}
 			}
 		}
 	}
@@ -290,14 +290,14 @@ func (l *Lexer) readLink() Token {
 	l.position = start
 	l.readPosition = start
 	l.readChar()
-	return Token{Type: Symbol, Value: []rune("[")}
+	return Token{Type: symbol, Value: []rune("[")}
 }
 
 func (l *Lexer) readListOrCheckBox() Token {
 	pos := l.position
 	if l.peekChar() != ' ' {
 		l.readChar()
-		return Token{Type: Symbol, Value: []rune{'-'}}
+		return Token{Type: symbol, Value: []rune{'-'}}
 	}
 
 	l.readChar()
@@ -317,9 +317,9 @@ func (l *Lexer) readListOrCheckBox() Token {
 				literal := l.input[pos:l.position]
 
 				if isField {
-					return Token{Type: ListBoxField, Literal: literal}
+					return Token{Type: listBoxField, Literal: literal}
 				} else {
-					return Token{Type: ListBoxEmpty, Literal: literal}
+					return Token{Type: listBoxEmpty, Literal: literal}
 				}
 			}
 		}
@@ -327,8 +327,8 @@ func (l *Lexer) readListOrCheckBox() Token {
 		l.position = start
 		l.readPosition = start
 		l.readChar()
-		return Token{Type: ListDash, Literal: []rune("-")}
+		return Token{Type: listDash, Literal: []rune("-")}
 	}
 
-	return Token{Type: ListDash, Literal: []rune("-")}
+	return Token{Type: listDash, Literal: []rune("-")}
 }

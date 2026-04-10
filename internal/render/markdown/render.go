@@ -35,9 +35,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
-			return general.PainAsAttr("---"), 0, renderMode
+			return general.PainAsAttr(string(line)), 0, renderMode
 		}
-		return general.PainAsAttr(strings.Repeat("\u2015", r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
+		return general.PainAsAttr(strings.Repeat(ascii.SplitLIne.Str(), r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
 	}
 
 	r.l.input = line
@@ -50,85 +50,85 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 	var data strings.Builder
 	var diff = 0
 
-	var i = 0
-	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {
+	isFirst := true
+	for tok := r.l.NextToken(); tok.Type != eol; tok = r.l.NextToken() {
 		switch tok.Type {
-		case Header_1, Header_2, Header_3, Header_4, Header_5, Header_6:
-			if i == 0 {
+		case header_1, header_2, header_3, header_4, header_5, header_6:
+			if isFirst {
 				data.WriteString(r.renderHeader(&tok))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
-		case ListBoxField:
-			if i == 0 {
+		case listBoxField:
+			if isFirst {
 				data.WriteString(r.renderBoxField(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
-		case ListBoxEmpty:
-			if i == 0 {
+		case listBoxEmpty:
+			if isFirst {
 				data.WriteString(r.renderBoxEmpty(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
-		case Quote:
-			if i == 0 {
+		case quote:
+			if isFirst {
 				data.WriteString(r.renderQuote(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
-		case CodeBlock:
-			if i == 0 {
-				data.WriteString(r.RenderCodeBlock(&tok, show))
+		case codeBlock:
+			if isFirst {
+				data.WriteString(r.renderCodeBlock(&tok, show))
 				diff = -r.w - len(r.l.input)
 			} else {
 				data.WriteString(string(tok.Literal) + string(tok.Value))
 			}
 			renderMode = enums.Code
-		case ListDash:
+		case listDash:
 			if isWhiteSpace {
 				data.WriteString(r.renderListDash(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
-		case ListNumberB, ListNumberDot:
+		case listNumberB, listNumberDot:
 			if isWhiteSpace {
 				data.WriteString(r.renderListNumber(&tok))
 			} else {
 				data.WriteString(string(tok.Value) + string(tok.Literal))
 			}
-		case Hightlight:
+		case hightlight:
 			data.WriteString(r.simpleAttrRender(ascii.Hightlight.Str(), string(tok.Value), show))
-		case Link:
+		case link:
 			data.WriteString(r.renderLink(&tok, show))
-		case Image:
+		case image:
 			data.WriteString(r.renderImage(&tok, show))
-		case CodeLine:
-			data.WriteString(r.RenderCodeLine(&tok, show))
-		case TEXT:
+		case codeLine:
+			data.WriteString(r.renderCodeLine(&tok, show))
+		case text:
 			data.WriteString(r.renderText(&tok))
-		case Shield:
+		case shield:
 			data.WriteString(r.renderShield(&tok, show))
-		case Tag:
+		case tag:
 			data.WriteString(r.renderTag(&tok, show))
 			diff -= 1
-		case OneStar, OneUnderline:
+		case oneStar, oneUnderLine:
 			data.WriteString(r.simpleAttrRender(ascii.Italic.Str(), string(tok.Literal), show))
-		case TwoStars, TwoUnderlines:
+		case twoStars, twoUnderLines:
 			data.WriteString(r.simpleAttrRender(ascii.Bold.Str(), string(tok.Literal), show))
-		case ThreeStars, ThreeUnderlines:
+		case threeStars, threeUnderLines:
 			data.WriteString(r.simpleAttrRender(ascii.BoldItalic.Str(), string(tok.Literal), show))
-		case Stricked:
+		case stricked:
 			data.WriteString(r.simpleAttrRender(ascii.Stricked.Str(), string(tok.Literal), show))
-		case WhiteSpace:
+		case whitespace:
 			data.WriteString(string(tok.Value))
-		case WSEOL:
-			data.WriteString(r.RenderWSEOL(&tok))
-		case Symbol:
+		case wseol:
+			data.WriteString(r.renderWSEOL(&tok))
+		case symbol:
 			data.WriteString(string(tok.Value))
 		}
-		i += 1
-		if isWhiteSpace && tok.Type != WhiteSpace {
+		isFirst = false
+		if isWhiteSpace && tok.Type != whitespace {
 			isWhiteSpace = false
 		}
 	}
@@ -143,11 +143,11 @@ func (r *Render) fillSpace() string {
 	return strings.Repeat(" ", amount)
 }
 
-func (r *Render) RenderWSEOL(t *Token) string {
+func (r *Render) renderWSEOL(t *Token) string {
 	return strings.Repeat(ascii.WSEOLColor.Str()+ascii.WSEOL.Str(), len(t.Value))
 }
 
-func (r *Render) RenderCodeBlock(t *Token, show bool) string {
+func (r *Render) renderCodeBlock(t *Token, show bool) string {
 	if !show {
 		return ascii.CodeBg.Str() + general.PainAsAttr("["+string(t.Value)+"] ") + r.fillSpace()
 	}
@@ -251,7 +251,7 @@ func (r *Render) renderImage(t *Token, show bool) string {
 	return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
 }
 
-func (r *Render) RenderCodeLine(t *Token, show bool) string {
+func (r *Render) renderCodeLine(t *Token, show bool) string {
 	var s strings.Builder
 	if show {
 		s.WriteString(string(t.Literal) + string(t.Value))

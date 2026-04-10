@@ -9,45 +9,45 @@ type Token struct {
 }
 
 const (
-	TEXT = "text"
+	text = "text"
 
-	WhiteSpace = " "
-	WSEOL      = "." // White Space at the End Of Line
-	Symbol     = "symbol"
-	Shield     = "\\"
+	whitespace = " "
+	wseol      = "." // White Space at the End Of Line
+	symbol     = "symbol"
+	shield     = "\\"
 
-	EOL = "EOL" // End Of Line
+	eol = "eol" // End Of Line
 
-	ListNumberDot = "n."
-	ListNumberB   = "n)"
-	ListDash      = "-"
-	ListBoxEmpty  = "- [ ]"
-	ListBoxField  = "- [x]"
+	listNumberDot = "n."
+	listNumberB   = "n)"
+	listDash      = "-"
+	listBoxEmpty  = "- [ ]"
+	listBoxField  = "- [x]"
 
-	OneStar    = "*"
-	TwoStars   = "**"
-	ThreeStars = "***"
+	oneStar    = "*"
+	twoStars   = "**"
+	threeStars = "***"
 
-	OneUnderline    = "_"
-	TwoUnderlines   = "__"
-	ThreeUnderlines = "___"
+	oneUnderLine    = "_"
+	twoUnderLines   = "__"
+	threeUnderLines = "___"
 
-	Stricked   = "~~"
-	Hightlight = "=="
+	stricked   = "~~"
+	hightlight = "=="
 
-	Header_1 = "#"
-	Header_2 = "##"
-	Header_3 = "###"
-	Header_4 = "####"
-	Header_5 = "#####"
-	Header_6 = "######"
+	header_1 = "#"
+	header_2 = "##"
+	header_3 = "###"
+	header_4 = "####"
+	header_5 = "#####"
+	header_6 = "######"
 
-	Quote = ">"
-	Tag   = "#text"
+	quote = ">"
+	tag   = "#text"
 
-	CodeLine  = "`"
-	CodeBlock = "```"
+	codeLine  = "`"
+	codeBlock = "```"
 
-	Link  = "[text](link)"
-	Image = "![text](link)"
+	link  = "[text](link)"
+	image = "![text](link)"
 )
