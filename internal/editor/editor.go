@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"runtime/debug"
 	"strconv"
 
 	"golang.org/x/term"
@@ -109,8 +110,11 @@ func (e *Editor) listenResize() {
 func (e *Editor) Exit(code int) {
 	e.c.Save()
 
-	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal)
+	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
 	term.Restore(e.fdIn, e.oldState)
+	if r := recover(); r != nil {
+		fmt.Println(ascii.RedFg, r, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+	}
 	os.Exit(code)
 }
 
@@ -151,6 +155,7 @@ func (e *Editor) replaceWithAmount(key rune) {
 // About |Run()|
 // Gets user input, switched by currend move to decide what to do with pressed key and calles [Draw()] to display changes
 func (e *Editor) Run() {
+	defer e.Exit(1)
 	fmt.Print(ascii.SaveTerminal)
 	e.Draw()
 	reader := bufio.NewReader(os.Stdin)
