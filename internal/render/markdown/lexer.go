@@ -183,7 +183,7 @@ func (l *Lexer) readText() []rune {
 	pos := l.position
 	for isLetter(l.ch) || isNumber(l.ch) {
 		l.readChar()
-		if !(l.ch == '_' && l.peekChar() != '_' && isLetter(l.peekChar())) {
+		if l.ch == '_' && l.peekChar() == '_' {
 			break
 		}
 	}
