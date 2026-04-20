@@ -38,6 +38,7 @@ type Editor struct {
 	curMode   mode.Mode
 	command   string
 	subCmd    string
+	IsChanged bool
 	save      bool
 	fdOut     int
 	fdIn      int

@@ -45,9 +45,8 @@ func (b *Buffer) InsertLine() {
 func (b *Buffer) DelAndMoveLine() {
 	if !b.IsReadOnly {
 		if b.Cursor.line > 0 {
-			shiftData := b.Lines[b.Cursor.line].Data[b.Cursor.offset:]
+			shiftData := b.Lines[b.Cursor.line].Data
 			b.RemoveLine()
-			b.Cursor.line -= 1
 			b.Cursor.offset = len(b.Lines[b.Cursor.line].Data)
 			b.Lines[b.Cursor.line].Data = append(b.Lines[b.Cursor.line].Data, shiftData...)
 		}
@@ -72,7 +71,7 @@ func (b *Buffer) RemoveLine() {
 			return
 		}
 		b.Lines = slices.Delete(b.Lines, b.Cursor.line, b.Cursor.line+1)
-		if b.Cursor.line >= len(b.Lines) {
+		if b.Cursor.line != 0 {
 			b.K(1)
 		}
 	}

@@ -31,9 +31,9 @@ func (e *Editor) Draw() {
 	upperBorder := e.tui.YScroll
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
 
-	if e.c.IsChanged {
+	if e.IsChanged {
 		e.tui.MakeDirty()
-		e.c.IsChanged = false
+		e.IsChanged = false
 	}
 
 	// Working only with visible lines

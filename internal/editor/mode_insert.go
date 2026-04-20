@@ -1,6 +1,11 @@
 package editor
 
-import "github.com/EnotInc/Bard/internal/mode"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/EnotInc/Bard/internal/mode"
+)
 
 // About caseInsert()
 // Called from [Run()] func
@@ -29,9 +34,19 @@ func (e *Editor) caseInsert(key rune) {
 	case '[', '{', '(', ')', '}', ']', '\'', '"', '<', '>', '*', '_', '`':
 		e.b[e.curBuffer].InsertPair(key)
 		e.ScrollRight()
+	case 8:
+		e.b[e.curBuffer].DeleteUntilSpace()
 	default:
+		if !isLetterNumberOrSymbol(key) {
+			e.tui.Message = fmt.Sprintf("Unknown key. Code: %d", int(key))
+			return
+		}
 		e.b[e.curBuffer].InsertKey(key)
 		e.ScrollRight()
 	}
 	e.setUiCursor()
+}
+
+func isLetterNumberOrSymbol(key rune) bool {
+	return ('a' <= key && key <= 'z') || ('A' <= key && key <= 'Z') || (strings.Contains(" !@#$%^&:;|\\/~", string(key)))
 }

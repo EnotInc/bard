@@ -92,3 +92,35 @@ func (b *Buffer) insertBoth(key rune) {
 		}
 	}
 }
+
+func (b *Buffer) DeleteUntilSpace() {
+	if b.IsReadOnly {
+		return
+	}
+
+	curLine := b.Lines[b.Cursor.line]
+	offset := b.Cursor.offset
+
+	if b.Cursor.offset == 0 {
+		b.DelAndMoveLine()
+		return
+	}
+
+	ch := curLine.Data[b.Cursor.offset-1]
+
+	for ch == ' ' && b.Cursor.offset > 0 { // skipping first spaces
+		b.Cursor.offset -= 1
+		ch = curLine.Data[b.Cursor.offset]
+	}
+
+	for ch != ' ' && b.Cursor.offset > 0 {
+		b.Cursor.offset -= 1
+		ch = curLine.Data[b.Cursor.offset]
+	}
+
+	if b.Cursor.offset > 0 {
+		b.Cursor.offset += 1
+	}
+	curLine.Data = slices.Delete(curLine.Data, b.Cursor.offset, offset)
+	b.Cursor.keepOffset = b.Cursor.offset
+}
