@@ -72,6 +72,10 @@ func (b *Buffer) Delkey() {
 		b.copies = append([]*copied{}, &copied{data: []rune{ch}, isStart: false, isEnd: false})
 		curLine.Data = slices.Delete(curLine.Data, index, index+1)
 	}
+
+	if b.Cursor.offset == len(b.Lines[b.Cursor.line].Data) {
+		b.H(1)
+	}
 }
 
 func (b *Buffer) InsertPair(key rune) {

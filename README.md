@@ -15,6 +15,8 @@ Quick render example:
 ![MarkdownRender](docs/assets/MarkdownRender.png)
 
 ## **Installation**
+[Nerd Font](https://www.nerdfonts.com) is required
+
 It is not available in any package managers yet, so to install Bard you can do this:
 
 ```bash

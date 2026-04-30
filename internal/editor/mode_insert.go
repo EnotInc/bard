@@ -48,5 +48,5 @@ func (e *Editor) caseInsert(key rune) {
 }
 
 func isLetterNumberOrSymbol(key rune) bool {
-	return ('a' <= key && key <= 'z') || ('A' <= key && key <= 'Z') || (strings.Contains(" !@#$%^&:;|\\/~", string(key)))
+	return ('a' <= key && key <= 'z') || ('A' <= key && key <= 'Z') || ('0' <= key && key <= '9') || (strings.Contains(" !@#$%^&:;|\\/~.,+=-", string(key)))
 }

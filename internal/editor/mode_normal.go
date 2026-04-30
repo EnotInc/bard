@@ -117,7 +117,6 @@ func (e *Editor) caseNormal(key rune) {
 		}
 	case 'x':
 		e.b[e.curBuffer].Delkey()
-		e.b[e.curBuffer].H(1)
 		e.ScrollLeft()
 	case 's':
 		e.b[e.curBuffer].Delkey()
