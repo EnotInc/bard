@@ -56,15 +56,15 @@ func (e *Editor) execCommand() {
 	case "help", "h":
 		e.OpenHelp(enums.About)
 	case "rln":
-		e.c.RLN = !e.c.RLN
+		e.c.Editor.RLN = !e.c.Editor.RLN
 	case "showmd":
-		e.c.ShowMD = !e.c.ShowMD
+		e.c.Editor.ShowMD = !e.c.Editor.ShowMD
 		e.IsChanged = true
 	case "render", "rnd":
-		e.c.Render = !e.c.Render
+		e.c.Editor.Render = !e.c.Editor.Render
 		e.IsChanged = true
 	case "tn", "tabnames":
-		e.c.TabNames = !e.c.TabNames
+		e.c.Editor.TabNames = !e.c.Editor.TabNames
 	case "gt":
 		e.nextTab()
 	case "gT":

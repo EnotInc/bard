@@ -1,6 +1,7 @@
 package render
 
 import (
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 	code "github.com/EnotInc/Bard/internal/render/code"
 	md "github.com/EnotInc/Bard/internal/render/markdown"
@@ -21,11 +22,11 @@ type Renderer struct {
 	w    int
 }
 
-func InitRender(w, h int) *Renderer {
+func InitRender(w, h int, theme *config.Theme) *Renderer {
 	_c := initCache()
 	r := &Renderer{c: _c, w: w, mode: enums.Markdown}
-	r.md = md.NewRender(w)
-	r.code = code.NewRender(w)
+	r.md = md.NewRender(w, &theme.Markdown)
+	r.code = code.NewRender(w, &theme.Code)
 	return r
 }
 

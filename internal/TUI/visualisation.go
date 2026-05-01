@@ -14,7 +14,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 	var line []rune
 
 	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
-		return ascii.GrayBg.Str() + ascii.NewLine.Str() + ascii.Reset.Str()
+		return ui.theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str()
 	}
 
 	switch curMode {
@@ -31,26 +31,26 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		rendered, _ := ui.render.Render(l, i, true, true, i == startLine)
 		if startLine == i && i == endLine {
-			selected := paint(l[startOffset:endOffset])
+			selected := ui.paint(l[startOffset:endOffset])
 			before := VisibleSubString(rendered, 0, startOffset-1)
 			after := VisibleSubString(rendered, endOffset, len(l))
 			line = []rune(before + ascii.Reset.Str() + string(selected) + after)
 
 		} else if startLine < i && i < endLine {
-			line = WithEndLine(string(paint(l)))
+			line = ui.WithEndLine(string(ui.paint(l)))
 
 		} else if startLine == i {
-			selected := paint(l[startOffset:])
+			selected := ui.paint(l[startOffset:])
 			before := VisibleSubString(rendered, 0, startOffset-1)
-			line = WithEndLine(before + ascii.Reset.Str() + string(selected))
+			line = ui.WithEndLine(before + ascii.Reset.Str() + string(selected))
 
 		} else if endLine == i {
-			selected := paint(l[:endOffset])
+			selected := ui.paint(l[:endOffset])
 			after := VisibleSubString(rendered, endOffset, len(l))
 			line = []rune(string(selected) + after)
 
 		} else {
-			line = WithEndLine(rendered)
+			line = ui.WithEndLine(rendered)
 		}
 
 	case mode.Visual_line:
@@ -58,8 +58,8 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			startLine, endLine = endLine, startLine
 		}
 
-		l := ascii.GrayBg.Str() + string(l) + ascii.Reset.Str()
-		line = WithEndLine(l)
+		l := ui.theme.Selection + string(l) + ascii.Reset.Str()
+		line = ui.WithEndLine(l)
 	}
 
 	return string(line)
@@ -67,17 +67,17 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 // About WithEndLine()
 // used to add 'new line' symbol to the givven selected line
-func WithEndLine(l string) []rune {
-	return []rune(l + ascii.GrayBg.Str() + ascii.NewLine.Str() + ascii.Reset.Str())
+func (ui *TUI) WithEndLine(l string) []rune {
+	return []rune(l + ui.theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str())
 }
 
 // About paint()
 // used to colorise every single char in line
 // is just inserts selected ascii.StarSel [Color] before the char
-func paint(line []rune) []rune {
+func (ui *TUI) paint(line []rune) []rune {
 	var s strings.Builder
 	for _, ch := range line {
-		fmt.Fprintf(&s, "%s%c", ascii.GrayBg, ch)
+		fmt.Fprintf(&s, "%s%c", ui.theme.Selection, ch)
 	}
 	s.WriteString(ascii.Reset.Str())
 	return []rune(s.String())

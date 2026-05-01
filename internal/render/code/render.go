@@ -3,18 +3,20 @@ package code
 import (
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render/general"
 )
 
 type Render struct {
-	l *Lexer
-	w int
+	l     *Lexer
+	w     int
+	theme *config.Code
 }
 
-func NewRender(w int) *Render {
-	r := &Render{w: w}
+func NewRender(w int, theme *config.Code) *Render {
+	r := &Render{w: w, theme: theme}
 	r.l = newLexer()
 	return r
 }
@@ -40,7 +42,7 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Rend
 		if !show {
 			line = []rune("   ")
 		}
-		l := ascii.CodeBg.Str() + string(line) + r.fillSpace()
+		l := r.theme.Background + string(line) + r.fillSpace()
 		diff := -r.w
 		return l, diff, enums.Markdown
 	}
@@ -74,35 +76,35 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Rend
 			data.WriteString(r.renderWSEOL(&tok))
 		}
 	}
-	l := ascii.CodeBg.Str() + data.String() + r.fillSpace()
+	l := r.theme.Background + data.String() + r.fillSpace()
 	diff := -r.w - len(r.l.input) - enums.InitialOffset - 1
 	return l, diff, mode
 }
 
 func (r *Render) renderWSEOL(t *Token) string {
-	return strings.Repeat(ascii.WSEOLColor.Str()+ascii.WSEOL.Str(), len(t.Literal))
+	return strings.Repeat(ascii.Error.Str()+ascii.WSEOL.Str(), len(t.Literal))
 }
 
 func (r *Render) renderBracket(t *Token) string {
-	return general.PaintString(ascii.PurpleFg, string(t.Literal)) + ascii.ResetFg.Str()
+	return general.PaintString(r.theme.Bracket, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderSymbol(t *Token) string {
-	return general.PaintString(ascii.YellowFg, string(t.Literal)) + ascii.ResetFg.Str()
+	return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderKeyWord(t *Token) string {
-	return general.PaintString(ascii.YellowFg, string(t.Literal)) + ascii.ResetFg.Str()
+	return general.PaintString(r.theme.Keyword, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderNumber(t *Token) string {
-	return general.PaintString(ascii.PurpleFg, string(t.Literal)) + ascii.ResetFg.Str()
+	return general.PaintString(r.theme.Number, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderString(t *Token) string {
-	return general.PaintString(ascii.GreenFg, string(t.Literal)) + ascii.ResetFg.Str()
+	return general.PaintString(r.theme.String, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderComment(t *Token) string {
-	return general.PaintString(ascii.GrayFg, string(t.Literal)) + ascii.ResetFg.Str()
+	return general.PaintString(r.theme.Comment, string(t.Literal)) + ascii.ResetFg.Str()
 }

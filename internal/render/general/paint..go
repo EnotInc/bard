@@ -3,22 +3,13 @@ package general
 import (
 	"fmt"
 	"strings"
-
-	"github.com/EnotInc/Bard/internal/ascii"
 )
 
-// About general.go
-// this file contains simple helpre functions, that can be used in any render mode renders
-
-func PainAsAttr(symbol string) string {
-	sym := PaintString(ascii.SymbolColor, symbol)
-	return sym + ascii.ResetFg.Str()
-}
-
-func PaintString(c ascii.Color, str string) string {
+// func PaintString(c ascii.Color, str string) string {
+func PaintString(color string, str string) string {
 	var s strings.Builder
 	for _, x := range str {
-		fmt.Fprint(&s, c, string(x))
+		fmt.Fprint(&s, color, string(x))
 	}
 	return s.String()
 }

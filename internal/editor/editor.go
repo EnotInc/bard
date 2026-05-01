@@ -64,7 +64,7 @@ func InitEditor() *Editor {
 
 	_c := config.InitConfig()
 	_b := buffer.InitBuffer()
-	_tui := tui.InitTUI(_h, _w)
+	_tui := tui.InitTUI(_h, _w, &_c.Theme)
 
 	e := &Editor{
 		oldState:  old,
@@ -114,7 +114,7 @@ func (e *Editor) Exit(code int) {
 	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
 	term.Restore(e.fdIn, e.oldState)
 	if r := recover(); r != nil {
-		fmt.Println(ascii.RedFg, r, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+		fmt.Println(ascii.Error, r, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
 	}
 	os.Exit(code)
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render"
@@ -43,11 +44,12 @@ type TUI struct {
 	Hello     [][]rune
 	visual    *visual
 	render    *render.Renderer
+	theme     *config.General
 	Redraw    chan bool
 }
 
-func InitTUI(h int, w int) *TUI {
-	r := render.InitRender(w, h)
+func InitTUI(h int, w int, theme *config.Theme) *TUI {
+	r := render.InitRender(w, h, theme)
 	v := &visual{line: 0, offset: 0}
 	ui := &TUI{
 		XScroll: 0,
@@ -59,6 +61,7 @@ func InitTUI(h int, w int) *TUI {
 		H:       h,
 		visual:  v,
 		render:  r,
+		theme:   &theme.General,
 		Redraw:  make(chan bool, 1),
 	}
 	return ui
@@ -107,7 +110,7 @@ func (tui *TUI) MakeDirty() {
 // |.10      bar()
 // |.11      baz()
 // |.12  }
-func BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
+func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 	rn := n
 	if rln && rn != curLine+1 {
 		rn = curLine - n + 1
@@ -125,9 +128,9 @@ func BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 	fmt.Fprint(&num, strings.Repeat(" ", maxOffset-numLen))
 
 	if curLine+1 == n {
-		fmt.Fprint(&num, ascii.YellowFg, numStr)
+		fmt.Fprint(&num, ui.theme.CurrentLine, numStr)
 	} else {
-		fmt.Fprint(&num, ascii.GrayFg, numStr)
+		fmt.Fprint(&num, ui.theme.LineNumber, numStr)
 	}
 	fmt.Fprint(&num, ascii.Reset, " ")
 
@@ -156,7 +159,7 @@ func (ui *TUI) fillSpace() string {
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
 	var data strings.Builder
 	pos := fmt.Sprintf(" %d-%d ", x, y)
-	fmt.Fprintf(&data, "%s%s%s %s%s%s ", ascii.LowerBarBg, pos, curdata, ascii.RedFg, message, ascii.ResetFg)
+	fmt.Fprintf(&data, "%s%s%s %s%s%s ", ui.theme.BottomBar, pos, curdata, ascii.Error, message, ui.theme.BottomBar)
 
 	ln := 0
 	if cmd != "" {
@@ -172,8 +175,8 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	var data strings.Builder
-	cmd := ascii.YellowFg.Str() + " :" + ascii.ResetFg.Str()
-	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", ascii.LowerBarBg, cmd, curdata, ui.fillSpaceWiht(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
+	cmd := ui.theme.Command + " :" + ui.theme.BottomBar
+	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", ui.theme.BottomBar, cmd, curdata, ui.fillSpaceWiht(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
 
 	return data.String()
 }
@@ -242,20 +245,20 @@ func (ui *TUI) Center(l []rune) string {
 
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	if len(tabs) == 1 {
-		return fmt.Sprintf("%s[%s]", ascii.Tab, tabs[0])
+		return fmt.Sprintf("%s[%s]", ui.theme.Tab, tabs[0])
 	}
 
 	var s strings.Builder
 	for i, tab := range tabs {
 		if i == curTab {
-			fmt.Fprint(&s, ascii.Tab)
+			fmt.Fprint(&s, ui.theme.Tab)
 		}
 		if show {
 			fmt.Fprintf(&s, "[%d|%s]", i+1, tab)
 		} else {
 			fmt.Fprintf(&s, "[%d]", i+1)
 		}
-		fmt.Fprint(&s, ascii.ResetFg)
+		fmt.Fprint(&s, ascii.Reset, ui.theme.BottomBar)
 	}
 	return s.String()
 }

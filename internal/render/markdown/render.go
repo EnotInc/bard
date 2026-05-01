@@ -3,6 +3,7 @@ package markdown
 import (
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render/general"
@@ -12,10 +13,11 @@ type Render struct {
 	curAttr string
 	w       int
 	l       *Lexer
+	theme   *config.Markdown
 }
 
-func NewRender(w int) *Render {
-	r := &Render{w: w}
+func NewRender(w int, theme *config.Markdown) *Render {
+	r := &Render{w: w, theme: theme}
 	r.l = newLexer()
 	return r
 }
@@ -35,9 +37,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
-			return general.PainAsAttr(string(line)), 0, renderMode
+			return general.PaintString(r.theme.Symbol, string(line)), 0, renderMode
 		}
-		return general.PainAsAttr(strings.Repeat(ascii.SplitLIne.Str(), r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
+		return general.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
 	}
 
 	r.l.input = line
@@ -98,7 +100,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 				data.WriteString(string(tok.Value) + string(tok.Literal))
 			}
 		case hightlight:
-			data.WriteString(r.simpleAttrRender(ascii.Hightlight.Str(), string(tok.Value), show))
+			data.WriteString(r.simpleAttrRender(r.theme.Highlight, string(tok.Value), show))
 		case link:
 			data.WriteString(r.renderLink(&tok, show))
 		case image:
@@ -144,46 +146,47 @@ func (r *Render) fillSpace() string {
 }
 
 func (r *Render) renderWSEOL(t *Token) string {
-	return strings.Repeat(ascii.WSEOLColor.Str()+ascii.WSEOL.Str(), len(t.Value))
+	return strings.Repeat(ascii.Error.Str()+ascii.WSEOL.Str(), len(t.Value))
 }
 
 func (r *Render) renderCodeBlock(t *Token, show bool) string {
 	if show {
-		return ascii.CodeBg.Str() + general.PainAsAttr(string(t.Literal)+string(t.Value)) + r.fillSpace()
+		//return ascii.CodeBg.Str() + general.PaintString(string(t.Literal)+string(t.Value)) + r.fillSpace()
+		return r.theme.CodeBg + general.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
 	}
 
 	if i, ok := langIcon[strings.ToLower(string(t.Value))]; ok {
-		return ascii.CodeBg.Str() + " " + i + general.PainAsAttr(string(t.Value)) + r.fillSpace()
+		return r.theme.CodeBg + " " + i + general.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace()
 	}
 	// fallback
-	return ascii.CodeBg.Str() + general.PainAsAttr("["+string(t.Value)+"] ") + r.fillSpace()
+	return r.theme.CodeBg + general.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace()
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	if show {
-		return general.PainAsAttr(string(t.Literal))
+		return general.PaintString(r.theme.Symbol, string(t.Literal))
 	}
 	return ascii.BoxEmpty.Str()
 }
 
 func (r *Render) renderBoxField(t *Token, show bool) string {
 	if show {
-		return general.PainAsAttr(string(t.Literal))
+		return general.PaintString(r.theme.Symbol, string(t.Literal))
 	}
 	return ascii.BoxField.Str()
 }
 
 func (r *Render) renderListNumber(t *Token) string {
 	var s strings.Builder
-	s.WriteString(general.PaintString(ascii.ListColor, string(t.Value)))
-	s.WriteString(general.PaintString(ascii.ListColor, string(t.Literal)))
+	s.WriteString(general.PaintString(r.theme.NumberList, string(t.Value)))
+	s.WriteString(general.PaintString(r.theme.NumberList, string(t.Literal)))
 	s.WriteString(ascii.Reset.Str())
 	return s.String()
 }
 
 func (r *Render) renderListDash(t *Token, show bool) string {
 	if show {
-		return general.PainAsAttr(string(t.Literal))
+		return general.PaintString(r.theme.Symbol, string(t.Literal))
 	}
 	return ascii.ListDash.Str()
 }
@@ -191,7 +194,7 @@ func (r *Render) renderListDash(t *Token, show bool) string {
 func (r *Render) renderShield(t *Token, show bool) string {
 	var s strings.Builder
 	if show {
-		s.WriteString(general.PainAsAttr(string(t.Literal)))
+		s.WriteString(general.PaintString(r.theme.Symbol, string(t.Literal)))
 	}
 	s.WriteString(string(t.Value))
 	return s.String()
@@ -199,9 +202,9 @@ func (r *Render) renderShield(t *Token, show bool) string {
 
 func (r *Render) renderQuote(t *Token, show bool) string {
 	var s strings.Builder
-	s.WriteString(ascii.Quote.Str())
+	s.WriteString(r.theme.Quote)
 	if show {
-		s.WriteString(general.PainAsAttr(string(t.Literal)))
+		s.WriteString(general.PaintString(r.theme.Symbol, string(t.Literal)))
 	} else {
 		s.WriteString(ascii.QuoteSymbol.Str())
 	}
@@ -211,7 +214,7 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 
 func (r *Render) renderText(t *Token) string {
 	if r.curAttr != ascii.Reset.Str() {
-		return general.PaintString(ascii.Color(r.curAttr), string(t.Value))
+		return general.PaintString(r.curAttr, string(t.Value))
 	}
 	return string(t.Value)
 }
@@ -219,15 +222,15 @@ func (r *Render) renderText(t *Token) string {
 func (r *Render) renderTag(t *Token, show bool) string {
 	var s strings.Builder
 	if !show {
-		s.WriteString(ascii.TagColor.Str())
+		s.WriteString(r.theme.Tag)
 		s.WriteString(ascii.TagS.Str())
-		s.WriteString(general.PaintString(ascii.TagColor, string(t.Literal)))
-		s.WriteString(general.PaintString(ascii.TagColor, string(t.Value)))
+		s.WriteString(general.PaintString(r.theme.Tag, string(t.Literal)))
+		s.WriteString(general.PaintString(r.theme.Tag, string(t.Value)))
 		s.WriteString(ascii.TagE.Str())
 		s.WriteString(ascii.Reset.Str())
 	} else {
-		s.WriteString(general.PaintString(ascii.TagColor, string(t.Literal)))
-		s.WriteString(general.PaintString(ascii.TagColor, string(t.Value)))
+		s.WriteString(general.PaintString(r.theme.Tag, string(t.Literal)))
+		s.WriteString(general.PaintString(r.theme.Tag, string(t.Value)))
 	}
 	s.WriteString(ascii.Reset.Str())
 	return s.String()
@@ -235,25 +238,25 @@ func (r *Render) renderTag(t *Token, show bool) string {
 
 func (r *Render) renderHeader(t *Token) string {
 	var s strings.Builder
-	s.WriteString(ascii.Header.Str())
+	s.WriteString(r.theme.Header1)
 	s.WriteString(ascii.Underline.Str())
-	r.curAttr = ascii.Header.Str()
+	r.curAttr = r.theme.Header1
 	s.WriteString(string(t.Literal))
 	return s.String()
 }
 
 func (r *Render) renderLink(t *Token, show bool) string {
 	if show {
-		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
+		return r.theme.Link + string(t.Literal) + ascii.Reset.Str()
 	}
-	return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
+	return r.theme.Link + string(t.Value) + ascii.Reset.Str()
 }
 
 func (r *Render) renderImage(t *Token, show bool) string {
 	if show {
-		return ascii.Link.Str() + string(t.Literal) + ascii.Reset.Str()
+		return r.theme.Image + string(t.Literal) + ascii.Reset.Str()
 	}
-	return ascii.Link.Str() + string(t.Value) + ascii.Reset.Str()
+	return r.theme.Image + string(t.Value) + ascii.Reset.Str()
 }
 
 func (r *Render) renderCodeLine(t *Token, show bool) string {
@@ -267,7 +270,7 @@ func (r *Render) renderCodeLine(t *Token, show bool) string {
 		}
 		s.WriteString(string(t.Value[:end]))
 	}
-	return ascii.CodeBg.Str() + ascii.CodeLine.Str() + s.String() + ascii.Reset.Str()
+	return r.theme.CodeBg + r.theme.CodeText + s.String() + ascii.Reset.Str()
 }
 
 func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {
@@ -275,14 +278,14 @@ func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {
 	if r.curAttr == mode {
 		r.curAttr = ascii.Reset.Str()
 		if show {
-			s.WriteString(general.PainAsAttr(attr))
+			s.WriteString(general.PaintString(r.theme.Symbol, attr))
 		}
 		s.WriteString(r.curAttr)
 	} else {
 		r.curAttr = mode
 		s.WriteString(r.curAttr)
 		if show {
-			s.WriteString(general.PainAsAttr(attr))
+			s.WriteString(general.PaintString(r.theme.Symbol, attr))
 		}
 	}
 	return s.String()
