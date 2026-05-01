@@ -1,21 +1,15 @@
 package config
 
 // About |Config|
-type Config struct {
-	Editor Editor
-	Theme  Theme
-}
-
-// About |Editor|
 // |RLN| - relative line munber
 // |ShowMD| - always show markdown symbols
 // |Render| - enable or disable render
 // |TabNames| - show file name is tabs or not
-type Editor struct {
-	RLN      bool `json:"rln"`
-	ShowMD   bool `json:"showmd"`
-	Render   bool `json:"render"`
-	TabNames bool `json:"tab_names"`
+type Config struct {
+	RLN      bool `json:"relative_line_numbers"`
+	ShowMD   bool `json:"show_markdown_symbols"`
+	Render   bool `json:"enable_render"`
+	TabNames bool `json:"show_tab_names"`
 }
 
 type Theme struct {

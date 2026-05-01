@@ -35,6 +35,7 @@ type Editor struct {
 	b         []*buffer.Buffer
 	tui       *tui.TUI
 	c         *config.Config
+	theme     *config.Theme
 	curMode   mode.Mode
 	command   string
 	subCmd    string
@@ -63,14 +64,16 @@ func InitEditor() *Editor {
 	}
 
 	_c := config.InitConfig()
+	_t := config.InitTheme()
 	_b := buffer.InitBuffer()
-	_tui := tui.InitTUI(_h, _w, &_c.Theme)
+	_tui := tui.InitTUI(_h, _w, _t)
 
 	e := &Editor{
 		oldState:  old,
 		b:         _b,
 		tui:       _tui,
 		c:         _c,
+		theme:     _t,
 		curMode:   mode.Normal,
 		command:   "",
 		subCmd:    "",

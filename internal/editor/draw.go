@@ -39,7 +39,7 @@ func (e *Editor) Draw() {
 	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
 		if i < len(buf.Lines) {
-			show := buf.Cursor.Line() == i || e.c.Editor.ShowMD
+			show := buf.Cursor.Line() == i || e.c.ShowMD
 			isFirst := i == upperBorder
 
 			// This 2 variables are used to get the horizontal borders of the visible content
@@ -56,9 +56,9 @@ func (e *Editor) Draw() {
 				str = []rune{}
 			}
 
-			n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.Editor.RLN)
+			n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
 			var l strings.Builder
-			if e.b[e.curBuffer].IsMdFile && e.c.Editor.Render {
+			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
 				case mode.Visual, mode.Visual_line:
 					// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
@@ -89,9 +89,9 @@ func (e *Editor) Draw() {
 		} else {
 			// If the line is empty, I just add the '~' symbol
 			if e.tui.ShowHello {
-				fmt.Fprint(&data, e.c.Theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)), "\n\r")
+				fmt.Fprint(&data, e.theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)), "\n\r")
 			} else {
-				fmt.Fprint(&data, e.c.Theme.General.EmptyLine, "~", "\n\r")
+				fmt.Fprint(&data, e.theme.General.EmptyLine, "~", "\n\r")
 			}
 		}
 	}
@@ -127,7 +127,7 @@ func (e *Editor) Draw() {
 		for _, t := range e.b {
 			tabs = append(tabs, t.Title)
 		}
-		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, e.c.Editor.TabNames)
+		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, e.c.TabNames)
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, cursorPos, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
