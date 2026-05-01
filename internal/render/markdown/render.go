@@ -238,9 +238,23 @@ func (r *Render) renderTag(t *Token, show bool) string {
 
 func (r *Render) renderHeader(t *Token) string {
 	var s strings.Builder
-	s.WriteString(r.theme.Header1)
-	s.WriteString(ascii.Underline.Str())
-	r.curAttr = r.theme.Header1
+	header := r.theme.Header1
+	switch t.Type {
+	case header_1:
+		header = r.theme.Header1
+	case header_2:
+		header = r.theme.Header2
+	case header_3:
+		header = r.theme.Header3
+	case header_4:
+		header = r.theme.Header4
+	case header_5:
+		header = r.theme.Header5
+	case header_6:
+		header = r.theme.Header6
+	}
+	s.WriteString(header)
+	r.curAttr = header
 	s.WriteString(string(t.Literal))
 	return s.String()
 }

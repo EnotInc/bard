@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 )
 
+const defaultThemeName = "bard.json"
+
 func getDirPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -14,29 +16,23 @@ func getDirPath() string {
 	return filepath.Join(home, ".bard/")
 }
 
-func (c *Theme) Save() {
-	theme := getCongfigPath()
-	json, _ := json.MarshalIndent(theme, "", "    ")
-	os.WriteFile(theme, []byte(json), 0644)
-}
-
-func getThemePath() string {
+func getThemePath(themeName string) string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".bard/theme.json"
+		return ".bard/" + themeName
 	}
-	return filepath.Join(home, ".bard/theme.json")
+	return filepath.Join(home, ".bard/"+themeName)
 }
 
-func InitTheme() *Theme {
+func InitTheme(themeName string) *Theme {
 	defaultTheme := getDefaultTheme()
-	theme := getThemePath()
+	theme := getThemePath(themeName)
 
 	if _, err := os.Stat(theme); err != nil {
 		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
 		dir := getDirPath()
 		os.Mkdir(dir, 0755)
-		os.WriteFile(theme, []byte(json), 0644)
+		os.WriteFile(defaultThemeName, []byte(json), 0644)
 		return defaultTheme
 	}
 
@@ -52,6 +48,33 @@ func InitTheme() *Theme {
 	}
 
 	return t
+}
+
+func (t *Theme) ChangeTheme(themeName string) string {
+	theme := getThemePath(themeName)
+	defaultTheme := getDefaultTheme()
+
+	if _, err := os.Stat(theme); err != nil {
+		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
+		dir := getDirPath()
+		os.Mkdir(dir, 0755)
+		os.WriteFile(defaultThemeName, []byte(json), 0644)
+		return "unable to set theme '" + themeName + "', getting default instead"
+	}
+
+	data, err := os.ReadFile(theme)
+	if err != nil {
+		return "unable to set theme '" + themeName + "'"
+	}
+
+	new := &Theme{}
+	err = json.Unmarshal(data, t)
+	if err != nil {
+		return "unable to set theme '" + themeName + "'"
+	}
+
+	t = new // just in case
+	return ""
 }
 
 func getDefaultTheme() *Theme {

@@ -64,7 +64,7 @@ func InitEditor() *Editor {
 	}
 
 	_c := config.InitConfig()
-	_t := config.InitTheme()
+	_t := config.InitTheme(_c.ThemeName)
 	_b := buffer.InitBuffer()
 	_tui := tui.InitTUI(_h, _w, _t)
 

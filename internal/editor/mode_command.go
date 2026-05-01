@@ -101,6 +101,15 @@ func (e *Editor) parseCommand() {
 		case "help", "h":
 			var topic enums.Help = enums.Help(arg)
 			e.OpenHelp(topic)
+		case "theme":
+			msg := e.theme.ChangeTheme(arg)
+			if msg != "" {
+				e.tui.Message = msg
+				return
+			}
+			e.IsChanged = true
+			e.c.ThemeName = arg
+			e.c.Save()
 		default:
 			e.tui.Message = "unknown command"
 		}

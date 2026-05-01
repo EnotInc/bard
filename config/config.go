@@ -6,12 +6,14 @@ import (
 	"path/filepath"
 )
 
+const defaultConfigFile = ".bard/config.json"
+
 func getCongfigPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".bard/config.json"
+		return defaultConfigFile
 	}
-	return filepath.Join(home, ".bard/config.json")
+	return filepath.Join(home, defaultConfigFile)
 }
 
 func InitConfig() *Config {
@@ -50,10 +52,11 @@ func (c *Config) Save() {
 
 func getDefaultConfig() *Config {
 	config := &Config{
-		RLN:      false,
-		ShowMD:   false,
-		Render:   true,
-		TabNames: true,
+		RLN:       false,
+		ShowMD:    false,
+		Render:    true,
+		TabNames:  true,
+		ThemeName: defaultThemeName,
 	}
 	return config
 }
