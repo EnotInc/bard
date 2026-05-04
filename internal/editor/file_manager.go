@@ -55,6 +55,7 @@ func (e *Editor) LoadFile(file string) {
 	} else if f.IsDir() {
 		fmt.Printf("'%s' is a dir, not file", file)
 		os.Exit(1)
+		return
 	}
 
 	f, err := os.Open(file)
