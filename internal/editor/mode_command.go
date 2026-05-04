@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/EnotInc/Bard/internal/enums"
@@ -71,6 +72,8 @@ func (e *Editor) execCommand() {
 		e.prevTab()
 	case "newtab", "nt":
 		e.newBuffer()
+	case "theme":
+		e.tui.Message = fmt.Sprintf("Theme: %s", e.c.ThemeName)
 	default:
 		e.parseCommand()
 	}
@@ -107,7 +110,7 @@ func (e *Editor) parseCommand() {
 				e.tui.Message = msg
 				return
 			}
-			e.IsChanged = true
+			e.tui.PurgeCache()
 			e.c.ThemeName = arg
 			e.c.Save()
 		default:

@@ -52,19 +52,14 @@ func InitTheme(themeName string) *Theme {
 
 func (t *Theme) ChangeTheme(themeName string) string {
 	theme := getThemePath(themeName)
-	defaultTheme := getDefaultTheme()
 
 	if _, err := os.Stat(theme); err != nil {
-		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
-		dir := getDirPath()
-		os.Mkdir(dir, 0755)
-		os.WriteFile(defaultThemeName, []byte(json), 0644)
-		return "unable to set theme '" + themeName + "', getting default instead"
+		return "Unknown theme '" + themeName + "'"
 	}
 
 	data, err := os.ReadFile(theme)
 	if err != nil {
-		return "unable to set theme '" + themeName + "'"
+		return "unable to read theme file '" + themeName + "'"
 	}
 
 	new := &Theme{}

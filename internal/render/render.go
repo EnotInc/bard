@@ -91,3 +91,7 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 	}
 	return data, diff
 }
+
+func (r *Renderer) PurgeCache() {
+	r.c.purge()
+}

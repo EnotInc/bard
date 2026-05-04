@@ -59,3 +59,11 @@ func (c *cache) cacheLine(h uint32, render string, diff int, index int, m enums.
 		c.lines[index] = newLine
 	}
 }
+
+func (c *cache) purge() {
+	c.dirty = false
+	for k := range c.lines {
+		delete(c.lines, k)
+	}
+
+}
