@@ -32,7 +32,7 @@ func InitTheme(themeName string) *Theme {
 		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
 		dir := getDirPath()
 		os.Mkdir(dir, 0755)
-		os.WriteFile(defaultThemeName, []byte(json), 0644)
+		os.WriteFile(getThemePath(defaultThemeName), []byte(json), 0644)
 		return defaultTheme
 	}
 
