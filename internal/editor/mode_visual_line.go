@@ -42,6 +42,24 @@ func (e *Editor) caseVisualLine(key rune) {
 		e.curMode = mode.Insert
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
+	case 'w':
+		e.b[e.curBuffer].MoveWord(1)
+		e.setUiCursor()
+	case 'W':
+		e.b[e.curBuffer].MoveWORD(1)
+		e.setUiCursor()
+	case 'b':
+		e.b[e.curBuffer].MoveBack(1)
+		e.setUiCursor()
+	case 'B':
+		e.b[e.curBuffer].MoveBACK(1)
+		e.setUiCursor()
+	case 'e':
+		e.b[e.curBuffer].MoveEnd(1)
+		e.setUiCursor()
+	case 'E':
+		e.b[e.curBuffer].MoveEND(1)
+		e.setUiCursor()
 	case '\033':
 		e.curMode = mode.Normal
 		e.b[e.curBuffer].EscapeToNormal()

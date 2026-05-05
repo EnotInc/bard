@@ -1,6 +1,10 @@
 package editor
 
-import "github.com/EnotInc/Bard/internal/mode"
+import (
+	"unicode"
+
+	"github.com/EnotInc/Bard/internal/mode"
+)
 
 // About caseReplaceChar()
 // Unless `escape` key is pressed, replaces 1 chat (given key) at the time
@@ -23,7 +27,9 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 			e.ScrollRight()
 		}
 	default:
-		e.b[e.curBuffer].ReplaceKeys(key, amount)
+		if unicode.IsPrint(key) {
+			e.b[e.curBuffer].ReplaceKeys(key, amount)
+		}
 	}
 	e.subCmd = ""
 }
@@ -52,7 +58,9 @@ func (e *Editor) caseReplaceMode(key rune) {
 			e.ScrollRight()
 		}
 	default:
-		e.b[e.curBuffer].ReplaceKeys(key, 1)
-		e.b[e.curBuffer].L(1)
+		if unicode.IsPrint(key) {
+			e.b[e.curBuffer].ReplaceKeys(key, 1)
+			e.b[e.curBuffer].L(1)
+		}
 	}
 }

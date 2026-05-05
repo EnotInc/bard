@@ -59,6 +59,24 @@ func (e *Editor) caseVisual(key rune) {
 	case 's':
 		e.b[e.curBuffer].CopySelected(true, false)
 		e.curMode = mode.Insert
+	case 'w':
+		e.b[e.curBuffer].MoveWord(1)
+		e.setUiCursor()
+	case 'W':
+		e.b[e.curBuffer].MoveWORD(1)
+		e.setUiCursor()
+	case 'b':
+		e.b[e.curBuffer].MoveBack(1)
+		e.setUiCursor()
+	case 'B':
+		e.b[e.curBuffer].MoveBACK(1)
+		e.setUiCursor()
+	case 'e':
+		e.b[e.curBuffer].MoveEnd(1)
+		e.setUiCursor()
+	case 'E':
+		e.b[e.curBuffer].MoveEND(1)
+		e.setUiCursor()
 	case '\033':
 		e.curMode = mode.Normal
 		e.ScrollLeft()

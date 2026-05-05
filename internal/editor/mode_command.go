@@ -3,6 +3,7 @@ package editor
 import (
 	"fmt"
 	"strings"
+	"unicode"
 
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/mode"
@@ -28,7 +29,9 @@ func (e *Editor) caseCommand(key rune) {
 		e.command = ""
 		e.curMode = mode.Normal
 	default:
-		e.command += string(key)
+		if unicode.IsPrint(key) {
+			e.command += string(key)
+		}
 	}
 }
 

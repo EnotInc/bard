@@ -2,7 +2,7 @@ package editor
 
 import (
 	"fmt"
-	"strings"
+	"unicode"
 
 	"github.com/EnotInc/Bard/internal/mode"
 )
@@ -37,7 +37,7 @@ func (e *Editor) caseInsert(key rune) {
 	case 8:
 		e.b[e.curBuffer].DeleteUntilSpace()
 	default:
-		if !isLetterNumberOrSymbol(key) {
+		if !unicode.IsPrint(key) {
 			e.tui.Message = fmt.Sprintf("Unknown key. Code: %d", int(key))
 			return
 		}
@@ -45,8 +45,4 @@ func (e *Editor) caseInsert(key rune) {
 		e.ScrollRight()
 	}
 	e.setUiCursor()
-}
-
-func isLetterNumberOrSymbol(key rune) bool {
-	return ('a' <= key && key <= 'z') || ('A' <= key && key <= 'Z') || ('0' <= key && key <= '9') || (strings.Contains(" !@#$%^&:;|\\/~.,+=-", string(key)))
 }
