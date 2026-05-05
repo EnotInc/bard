@@ -40,9 +40,7 @@ func InitBuffer() []*Buffer {
 
 func (b *Buffer) EscapeToNormal() {
 	b.pairs = []rune{}
-	if b.Cursor.offset > 0 {
-		b.Cursor.offset -= 1
-	}
+	b.H(1)
 	b.FixOffset()
 }
 

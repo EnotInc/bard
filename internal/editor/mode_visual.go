@@ -64,7 +64,9 @@ func (e *Editor) saveSelected() {
 	e.b[e.curBuffer].SaveChanges(
 		buffer.Change,
 		from, to, false)
-	e.b[e.curBuffer].SaveChanges(
-		buffer.Delete,
-		from+1, to, true)
+	if from != to {
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Delete,
+			from+1, to, true)
+	}
 }

@@ -116,7 +116,6 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 		}
 
 		b.Cursor.offset = startOffset
-		b.FixOffset()
 	}
 }
 
