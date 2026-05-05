@@ -165,10 +165,10 @@ func (b *Buffer) FindBeforePrev(ch rune) {
 
 func (b *Buffer) MoveBack(amount int) {
 	var offset int
-	for range amount {
-		curLine := b.Lines[b.Cursor.line]
-		offset = b.Cursor.offset
+	curLine := b.Lines[b.Cursor.line]
+	offset = b.Cursor.offset
 
+	for range amount {
 		if len(curLine.Data) == 0 || b.Cursor.offset == 0 {
 			continue
 		}
@@ -211,10 +211,10 @@ func (b *Buffer) MoveBack(amount int) {
 
 func (b *Buffer) MoveBACK(amount int) {
 	var offset int
-	for range amount {
-		curLine := b.Lines[b.Cursor.line]
-		offset = b.Cursor.offset
+	curLine := b.Lines[b.Cursor.line]
+	offset = b.Cursor.offset
 
+	for range amount {
 		if len(curLine.Data) == 0 || b.Cursor.offset == 0 {
 			continue
 		}
@@ -250,10 +250,10 @@ func (b *Buffer) MoveBACK(amount int) {
 
 func (b *Buffer) MoveWord(amount int) {
 	var offset int
-	for range amount {
-		curLine := b.Lines[b.Cursor.line]
-		offset = b.Cursor.offset
+	curLine := b.Lines[b.Cursor.line]
+	offset = b.Cursor.offset
 
+	for range amount {
 		if len(curLine.Data) == 0 || b.Cursor.offset == len(curLine.Data)-1 {
 			continue
 		}
@@ -286,10 +286,10 @@ func (b *Buffer) MoveWord(amount int) {
 
 func (b *Buffer) MoveWORD(amount int) {
 	var offset int
-	for range amount {
-		curLine := b.Lines[b.Cursor.line]
-		offset = b.Cursor.offset
+	curLine := b.Lines[b.Cursor.line]
+	offset = b.Cursor.offset
 
+	for range amount {
 		if len(curLine.Data) == 0 || b.Cursor.offset == len(curLine.Data)-1 {
 			continue
 		}
@@ -314,10 +314,10 @@ func (b *Buffer) MoveWORD(amount int) {
 
 func (b *Buffer) MoveEnd(amount int) {
 	var offset int
-	for range amount {
-		curLine := b.Lines[b.Cursor.line]
-		offset = b.Cursor.offset
+	curLine := b.Lines[b.Cursor.line]
+	offset = b.Cursor.offset
 
+	for range amount {
 		if len(curLine.Data) == 0 || b.Cursor.offset == len(curLine.Data)-1 {
 			continue
 		}
@@ -359,10 +359,10 @@ func (b *Buffer) MoveEnd(amount int) {
 
 func (b *Buffer) MoveEND(amount int) {
 	var offset int
-	for range amount {
-		curLine := b.Lines[b.Cursor.line]
-		offset = b.Cursor.offset
+	curLine := b.Lines[b.Cursor.line]
+	offset = b.Cursor.offset
 
+	for range amount {
 		if len(curLine.Data) == 0 || b.Cursor.offset == len(curLine.Data)-1 {
 			continue
 		}

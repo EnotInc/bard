@@ -125,9 +125,9 @@ func (e *Editor) Exit(code int) {
 // About moveWithSubCommand()
 // Used to get move func (one of 'H', 'J', 'K' or 'L'), and move cursor by some amout
 // needded about of moves is get's from [subCmd], and if it not parsed, it does nothing
-func (e *Editor) moveWithSubCommand(move func(int)) {
+func (e *Editor) execWithSubCommand(exec func(int)) {
 	if e.subCmd == "" {
-		move(1)
+		exec(1)
 		return
 	}
 	amount, err := strconv.Atoi(e.subCmd)
@@ -135,7 +135,7 @@ func (e *Editor) moveWithSubCommand(move func(int)) {
 		e.subCmd = ""
 		return
 	}
-	move(amount)
+	exec(amount)
 	e.subCmd = ""
 }
 
