@@ -169,17 +169,30 @@ func (e *Editor) Run() {
 		if err != nil {
 			panic(err)
 		}
+
 		switch e.curMode {
 		case mode.Normal:
-			e.caseNormal(key)
+			if IsGeneralMove(key) {
+				e.GeneralCase(key)
+			} else {
+				e.caseNormal(key)
+			}
+		case mode.Visual:
+			if IsGeneralMove(key) {
+				e.GeneralCase(key)
+			} else {
+				e.caseVisual(key)
+			}
+		case mode.Visual_line:
+			if IsGeneralMove(key) {
+				e.GeneralCase(key)
+			} else {
+				e.caseVisualLine(key)
+			}
 		case mode.Command:
 			e.caseCommand(key)
 		case mode.Insert:
 			e.caseInsert(key)
-		case mode.Visual:
-			e.caseVisual(key)
-		case mode.Visual_line:
-			e.caseVisualLine(key)
 		case mode.Replace:
 			e.caseReplaceMode(key)
 		default:

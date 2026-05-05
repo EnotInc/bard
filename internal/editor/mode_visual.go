@@ -31,23 +31,6 @@ func (e *Editor) caseVisual(key rune) {
 	}
 
 	switch key {
-	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'f', 'F', 't', 'T':
-		e.subCmd += string(key)
-	case 'h':
-		e.moveWithSubCommand(e.b[e.curBuffer].H)
-		e.setUiCursor()
-		e.ScrollLeft()
-	case 'j':
-		e.moveWithSubCommand(e.b[e.curBuffer].J)
-		e.ScrollDown()
-		e.shiftLeft()
-	case 'k':
-		e.moveWithSubCommand(e.b[e.curBuffer].K)
-		e.ScrollUp()
-		e.shiftLeft()
-	case 'l':
-		e.moveWithSubCommand(e.b[e.curBuffer].L)
-		e.ScrollRight()
 	case 'y':
 		e.b[e.curBuffer].CopySelected(false, false)
 		e.curMode = mode.Normal
@@ -68,24 +51,6 @@ func (e *Editor) caseVisual(key rune) {
 
 		e.b[e.curBuffer].CopySelected(true, false)
 		e.curMode = mode.Insert
-	case 'w':
-		e.b[e.curBuffer].MoveWord(1)
-		e.setUiCursor()
-	case 'W':
-		e.b[e.curBuffer].MoveWORD(1)
-		e.setUiCursor()
-	case 'b':
-		e.b[e.curBuffer].MoveBack(1)
-		e.setUiCursor()
-	case 'B':
-		e.b[e.curBuffer].MoveBACK(1)
-		e.setUiCursor()
-	case 'e':
-		e.b[e.curBuffer].MoveEnd(1)
-		e.setUiCursor()
-	case 'E':
-		e.b[e.curBuffer].MoveEND(1)
-		e.setUiCursor()
 	case '\033':
 		e.curMode = mode.Normal
 		e.ScrollLeft()
