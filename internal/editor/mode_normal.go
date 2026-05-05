@@ -35,6 +35,8 @@ func (e *Editor) caseNormal(key rune) {
 	}
 
 	switch key {
+	case 'r':
+		e.subCmd += string(key)
 	case 'i':
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = enums.Insert
