@@ -7,21 +7,22 @@ import (
 )
 
 const defaultThemeName = "bard.json"
+const themeDir = ".bard/themes"
 
-func getDirPath() string {
+func getThemeDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".bard/"
+		return themeDir
 	}
-	return filepath.Join(home, ".bard/")
+	return filepath.Join(home, themeDir)
 }
 
 func getThemePath(themeName string) string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".bard/" + themeName
+		return filepath.Join(themeDir, themeName)
 	}
-	return filepath.Join(home, ".bard/"+themeName)
+	return filepath.Join(home, themeDir, themeName)
 }
 
 func InitTheme(themeName string) *Theme {
@@ -30,7 +31,7 @@ func InitTheme(themeName string) *Theme {
 
 	if _, err := os.Stat(theme); err != nil {
 		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
-		dir := getDirPath()
+		dir := getThemeDir()
 		os.Mkdir(dir, 0755)
 		os.WriteFile(getThemePath(defaultThemeName), []byte(json), 0644)
 		return defaultTheme

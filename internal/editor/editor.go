@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"runtime/debug"
 	"strconv"
 
 	"golang.org/x/term"
@@ -12,7 +11,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/buffer"
-	"github.com/EnotInc/Bard/internal/mode"
+	"github.com/EnotInc/Bard/internal/enums"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
 )
@@ -36,7 +35,7 @@ type Editor struct {
 	tui       *tui.TUI
 	c         *config.Config
 	theme     *config.Theme
-	curMode   mode.Mode
+	curMode   enums.Mode
 	command   string
 	subCmd    string
 	IsChanged bool
@@ -74,7 +73,7 @@ func InitEditor() *Editor {
 		tui:       _tui,
 		c:         _c,
 		theme:     _t,
-		curMode:   mode.Normal,
+		curMode:   enums.Normal,
 		command:   "",
 		subCmd:    "",
 		fdOut:     _fdOut,
@@ -117,7 +116,12 @@ func (e *Editor) Exit(code int) {
 	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
 	term.Restore(e.fdIn, e.oldState)
 	if r := recover(); r != nil {
-		fmt.Println(ascii.Error, r, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+		err := e.saveLog(r)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
+		}
 	}
 	os.Exit(code)
 }
@@ -171,29 +175,29 @@ func (e *Editor) Run() {
 		}
 
 		switch e.curMode {
-		case mode.Normal:
+		case enums.Normal:
 			if IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseNormal(key)
 			}
-		case mode.Visual:
+		case enums.Visual:
 			if IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseVisual(key)
 			}
-		case mode.Visual_line:
+		case enums.Visual_line:
 			if IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseVisualLine(key)
 			}
-		case mode.Command:
+		case enums.Command:
 			e.caseCommand(key)
-		case mode.Insert:
+		case enums.Insert:
 			e.caseInsert(key)
-		case mode.Replace:
+		case enums.Replace:
 			e.caseReplaceMode(key)
 		default:
 			e.Exit(1)

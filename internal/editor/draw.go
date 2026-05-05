@@ -6,7 +6,6 @@ import (
 
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/mode"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
 )
@@ -60,7 +59,7 @@ func (e *Editor) Draw() {
 			var l strings.Builder
 			if e.b[e.curBuffer].IsMdFile && e.c.Render {
 				switch e.curMode {
-				case mode.Visual, mode.Visual_line:
+				case enums.Visual, enums.Visual_line:
 					// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
 						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
@@ -75,7 +74,7 @@ func (e *Editor) Draw() {
 
 				fmt.Fprint(&l, ascii.Reset.Str())
 			} else {
-				if e.curMode == mode.Visual || e.curMode == mode.Visual_line {
+				if e.curMode == enums.Visual || e.curMode == enums.Visual_line {
 					visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
 					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 				} else {
@@ -112,21 +111,21 @@ func (e *Editor) Draw() {
 
 	// Different modes have different information on the last line
 	switch e.curMode {
-	case mode.Insert:
+	case enums.Insert:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
-	case mode.Replace:
+	case enums.Replace:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorUnderline)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
-	case mode.Command:
+	case enums.Command:
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
-	case mode.Normal:
+	case enums.Normal:
 		var tabs []string
 		for _, t := range e.b {
 			tabs = append(tabs, t.Title)
@@ -136,7 +135,7 @@ func (e *Editor) Draw() {
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
-	case mode.Visual, mode.Visual_line:
+	case enums.Visual, enums.Visual_line:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)

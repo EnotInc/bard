@@ -4,7 +4,7 @@ import (
 	"unicode"
 
 	"github.com/EnotInc/Bard/internal/buffer"
-	"github.com/EnotInc/Bard/internal/mode"
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 // About caseReplaceChar()
@@ -26,7 +26,7 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 			e.b[e.curBuffer].Cursor.Line(),
 			e.b[e.curBuffer].Cursor.Line(), true)
 	case '\033':
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
 		e.setUiCursor()
@@ -64,7 +64,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 		e.ScrollDown()
 		e.moveLeft()
 	case '\033':
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
 	case '\x7f':

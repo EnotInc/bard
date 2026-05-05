@@ -2,7 +2,7 @@ package editor
 
 import (
 	"github.com/EnotInc/Bard/internal/buffer"
-	"github.com/EnotInc/Bard/internal/mode"
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 // About caseVisual()
@@ -33,26 +33,26 @@ func (e *Editor) caseVisual(key rune) {
 	switch key {
 	case 'y':
 		e.b[e.curBuffer].CopySelected(false, false)
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 	case 'x':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, false)
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
 	case 'd', 'D':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, false)
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 	case 's':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, false)
-		e.curMode = mode.Insert
+		e.curMode = enums.Insert
 	case '\033':
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 		e.ScrollLeft()
 	}
 }

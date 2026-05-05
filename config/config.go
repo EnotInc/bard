@@ -7,6 +7,7 @@ import (
 )
 
 const defaultConfigFile = ".bard/config.json"
+const configDir = ".bard"
 
 func getCongfigPath() string {
 	home, err := os.UserHomeDir()
@@ -16,6 +17,14 @@ func getCongfigPath() string {
 	return filepath.Join(home, defaultConfigFile)
 }
 
+func getConfigDir() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return configDir
+	}
+	return filepath.Join(home, configDir)
+}
+
 func InitConfig() *Config {
 	defaultConfing := getDefaultConfig()
 	config := getCongfigPath()
@@ -23,7 +32,7 @@ func InitConfig() *Config {
 	// creating a default config if bard.json is not found
 	if _, err := os.Stat(config); err != nil {
 		json, _ := json.MarshalIndent(defaultConfing, "", "    ")
-		dir := getDirPath()
+		dir := getConfigDir()
 		os.Mkdir(dir, 0755)
 		os.WriteFile(config, []byte(json), 0644)
 		return defaultConfing

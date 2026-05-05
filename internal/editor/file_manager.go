@@ -4,11 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"iter"
+	"log"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 
 	"github.com/EnotInc/Bard/docs/help"
+	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
 )
@@ -18,13 +21,13 @@ import (
 func (e *Editor) OpenHelp(topic enums.Help) {
 	var lines iter.Seq[string]
 	switch topic {
-	case enums.About:
+	case enums.HelpAbout:
 		lines = strings.SplitSeq(help.About, "\n")
-	case enums.Modes:
+	case enums.HelpModes:
 		lines = strings.SplitSeq(help.Modes, "\n")
-	case enums.Normal:
+	case enums.HelpNormal:
 		lines = strings.SplitSeq(help.Noraml, "\n")
-	case enums.Command:
+	case enums.HelpCommand:
 		lines = strings.SplitSeq(help.Command, "\n")
 	default:
 		e.tui.Message = "Unknown topic"
@@ -120,4 +123,27 @@ func (e *Editor) SaveFile() {
 			e.tui.Message = "file name was not provided"
 		}
 	}
+}
+
+func getLogPath() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ".bard"
+	}
+	return filepath.Join(home, ".bard")
+}
+
+func (e *Editor) saveLog(msg any) error {
+	path := getLogPath()
+	logs := filepath.Join(path, ".log")
+
+	file, err := os.OpenFile(logs, os.O_APPEND|os.O_CREATE, 0644)
+	if err != nil {
+		return fmt.Errorf("%s%s%s%s%s", ascii.Error, msg, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+	}
+	defer file.Close()
+
+	log.SetOutput(file)
+	log.Println(msg, "\n", string(debug.Stack()))
+	return nil
 }

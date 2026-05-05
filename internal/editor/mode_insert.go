@@ -5,7 +5,7 @@ import (
 	"unicode"
 
 	"github.com/EnotInc/Bard/internal/buffer"
-	"github.com/EnotInc/Bard/internal/mode"
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 // About caseInsert()
@@ -30,7 +30,7 @@ func (e *Editor) caseInsert(key rune) {
 			e.b[e.curBuffer].Cursor.Line(), true)
 
 	case '\033':
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
 	case '\x7f':

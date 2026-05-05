@@ -6,7 +6,6 @@ import (
 	"unicode"
 
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/mode"
 )
 
 // About caseCommand()
@@ -16,18 +15,18 @@ func (e *Editor) caseCommand(key rune) {
 	switch key {
 	case '\033':
 		e.command = ""
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 	case '\127', '\x7f':
 		if len(e.command) > 0 {
 			e.command = e.command[:len(e.command)-1]
 		} else {
 			e.command = ""
-			e.curMode = mode.Normal
+			e.curMode = enums.Normal
 		}
 	case '\013', '\r', '\n':
 		e.execCommand()
 		e.command = ""
-		e.curMode = mode.Normal
+		e.curMode = enums.Normal
 	default:
 		if unicode.IsPrint(key) {
 			e.command += string(key)
@@ -58,7 +57,7 @@ func (e *Editor) execCommand() {
 			e.Exit(0)
 		}
 	case "help", "h":
-		e.OpenHelp(enums.About)
+		e.OpenHelp(enums.HelpAbout)
 	case "rln":
 		e.c.RLN = !e.c.RLN
 	case "showmd":

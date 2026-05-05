@@ -1,4 +1,4 @@
-package mode
+package enums
 
 // About |Mode|
 // Mode is just an aliase for string

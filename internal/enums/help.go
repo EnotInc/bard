@@ -5,10 +5,10 @@ package enums
 type Help string
 
 const (
-	About   Help = "about"
-	Modes   Help = "modes"
-	Normal  Help = "normal"
-	Insert  Help = "insert"
-	Command Help = "command"
-	Visual  Help = "visual"
+	HelpAbout   Help = "about"
+	HelpModes   Help = "modes"
+	HelpNormal  Help = "normal"
+	HelpInsert  Help = "insert"
+	HelpCommand Help = "command"
+	HelpVisual  Help = "visual"
 )

@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/internal/ascii"
-	"github.com/EnotInc/Bard/internal/mode"
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 // About AddVisual()
 // This function is used to add visual highlight to the selected lines
-func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
+func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
 	var line []rune
 
 	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
@@ -18,7 +18,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 	}
 
 	switch curMode {
-	case mode.Visual:
+	case enums.Visual:
 		if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 			startLine, endLine = endLine, startLine
 			startOffset, endOffset = endOffset, startOffset
@@ -53,7 +53,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			line = ui.WithEndLine(rendered)
 		}
 
-	case mode.Visual_line:
+	case enums.Visual_line:
 		if startLine > endLine {
 			startLine, endLine = endLine, startLine
 		}

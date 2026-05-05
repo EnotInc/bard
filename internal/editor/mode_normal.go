@@ -3,7 +3,6 @@ package editor
 import (
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/mode"
 )
 
 // About caseNormal()
@@ -38,7 +37,7 @@ func (e *Editor) caseNormal(key rune) {
 	switch key {
 	case 'i':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
@@ -48,7 +47,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'a':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
@@ -60,7 +59,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'I':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
@@ -71,7 +70,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'A':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
@@ -81,10 +80,10 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].Insert_a()
 		e.tui.ShowHello = false
 	case ':':
-		e.curMode = mode.Command
+		e.curMode = enums.Command
 	case 'o':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Below)
 		e.b[e.curBuffer].J(1)
@@ -97,7 +96,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 	case 'O':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
 		e.b[e.curBuffer].MoveToFirstChar()
@@ -136,7 +135,7 @@ func (e *Editor) caseNormal(key rune) {
 			e.b[e.curBuffer].Cursor.Line(), false)
 
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Replace
+			e.curMode = enums.Replace
 		}
 	case 'x':
 		e.b[e.curBuffer].SaveChanges(
@@ -154,7 +153,7 @@ func (e *Editor) caseNormal(key rune) {
 
 		e.b[e.curBuffer].Delkey()
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 		}
 	case 'S':
 		e.b[e.curBuffer].SaveChanges(
@@ -164,14 +163,14 @@ func (e *Editor) caseNormal(key rune) {
 
 		e.b[e.curBuffer].ClearLine()
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = mode.Insert
+			e.curMode = enums.Insert
 		}
 	case 'v':
-		e.curMode = mode.Visual
+		e.curMode = enums.Visual
 		e.b[e.curBuffer].StartVisual()
 		e.tui.ShowHello = false
 	case 'V':
-		e.curMode = mode.Visual_line
+		e.curMode = enums.Visual_line
 		e.b[e.curBuffer].StartVisualLine()
 		e.tui.ShowHello = false
 	case 'p':
