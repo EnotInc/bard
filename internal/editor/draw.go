@@ -100,6 +100,10 @@ func (e *Editor) Draw() {
 	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
 	y := e.tui.CurRow + enums.CursorLineOffset
 
+	cursor := e.b[e.curBuffer].Cursor
+	posx := cursor.Offset() + enums.InitialOffset + len(emtpyLineSpases)
+	posy := cursor.Line() + enums.CursorLineOffset
+
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
 	if e.b[e.curBuffer].IsReadOnly && e.tui.Message == "" {
@@ -109,12 +113,12 @@ func (e *Editor) Draw() {
 	// Different modes have different information on the last line
 	switch e.curMode {
 	case mode.Insert:
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Replace:
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorUnderline)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
@@ -128,12 +132,12 @@ func (e *Editor) Draw() {
 			tabs = append(tabs, t.Title)
 		}
 		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, e.c.TabNames)
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, cursorPos, e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, cursorPos, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Visual, mode.Visual_line:
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(x, y, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
