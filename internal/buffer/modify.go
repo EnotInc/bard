@@ -69,7 +69,7 @@ func (b *Buffer) Delkey() {
 		curLine := b.Lines[b.Cursor.line]
 		index := b.Cursor.offset
 		ch := curLine.Data[index]
-		b.copies = append([]*copied{}, &copied{data: []rune{ch}, isStart: false, isEnd: false})
+		b.Copies = append([]*copied{}, &copied{data: []rune{ch}, isStart: false, isEnd: false})
 		curLine.Data = slices.Delete(curLine.Data, index, index+1)
 	}
 

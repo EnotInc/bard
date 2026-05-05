@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"unicode"
 
+	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/mode"
 )
 
@@ -14,9 +15,20 @@ import (
 func (e *Editor) caseInsert(key rune) {
 	switch key {
 	case '\013', '\r', '\n':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].InsertLine()
 		e.ScrollDown()
 		e.moveLeft()
+
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Insert,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), true)
+
 	case '\033':
 		e.curMode = mode.Normal
 		e.b[e.curBuffer].EscapeToNormal()
@@ -26,6 +38,11 @@ func (e *Editor) caseInsert(key rune) {
 		e.ScrollLeft()
 		e.ScrollUp()
 	case '\t':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		//NOTE: yeah, I just insert 4 spaces instead of tabs
 		for range 4 {
 			e.b[e.curBuffer].InsertKey(' ')
@@ -35,8 +52,19 @@ func (e *Editor) caseInsert(key rune) {
 		e.b[e.curBuffer].InsertPair(key)
 		e.ScrollRight()
 	case 8:
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].DeleteUntilSpace()
 	default:
+		if key == ' ' {
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Change,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
+		}
 		if !unicode.IsPrint(key) {
 			e.tui.Message = fmt.Sprintf("Unknown key. Code: %d", int(key))
 			return

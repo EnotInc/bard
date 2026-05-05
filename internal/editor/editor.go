@@ -139,7 +139,7 @@ func (e *Editor) moveWithSubCommand(move func(int)) {
 	e.subCmd = ""
 }
 
-// About replaceWithAbout()
+// About replaceWithAmount()
 // does not work...
 func (e *Editor) replaceWithAmount(key rune) {
 	if e.subCmd == "r" {

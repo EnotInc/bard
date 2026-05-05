@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/mode"
 )
@@ -55,12 +56,20 @@ func (e *Editor) caseNormal(key rune) {
 	case 'i':
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Insert
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Change,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
 		}
 		e.ScrollLeft()
 		e.tui.ShowHello = false
 	case 'a':
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Insert
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Change,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
 		}
 		e.b[e.curBuffer].FixOffset()
 		e.b[e.curBuffer].Insert_a()
@@ -69,6 +78,10 @@ func (e *Editor) caseNormal(key rune) {
 	case 'I':
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Insert
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Change,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
 		}
 		e.b[e.curBuffer].MoveToFirstVisible()
 		e.moveLeft()
@@ -76,6 +89,10 @@ func (e *Editor) caseNormal(key rune) {
 	case 'A':
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Insert
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Change,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
 		}
 		e.b[e.curBuffer].MoveToLastChar()
 		e.b[e.curBuffer].Insert_a()
@@ -90,6 +107,10 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].J(1)
 		e.ScrollDown()
 		e.moveLeft()
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Insert,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
 		e.tui.ShowHello = false
 	case 'O':
 		if !e.b[e.curBuffer].IsReadOnly {
@@ -99,31 +120,65 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].MoveToFirstChar()
 		e.ScrollUp()
 		e.moveLeft()
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Insert,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
 		e.tui.ShowHello = false
 	case 'D':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].ClearLine()
 		e.b[e.curBuffer].MoveToFirstChar()
 		e.moveLeft()
 	case 'd':
 		e.subCmd += "d"
 		if e.subCmd == "dd" {
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Delete,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
+
 			e.subCmd = ""
 			e.b[e.curBuffer].RemoveLine()
 			e.moveLeft()
 		}
 	case 'R':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Replace
 		}
 	case 'x':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].Delkey()
 		e.ScrollLeft()
 	case 's':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].Delkey()
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Insert
 		}
 	case 'S':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].ClearLine()
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = mode.Insert
@@ -165,11 +220,26 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].StartVisualLine()
 		e.tui.ShowHello = false
 	case 'p':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Insert,
+			e.b[e.curBuffer].Cursor.Line(),
+			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1, false)
+
 		e.b[e.curBuffer].Paste(enums.After)
 		e.tui.ShowHello = false
 	case 'P':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Insert,
+			e.b[e.curBuffer].Cursor.Line(),
+			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1, false)
+
 		e.b[e.curBuffer].Paste(enums.Before)
 		e.tui.ShowHello = false
+	case 'u':
+		err := e.b[e.curBuffer].Undo()
+		if err != nil {
+			e.tui.Message = err.Error()
+		}
 	default:
 		e.subCmd = ""
 	}

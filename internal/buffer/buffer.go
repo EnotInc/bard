@@ -12,10 +12,11 @@ package buffer
 type Buffer struct {
 	Title      string
 	pairs      []rune
-	copies     []*copied
+	Copies     []*copied
 	Lines      []*Line
 	Cursor     *cursor
 	Visual     *cursor
+	History    []snapshot
 	IsReadOnly bool
 	IsMdFile   bool
 }
@@ -26,6 +27,7 @@ func InitBuffer() []*Buffer {
 	b := &Buffer{
 		Cursor:     c,
 		Visual:     v,
+		History:    []snapshot{},
 		pairs:      []rune{},
 		IsReadOnly: false,
 		IsMdFile:   false,
@@ -41,6 +43,7 @@ func (b *Buffer) EscapeToNormal() {
 	if b.Cursor.offset > 0 {
 		b.Cursor.offset -= 1
 	}
+	b.FixOffset()
 }
 
 func (b *Buffer) ResetKeepOffset() {

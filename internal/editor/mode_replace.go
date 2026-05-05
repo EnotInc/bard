@@ -3,6 +3,7 @@ package editor
 import (
 	"unicode"
 
+	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/mode"
 )
 
@@ -11,13 +12,24 @@ import (
 func (e *Editor) caseReplaceChar(key rune, amount int) {
 	switch key {
 	case '\013', '\r', '\n':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
 		e.b[e.curBuffer].InsertLine()
 		e.ScrollDown()
 		e.moveLeft()
+
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Insert,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), true)
 	case '\033':
 		e.curMode = mode.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
+		e.setUiCursor()
 	case '\x7f': // just do nothing if backspace is pressed
 		return
 	case '\t':
@@ -26,9 +38,17 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 			e.b[e.curBuffer].InsertKey(' ')
 			e.ScrollRight()
 		}
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
 	default:
 		if unicode.IsPrint(key) {
 			e.b[e.curBuffer].ReplaceKeys(key, amount)
+			e.b[e.curBuffer].SaveChanges(
+				buffer.Change,
+				e.b[e.curBuffer].Cursor.Line(),
+				e.b[e.curBuffer].Cursor.Line(), false)
 		}
 	}
 	e.subCmd = ""

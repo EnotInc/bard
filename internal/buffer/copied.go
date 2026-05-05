@@ -58,7 +58,7 @@ func (b *Buffer) CopyLine(l *Line, startOffset int, endOffset int) *copied {
 // copies selected area into [copied], betven [Cursor] and [Visual] points
 func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	if !b.IsReadOnly {
-		b.copies = []*copied{}
+		b.Copies = []*copied{}
 
 		startOffset := b.Visual.offset
 		startLine := b.Visual.line
@@ -89,7 +89,7 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 			}
 
 			line := b.CopyLine(b.Lines[i], curOffsetStart, curOffsetEnd)
-			b.copies = append(b.copies, line)
+			b.Copies = append(b.Copies, line)
 
 			if isDelete {
 				if lineCount == 0 {
@@ -130,11 +130,11 @@ func (b *Buffer) Paste(shift int) {
 		DataFirst := append([]rune(nil), b.Lines[b.Cursor.line].Data[:initialOffset]...)
 		DataSecond := append([]rune(nil), b.Lines[b.Cursor.line].Data[initialOffset:]...)
 
-		isFirstStart := b.copies[0].isStart
-		isLastEnd := b.copies[len(b.copies)-1].isEnd
+		isFirstStart := b.Copies[0].isStart
+		isLastEnd := b.Copies[len(b.Copies)-1].isEnd
 
 		lineIndex := b.Cursor.line
-		for i, line := range b.copies {
+		for i, line := range b.Copies {
 			Data := append([]rune{}, line.data...)
 
 			lineIndex = b.Cursor.line + i // Moving index while walking on copied lines
@@ -145,7 +145,7 @@ func (b *Buffer) Paste(shift int) {
 
 			switch i {
 			case 0: // Working with 1st line
-				if len(b.copies) == 1 {
+				if len(b.Copies) == 1 {
 					if !isFirstStart && !isLastEnd {
 						curLine.Data = slices.Concat(DataFirst, Data, DataSecond)
 					} else {
@@ -158,7 +158,7 @@ func (b *Buffer) Paste(shift int) {
 						curLine.Data = slices.Concat(DataFirst, Data)
 					}
 				}
-			case len(b.copies) - 1: // Working with last line
+			case len(b.Copies) - 1: // Working with last line
 				if isLastEnd && isFirstStart {
 					b.InsertLineWithData(lineIndex+shift, Data)
 				} else {
