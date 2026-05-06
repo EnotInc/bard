@@ -142,6 +142,25 @@ func (e *Editor) caseNormal(key rune) {
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = enums.Replace
 		}
+	case 'J':
+		if len(e.b[e.curBuffer].Lines)-1 == e.b[e.curBuffer].Cursor.Line() {
+			return
+		} // do nothing on the last line
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+
+		line := e.b[e.curBuffer].Cursor.Line()
+		e.b[e.curBuffer].J(1)
+
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Delete,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), true)
+
+		e.b[e.curBuffer].DelAndMoveLineAt(line, line+1, 0)
+		e.b[e.curBuffer].K(1)
 	case 'x':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,

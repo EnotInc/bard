@@ -34,9 +34,21 @@ func (e *Editor) caseInsert(key rune) {
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
 	case '\x7f':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Delete,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), false)
+		e.b[e.curBuffer].K(1)
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Cursor.Line(), true)
+		e.b[e.curBuffer].J(1)
+
 		e.b[e.curBuffer].RemoveKey(0)
 		e.ScrollLeft()
 		e.ScrollUp()
+
 	case '\t':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,

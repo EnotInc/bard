@@ -14,7 +14,7 @@ const (
 	Delete
 )
 
-const capacity = 100
+const capacity = 1000
 
 type snapshot struct {
 	prev  bool
