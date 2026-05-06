@@ -101,11 +101,11 @@ func (e *Editor) Draw() {
 
 	// Calculating the visual position of the cursor
 	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
-	y := e.tui.CurRow + enums.CursorLineOffset
+	y := e.tui.CurRow + enums.CursorOffset
 
 	cursor := e.b[e.curBuffer].Cursor
-	posx := cursor.Offset() + enums.InitialOffset + len(emtpyLineSpases)
-	posy := cursor.Line() + enums.CursorLineOffset
+	posx := cursor.Offset() + enums.CursorOffset
+	posy := cursor.Line() + enums.CursorOffset
 
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
