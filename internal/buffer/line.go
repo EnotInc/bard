@@ -107,7 +107,6 @@ func (b *Buffer) RemoveLineAt(lineIndex int) {
 	}
 }
 
-// Set line.data = ""
 func (b *Buffer) ClearLine() {
 	if b.IsReadOnly {
 		return

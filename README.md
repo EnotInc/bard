@@ -5,10 +5,6 @@
 Bard is a little TUI text editor for markdown files, with vim-like keybindings
 I wrote Bard because I wanted to have beautiful markdown rendering, similar to Obsidian, but in the terminal with Vim's motions efficiency
 
-foo bar
-baz
-qwerty
-
 ![WelcomePage](docs/assets/WelcomePage.png)
 
 ## **Usage**
