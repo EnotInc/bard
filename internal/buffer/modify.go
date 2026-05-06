@@ -44,19 +44,15 @@ func (b *Buffer) ReplaceKeys(key rune, amount int) {
 }
 
 // Called when the user presses [backspace] and just removes the character in front of it
-func (b *Buffer) RemoveKey(keyShift int) {
+func (b *Buffer) RemoveKey() {
 	if b.IsReadOnly {
 		return
 	}
 
-	if b.Cursor.offset > 0 {
-		curLine := b.Lines[b.Cursor.line]
-		index := keyShift + b.Cursor.offset
-		curLine.Data = slices.Delete(curLine.Data, index-1, index)
-		b.Cursor.offset -= 1
-	} else {
-		b.DelAndMoveLine()
-	}
+	curLine := b.Lines[b.Cursor.line]
+	index := b.Cursor.offset - 1
+	curLine.Data = slices.Delete(curLine.Data, index, index+1)
+	b.Cursor.offset -= 1
 }
 
 // Called when the user presses [x] or [s] in normal mode. It deletes the character and copies it to the buffer
@@ -71,10 +67,6 @@ func (b *Buffer) Delkey() {
 		ch := curLine.Data[index]
 		b.Copies = append([]*copied{}, &copied{data: []rune{ch}, isStart: false, isEnd: false})
 		curLine.Data = slices.Delete(curLine.Data, index, index+1)
-	}
-
-	if b.Cursor.offset == len(b.Lines[b.Cursor.line].Data) {
-		b.H(1)
 	}
 }
 

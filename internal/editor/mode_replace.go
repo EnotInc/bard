@@ -69,7 +69,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
 	case '\x7f':
-		e.b[e.curBuffer].RemoveKey(0)
+		e.b[e.curBuffer].RemoveKey()
 		e.ScrollLeft()
 		e.ScrollUp()
 	case '\t':

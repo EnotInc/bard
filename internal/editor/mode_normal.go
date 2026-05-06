@@ -168,6 +168,9 @@ func (e *Editor) caseNormal(key rune) {
 			e.b[e.curBuffer].Cursor.Line(), false)
 
 		e.b[e.curBuffer].Delkey()
+		if e.b[e.curBuffer].Cursor.Offset() == len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data) {
+			e.b[e.curBuffer].H(1)
+		}
 		e.ScrollLeft()
 	case 's':
 		e.b[e.curBuffer].SaveChanges(
