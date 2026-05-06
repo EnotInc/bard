@@ -14,6 +14,8 @@ const (
 	Delete
 )
 
+const capacity = 100
+
 type snapshot struct {
 	prev  bool
 	op    operation
@@ -47,7 +49,16 @@ func (b *Buffer) SaveChanges(op operation, start int, end int, with_prev bool) {
 		prev:  with_prev,
 	}
 
-	b.History = append(b.History, sn)
+	b.UndoStack = append(b.UndoStack, sn)
+
+	b.fixHistoryCapacity()
+}
+
+func (b *Buffer) fixHistoryCapacity() {
+	len := len(b.UndoStack)
+	if len >= capacity {
+		b.UndoStack = b.UndoStack[len-capacity:]
+	}
 }
 
 func (b *Buffer) Undo() error {
@@ -55,12 +66,12 @@ func (b *Buffer) Undo() error {
 		return fmt.Errorf("Buffer is read only")
 	}
 
-	if len(b.History) == 0 {
+	if len(b.UndoStack) == 0 {
 		return fmt.Errorf("Change history is empty")
 	}
 
-	index := len(b.History) - 1
-	snapshot := b.History[index]
+	index := len(b.UndoStack) - 1
+	snapshot := b.UndoStack[index]
 
 	b.Cursor.line = snapshot.start
 
@@ -75,7 +86,7 @@ func (b *Buffer) Undo() error {
 		}
 	}
 
-	b.History = b.History[:index]
+	b.UndoStack = b.UndoStack[:index]
 
 	if b.Cursor.line > len(b.Lines)-1 {
 		b.Cursor.line = len(b.Lines) - 1

@@ -6,6 +6,7 @@ package buffer
 // |copies| - sores copied lines
 // |Lines| - List of lines
 // |Cursor| - read pos of cursor
+// |UndoStack| - stores list of snapshots. Used to move 'back in time' in file history
 // |Visual| - anchor point for real cursor pos, used to calculate selected area in visual and visual-line modes
 // |IsReadOnly| - ised to check if oppened file could be change
 // |IsMdFile| - if file extations is not '.md', bard uses default reader instead of markdown one
@@ -16,7 +17,7 @@ type Buffer struct {
 	Lines      []*Line
 	Cursor     *cursor
 	Visual     *cursor
-	History    []snapshot
+	UndoStack  []snapshot
 	IsReadOnly bool
 	IsMdFile   bool
 }
@@ -27,7 +28,7 @@ func InitBuffer() []*Buffer {
 	b := &Buffer{
 		Cursor:     c,
 		Visual:     v,
-		History:    []snapshot{},
+		UndoStack:  []snapshot{},
 		pairs:      []rune{},
 		IsReadOnly: false,
 		IsMdFile:   false,
