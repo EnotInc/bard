@@ -18,6 +18,7 @@ type Buffer struct {
 	Cursor     *cursor
 	Visual     *cursor
 	UndoStack  []snapshot
+	RedoStack  []snapshot
 	IsReadOnly bool
 	IsMdFile   bool
 }

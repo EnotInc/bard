@@ -221,6 +221,11 @@ func (e *Editor) caseNormal(key rune) {
 		if err != nil {
 			e.tui.Message = err.Error()
 		}
+	case 18: // ctrl + r
+		err := e.b[e.curBuffer].Redo()
+		if err != nil {
+			e.tui.Message = err.Error()
+		}
 	default:
 		e.subCmd = ""
 	}

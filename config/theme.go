@@ -87,7 +87,7 @@ func getDefaultTheme() *Theme {
 			Selection:   "\033[100m",
 			Command:     "\033[33m",
 			EmptyLine:   "\033[36m",
-			Message:     "\033]31m",
+			Message:     "\033[31m",
 			Tab:         "\033[94m",
 		},
 		Markdown: Markdown{
