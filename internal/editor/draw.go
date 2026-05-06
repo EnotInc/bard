@@ -62,7 +62,7 @@ func (e *Editor) Draw() {
 				case enums.Visual, enums.Visual_line:
 					// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), true)
 						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 					} else {
 						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst))
@@ -76,7 +76,7 @@ func (e *Editor) Draw() {
 			} else {
 				if e.curMode == enums.Visual || e.curMode == enums.Visual_line {
 					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), false)
 						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 					} else {
 						fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
@@ -92,9 +92,9 @@ func (e *Editor) Draw() {
 		} else {
 			// If the line is empty, I just add the '~' symbol
 			if e.tui.ShowHello {
-				fmt.Fprint(&data, e.theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)), "\n\r")
+				fmt.Fprint(&data, ascii.Reset, e.theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)), "\n\r")
 			} else {
-				fmt.Fprint(&data, e.theme.General.EmptyLine, "~", "\n\r")
+				fmt.Fprint(&data, ascii.Reset, e.theme.General.EmptyLine, "~", "\n\r")
 			}
 		}
 	}

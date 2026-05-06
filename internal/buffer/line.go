@@ -1,6 +1,11 @@
 package buffer
 
-import "slices"
+import (
+	"fmt"
+	"slices"
+	"strconv"
+	"strings"
+)
 
 type Line struct {
 	Data []rune
@@ -11,10 +16,17 @@ func (b *Buffer) InsertEmptyLine(lineShift int) {
 		return
 	}
 
+	keep := b.continueList()
+
 	index := b.Cursor.line + lineShift
 	newLine := make([]*Line, 0)
-	newLine = append(newLine, &Line{Data: []rune("")})
+	newLine = append(newLine, &Line{Data: keep})
 	b.Lines = append(b.Lines[:index], append(newLine, b.Lines[index:]...)...)
+
+	if len(keep) != 0 {
+		b.MoveToLastChar()
+		b.Insert_a()
+	}
 }
 
 func (b *Buffer) InsertLineWithData(index int, data []rune) {
@@ -38,13 +50,17 @@ func (b *Buffer) InsertLine() {
 	shiftData := b.Lines[b.Cursor.line].Data[b.Cursor.offset:]
 	b.Lines[b.Cursor.line].Data = b.Lines[b.Cursor.line].Data[:b.Cursor.offset]
 
+	keep := b.continueList()
+
 	newLine := Line{}
 	b.Lines = append(b.Lines[:index], append([]*Line{&newLine}, b.Lines[index:]...)...)
 	b.Cursor.line += 1
 	b.Cursor.offset = 0
 
+	b.Lines[b.Cursor.line].Data = append(b.Lines[b.Cursor.line].Data, keep...)
 	b.Lines[b.Cursor.line].Data = append(b.Lines[b.Cursor.line].Data, shiftData...)
 
+	b.Cursor.offset += len(keep)
 }
 
 // About DelAndMoveLine()
@@ -114,4 +130,41 @@ func (b *Buffer) ClearLine() {
 
 	b.Cursor.offset = 0
 	b.Lines[b.Cursor.line].Data = []rune{}
+}
+
+func (b *Buffer) continueList() []rune {
+	curLine := b.Lines[b.Cursor.line]
+	trim := strings.TrimSpace(string(curLine.Data))
+	b.MoveToFirstVisible()
+
+	amount := b.Cursor.offset
+	var newLine []rune
+
+	if strings.HasPrefix(trim, "-") {
+		// NOTE: yeah, this looks not rly good. Anyway, I'll refactor it later
+		if len(trim) > 5 && trim[2] == '[' && trim[4] == ']' {
+			newLine = append(newLine, []rune(strings.Repeat(" ", amount))...)
+			newLine = append(newLine, []rune("- [ ] ")...)
+		} else {
+			newLine = append(newLine, []rune(strings.Repeat(" ", amount))...)
+			newLine = append(newLine, []rune("- ")...)
+		}
+	} else {
+		parts := strings.Split(trim, " ")
+		if len(parts) != 0 && strings.HasSuffix(parts[0], ")") || strings.HasSuffix(parts[0], ".") {
+			suffix := string(trim[len(parts[0])-1])
+			prefix := trim[:len(parts[0])-1]
+			number, err := strconv.Atoi(prefix)
+			if err != nil {
+				return newLine
+			}
+
+			number += 1
+			newLine = append(newLine, []rune(fmt.Sprint(number))...)
+			newLine = append(newLine, []rune(suffix)...)
+			newLine = append(newLine, []rune(" ")...)
+		}
+	}
+
+	return newLine
 }

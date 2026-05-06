@@ -10,7 +10,7 @@ import (
 
 // About AddVisual()
 // This function is used to add visual highlight to the selected lines
-func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int) string {
+func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int, isRender bool) string {
 	var line []rune
 
 	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
@@ -29,7 +29,13 @@ func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, start
 			endOffset += 1 // too highlight the whole char
 		}
 
-		rendered, _ := ui.render.Render(l, i, true, true, i == startLine)
+		var rendered string
+		if isRender {
+			rendered, _ = ui.render.Render(l, i, true, true, i == startLine)
+		} else {
+			rendered = string(l)
+		}
+
 		if startLine == i && i == endLine {
 			selected := ui.paint(l[startOffset:endOffset])
 			before := VisibleSubString(rendered, 0, startOffset-1)

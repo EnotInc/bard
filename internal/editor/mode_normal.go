@@ -87,10 +87,13 @@ func (e *Editor) caseNormal(key rune) {
 		if !e.b[e.curBuffer].IsReadOnly {
 			e.curMode = enums.Insert
 		}
+
 		e.b[e.curBuffer].InsertEmptyLine(enums.Below)
 		e.b[e.curBuffer].J(1)
+		e.b[e.curBuffer].Insert_a()
 		e.ScrollDown()
 		e.moveLeft()
+
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
@@ -101,9 +104,9 @@ func (e *Editor) caseNormal(key rune) {
 			e.curMode = enums.Insert
 		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
-		e.b[e.curBuffer].MoveToFirstChar()
 		e.ScrollUp()
 		e.moveLeft()
+
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
