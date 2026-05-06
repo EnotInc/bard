@@ -120,55 +120,50 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 }
 
 func (b *Buffer) Paste(shift int) {
-	if !b.IsReadOnly {
-		initialOffset := b.Cursor.offset + shift
-		if len(b.Lines[b.Cursor.line].Data) == 0 || b.Cursor.offset < 0 {
-			initialOffset = 0
-		}
-
-		DataFirst := append([]rune(nil), b.Lines[b.Cursor.line].Data[:initialOffset]...)
-		DataSecond := append([]rune(nil), b.Lines[b.Cursor.line].Data[initialOffset:]...)
-
-		isFirstStart := b.Copies[0].isStart
-		isLastEnd := b.Copies[len(b.Copies)-1].isEnd
-
-		lineIndex := b.Cursor.line
-		for i, line := range b.Copies {
-			Data := append([]rune{}, line.data...)
-
-			lineIndex = b.Cursor.line + i // Moving index while walking on copied lines
-			if lineIndex >= len(b.Lines) {
-				lineIndex = len(b.Lines) - 1
-			}
-			curLine := b.Lines[lineIndex]
-
-			switch i {
-			case 0: // Working with 1st line
-				if len(b.Copies) == 1 {
-					if !isFirstStart && !isLastEnd {
-						curLine.Data = slices.Concat(DataFirst, Data, DataSecond)
-					} else {
-						b.InsertLineWithData(lineIndex+shift, Data)
-					}
-				} else {
-					if isFirstStart && isLastEnd {
-						b.InsertLineWithData(lineIndex+shift, Data)
-					} else {
-						curLine.Data = slices.Concat(DataFirst, Data)
-					}
-				}
-			case len(b.Copies) - 1: // Working with last line
-				if isLastEnd && isFirstStart {
-					b.InsertLineWithData(lineIndex+shift, Data)
-				} else {
-					savedData := slices.Concat(Data, DataSecond)
-					b.InsertLineWithData(lineIndex+shift, savedData)
-				}
-			default: //Just insert a new line
-				b.InsertLineWithData(lineIndex+shift, Data)
-			}
-		}
-
-		b.FixOffset()
+	if b.IsReadOnly || len(b.Copies) == 0 {
+		return
 	}
+
+	initialOffset := b.Cursor.offset + shift
+	if len(b.Lines[b.Cursor.line].Data) == 0 || b.Cursor.offset < 0 {
+		initialOffset = 0
+	}
+	if initialOffset >= len(b.Lines[b.Cursor.line].Data) {
+		initialOffset = len(b.Lines[b.Cursor.line].Data)
+	}
+
+	DataFirst := append([]rune(nil), b.Lines[b.Cursor.line].Data[:initialOffset]...)
+	DataSecond := append([]rune(nil), b.Lines[b.Cursor.line].Data[initialOffset:]...)
+
+	isFirstStart := b.Copies[0].isStart
+	isLastEnd := b.Copies[len(b.Copies)-1].isEnd
+
+	lineIndex := b.Cursor.line
+	for i, line := range b.Copies {
+		Data := append([]rune{}, line.data...)
+
+		lineIndex = b.Cursor.line + i // Moving index while walking on copied lines
+		if lineIndex >= len(b.Lines) {
+			lineIndex = len(b.Lines) - 1
+		}
+		curLine := b.Lines[lineIndex]
+
+		if isFirstStart && i == 0 || isLastEnd && i == len(b.Copies) {
+			b.InsertLineWithData(lineIndex, Data)
+			continue
+		}
+
+		if !line.isEnd && !line.isStart {
+			curLine.Data = slices.Concat(DataFirst, Data, DataSecond)
+		} else if line.isEnd && line.isStart {
+			b.InsertLineWithData(lineIndex, Data)
+		} else if line.isStart {
+			curLine.Data = slices.Concat(Data, DataSecond)
+		} else if line.isEnd {
+			savedData := slices.Concat(DataFirst, Data)
+			b.InsertLineWithData(lineIndex, savedData)
+		}
+	}
+
+	b.FixOffset()
 }
