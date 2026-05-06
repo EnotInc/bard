@@ -152,14 +152,14 @@ func (r *Render) renderWSEOL(t *Token) string {
 func (r *Render) renderCodeBlock(t *Token, show bool) string {
 	if show {
 		//return ascii.CodeBg.Str() + general.PaintString(string(t.Literal)+string(t.Value)) + r.fillSpace()
-		return r.theme.CodeBg + general.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
+		return r.theme.CodeHeader + general.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
 	}
 
 	if i, ok := langIcon[strings.ToLower(string(t.Value))]; ok {
-		return r.theme.CodeBg + " " + i + general.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace()
+		return r.theme.CodeHeader + " " + i + general.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace()
 	}
 	// fallback
-	return r.theme.CodeBg + general.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace()
+	return r.theme.CodeHeader + general.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace()
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
@@ -284,7 +284,7 @@ func (r *Render) renderCodeLine(t *Token, show bool) string {
 		}
 		s.WriteString(string(t.Value[:end]))
 	}
-	return r.theme.CodeBg + r.theme.CodeText + s.String() + ascii.Reset.Str()
+	return r.theme.CodeLineBg + r.theme.CodeText + s.String() + ascii.Reset.Str()
 }
 
 func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {

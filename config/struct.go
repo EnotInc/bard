@@ -32,14 +32,15 @@ type General struct {
 type Markdown struct {
 	NumberList string `json:"number_list"`
 	Highlight  string `json:"highlight"`
+	CodeLineBg string `json:"code_line_bg"`
 	CodeText   string `json:"code_text"`
+	CodeHeader string `json:"code_header"`
 	Header1    string `json:"header_1"`
 	Header2    string `json:"header_2"`
 	Header3    string `json:"header_3"`
 	Header4    string `json:"header_4"`
 	Header5    string `json:"header_5"`
 	Header6    string `json:"header_6"`
-	CodeBg     string `json:"code_bg"`
 	Symbol     string `json:"symbol"`
 	Quote      string `json:"quote"`
 	Image      string `json:"image"`
