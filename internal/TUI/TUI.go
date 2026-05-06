@@ -125,7 +125,7 @@ func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 	if maxOffset <= enums.InitialOffset {
 		maxOffset = enums.InitialOffset
 	}
-	fmt.Fprint(&num, strings.Repeat(" ", maxOffset-numLen))
+	fmt.Fprint(&num, ascii.Reset, strings.Repeat(" ", maxOffset-numLen))
 
 	if curLine+1 == n {
 		fmt.Fprint(&num, ui.theme.CurrentLine, numStr)

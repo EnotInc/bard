@@ -14,7 +14,7 @@ func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, start
 	var line []rune
 
 	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
-		return ui.theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str()
+		return string(ui.WithEndLine(string(l)))
 	}
 
 	switch curMode {

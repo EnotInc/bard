@@ -75,8 +75,12 @@ func (e *Editor) Draw() {
 				fmt.Fprint(&l, ascii.Reset.Str())
 			} else {
 				if e.curMode == enums.Visual || e.curMode == enums.Visual_line {
-					visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
-					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
+					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
+						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data))
+						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
+					} else {
+						fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
+					}
 				} else {
 					fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
 				}
