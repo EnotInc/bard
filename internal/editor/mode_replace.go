@@ -17,6 +17,7 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 			e.b[e.curBuffer].Cursor.Line(),
 			e.b[e.curBuffer].Cursor.Line(), false)
 
+		e.b[e.curBuffer].Delkey()
 		e.b[e.curBuffer].InsertLine()
 		e.ScrollDown()
 		e.moveLeft()

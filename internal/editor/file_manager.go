@@ -144,6 +144,6 @@ func (e *Editor) saveLog(msg any) error {
 	defer file.Close()
 
 	log.SetOutput(file)
-	log.Println(msg, "\n", string(debug.Stack()))
+	log.Print(strings.Repeat("=", 30), "\n\n", msg, string(debug.Stack()), "\n\n")
 	return nil
 }
