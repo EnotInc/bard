@@ -63,7 +63,7 @@ func InitEditor() *Editor {
 	}
 
 	_c := config.InitConfig()
-	_t := config.InitTheme(_c.ThemeName)
+	_t, err := config.InitTheme(_c.ThemeName)
 	_b := buffer.InitBuffer()
 	_tui := tui.InitTUI(_h, _w, _t)
 
@@ -79,6 +79,10 @@ func InitEditor() *Editor {
 		fdOut:     _fdOut,
 		fdIn:      _fdIn,
 		curBuffer: 0,
+	}
+
+	if err != nil {
+		e.c.ThemeName = _c.DefaultThemeName()
 	}
 
 	if _w < 80 || _h < 30 {

@@ -139,7 +139,7 @@ func (e *Editor) saveLog(msg any) error {
 
 	file, err := os.OpenFile(logs, os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		return fmt.Errorf("%s%s%s%s%s", ascii.Error, msg, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+		return fmt.Errorf("%s%s%s%s%s", e.theme.General.Message, msg, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
 	}
 	defer file.Close()
 

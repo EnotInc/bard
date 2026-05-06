@@ -146,7 +146,7 @@ func (r *Render) fillSpace() string {
 }
 
 func (r *Render) renderWSEOL(t *Token) string {
-	return strings.Repeat(ascii.Error.Str()+ascii.WSEOL.Str(), len(t.Value))
+	return strings.Repeat(r.theme.Symbol+ascii.WSEOL.Str(), len(t.Value))
 }
 
 func (r *Render) renderCodeBlock(t *Token, show bool) string {

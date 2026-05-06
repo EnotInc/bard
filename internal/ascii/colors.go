@@ -13,7 +13,6 @@ const (
 	// -===[ Basic colors ]===-
 	Reset   Color = "\033[0m"
 	ResetFg Color = "\033[39m"
-	Error   Color = "\033[31m"
 
 	// -===[ Text style ]===-
 	Bold       Color = "\033[1m"

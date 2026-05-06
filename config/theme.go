@@ -2,12 +2,17 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 )
 
 const defaultThemeName = "bard.json"
 const themeDir = ".bard/themes"
+
+func (c *Config) DefaultThemeName() string {
+	return defaultThemeName
+}
 
 func getThemeDir() string {
 	home, err := os.UserHomeDir()
@@ -25,7 +30,7 @@ func getThemePath(themeName string) string {
 	return filepath.Join(home, themeDir, themeName)
 }
 
-func InitTheme(themeName string) *Theme {
+func InitTheme(themeName string) (*Theme, error) {
 	defaultTheme := getDefaultTheme()
 	theme := getThemePath(themeName)
 
@@ -34,21 +39,21 @@ func InitTheme(themeName string) *Theme {
 		dir := getThemeDir()
 		os.Mkdir(dir, 0755)
 		os.WriteFile(getThemePath(defaultThemeName), []byte(json), 0644)
-		return defaultTheme
+		return defaultTheme, fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
 	data, err := os.ReadFile(theme)
 	if err != nil {
-		return defaultTheme
+		return defaultTheme, fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
 	t := &Theme{}
 	err = json.Unmarshal(data, t)
 	if err != nil {
-		return defaultTheme
+		return defaultTheme, fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
-	return t
+	return t, nil
 }
 
 func (t *Theme) ChangeTheme(themeName string) string {
@@ -82,6 +87,7 @@ func getDefaultTheme() *Theme {
 			Selection:   "\033[100m",
 			Command:     "\033[33m",
 			EmptyLine:   "\033[36m",
+			Message:     "\033]31m",
 			Tab:         "\033[94m",
 		},
 		Markdown: Markdown{

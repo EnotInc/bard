@@ -159,7 +159,7 @@ func (ui *TUI) fillSpace() string {
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
 	var data strings.Builder
 	pos := fmt.Sprintf(" %d-%d ", x, y)
-	fmt.Fprintf(&data, "%s%s%s %s%s%s ", ui.theme.BottomBar, pos, curdata, ascii.Error, message, ui.theme.BottomBar)
+	fmt.Fprintf(&data, "%s%s%s %s%s%s ", ui.theme.BottomBar, pos, curdata, ui.theme.Message, message, ui.theme.BottomBar)
 
 	ln := 0
 	if cmd != "" {

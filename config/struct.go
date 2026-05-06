@@ -26,6 +26,7 @@ type General struct {
 	EmptyLine   string `json:"empty_line"`
 	Selection   string `json:"selection"`
 	Command     string `json:"command"`
+	Message     string `json:"message"`
 	Tab         string `json:"tab"`
 }
 
@@ -33,8 +34,8 @@ type Markdown struct {
 	NumberList string `json:"number_list"`
 	Highlight  string `json:"highlight"`
 	CodeLineBg string `json:"code_line_bg"`
-	CodeText   string `json:"code_text"`
 	CodeHeader string `json:"code_header"`
+	CodeText   string `json:"code_text"`
 	Header1    string `json:"header_1"`
 	Header2    string `json:"header_2"`
 	Header3    string `json:"header_3"`

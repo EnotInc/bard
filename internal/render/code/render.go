@@ -82,7 +82,7 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Rend
 }
 
 func (r *Render) renderWSEOL(t *Token) string {
-	return strings.Repeat(ascii.Error.Str()+ascii.WSEOL.Str(), len(t.Literal))
+	return strings.Repeat(r.theme.Comment+ascii.WSEOL.Str(), len(t.Literal))
 }
 
 func (r *Render) renderBracket(t *Token) string {
