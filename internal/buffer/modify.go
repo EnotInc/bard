@@ -1,6 +1,9 @@
 package buffer
 
-import "slices"
+import (
+	"slices"
+	"strings"
+)
 
 // About openPairs
 // map of paired runes. Markdown symbols are included
@@ -131,4 +134,38 @@ func (b *Buffer) DeleteUntilSpace() {
 	}
 	curLine.Data = slices.Delete(curLine.Data, b.Cursor.offset, offset)
 	b.Cursor.keepOffset = b.Cursor.offset
+}
+
+func (b *Buffer) ShiftLineRight(amount int) {
+	if b.IsReadOnly {
+		return
+	}
+
+	from := min(b.Cursor.line, b.Visual.line)
+	to := max(b.Cursor.line, b.Visual.line)
+	to += 1
+
+	for i := range to - from {
+		curLine := b.Lines[from+i]
+		tab := []rune(strings.Repeat("    ", amount))
+		newData := append(tab, curLine.Data...)
+		curLine.Data = []rune(newData)
+	}
+}
+
+func (b *Buffer) ShiftLineLeft(amount int) {
+	if b.IsReadOnly {
+		return
+	}
+
+	from := min(b.Cursor.line, b.Visual.line)
+	to := max(b.Cursor.line, b.Visual.line)
+	to += 1
+
+	for i := range to - from {
+		curLine := b.Lines[from+i]
+		tab := strings.Repeat("    ", amount)
+		newData, _ := strings.CutPrefix(string(curLine.Data), tab)
+		curLine.Data = []rune(newData)
+	}
 }

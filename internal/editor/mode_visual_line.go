@@ -37,6 +37,12 @@ func (e *Editor) caseVisualLine(key rune) {
 		e.curMode = enums.Insert
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
+	case '<':
+		e.execWithSubCommand(e.b[e.curBuffer].ShiftLineLeft)
+		e.b[e.curBuffer].MoveToFirstVisible()
+	case '>':
+		e.execWithSubCommand(e.b[e.curBuffer].ShiftLineRight)
+		e.b[e.curBuffer].MoveToFirstVisible()
 	case '\033':
 		e.curMode = enums.Normal
 		e.b[e.curBuffer].EscapeToNormal()
