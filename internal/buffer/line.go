@@ -176,3 +176,24 @@ func (b *Buffer) continueList() []rune {
 
 	return newLine
 }
+
+func (b *Buffer) DismissList() bool {
+	curLine := b.Lines[b.Cursor.line]
+	if len(curLine.Data) == 0 {
+		return false
+	}
+
+	trim := strings.TrimSpace(string(curLine.Data))
+
+	if trim == "-" || trim == "- [ ]" {
+		return true
+	} else if trim[len(trim)-1] == ')' || trim[len(trim)-1] == '.' {
+		prefix := trim[:len(trim)-1]
+		_, err := strconv.Atoi(prefix)
+		if err != nil {
+			return false
+		}
+		return true
+	}
+	return false
+}

@@ -20,6 +20,12 @@ func (e *Editor) caseInsert(key rune) {
 			e.b[e.curBuffer].Cursor.Line(),
 			e.b[e.curBuffer].Cursor.Line(), false)
 
+		ok := e.b[e.curBuffer].DismissList()
+		if ok {
+			e.b[e.curBuffer].ClearLine()
+			return
+		}
+
 		e.b[e.curBuffer].InsertLine()
 		e.ScrollDown()
 		e.moveLeft()
