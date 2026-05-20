@@ -38,9 +38,19 @@ func (e *Editor) caseVisualLine(key rune) {
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
 	case '<':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Visual.Line(), false)
+
 		e.execWithSubCommand(e.b[e.curBuffer].ShiftLineLeft)
 		e.b[e.curBuffer].MoveToFirstVisible()
 	case '>':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Visual.Line(), false)
+
 		e.execWithSubCommand(e.b[e.curBuffer].ShiftLineRight)
 		e.b[e.curBuffer].MoveToFirstVisible()
 	case '\033':
