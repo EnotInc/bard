@@ -75,28 +75,34 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 		lineCount := 0
 		lineSelected := endLine - startLine
 		for i := startLine; i <= endLine; {
-			curOffsetStart := 0
-			if lineCount == 0 {
-				curOffsetStart = startOffset
+			curOfsetStart := 0
+			curOfsetEnd := max(len(b.Lines[i].Data)-1, 0)
+
+			if isVisualLine {
+				curOfsetStart = 0
+				// not changing curOfsetEnd coz it was set to the max of 0 and len of the current line
+			} else {
+				if lineCount == 0 {
+					curOfsetStart = startOffset
+				}
+				if i == endLine {
+					curOfsetEnd = endOffset
+				}
 			}
 
-			curOffsetEnd := max(len(b.Lines[i].Data)-1, 0)
-			if i == endLine && !isVisualLine {
-				curOffsetEnd = endOffset
-			}
 			if len(b.Lines[i].Data) > 0 {
-				curOffsetEnd++
+				curOfsetEnd++
 			}
 
-			line := b.CopyLine(b.Lines[i], curOffsetStart, curOffsetEnd)
+			line := b.CopyLine(b.Lines[i], curOfsetStart, curOfsetEnd)
 			b.Copies = append(b.Copies, line)
 
 			if isDelete {
 				if lineCount == 0 {
-					tempLine = b.Lines[i].Data[:curOffsetStart]
+					tempLine = b.Lines[i].Data[:curOfsetStart]
 				}
 				if lineCount == lineSelected {
-					tempLine = append(tempLine, b.Lines[i].Data[curOffsetEnd:]...)
+					tempLine = append(tempLine, b.Lines[i].Data[curOfsetEnd:]...)
 				}
 				b.RemoveLineAt(i)
 				endLine--
