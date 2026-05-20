@@ -151,7 +151,6 @@ func (r *Render) renderWSEOL(t *Token) string {
 
 func (r *Render) renderCodeBlock(t *Token, show bool) string {
 	if show {
-		//return ascii.CodeBg.Str() + general.PaintString(string(t.Literal)+string(t.Value)) + r.fillSpace()
 		return r.theme.CodeHeader + general.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
 	}
 
@@ -164,14 +163,14 @@ func (r *Render) renderCodeBlock(t *Token, show bool) string {
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	if show {
-		return general.PaintString(r.theme.Symbol, string(t.Literal))
+		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
 	return ascii.BoxEmpty.Str()
 }
 
 func (r *Render) renderBoxField(t *Token, show bool) string {
 	if show {
-		return general.PaintString(r.theme.Symbol, string(t.Literal))
+		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
 	return ascii.BoxField.Str()
 }
@@ -186,7 +185,7 @@ func (r *Render) renderListNumber(t *Token) string {
 
 func (r *Render) renderListDash(t *Token, show bool) string {
 	if show {
-		return general.PaintString(r.theme.Symbol, string(t.Literal))
+		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
 	return ascii.ListDash.Str()
 }

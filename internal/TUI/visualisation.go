@@ -63,6 +63,9 @@ func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, start
 		if startLine > endLine {
 			startLine, endLine = endLine, startLine
 		}
+		if isRender {
+			ui.render.Render(l, i, true, true, i == startLine)
+		}
 
 		l := ui.theme.Selection + string(l) + ascii.Reset.Str()
 		line = ui.WithEndLine(l)

@@ -220,7 +220,11 @@ func VisibleSubString(text string, start int, end int) string {
 	return res.String()
 }
 
-func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool) string {
+func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, isRender bool) string {
+	if !isRender { // returning stripped text if render is of (or it's not a md file)
+		return VisibleSubString(string(str), start, end)
+	}
+
 	var l = ""
 	// diff is used for calculating the size of the line, where markdown symbols are hidden
 	var diff = 0

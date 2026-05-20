@@ -57,33 +57,20 @@ func (e *Editor) Draw() {
 
 			n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
 			var l strings.Builder
-			if e.b[e.curBuffer].IsMdFile && e.c.Render {
-				switch e.curMode {
-				case enums.Visual, enums.Visual_line:
-					// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
-					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), true)
-						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
-					} else {
-						fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst))
-					}
-				// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
-				default:
-					fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst))
-				}
 
-				fmt.Fprint(&l, ascii.Reset.Str())
-			} else {
-				if e.curMode == enums.Visual || e.curMode == enums.Visual_line {
-					if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-						visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), false)
-						fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
-					} else {
-						fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
-					}
+			isRender := e.b[e.curBuffer].IsMdFile && e.c.Render
+			switch e.curMode {
+			case enums.Visual, enums.Visual_line:
+				// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
+				if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
+					visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), isRender)
+					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
 				} else {
-					fmt.Fprint(&l, tui.VisibleSubString(string(str), start, end))
+					fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
 				}
+			// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
+			default:
+				fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
 			}
 
 			// Here is where I add the line to the main data string
