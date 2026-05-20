@@ -8,7 +8,7 @@ type Token struct {
 	Value   []rune
 }
 
-const (
+const ( // maybe it's better to use iota for tokens?
 	text = "text"
 
 	whitespace = " "
@@ -22,7 +22,7 @@ const (
 	listNumberB   = "n)"
 	listDash      = "-"
 	listBoxEmpty  = "- [ ]"
-	listBoxField  = "- [x]"
+	listBoxFilled = "- [x]"
 
 	oneStar    = "*"
 	twoStars   = "**"

@@ -61,9 +61,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
-		case listBoxField:
+		case listBoxFilled:
 			if isWhiteSpace {
-				data.WriteString(r.renderBoxField(&tok, show))
+				data.WriteString(r.renderBoxFilled(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
@@ -168,7 +168,7 @@ func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	return ascii.BoxEmpty.Str()
 }
 
-func (r *Render) renderBoxField(t *Token, show bool) string {
+func (r *Render) renderBoxFilled(t *Token, show bool) string {
 	if show {
 		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
@@ -196,6 +196,7 @@ func (r *Render) renderShield(t *Token, show bool) string {
 		s.WriteString(general.PaintString(r.theme.Symbol, string(t.Literal)))
 	}
 	s.WriteString(string(t.Value))
+	s.WriteString(ascii.Reset.Str())
 	return s.String()
 }
 

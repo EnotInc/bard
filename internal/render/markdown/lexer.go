@@ -317,7 +317,7 @@ func (l *Lexer) readListOrCheckBox() Token {
 				literal := l.input[pos:l.position]
 
 				if isField {
-					return Token{Type: listBoxField, Literal: literal}
+					return Token{Type: listBoxFilled, Literal: literal}
 				} else {
 					return Token{Type: listBoxEmpty, Literal: literal}
 				}
