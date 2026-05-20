@@ -29,6 +29,8 @@ func (e *Editor) OpenHelp(topic enums.Help) {
 		lines = strings.SplitSeq(help.Noraml, "\n")
 	case enums.HelpCommand:
 		lines = strings.SplitSeq(help.Command, "\n")
+	case enums.HelpVisual, enums.HelpVisualLine:
+		lines = strings.SplitSeq(help.Visual, "\n")
 	default:
 		e.tui.Message = "Unknown topic"
 		return

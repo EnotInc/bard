@@ -8,7 +8,7 @@ Anyways, there are some modes available:
 - ***NORMAL*** - main mode where you can move around and do some stuff
 - ***INSERT*** - this is where you insert text
 - ***COMMAND*** - mode for command execution, like *:wq*
-- ***VISUAL*** / ***VISUAL-LINE*** - mode for text selection
+- ***VISUAL*** / ***VISUAL-LINE*** - modes for text selection
 
 When you run bart you start in *NORMAL* mode, and in any other mode you can press *ESC* to get back to here
 For more information run ` + "`" + `:h[elp] <topic>` + "`" + `, for example ` + "`" + `:h command` + "`" + ` to get list of available command in ***Command*** mode
