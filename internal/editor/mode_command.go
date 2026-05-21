@@ -8,8 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
-// About caseCommand()
-// Called from [Run()] func
+// Called from Run() func
 // Used to decide what do to with pressed key
 func (e *Editor) caseCommand(key rune) {
 	switch key {
@@ -34,7 +33,6 @@ func (e *Editor) caseCommand(key rune) {
 	}
 }
 
-// About execCommand()
 // For now I just compare commands, and run them
 // Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
@@ -81,7 +79,6 @@ func (e *Editor) execCommand() {
 	}
 }
 
-// About parseCommand()
 // Used to parse some specific commands like `help`, or `w` (save)
 func (e *Editor) parseCommand() {
 	if len(e.command) >= 3 {

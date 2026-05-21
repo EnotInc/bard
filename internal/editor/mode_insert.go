@@ -8,8 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
-// About caseInsert()
-// Called from [Run()] func
+// Called from Run() func
 // Used to insert (or delete) key in buffer
 // Some specific keys (like paired symbols) can be treated differently
 func (e *Editor) caseInsert(key rune) {

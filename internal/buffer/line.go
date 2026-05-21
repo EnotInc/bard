@@ -39,7 +39,6 @@ func (b *Buffer) InsertLineWithData(index int, data []rune) {
 	b.Lines = append(b.Lines[:index], append(newLine, b.Lines[index:]...)...)
 }
 
-// Abotu InsertLine()
 // Called when the user presses [enter] in the middle of a line. This function shifts data from the right to the new line
 func (b *Buffer) InsertLine() {
 	if b.IsReadOnly {
@@ -63,7 +62,6 @@ func (b *Buffer) InsertLine() {
 	b.Cursor.offset += len(keep)
 }
 
-// About DelAndMoveLine()
 // Called when the user deletes the 0th character in a line. The line is deleted and data is moved to the line above
 func (b *Buffer) DelAndMoveLine() {
 	if b.IsReadOnly {
@@ -89,7 +87,6 @@ func (b *Buffer) DelAndMoveLineAt(startLine int, endLine int, endOffset int) {
 	b.Lines[startLine].Data = append(b.Lines[startLine].Data, shiftData...)
 }
 
-// About RemoveLine()
 // Delete the whole line
 func (b *Buffer) RemoveLine() {
 	if b.IsReadOnly {
@@ -106,7 +103,6 @@ func (b *Buffer) RemoveLine() {
 	}
 }
 
-// About RemoveLineAt()
 // Delete the whole line at index
 func (b *Buffer) RemoveLineAt(lineIndex int) {
 	if b.IsReadOnly {

@@ -8,7 +8,6 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
-// About AddVisual()
 // This function is used to add visual highlight to the selected lines
 func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int, isRender bool) string {
 	var line []rune
@@ -74,13 +73,11 @@ func (ui *TUI) AddVisual(curMode enums.Mode, l []rune, i int, startOffset, start
 	return string(line)
 }
 
-// About WithEndLine()
 // used to add 'new line' symbol to the givven selected line
 func (ui *TUI) WithEndLine(l string) []rune {
 	return []rune(l + ui.theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str())
 }
 
-// About paint()
 // used to colorise every single char in line
 // is just inserts selected ascii.StarSel [Color] before the char
 func (ui *TUI) paint(line []rune) []rune {

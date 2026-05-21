@@ -8,10 +8,9 @@ import (
 	md "github.com/EnotInc/Bard/internal/render/markdown"
 )
 
-// About |Renderer|
 // struct is used to work with different renders
-// mode - current [render mode]
-// c - [cache]
+// mode - current render mode
+// c - cache
 // md - markdown redner
 // code - code redner
 // w - screen width
@@ -47,8 +46,7 @@ func (r *Renderer) Reset() {
 	r.c.dirty = false
 }
 
-// About Render()
-// This func is used to decide which render to use, and should you ever call a [Code] or [Markdown] render, or this line was already rendered an cached
+// This func is used to decide which render to use, and should you ever call a Code or Markdown render, or this line was already rendered an cached
 // First it calculates hash of current line, an if this line was cached, it does next:
 // 1. If this is a first line in render (first on the screen, on top) and if this line was c `code` line - current render mode is become `code`. This needed to avoid situation, where code block is starts above the visiable screen, and render would thing that text on the screen is a Makrdown, and node a code block
 // 2. If hash of the line is stored equal to cached line (and it is not dirty) - it returns old rendered line (with escape sequences). This way I can save some time on render line, which wasn't changed, and just return prev render of this line

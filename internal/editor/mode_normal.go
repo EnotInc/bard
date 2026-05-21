@@ -5,8 +5,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
-// About caseNormal()
-// Called from [Run()] func
+// Called from Run() func
 // used to move cursor, change move or do other stuff, depending on given key
 func (e *Editor) caseNormal(key rune) {
 	if ok := e.findSome(key); ok {

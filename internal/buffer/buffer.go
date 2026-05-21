@@ -1,15 +1,15 @@
 package buffer
 
-// About |Buffer|
-// |Title| - name of the oppened file
-// |pairs| - used like a stask to keep track of paired brackets
-// |copies| - sores copied lines
-// |Lines| - List of lines
-// |Cursor| - read pos of cursor
-// |UndoStack| - stores list of snapshots. Used to move 'back in time' in file history
-// |Visual| - anchor point for real cursor pos, used to calculate selected area in visual and visual-line modes
-// |IsReadOnly| - ised to check if oppened file could be change
-// |IsMdFile| - if file extations is not '.md', bard uses default reader instead of markdown one
+// About Buffer
+// Title - name of the oppened file
+// pairs - used like a stask to keep track of paired brackets
+// copies - sores copied lines
+// Lines - List of lines
+// Cursor - read pos of cursor
+// UndoStack - stores list of snapshots. Used to move 'back in time' in file history
+// Visual - anchor point for real cursor pos, used to calculate selected area in visual and visual-line modes
+// IsReadOnly - ised to check if oppened file could be change
+// IsMdFile - if file extations is not '.md', bard uses default reader instead of markdown one
 type Buffer struct {
 	Title      string
 	pairs      []rune

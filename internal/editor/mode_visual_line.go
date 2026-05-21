@@ -7,8 +7,7 @@ import (
 
 const visual_line = true
 
-// About caseVisualLine()
-// Called from [Run()] func when current mode is Visual LIne
+// Called from Run() func when current mode is Visual LIne
 func (e *Editor) caseVisualLine(key rune) {
 	switch key {
 	case 'u':

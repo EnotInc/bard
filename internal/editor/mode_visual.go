@@ -7,7 +7,6 @@ import (
 
 const visual = false
 
-// About caseVisual()
 // kinda similar to caseVisulLine
 func (e *Editor) caseVisual(key rune) {
 	if ok := e.findSome(key); ok {

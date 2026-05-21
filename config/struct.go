@@ -1,10 +1,10 @@
 package config
 
-// About |Config|
-// |RLN| - relative line munber
-// |ShowMD| - always show markdown symbols
-// |Render| - enable or disable render
-// |TabNames| - show file name is tabs or not
+// About Config
+// RLN - relative line munber
+// ShowMD - always show markdown symbols
+// Render - enable or disable render
+// TabNames - show file name is tabs or not
 type Config struct {
 	RLN       bool   `json:"relative_line_numbers"`
 	ShowMD    bool   `json:"show_markdown_symbols"`

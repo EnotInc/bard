@@ -18,20 +18,19 @@ type visual struct {
 	line   int
 }
 
-// About |TUI|
 // so this is a struct where I store a data about visual intermretation of bard
-// |XScroll| - stores a upped border of editor 'view window'
-// |YScroll| - stores a left border of editor 'view window'
-// |CurRow| - visual row where cursor is located
-// |CurOff| - visual offset where cursor is located
-// |W|, |H| - width and height of terminal window
-// |Save| - is terminal save (is is big enough)
-// |ShowHello| - used to how 'hello message' and bard logo in empty editor
-// |Message| - shows at the bottom of the screen, in 'lower bar'. Used to display some messages
-// |Hello| - ascii art of bard
-// |visual| - anchor of wisual row and offset. Used to calculate visual selection between this point and the cursor
-// |render| - an instance of render. Used to buld line with ansi sybols
-// |Redraw| - chan, wich used to redraw the whole editor when window size is changed
+// XScroll - stores a upped border of editor 'view window'
+// YScroll - stores a left border of editor 'view window'
+// CurRow - visual row where cursor is located
+// CurOff - visual offset where cursor is located
+// W, H - width and height of terminal window
+// Save - is terminal save (is is big enough)
+// ShowHello - used to how 'hello message' and bard logo in empty editor
+// Message - shows at the bottom of the screen, in 'lower bar'. Used to display some messages
+// Hello - ascii art of bard
+// visual - anchor of wisual row and offset. Used to calculate visual selection between this point and the cursor
+// render - an instance of render. Used to buld line with ansi sybols
+// Redraw - chan, wich used to redraw the whole editor when window size is changed
 type TUI struct {
 	XScroll   int
 	YScroll   int
@@ -67,7 +66,6 @@ func InitTUI(h int, w int, theme *config.Theme) *TUI {
 	return ui
 }
 
-// About TermSizeMonitor()
 // This function is called in the main.go file in a goroutine.
 // Here I just recalculate the terminal size and adjust Bard to it
 func (tui *TUI) TermSizeMonitor(fdOut int) {
@@ -103,7 +101,6 @@ func (tui *TUI) MakeDirty() {
 	tui.render.MakeDirty()
 }
 
-// About BuildNumber()
 // this func is used to build pretty line numbers (represented with '.'):
 // |..8  // foo func
 // |..9  func foo() {
@@ -154,7 +151,6 @@ func (ui *TUI) fillSpace() string {
 	return strings.Repeat(" ", amount)
 }
 
-// About BuildLowerBar()
 // Little func, that used to build lower bar
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
 	var data strings.Builder
@@ -171,7 +167,6 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 	return VisibleSubString(data.String(), 0, ui.W-1)
 }
 
-// About BuildCommandBar
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	var data strings.Builder
@@ -181,7 +176,6 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 	return data.String()
 }
 
-// About VisibleSubString()
 // So here is where I build the actual line, including the ASCII escape sequences
 // If I just use line.data[start:end], I'll get something like this:
 // ```

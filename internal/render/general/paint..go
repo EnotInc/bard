@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-// func PaintString(c ascii.Color, str string) string {
 func PaintString(color string, str string) string {
 	var s strings.Builder
 	for _, x := range str {

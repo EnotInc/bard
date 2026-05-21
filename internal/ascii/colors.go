@@ -1,6 +1,5 @@
 package ascii
 
-// About |Color|
 // Color is just a string
 // Each Color has ascii escape sequence
 type Color string
