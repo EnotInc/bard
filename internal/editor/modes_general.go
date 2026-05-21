@@ -4,7 +4,8 @@ import "strings"
 
 func (e *Editor) IsGeneralMove(key rune) bool {
 	// NOTE: this is not the best implementation I'm sure, but this is fine for not, ig
-	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key)) // && !(e.subCmd == "" && key == '0')
+	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key)) &&
+		!(len(e.subCmd) == 1 && strings.Contains("fFtT", e.subCmd))
 }
 
 func (e *Editor) GeneralCase(key rune) {
