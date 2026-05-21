@@ -2,9 +2,9 @@ package editor
 
 import "strings"
 
-func IsGeneralMove(key rune) bool {
+func (e *Editor) IsGeneralMove(key rune) bool {
 	// NOTE: this is not the best implementation I'm sure, but this is fine for not, ig
-	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key))
+	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key)) && !(e.subCmd == "" && key == '0')
 }
 
 func (e *Editor) GeneralCase(key rune) {

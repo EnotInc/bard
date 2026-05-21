@@ -182,19 +182,19 @@ func (e *Editor) Run() {
 
 		switch e.curMode {
 		case enums.Normal:
-			if IsGeneralMove(key) {
+			if e.IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseNormal(key)
 			}
 		case enums.Visual:
-			if IsGeneralMove(key) {
+			if e.IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseVisual(key)
 			}
 		case enums.Visual_line:
-			if IsGeneralMove(key) {
+			if e.IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseVisualLine(key)

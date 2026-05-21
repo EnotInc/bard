@@ -91,11 +91,13 @@ func (b *Buffer) MoveToFirstLine() {
 
 func (b *Buffer) MoveToFirstChar() {
 	b.Cursor.offset = 0
+	b.Cursor.keepOffset = 0
 	b.FixOffset()
 }
 
 func (b *Buffer) MoveToLastChar() {
 	b.Cursor.offset = len(b.Lines[b.Cursor.line].Data)
+	b.Cursor.keepOffset = b.Cursor.offset
 	b.FixOffset()
 }
 
