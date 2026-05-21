@@ -25,7 +25,7 @@ func (e *Editor) DrawDiff() {
 	for i := upperBorder; i < lowerBorder; i++ {
 		l := e.getRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
 		curHash := hash.GetHash(l)
-		if oldHash, ok := e.hash[i-upperBorder]; !ok || (ok && curHash != oldHash) {
+		if oldHash, ok := e.hash[i-upperBorder]; !ok || (ok && curHash != oldHash) || (i == e.tui.CurRow) {
 			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
 			fmt.Fprint(&diff, l)
 			e.hash[i-upperBorder] = curHash
@@ -68,6 +68,7 @@ func (e *Editor) getStatusBar(emtpyLineSpases string, lastLine int) string {
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case enums.Command:
+		fmt.Fprintf(&data, "\033[%d;%dH%s\033[%d;1H", y, x, ascii.Cursor, lastLine+1) // adding cursor as unicode symbol on last visual position, and returning it to the last line
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 

@@ -21,4 +21,6 @@ const (
 
 	TagS Symbol = "["
 	TagE Symbol = "]"
+
+	Cursor Symbol = "\u2592"
 )
