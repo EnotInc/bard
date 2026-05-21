@@ -35,8 +35,6 @@ func (e *Editor) caseNormal(key rune) {
 	}
 
 	switch key {
-	case '0':
-		e.b[e.curBuffer].MoveToFirstChar()
 	case 'r':
 		e.subCmd += string(key)
 	case 'i':

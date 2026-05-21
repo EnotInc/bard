@@ -4,10 +4,14 @@ import "strings"
 
 func (e *Editor) IsGeneralMove(key rune) bool {
 	// NOTE: this is not the best implementation I'm sure, but this is fine for not, ig
-	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key)) && !(e.subCmd == "" && key == '0')
+	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key)) // && !(e.subCmd == "" && key == '0')
 }
 
 func (e *Editor) GeneralCase(key rune) {
+	if e.subCmd == "" && key == '0' {
+		e.b[e.curBuffer].MoveToFirstChar()
+		return
+	}
 	switch key {
 	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'f', 'F', 't', 'T':
 		e.subCmd += string(key)
