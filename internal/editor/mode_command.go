@@ -98,7 +98,7 @@ func (e *Editor) parseCommand() {
 			e.SaveFile()
 		case "newtab", "nt":
 			e.newBuffer()
-			e.CreateFile(arg)
+			e.LoadFile(arg)
 			e.b[e.curBuffer].Title = arg
 		case "help", "h":
 			var topic enums.Help = enums.Help(arg)
