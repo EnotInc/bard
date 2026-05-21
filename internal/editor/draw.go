@@ -135,6 +135,7 @@ func (e *Editor) getRenderedLine(i int, upperBorder int, emtpyLineSpases string,
 		}
 
 		// Here is where I add the line to the main data string
+		fmt.Fprint(&content, ascii.Reset)
 		fmt.Fprint(&l, n, content.String())
 	} else { // getting empty line
 		if e.tui.ShowHello {
