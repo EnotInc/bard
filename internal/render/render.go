@@ -3,6 +3,7 @@ package render
 import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/hash"
 	code "github.com/EnotInc/Bard/internal/render/code"
 	md "github.com/EnotInc/Bard/internal/render/markdown"
 )
@@ -57,7 +58,7 @@ func (r *Renderer) Reset() {
 // And then - caches the result of the render
 // Basically, I render only line with the cursor on it, and dirty lines
 func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool) (string, int) {
-	lineHash := GetHash(&line)
+	lineHash := hash.GetHash(string(line))
 	if !isCurrent {
 		if l, ok := r.c.getCached(lineIndex); ok {
 			if isFirst && l.mode == enums.Code {

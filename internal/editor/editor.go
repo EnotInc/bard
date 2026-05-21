@@ -23,6 +23,7 @@ import (
 // |tui| - [TUI]
 // |c| - current editor [Config]
 // |CurMode| - current editor [Mode]
+// hash - used in DrawDiff() func for diff rendering
 // |command| - used in command mode, stores user input
 // |subCmd| - sub command. Used to store commands like `12k`
 // |save| - is terminal save to work in (depends on window size, if w < 80 or h < 30 then terminal is not save)
@@ -36,6 +37,7 @@ type Editor struct {
 	c         *config.Config
 	theme     *config.Theme
 	curMode   enums.Mode
+	hash      map[int]uint32
 	command   string
 	subCmd    string
 	IsChanged bool
@@ -74,6 +76,7 @@ func InitEditor() *Editor {
 		c:         _c,
 		theme:     _t,
 		curMode:   enums.Normal,
+		hash:      make(map[int]uint32),
 		command:   "",
 		subCmd:    "",
 		fdOut:     _fdOut,
@@ -107,7 +110,7 @@ func (e *Editor) listenResize() {
 	for {
 		value := <-e.tui.Redraw
 		if value {
-			e.Draw()
+			e.DrawDiff()
 		}
 	}
 }
@@ -164,12 +167,11 @@ func (e *Editor) replaceWithAmount(key rune) {
 	e.subCmd = ""
 }
 
-// About |Run()|
 // Gets user input, switched by currend move to decide what to do with pressed key and calles [Draw()] to display changes
 func (e *Editor) Run() {
 	defer e.Exit(1)
-	fmt.Print(ascii.SaveTerminal)
-	e.Draw()
+	fmt.Print(ascii.SaveTerminal, ascii.ClearView, ascii.ClearHistory)
+	e.DrawDiff()
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		e.tui.Message = ""
@@ -208,6 +210,6 @@ func (e *Editor) Run() {
 		}
 
 		e.setUiCursor()
-		e.Draw()
+		e.DrawDiff()
 	}
 }

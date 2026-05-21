@@ -1,6 +1,5 @@
 package ascii
 
-// About commands.go
 // List of ascii escape sequences, that used across whole project to work wiht termilan
 const (
 	ClearView    = "\033[2J"
@@ -15,4 +14,7 @@ const (
 	CursorBloc      = "\x1b[2 q"
 	CursorLine      = "\x1b[6 q"
 	CursorUnderline = "\x1b[4 q"
+
+	HideCursor = "\x1b[?25l"
+	ShowCursor = "\x1b[?25h"
 )

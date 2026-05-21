@@ -6,87 +6,42 @@ import (
 
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/hash"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
 )
 
-// About |Draw()|
-// Main func to build tui and display it
-// Line by line this function collects data from buffer, render raw text into markdown, accumulates it and prints it
-// by collection all lines into one variable, I can avoid cursor blinking
-// Curcor position is changed wish ascii escape sequence, and it calculates every time when this function is called
-func (e *Editor) Draw() {
+func (e *Editor) DrawDiff() {
 	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
 
-	buf := e.b[e.curBuffer]
+	var diff strings.Builder
 
-	// data - is one long string that turns into the TUI
-	var data strings.Builder
-
-	// Clearing the terminal
-	fmt.Fprint(&data, ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart)
+	fmt.Fprint(&diff, ascii.HideCursor, ascii.MoveToStart)
 
 	upperBorder := e.tui.YScroll
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
 
-	if e.IsChanged {
-		e.tui.MakeDirty()
-		e.IsChanged = false
-	}
-
-	// Working only with visible lines
 	for i := upperBorder; i < lowerBorder; i++ {
-		if i < len(buf.Lines) {
-			show := buf.Cursor.Line() == i || e.c.ShowMD
-			isFirst := i == upperBorder
-
-			// This 2 variables are used to get the horizontal borders of the visible content
-			start := e.tui.XScroll
-			end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
-
-			str := buf.Lines[i].Data
-			if len(str) <= end {
-				end = len(str)
-			}
-			if len(str) < start {
-				start = 0
-				end = 0
-				str = []rune{}
-			}
-
-			n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
-			var l strings.Builder
-
-			isRender := e.b[e.curBuffer].IsMdFile && e.c.Render
-			switch e.curMode {
-			case enums.Visual, enums.Visual_line:
-				// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
-				if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-					visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), isRender)
-					fmt.Fprint(&l, tui.VisibleSubString(visual, start, end))
-				} else {
-					fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
-				}
-			// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
-			default:
-				fmt.Fprint(&l, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
-			}
-
-			// Here is where I add the line to the main data string
-			fmt.Fprint(&data, n, l.String(), "\n\r")
-			l.Reset()
-		} else {
-			// If the line is empty, I just add the '~' symbol
-			if e.tui.ShowHello {
-				fmt.Fprint(&data, ascii.Reset, e.theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)), "\n\r")
-			} else {
-				fmt.Fprint(&data, ascii.Reset, e.theme.General.EmptyLine, "~", "\n\r")
-			}
+		l := e.getRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
+		curHash := hash.GetHash(l)
+		if oldHash, ok := e.hash[i-upperBorder]; !ok || (ok && curHash != oldHash) {
+			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
+			fmt.Fprint(&diff, l)
+			e.hash[i-upperBorder] = curHash
 		}
 	}
 
-	// Calculating the visual position of the cursor
+	status := e.getStatusBar(emtpyLineSpases, lowerBorder-upperBorder)
+	fmt.Fprint(&diff, status)
+	fmt.Print(diff.String())
+}
+
+func (e *Editor) getStatusBar(emtpyLineSpases string, lastLine int) string {
+	var data strings.Builder
+
+	fmt.Fprintf(&data, "\033[%d;1H", lastLine+1)
+
 	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
 	y := e.tui.CurRow + enums.CursorOffset
 
@@ -133,9 +88,61 @@ func (e *Editor) Draw() {
 	}
 
 	e.tui.ResetRender()
-	fmt.Fprintf(&data, "%s", ascii.Reset)
+	fmt.Fprint(&data, ascii.Reset, ascii.ShowCursor)
 
-	// And at the end - print the data
-	fmt.Print(data.String())
-	data.Reset()
+	return data.String()
+}
+
+func (e *Editor) getRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) string {
+	buf := e.b[e.curBuffer]
+	show := buf.Cursor.Line() == i || e.c.ShowMD
+	isFirst := i == upperBorder
+
+	var l strings.Builder
+
+	// This 2 variables are used to get the horizontal borders of the visible content
+	if i < len(buf.Lines) { // rendering line
+		var content strings.Builder
+
+		start := e.tui.XScroll
+		end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
+
+		str := buf.Lines[i].Data
+		if len(str) <= end {
+			end = len(str)
+		}
+		if len(str) < start {
+			start = 0
+			end = 0
+			str = []rune{}
+		}
+
+		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
+
+		isRender := e.b[e.curBuffer].IsMdFile && e.c.Render
+		switch e.curMode {
+		case enums.Visual, enums.Visual_line:
+			// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
+			if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
+				visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), isRender)
+				fmt.Fprint(&content, tui.VisibleSubString(visual, start, end))
+			} else {
+				fmt.Fprint(&content, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
+			}
+		// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
+		default:
+			fmt.Fprint(&content, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
+		}
+
+		// Here is where I add the line to the main data string
+		fmt.Fprint(&l, n, content.String())
+	} else { // getting empty line
+		if e.tui.ShowHello {
+			fmt.Fprint(&l, ascii.Reset, e.theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)))
+		} else {
+			fmt.Fprint(&l, ascii.Reset, e.theme.General.EmptyLine, "~")
+		}
+	}
+
+	return l.String()
 }
