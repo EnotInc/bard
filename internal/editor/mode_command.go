@@ -61,9 +61,11 @@ func (e *Editor) execCommand() {
 	case "showmd":
 		e.c.ShowMD = !e.c.ShowMD
 		e.IsChanged = true
+		e.tui.PurgeCache()
 	case "render", "rnd":
 		e.c.Render = !e.c.Render
 		e.IsChanged = true
+		e.tui.PurgeCache()
 	case "tn", "tabnames":
 		e.c.TabNames = !e.c.TabNames
 	case "gt":
