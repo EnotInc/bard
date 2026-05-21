@@ -78,11 +78,9 @@ func (b *Buffer) Undo() error {
 
 	switch snapshot.op {
 	case Change:
-		line := snapshot.lines[0]
-		snapshot.lines = []Line{} // saving unchanged strig fror redo
-		snapshot.lines = append(snapshot.lines, Line{Data: b.Lines[b.Cursor.line].Data})
-
-		b.Lines[snapshot.start] = &Line{Data: line.Data}
+		for i, line := range snapshot.lines {
+			b.Lines[snapshot.start+i] = &Line{Data: line.Data}
+		}
 	case Insert:
 		b.Lines = slices.Delete(b.Lines, snapshot.start, snapshot.end)
 	case Delete:
