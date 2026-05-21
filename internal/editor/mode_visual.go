@@ -5,6 +5,8 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
+const visual = false
+
 // About caseVisual()
 // kinda similar to caseVisulLine
 func (e *Editor) caseVisual(key rune) {
@@ -17,24 +19,40 @@ func (e *Editor) caseVisual(key rune) {
 
 	switch key {
 	case 'y':
-		e.b[e.curBuffer].CopySelected(false, false)
+		e.b[e.curBuffer].CopySelected(false, visual)
 		e.curMode = enums.Normal
 	case 'x':
 		e.saveSelected()
 
-		e.b[e.curBuffer].CopySelected(true, false)
+		e.b[e.curBuffer].CopySelected(true, visual)
+		e.curMode = enums.Normal
+	case 'u':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Visual.Line(), false)
+
+		e.b[e.curBuffer].ChangeLetterCaseTo(enums.Lower, visual)
+		e.curMode = enums.Normal
+	case 'U':
+		e.b[e.curBuffer].SaveChanges(
+			buffer.Change,
+			e.b[e.curBuffer].Cursor.Line(),
+			e.b[e.curBuffer].Visual.Line(), false)
+
+		e.b[e.curBuffer].ChangeLetterCaseTo(enums.Upper, visual)
 		e.curMode = enums.Normal
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
 	case 'd', 'D':
 		e.saveSelected()
 
-		e.b[e.curBuffer].CopySelected(true, false)
+		e.b[e.curBuffer].CopySelected(true, visual)
 		e.curMode = enums.Normal
 	case 's':
 		e.saveSelected()
 
-		e.b[e.curBuffer].CopySelected(true, false)
+		e.b[e.curBuffer].CopySelected(true, visual)
 		e.curMode = enums.Insert
 	case '\033':
 		e.curMode = enums.Normal
