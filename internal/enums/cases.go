@@ -1,9 +1,9 @@
 package enums
 
-type Letter_case int
+type Case int
 
 const (
-	_ Letter_case = iota
+	_ Case = iota
 	Upper
 	Lower
 )

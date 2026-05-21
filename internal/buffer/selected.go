@@ -181,7 +181,7 @@ func (b *Buffer) Paste(shift int) {
 	b.FixOffset()
 }
 
-func (b *Buffer) ChangeLetterCaseTo(l_case enums.Letter_case, isVisualLine bool) {
+func (b *Buffer) ChangeLetterCaseTo(Case enums.Case, isVisualLine bool) {
 	if b.IsReadOnly {
 		return
 	}
@@ -217,14 +217,17 @@ func (b *Buffer) ChangeLetterCaseTo(l_case enums.Letter_case, isVisualLine bool)
 			curOfsetEnd++
 		}
 
-		var new_case string
-		switch l_case {
+		var changed_line string
+		switch Case {
 		case enums.Lower:
-			new_case = strings.ToLower(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
+			changed_line = strings.ToLower(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
 		case enums.Upper:
-			new_case = strings.ToUpper(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
+			changed_line = strings.ToUpper(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
+		default:
+			changed_line = ""
 		}
-		b.Lines[i].Data = slices.Concat(b.Lines[i].Data[:curOfsetStart], []rune(new_case), b.Lines[i].Data[curOfsetEnd:])
+
+		b.Lines[i].Data = slices.Concat(b.Lines[i].Data[:curOfsetStart], []rune(changed_line), b.Lines[i].Data[curOfsetEnd:])
 
 		i++
 		lineCount++
