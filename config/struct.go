@@ -35,6 +35,8 @@ type Markdown struct {
 	Highlight  string `json:"highlight"`
 	CodeLineBg string `json:"code_line_bg"`
 	CodeHeader string `json:"code_header"`
+	HTMLSymbol string `json:"html_tag_symbol"`
+	HTMLText   string `json:"html_tag_text"`
 	CodeText   string `json:"code_text"`
 	Header1    string `json:"header_1"`
 	Header2    string `json:"header_2"`

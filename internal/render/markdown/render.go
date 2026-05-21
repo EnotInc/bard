@@ -105,6 +105,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			data.WriteString(r.renderLink(&tok, show))
 		case image:
 			data.WriteString(r.renderImage(&tok, show))
+		case html:
+			data.WriteString(r.renderHtmlBlcok(&tok))
 		case codeLine:
 			data.WriteString(r.renderCodeLine(&tok, show))
 		case text:
@@ -271,6 +273,39 @@ func (r *Render) renderImage(t *Token, show bool) string {
 		return r.theme.Image + string(t.Literal) + ascii.Reset.Str()
 	}
 	return r.theme.Image + string(t.Value) + ascii.Reset.Str()
+}
+
+func (r *Render) renderHtmlBlcok(t *Token) string {
+	var s strings.Builder
+	switch len(t.Literal) {
+	case 3: // </>
+		s.WriteString(r.theme.HTMLSymbol)
+		s.WriteString(string(t.Literal[:len(t.Literal)-1]))
+		s.WriteString(r.theme.HTMLText)
+		s.WriteString(string(t.Value))
+		s.WriteString(r.theme.HTMLSymbol)
+		s.WriteString(string(t.Literal[len(t.Literal)-1]))
+	case 2: // </ or <>
+		if t.Literal[1] == '/' {
+			s.WriteString(r.theme.HTMLSymbol)
+			s.WriteString(string(t.Literal))
+			s.WriteString(r.theme.HTMLText)
+			s.WriteString(string(t.Value))
+		} else {
+			s.WriteString(r.theme.HTMLSymbol)
+			s.WriteString(string(t.Literal[:len(t.Literal)-1]))
+			s.WriteString(r.theme.HTMLText)
+			s.WriteString(string(t.Value))
+			s.WriteString(r.theme.HTMLSymbol)
+			s.WriteString(string(t.Literal[len(t.Literal)-1]))
+		}
+	default: // <
+		s.WriteString(r.theme.HTMLSymbol)
+		s.WriteString(string(t.Literal))
+		s.WriteString(r.theme.HTMLText)
+		s.WriteString(string(t.Value))
+	}
+	return s.String() + ascii.Reset.Str()
 }
 
 func (r *Render) renderCodeLine(t *Token, show bool) string {

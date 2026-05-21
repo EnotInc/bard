@@ -132,8 +132,6 @@ func (b *Buffer) Redo() error {
 			b.Lines[snapshot.start+i] = &Line{Data: line.Data}
 			snapshot.lines[i] = Line{Data: old_line_data}
 		}
-
-		// b.Lines[snapshot.start] = &Line{Data: line.Data}
 	case Delete:
 		b.Lines = slices.Delete(b.Lines, snapshot.start, snapshot.end)
 	case Insert:

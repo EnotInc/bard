@@ -98,6 +98,8 @@ func getDefaultTheme() *Theme {
 			Header5:    "\033[34m",
 			Header6:    "\033[34m",
 			Highlight:  "\033[43m",
+			HTMLSymbol: "\033[90m",
+			HTMLText:   "\033[31m",
 			Symbol:     "\033[90m",
 			Quote:      "\033[32m",
 			NumberList: "\033[35m",

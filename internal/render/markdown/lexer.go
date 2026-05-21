@@ -144,6 +144,8 @@ func (l *Lexer) NextToken() Token {
 		default:
 			t = Token{Type: symbol, Value: lit}
 		}
+	case '<':
+		t = l.readHTMLBlock()
 	case 0:
 		t = Token{Type: eol, Literal: []rune("")}
 	default:
@@ -188,6 +190,44 @@ func (l *Lexer) readText() []rune {
 		}
 	}
 	return l.input[pos:l.position]
+}
+
+func (l *Lexer) readHTMLBlock() Token {
+	start := l.position
+	for l.ch != '>' && l.peekChar() != 0 {
+		l.readChar()
+	}
+	l.readChar()
+
+	value := l.input[start:l.position]
+	var literal []rune
+
+	if len(value) > 2 && value[0] == '<' && value[1] == '/' && value[len(value)-1] == '>' { // </>
+		literal = []rune{value[0], value[1], value[len(value)-1]}
+		value = value[2 : len(value)-1]
+
+	} else if len(value) >= 2 && value[0] == '<' && value[len(value)-1] == '>' { // <>
+		literal = []rune{value[0], value[len(value)-1]}
+		value = value[1 : len(value)-1]
+
+	} else if len(value) >= 2 && value[0] == '<' && value[1] == '/' { // </
+		literal = []rune{value[0], value[1]}
+		value = value[2:]
+
+	} else { // <
+		literal = []rune{'<'}
+		if len(value) > 1 {
+			value = value[1:]
+		} else {
+			value = []rune("")
+		}
+	}
+
+	return Token{
+		Type:    html,
+		Value:   value,
+		Literal: literal,
+	}
 }
 
 func (l *Lexer) readCodeLine() []rune {
