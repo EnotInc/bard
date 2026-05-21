@@ -40,6 +40,7 @@ type Editor struct {
 	hash      map[int]uint32
 	command   string
 	subCmd    string
+	lastCmd   string
 	IsChanged bool
 	save      bool
 	fdOut     int

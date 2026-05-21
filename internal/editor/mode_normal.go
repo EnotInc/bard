@@ -9,29 +9,11 @@ import (
 // Called from [Run()] func
 // used to move cursor, change move or do other stuff, depending on given key
 func (e *Editor) caseNormal(key rune) {
-	cmd := []byte(e.subCmd)
-	if len(cmd) > 0 {
-		switch cmd[len(cmd)-1] {
-		case 'r':
-			e.replaceWithAmount(key)
-			return
-		case 'f':
-			e.b[e.curBuffer].FindNext(key)
-			e.subCmd = ""
-			return
-		case 'F':
-			e.b[e.curBuffer].FindPrev(key)
-			e.subCmd = ""
-			return
-		case 't':
-			e.b[e.curBuffer].FindBeforeNext(key)
-			e.subCmd = ""
-			return
-		case 'T':
-			e.b[e.curBuffer].FindBeforePrev(key)
-			e.subCmd = ""
-			return
-		}
+	if ok := e.findSome(key); ok {
+		return
+	}
+	if ok := e.replaceWith(key); ok {
+		return
 	}
 
 	switch key {

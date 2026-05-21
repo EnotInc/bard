@@ -122,6 +122,9 @@ func (b *Buffer) FindNext(ch rune) {
 	for i < len(b.Lines[b.Cursor.line].Data)-1 && b.Lines[b.Cursor.line].Data[i] != ch {
 		i += 1
 	}
+	if b.Lines[b.Cursor.line].Data[i] != ch {
+		return
+	}
 	if i < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
 		b.Cursor.offset = i
 		b.Cursor.keepOffset = i
@@ -130,9 +133,15 @@ func (b *Buffer) FindNext(ch rune) {
 }
 
 func (b *Buffer) FindPrev(ch rune) {
-	i := b.Cursor.offset + 1
+	i := b.Cursor.offset
+	if i > 0 {
+		i -= 1
+	}
 	for i > 0 && b.Lines[b.Cursor.line].Data[i] != ch {
 		i -= 1
+	}
+	if b.Lines[b.Cursor.line].Data[i] != ch {
+		return
 	}
 	if i > 0 && i != b.Cursor.offset {
 		b.Cursor.offset = i
@@ -146,6 +155,9 @@ func (b *Buffer) FindBeforeNext(ch rune) {
 	for i < len(b.Lines[b.Cursor.line].Data)-1 && b.Lines[b.Cursor.line].Data[i] != ch {
 		i += 1
 	}
+	if b.Lines[b.Cursor.line].Data[i] != ch {
+		return
+	}
 	if i-1 >= 0 && i-1 < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
 		b.Cursor.offset = i - 1
 		b.Cursor.keepOffset = i - 1
@@ -154,9 +166,15 @@ func (b *Buffer) FindBeforeNext(ch rune) {
 }
 
 func (b *Buffer) FindBeforePrev(ch rune) {
-	i := b.Cursor.offset + 1
+	i := b.Cursor.offset
+	if i > 0 {
+		i -= 1
+	}
 	for i > 0 && b.Lines[b.Cursor.line].Data[i] != ch {
 		i -= 1
+	}
+	if b.Lines[b.Cursor.line].Data[i] != ch {
+		return
 	}
 	if i+1 > 0 && i+1 < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
 		b.Cursor.offset = i + 1

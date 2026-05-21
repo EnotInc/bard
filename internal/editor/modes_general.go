@@ -4,8 +4,48 @@ import "strings"
 
 func (e *Editor) IsGeneralMove(key rune) bool {
 	// NOTE: this is not the best implementation I'm sure, but this is fine for not, ig
-	return strings.Contains("webWEBhjklgG1234567890fFtT", string(key)) &&
+	return strings.Contains("webWEBhjklgG1234567890fFtT;", string(key)) &&
 		!(len(e.subCmd) == 1 && strings.Contains("fFtT", e.subCmd))
+}
+
+func (e *Editor) replaceWith(key rune) bool {
+	cmd := []byte(e.subCmd)
+	if len(cmd) > 0 {
+		if cmd[len(cmd)-1] == 'r' {
+			e.replaceWithAmount(key)
+			return true
+		}
+	}
+	return false
+}
+
+func (e *Editor) findSome(key rune) bool {
+	cmd := []byte(e.subCmd)
+	if len(cmd) > 0 {
+		switch cmd[len(cmd)-1] {
+		case 'f':
+			e.b[e.curBuffer].FindNext(key)
+			e.lastCmd = e.subCmd + string(key)
+			e.subCmd = ""
+			return true
+		case 'F':
+			e.b[e.curBuffer].FindPrev(key)
+			e.lastCmd = e.subCmd + string(key)
+			e.subCmd = ""
+			return true
+		case 't':
+			e.b[e.curBuffer].FindBeforeNext(key)
+			e.lastCmd = e.subCmd + string(key)
+			e.subCmd = ""
+			return true
+		case 'T':
+			e.b[e.curBuffer].FindBeforePrev(key)
+			e.lastCmd = e.subCmd + string(key)
+			e.subCmd = ""
+			return true
+		}
+	}
+	return false
 }
 
 func (e *Editor) GeneralCase(key rune) {
@@ -16,6 +56,17 @@ func (e *Editor) GeneralCase(key rune) {
 	switch key {
 	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'f', 'F', 't', 'T':
 		e.subCmd += string(key)
+	case ';':
+		if len(e.lastCmd) <= 0 {
+			return
+		}
+
+		e.subCmd = string(e.lastCmd[0])
+		key := e.lastCmd[len(e.lastCmd)-1]
+		if ok := e.findSome(rune(key)); !ok {
+			e.tui.Message = "nothing was found"
+		}
+		return
 	case 'h':
 		e.execWithSubCommand(e.b[e.curBuffer].H)
 		e.setUiCursor()
