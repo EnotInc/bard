@@ -104,6 +104,10 @@ func (e *Editor) parseCommand() {
 			var topic enums.Help = enums.Help(arg)
 			e.OpenHelp(topic)
 		case "theme":
+			if arg == "reload" {
+				arg = e.c.ThemeName
+			}
+
 			msg := e.theme.ChangeTheme(arg)
 			if msg != "" {
 				e.tui.Message = msg
