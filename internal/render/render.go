@@ -46,6 +46,17 @@ func (r *Renderer) Reset() {
 	r.c.dirty = false
 }
 
+func (r *Renderer) ToggleRender() {
+	switch r.mode {
+	case enums.Code:
+		r.mode = enums.Markdown
+	case enums.Markdown:
+		r.mode = enums.Code
+	default:
+		r.mode = enums.Raw
+	}
+}
+
 // This func is used to decide which render to use, and should you ever call a Code or Markdown render, or this line was already rendered an cached
 // First it calculates hash of current line, an if this line was cached, it does next:
 // 1. If this is a first line in render (first on the screen, on top) and if this line was c `code` line - current render mode is become `code`. This needed to avoid situation, where code block is starts above the visiable screen, and render would thing that text on the screen is a Makrdown, and node a code block

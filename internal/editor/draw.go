@@ -22,7 +22,16 @@ func (e *Editor) DrawDiff() {
 	upperBorder := e.tui.YScroll
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
 
-	for i := upperBorder; i < lowerBorder; i++ {
+	i := upperBorder
+	for j := 0; j < lowerBorder; j++ {
+		if j < upperBorder {
+			curLine := string(e.b[e.curBuffer].Lines[j].Data)
+			if strings.HasPrefix(curLine, "```") {
+				e.tui.ToggleRender()
+			}
+			continue
+		}
+
 		l := e.drawRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
 		curHash := hash.GetHash(l)
 		if oldHash, ok := e.hash[i-upperBorder]; !ok || (ok && curHash != oldHash) || (i == e.tui.CurRow) {
@@ -30,6 +39,7 @@ func (e *Editor) DrawDiff() {
 			fmt.Fprint(&diff, l)
 			e.hash[i-upperBorder] = curHash
 		}
+		i++
 	}
 
 	status := e.drawStatusBar(emtpyLineSpases, lowerBorder-upperBorder)

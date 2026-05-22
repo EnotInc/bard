@@ -264,3 +264,7 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 func (ui *TUI) PurgeCache() {
 	ui.render.PurgeCache()
 }
+
+func (ui *TUI) ToggleRender() {
+	ui.render.ToggleRender()
+}
