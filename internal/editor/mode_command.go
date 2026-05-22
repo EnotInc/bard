@@ -62,10 +62,12 @@ func (e *Editor) execCommand() {
 		e.c.ShowMD = !e.c.ShowMD
 		e.IsChanged = true
 		e.tui.PurgeCache()
+		e.PurgeCache()
 	case "render", "rnd":
 		e.c.Render = !e.c.Render
 		e.IsChanged = true
 		e.tui.PurgeCache()
+		e.PurgeCache()
 	case "tn", "tabnames":
 		e.c.TabNames = !e.c.TabNames
 	case "gt":
@@ -116,6 +118,7 @@ func (e *Editor) parseCommand() {
 				return
 			}
 			e.tui.PurgeCache()
+			e.PurgeCache()
 			e.c.ThemeName = arg
 			e.c.Save()
 		default:

@@ -161,7 +161,7 @@ func (e *Editor) replaceWithAmount(key rune) {
 	e.subCmd = ""
 }
 
-// Gets user input, switched by currend move to decide what to do with pressed key and calles Draw() to display changes
+// Gets user input, switched by current mode to decide what to do with pressed key and calles DrawDiff() to display changes
 func (e *Editor) Run() {
 	defer e.Exit(1)
 	fmt.Print(ascii.SaveTerminal, ascii.ClearView, ascii.ClearHistory)

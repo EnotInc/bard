@@ -23,7 +23,7 @@ func (e *Editor) DrawDiff() {
 	lowerBorder := e.tui.YScroll + e.tui.H - 1
 
 	for i := upperBorder; i < lowerBorder; i++ {
-		l := e.getRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
+		l := e.drawRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
 		curHash := hash.GetHash(l)
 		if oldHash, ok := e.hash[i-upperBorder]; !ok || (ok && curHash != oldHash) || (i == e.tui.CurRow) {
 			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
@@ -32,12 +32,12 @@ func (e *Editor) DrawDiff() {
 		}
 	}
 
-	status := e.getStatusBar(emtpyLineSpases, lowerBorder-upperBorder)
+	status := e.drawStatusBar(emtpyLineSpases, lowerBorder-upperBorder)
 	fmt.Fprint(&diff, status)
 	fmt.Print(diff.String())
 }
 
-func (e *Editor) getStatusBar(emtpyLineSpases string, lastLine int) string {
+func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 	var data strings.Builder
 
 	fmt.Fprintf(&data, "\033[%d;1H", lastLine+1)
@@ -94,7 +94,7 @@ func (e *Editor) getStatusBar(emtpyLineSpases string, lastLine int) string {
 	return data.String()
 }
 
-func (e *Editor) getRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) string {
+func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) string {
 	buf := e.b[e.curBuffer]
 	show := buf.Cursor.Line() == i || e.c.ShowMD
 	isFirst := i == upperBorder
@@ -147,4 +147,8 @@ func (e *Editor) getRenderedLine(i int, upperBorder int, emtpyLineSpases string,
 	}
 
 	return l.String()
+}
+
+func (e *Editor) PurgeCache() {
+	e.hash = make(map[int]uint32)
 }
