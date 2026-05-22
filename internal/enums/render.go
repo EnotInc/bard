@@ -4,7 +4,7 @@ package enums
 type Render int
 
 const (
-	Raw Render = iota
+	_ Render = iota
 	Markdown
 	Code
 )

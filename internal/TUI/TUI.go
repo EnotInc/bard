@@ -141,7 +141,7 @@ func BuildSpaces(maxOffset int) string {
 	return strings.Repeat(" ", maxOffset-1)
 }
 
-func (ui *TUI) fillSpaceWiht(ln int) string {
+func (ui *TUI) fillSpaceWith(ln int) string {
 	amount := max(ui.W-ln, 0)
 	return strings.Repeat(" ", amount)
 }
@@ -171,7 +171,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	var data strings.Builder
 	cmd := ui.theme.Command + " :" + ui.theme.BottomBar
-	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", ui.theme.BottomBar, cmd, curdata, ui.fillSpaceWiht(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
+	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", ui.theme.BottomBar, cmd, curdata, ui.fillSpaceWith(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
 
 	return data.String()
 }
@@ -199,7 +199,7 @@ func VisibleSubString(text string, start int, end int) string {
 			escapeSeq.WriteRune(r)
 			if r == 'm' {
 				inEscape = false
-				if visibleCount >= start && visibleCount <= start+end {
+				if /* visibleCount >= start && */ visibleCount <= start+end {
 					res.WriteString(escapeSeq.String())
 				}
 			}

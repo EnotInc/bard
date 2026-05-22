@@ -52,8 +52,6 @@ func (r *Renderer) ToggleRender() {
 		r.mode = enums.Markdown
 	case enums.Markdown:
 		r.mode = enums.Code
-	default:
-		r.mode = enums.Raw
 	}
 }
 

@@ -2,6 +2,7 @@ package editor
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -121,6 +122,20 @@ func (e *Editor) parseCommand() {
 			e.PurgeCache()
 			e.c.ThemeName = arg
 			e.c.Save()
+		case "gt":
+			page, err := strconv.Atoi(arg)
+			if err != nil {
+				e.tui.Message = "unable to get tab number"
+				return
+			}
+
+			page -= 1
+			if page < 0 || page > len(e.b) {
+				e.tui.Message = "can't open this tab"
+				return
+			}
+
+			e.curBuffer = page
 		default:
 			e.tui.Message = "unknown command"
 		}
