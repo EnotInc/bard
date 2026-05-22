@@ -44,7 +44,6 @@ func (e *Editor) OpenHelp(topic enums.Help) {
 	for line := range lines {
 		l := &buffer.Line{}
 
-		line = strings.ReplaceAll(line, "\t", "    ")
 		e.b[e.curBuffer].Lines = append(e.b[e.curBuffer].Lines, l)
 		e.b[e.curBuffer].Lines[len(e.b[e.curBuffer].Lines)-1].Data = []rune(line)
 	}
@@ -78,7 +77,6 @@ func (e *Editor) LoadFile(file string) {
 		l := &buffer.Line{}
 
 		scannedLine := scanner.Text()
-		scannedLine = strings.ReplaceAll(scannedLine, "\t", "    ")
 		e.b[e.curBuffer].Lines = append(e.b[e.curBuffer].Lines, l)
 		e.b[e.curBuffer].Lines[len(e.b[e.curBuffer].Lines)-1].Data = []rune(scannedLine)
 	}

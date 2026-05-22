@@ -70,11 +70,7 @@ func (e *Editor) caseInsert(key rune) {
 			e.b[e.curBuffer].Cursor.Line(),
 			e.b[e.curBuffer].Cursor.Line(), false)
 
-		//NOTE: yeah, I just insert 4 spaces instead of tabs
-		for range 4 {
-			e.b[e.curBuffer].InsertKey(' ')
-			e.ScrollRight()
-		}
+		e.b[e.curBuffer].InsertKey('\t')
 	case '[', '{', '(', ')', '}', ']', '\'', '"', '<', '>', '*', '_', '`':
 		e.b[e.curBuffer].InsertPair(key)
 		e.ScrollRight()

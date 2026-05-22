@@ -34,10 +34,8 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 		return
 	case '\t':
 		e.b[e.curBuffer].Delkey()
-		for range 4 {
-			e.b[e.curBuffer].InsertKey(' ')
-			e.ScrollRight()
-		}
+		e.b[e.curBuffer].InsertKey('\t')
+
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
@@ -72,10 +70,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 		e.ScrollUp()
 	case '\t':
 		e.b[e.curBuffer].Delkey()
-		for range 4 {
-			e.b[e.curBuffer].InsertKey(' ')
-			e.ScrollRight()
-		}
+		e.b[e.curBuffer].InsertKey('\t')
 	default:
 		if unicode.IsPrint(key) {
 			e.b[e.curBuffer].ReplaceKeys(key, 1)
