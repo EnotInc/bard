@@ -1,5 +1,7 @@
 package code
 
+import "github.com/EnotInc/Bard/internal/services"
+
 type Lexer struct {
 	input        []rune
 	position     int
@@ -80,6 +82,11 @@ func isNumber(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
 
+func (l *Lexer) readTab() Token {
+	new := services.ReadTabAt(l.input, l.position)
+	return Token{Type: tab, Literal: new}
+}
+
 func (l *Lexer) NextToken() Token {
 	var t Token
 	switch l.ch {
@@ -95,6 +102,9 @@ func (l *Lexer) NextToken() Token {
 		} else {
 			t = Token{Type: symbol, Literal: []rune{c}}
 		}
+	case '\t':
+		t = l.readTab()
+		l.readChar()
 	case '#':
 		s := l.input[l.position:]
 		t = Token{Type: comment, Literal: s}

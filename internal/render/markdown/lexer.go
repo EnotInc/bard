@@ -1,5 +1,9 @@
 package markdown
 
+import (
+	"github.com/EnotInc/Bard/internal/services"
+)
+
 type Lexer struct {
 	input        []rune
 	position     int
@@ -27,6 +31,9 @@ func (l *Lexer) NextToken() Token {
 	var t Token
 
 	switch l.ch {
+	case '\t':
+		t = l.readTab()
+		l.readChar()
 	case '[':
 		t = l.readLink()
 	case '!':
@@ -171,6 +178,11 @@ func (l *Lexer) NextToken() Token {
 	}
 
 	return t
+}
+
+func (l *Lexer) readTab() Token {
+	new := services.ReadTabAt(l.input, l.position)
+	return Token{Type: tab, Literal: []rune(new)}
 }
 
 func (l *Lexer) readNumber() []rune {

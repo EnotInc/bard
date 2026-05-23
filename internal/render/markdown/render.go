@@ -99,6 +99,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			} else {
 				data.WriteString(string(tok.Value) + string(tok.Literal))
 			}
+		case tab:
+			data.WriteString(r.renderTab(&tok))
+			diff -= len(tok.Literal)
 		case hightlight:
 			data.WriteString(r.simpleAttrRender(r.theme.Highlight, string(tok.Value), show))
 		case link:
@@ -259,6 +262,10 @@ func (r *Render) renderHeader(t *Token) string {
 	r.curAttr = header
 	s.WriteString(string(t.Literal))
 	return s.String()
+}
+
+func (r *Render) renderTab(t *Token) string {
+	return r.theme.Symbol + ascii.Tab.Str() + ascii.Reset.Str() + string(t.Literal[1:])
 }
 
 func (r *Render) renderLink(t *Token, show bool) string {

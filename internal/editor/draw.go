@@ -6,54 +6,10 @@ import (
 
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/hash"
+	"github.com/EnotInc/Bard/internal/services"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
 )
-
-// FIXME: move to config
-const tw = 4
-
-func (e *Editor) getStringWithTabs(index int) []rune {
-	var new strings.Builder
-
-	buf := e.b[e.curBuffer]
-	line := buf.Lines[index].Data
-
-	visual := 0
-	for i := range line {
-		if line[i] == '\t' {
-			tab_width := tw - (visual % tw)
-			spaces := strings.Repeat(" ", tab_width)
-			visual += tab_width
-			fmt.Fprint(&new, spaces)
-		} else {
-			fmt.Fprintf(&new, "%c", line[i])
-			visual += 1
-		}
-	}
-
-	return []rune(new.String())
-}
-
-func (e *Editor) cursorShift() int {
-	shift := 0
-	buf := e.b[e.curBuffer]
-	line := buf.Lines[buf.Cursor.Line()].Data
-
-	visual := 0
-	for i := 0; i < buf.Cursor.Offset(); i++ {
-		if line[i] == '\t' {
-			tab_width := tw - (visual % tw)
-			visual += tab_width
-			shift += tab_width - 1
-		} else {
-			visual += 1
-		}
-	}
-
-	return shift
-}
 
 func (e *Editor) DrawDiff() {
 	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
@@ -77,7 +33,7 @@ func (e *Editor) DrawDiff() {
 		}
 
 		l := e.drawRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
-		curHash := hash.GetHash(l)
+		curHash := services.GetHash(l)
 		oldHash, ok := e.hash[i-upperBorder]
 
 		// if row is 1 of cursor position, or hash isn't the same as prev render, or hash wasn't calculated - draw line
@@ -99,7 +55,11 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 
 	fmt.Fprintf(&data, "\033[%d;1H", lastLine+1)
 
-	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases) + e.cursorShift()
+	buf := e.b[e.curBuffer]
+	line := buf.Lines[buf.Cursor.Line()].Data
+	shift := services.CursorShiftAt(line, buf.Cursor.Offset())
+
+	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases) + shift
 	y := e.tui.CurRow + enums.CursorOffset
 
 	cursor := e.b[e.curBuffer].Cursor
@@ -165,7 +125,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		start := e.tui.XScroll
 		end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
 
-		str := e.getStringWithTabs(i)
+		str := buf.Lines[i].Data
 
 		if len(str) <= end {
 			end = len(str)
@@ -183,8 +143,20 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		case enums.Visual, enums.Visual_line:
 			// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
 			if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
-				visual := e.tui.AddVisual(e.curMode, str, i, buf.Visual.Offset(), buf.Visual.Line(), buf.Cursor.Offset(), buf.Cursor.Line(), len(buf.Lines[buf.Cursor.Line()].Data), isRender)
-				fmt.Fprint(&content, tui.VisibleSubString(visual, start, end))
+				visual := e.tui.AddVisual(e.curMode,
+					str, i,
+					buf.Visual.Offset(),
+					buf.Visual.Line(),
+					buf.Cursor.Offset(),
+					buf.Cursor.Line(),
+					len(buf.Lines[buf.Cursor.Line()].Data), isRender)
+
+				buf := e.b[e.curBuffer]
+				line := buf.Lines[i].Data
+				shift := services.CursorShift(line)
+
+				fmt.Fprint(&content, tui.VisibleSubString(visual, start, end+shift))
+				//fmt.Fprint(&content, visual)
 			} else {
 				fmt.Fprint(&content, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
 			}

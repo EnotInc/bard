@@ -74,11 +74,17 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Rend
 			data.WriteString(string(tok.Literal))
 		case wseol:
 			data.WriteString(r.renderWSEOL(&tok))
+		case tab:
+			data.WriteString(r.renderTab(&tok))
 		}
 	}
 	l := r.theme.Background + data.String() + r.fillSpace()
 	diff := -r.w - len(r.l.input) - enums.InitialOffset - 1
 	return l, diff, mode
+}
+
+func (r *Render) renderTab(t *Token) string {
+	return ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
 }
 
 func (r *Render) renderWSEOL(t *Token) string {

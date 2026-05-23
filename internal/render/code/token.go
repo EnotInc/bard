@@ -19,4 +19,5 @@ const (
 	whiteSpace           //
 	wseol                // white space at the end of line
 	EOL                  // End of line
+	tab
 )

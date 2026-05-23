@@ -11,6 +11,7 @@ type Token struct {
 const ( // maybe it's better to use iota for tokens?
 	_    TokenType = iota
 	text           // "text"
+	tab
 
 	whitespace // " "
 	wseol      // "." - White Space at the End Of Line
