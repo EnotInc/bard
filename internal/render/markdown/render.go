@@ -84,7 +84,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 				data.WriteString(r.renderCodeBlock(&tok, show))
 				diff = -r.w - len(r.l.input)
 			} else {
-				data.WriteString(string(tok.Literal) + string(tok.Value))
+				data.WriteString(string(tok.Literal))
+				data.WriteString(string(tok.Value))
 			}
 			renderMode = enums.Code
 		case listDash:
@@ -97,7 +98,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			if isWhiteSpace {
 				data.WriteString(r.renderListNumber(&tok))
 			} else {
-				data.WriteString(string(tok.Value) + string(tok.Literal))
+				data.WriteString(string(tok.Value))
+				data.WriteString(string(tok.Literal))
 			}
 		case tab:
 			data.WriteString(r.renderTab(&tok))
@@ -318,7 +320,8 @@ func (r *Render) renderHtmlBlcok(t *Token) string {
 func (r *Render) renderCodeLine(t *Token, show bool) string {
 	var s strings.Builder
 	if show {
-		s.WriteString(string(t.Literal) + string(t.Value))
+		s.WriteString(string(t.Literal))
+		s.WriteString(string(t.Value))
 	} else {
 		end := len(t.Value)
 		if end > 0 {

@@ -206,12 +206,20 @@ func (l *Lexer) readText() []rune {
 
 func (l *Lexer) readHTMLBlock() Token {
 	start := l.position
-	for l.ch != '>' && l.peekChar() != 0 {
+	l.readChar()
+	for l.ch != '>' && l.peekChar() != 0 && (isLetter(l.ch) || isNumber(l.ch) || isSymbol(l.ch) || l.ch == ' ') {
 		l.readChar()
 	}
-	l.readChar()
 
 	value := l.input[start:l.position]
+
+	if len(value) == 1 {
+		return Token{
+			Type:  symbol,
+			Value: value,
+		}
+	}
+
 	var literal []rune
 
 	if len(value) > 2 && value[0] == '<' && value[1] == '/' && value[len(value)-1] == '>' { // </>
@@ -252,12 +260,17 @@ func (l *Lexer) readCodeLine() []rune {
 	return l.input[pos:l.position]
 }
 
+// TODO: move to services 'is letter or number' functions
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
 func isNumber(ch rune) bool {
 	return '0' <= ch && ch <= '9'
+}
+
+func isSymbol(ch rune) bool {
+	return ch == '+' || ch == '/' || ch == '\\'
 }
 
 func (l *Lexer) peekChar() rune {
