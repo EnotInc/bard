@@ -54,7 +54,7 @@ func (l *Lexer) NextToken() Token {
 	case '-':
 		t = l.readListOrCheckBox()
 	case '\\':
-		if (isNumber(l.peekChar()) || isLetter(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ') && l.peekChar() != '_' {
+		if (services.IsLetterOrNumber(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ') && l.peekChar() != '_' {
 			t = Token{Type: symbol, Value: []rune{l.ch}}
 		} else {
 			sh := l.ch
@@ -104,7 +104,7 @@ func (l *Lexer) NextToken() Token {
 		end := l.position + 1
 		lit := []rune(l.input[pos:end])
 
-		if count == 1 && (isLetter(l.peekChar()) || isNumber(l.peekChar())) {
+		if count == 1 && services.IsLetterOrNumber(l.peekChar()) {
 			l.readChar()
 			text := l.readText()
 			t = Token{Type: tag, Literal: lit, Value: text}
@@ -156,7 +156,7 @@ func (l *Lexer) NextToken() Token {
 	case 0:
 		t = Token{Type: eol, Literal: []rune("")}
 	default:
-		if isNumber(l.ch) {
+		if services.IsNumber(l.ch) {
 			s := l.readNumber()
 			switch l.ch {
 			case ')':
@@ -168,7 +168,7 @@ func (l *Lexer) NextToken() Token {
 			default:
 				t = Token{Type: text, Value: s}
 			}
-		} else if isLetter(l.ch) || isNumber(l.ch) {
+		} else if services.IsLetterOrNumber(l.ch) {
 			s := l.readText()
 			t = Token{Type: text, Value: s}
 		} else {
@@ -187,7 +187,7 @@ func (l *Lexer) readTab() Token {
 
 func (l *Lexer) readNumber() []rune {
 	pos := l.position
-	for isNumber(l.ch) {
+	for services.IsNumber(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
@@ -195,7 +195,7 @@ func (l *Lexer) readNumber() []rune {
 
 func (l *Lexer) readText() []rune {
 	pos := l.position
-	for isLetter(l.ch) || isNumber(l.ch) {
+	for services.IsLetterOrNumber(l.ch) {
 		l.readChar()
 		if l.ch == '_' && (l.peekChar() == '_' || l.peekChar() == ' ' || l.peekChar() == 0) {
 			break
@@ -207,7 +207,7 @@ func (l *Lexer) readText() []rune {
 func (l *Lexer) readHTMLBlock() Token {
 	start := l.position
 	l.readChar()
-	for l.ch != '>' && l.peekChar() != 0 && (isLetter(l.ch) || isNumber(l.ch) || isSymbol(l.ch) || l.ch == ' ') {
+	for l.ch != '>' && l.peekChar() != 0 && (services.IsLetterOrNumber(l.ch) || isSymbol(l.ch) || l.ch == ' ') {
 		l.readChar()
 	}
 	if l.ch == '>' {
@@ -261,15 +261,6 @@ func (l *Lexer) readCodeLine() []rune {
 	}
 	l.readChar()
 	return l.input[pos:l.position]
-}
-
-// TODO: move to services 'is letter or number' functions
-func isLetter(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
-}
-
-func isNumber(ch rune) bool {
-	return '0' <= ch && ch <= '9'
 }
 
 func isSymbol(ch rune) bool {
@@ -375,7 +366,7 @@ func (l *Lexer) readListOrCheckBox() Token {
 		l.readChar()
 
 		ch := l.peekChar()
-		if ch == ' ' || isLetter(ch) || ch == '?' {
+		if ch == ' ' || services.IsLetter(ch) || ch == '?' {
 			l.readChar()
 			isField := ch != ' '
 

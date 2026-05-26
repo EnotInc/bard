@@ -35,7 +35,7 @@ func (l *Lexer) peekChar() rune {
 
 func (l *Lexer) readNumber() []rune {
 	pos := l.position
-	for isNumber(l.ch) || (l.ch == '.' && isNumber(l.peekChar())) {
+	for services.IsNumber(l.ch) || (l.ch == '.' && services.IsNumber(l.peekChar())) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
@@ -43,7 +43,7 @@ func (l *Lexer) readNumber() []rune {
 
 func (l *Lexer) readText() []rune {
 	pos := l.position
-	for isLetter(l.ch) || isNumber(l.ch) || islinkSymbol(l.ch) {
+	for services.IsLetterOrNumber(l.ch) || islinkSymbol(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
@@ -70,16 +70,8 @@ func (l *Lexer) readWhiteSpace() ([]rune, bool) {
 	return l.input[pos:l.position], l.ch != 0
 }
 
-func isLetter(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
-}
-
 func islinkSymbol(ch rune) bool {
 	return ch == '/' || ch == '.' || ch == ':' || ch == '?' || ch == '=' || ch == '%'
-}
-
-func isNumber(ch rune) bool {
-	return '0' <= ch && ch <= '9'
 }
 
 func (l *Lexer) readTab() Token {
@@ -127,10 +119,10 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: EOL, Literal: []rune("")}
 		l.readChar()
 	default:
-		if isNumber(l.ch) {
+		if services.IsNumber(l.ch) {
 			s := l.readNumber()
 			t = Token{Type: number, Literal: s}
-		} else if isLetter(l.ch) {
+		} else if services.IsLetter(l.ch) {
 			s := l.readText()
 			if _, ok := keywords[string(s)]; ok {
 				t = Token{Type: keyword, Literal: s}
