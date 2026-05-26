@@ -210,6 +210,9 @@ func (l *Lexer) readHTMLBlock() Token {
 	for l.ch != '>' && l.peekChar() != 0 && (isLetter(l.ch) || isNumber(l.ch) || isSymbol(l.ch) || l.ch == ' ') {
 		l.readChar()
 	}
+	if l.ch == '>' {
+		l.readChar()
+	}
 
 	value := l.input[start:l.position]
 
