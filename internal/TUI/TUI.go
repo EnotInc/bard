@@ -199,7 +199,7 @@ func VisibleSubString(text string, start int, end int) string {
 			escapeSeq.WriteRune(r)
 			if r == 'm' {
 				inEscape = false
-				if /* visibleCount >= start && */ visibleCount <= start+end {
+				if visibleCount <= start+end {
 					res.WriteString(escapeSeq.String())
 				}
 			}
