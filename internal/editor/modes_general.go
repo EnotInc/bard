@@ -28,16 +28,19 @@ func (e *Editor) findSome(key rune) bool {
 			e.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
+
 		case 'F':
 			e.b[e.curBuffer].FindPrev(key)
 			e.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
+
 		case 't':
 			e.b[e.curBuffer].FindBeforeNext(key)
 			e.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
+
 		case 'T':
 			e.b[e.curBuffer].FindBeforePrev(key)
 			e.lastCmd = e.subCmd + string(key)
@@ -67,36 +70,48 @@ func (e *Editor) GeneralCase(key rune) {
 			e.tui.Message = "nothing was found"
 		}
 		return
+
 	case 'h':
 		e.execWithSubCommand(e.b[e.curBuffer].H)
 		e.ScrollLeft()
+
 	case 'j':
 		e.execWithSubCommand(e.b[e.curBuffer].J)
 		e.shiftLeft()
+
 	case 'k':
 		e.execWithSubCommand(e.b[e.curBuffer].K)
 		e.shiftLeft()
+
 	case 'l':
 		e.execWithSubCommand(e.b[e.curBuffer].L)
 		e.ScrollRight()
+
 	case 'w':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveWord)
+
 	case 'W':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveWORD)
+
 	case 'b':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveBack)
+
 	case 'B':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveBACK)
+
 	case 'e':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveEnd)
+
 	case 'E':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveEND)
+
 	case 'g':
 		e.subCmd += "g"
 		if e.subCmd == "gg" {
 			e.b[e.curBuffer].MoveToFirstLine()
 			e.subCmd = ""
 		}
+
 	case 'G':
 		e.b[e.curBuffer].MoveToLastLine()
 	}

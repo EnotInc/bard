@@ -2,7 +2,7 @@ package render
 
 import (
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/enums"
+	render "github.com/EnotInc/Bard/internal/enums/render"
 	code "github.com/EnotInc/Bard/internal/render/code"
 	md "github.com/EnotInc/Bard/internal/render/markdown"
 	"github.com/EnotInc/Bard/internal/services"
@@ -15,7 +15,7 @@ import (
 // code - code redner
 // w - screen width
 type Renderer struct {
-	mode enums.Render
+	mode render.Render
 	c    *cache
 	md   *md.Render
 	code *code.Render
@@ -24,7 +24,7 @@ type Renderer struct {
 
 func InitRender(w, h int, theme *config.Theme) *Renderer {
 	_c := initCache()
-	r := &Renderer{c: _c, w: w, mode: enums.Markdown}
+	r := &Renderer{c: _c, w: w, mode: render.Markdown}
 	r.md = md.NewRender(w, &theme.Markdown)
 	r.code = code.NewRender(w, &theme.Code)
 	return r
@@ -40,7 +40,7 @@ func (r *Renderer) Resize(w int) {
 }
 
 func (r *Renderer) Reset() {
-	r.mode = enums.Markdown
+	r.mode = render.Markdown
 	r.md.Reset()
 	r.code.Reset()
 	r.c.dirty = false
@@ -48,10 +48,10 @@ func (r *Renderer) Reset() {
 
 func (r *Renderer) ToggleRender() {
 	switch r.mode {
-	case enums.Code:
-		r.mode = enums.Markdown
-	case enums.Markdown:
-		r.mode = enums.Code
+	case render.Code:
+		r.mode = render.Markdown
+	case render.Markdown:
+		r.mode = render.Code
 	}
 }
 
@@ -69,8 +69,8 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 	lineHash := services.GetHash(string(line))
 	if !isCurrent {
 		if l, ok := r.c.getCached(lineIndex); ok {
-			if isFirst && l.mode == enums.Code {
-				r.mode = enums.Code
+			if isFirst && l.mode == render.Code {
+				r.mode = render.Code
 			}
 			if lineHash == l.hash && l.mode == r.mode {
 				return l.render, l.diff
@@ -80,12 +80,12 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 
 	var data string
 	var diff int
-	var mode enums.Render
+	var mode render.Render
 
 	switch r.mode {
-	case enums.Markdown:
+	case render.Markdown:
 		data, diff, mode = r.md.RenderMarkdownLine(line, lineIndex, show)
-	case enums.Code:
+	case render.Code:
 		data, diff, mode = r.code.RenderCodeLine(line, show)
 	}
 

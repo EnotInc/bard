@@ -11,9 +11,9 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/buffer"
-	"github.com/EnotInc/Bard/internal/enums"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 // This is main structure, that contains current editor state
@@ -33,7 +33,7 @@ type Editor struct {
 	b         []*buffer.Buffer
 	tui       *tui.TUI
 	theme     *config.Theme
-	curMode   enums.Mode
+	curMode   mode.Mode
 	hash      map[int]uint32
 	command   string
 	subCmd    string
@@ -72,7 +72,7 @@ func InitEditor() *Editor {
 		b:         _b,
 		tui:       _tui,
 		theme:     _t,
-		curMode:   enums.Normal,
+		curMode:   mode.Normal,
 		hash:      make(map[int]uint32),
 		command:   "",
 		subCmd:    "",
@@ -174,29 +174,29 @@ func (e *Editor) Run() {
 		}
 
 		switch e.curMode {
-		case enums.Normal:
+		case mode.Normal:
 			if e.IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseNormal(key)
 			}
-		case enums.Visual:
+		case mode.Visual:
 			if e.IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseVisual(key)
 			}
-		case enums.Visual_line:
+		case mode.Visual_line:
 			if e.IsGeneralMove(key) {
 				e.GeneralCase(key)
 			} else {
 				e.caseVisualLine(key)
 			}
-		case enums.Command:
+		case mode.Command:
 			e.caseCommand(key)
-		case enums.Insert:
+		case mode.Insert:
 			e.caseInsert(key)
-		case enums.Replace:
+		case mode.Replace:
 			e.caseReplaceMode(key)
 		default:
 			e.Exit(1)

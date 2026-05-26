@@ -7,6 +7,8 @@ import (
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render/general"
+
+	render "github.com/EnotInc/Bard/internal/enums/render"
 )
 
 type Render struct {
@@ -36,7 +38,7 @@ func (r *Render) fillSpace() string {
 	return strings.Repeat(" ", amount)
 }
 
-func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Render) {
+func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Render) {
 	r.l.input = line
 	if string(line) == "```" {
 		if !show {
@@ -44,14 +46,14 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, enums.Rend
 		}
 		l := r.theme.Background + string(line) + r.fillSpace()
 		diff := -r.w
-		return l, diff, enums.Markdown
+		return l, diff, render.Markdown
 	}
 
 	r.l.position = 0
 	r.l.readPosition = 0
 	r.l.readChar()
 
-	var mode enums.Render = enums.Code
+	var mode render.Render = render.Code
 	var data strings.Builder
 
 	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {

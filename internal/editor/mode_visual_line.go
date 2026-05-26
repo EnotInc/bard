@@ -3,6 +3,9 @@ package editor
 import (
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
+	cases "github.com/EnotInc/Bard/internal/enums/cases"
+	"github.com/EnotInc/Bard/internal/enums/keys"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 const visual_line = true
@@ -14,64 +17,79 @@ func (e *Editor) caseVisualLine(key rune) {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
-		e.b[e.curBuffer].ChangeLetterCaseTo(enums.Lower, visual_line)
-		e.curMode = enums.Normal
+		e.b[e.curBuffer].ChangeLetterCaseTo(cases.Lower, visual_line)
+		e.curMode = mode.Normal
+
 	case 'U':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
-		e.b[e.curBuffer].ChangeLetterCaseTo(enums.Upper, visual_line)
-		e.curMode = enums.Normal
+		e.b[e.curBuffer].ChangeLetterCaseTo(cases.Upper, visual_line)
+		e.curMode = mode.Normal
+
 	case 'y':
 		e.b[e.curBuffer].CopySelected(false, visual_line)
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	case 'x':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Delete,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].CopySelected(true, visual_line)
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	case 'd', 'D':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Delete,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].CopySelected(true, visual_line)
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	case 's':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual_line)
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
 		e.b[e.curBuffer].MoveToFirstChar()
-		e.curMode = enums.Insert
+		e.curMode = mode.Insert
+
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
+
 	case '<':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
 		e.execWithSubCommand(e.b[e.curBuffer].ShiftLineLeft)
 		e.b[e.curBuffer].MoveToFirstVisible()
+
 	case '>':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
 		e.execWithSubCommand(e.b[e.curBuffer].ShiftLineRight)
 		e.b[e.curBuffer].MoveToFirstVisible()
-	case '\033':
-		e.curMode = enums.Normal
+
+	case keys.Esc:
+		e.curMode = mode.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
 	}

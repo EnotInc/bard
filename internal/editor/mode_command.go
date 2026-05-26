@@ -7,27 +7,32 @@ import (
 	"unicode"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/enums/help"
+	"github.com/EnotInc/Bard/internal/enums/keys"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 // Called from Run() func
 // Used to decide what do to with pressed key
 func (e *Editor) caseCommand(key rune) {
 	switch key {
-	case '\033':
+	case keys.Esc:
 		e.command = ""
-		e.curMode = enums.Normal
-	case '\127', '\x7f':
+		e.curMode = mode.Normal
+
+	case keys.Backspace:
 		if len(e.command) > 0 {
 			e.command = e.command[:len(e.command)-1]
 		} else {
 			e.command = ""
-			e.curMode = enums.Normal
+			e.curMode = mode.Normal
 		}
-	case '\013', '\r', '\n':
+
+	case keys.Enter:
 		e.execCommand()
 		e.command = ""
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	default:
 		if unicode.IsPrint(key) {
 			e.command += string(key)
@@ -46,10 +51,13 @@ func (e *Editor) execCommand() {
 		} else {
 			e.Exit(0)
 		}
+
 	case "qa":
 		e.Exit(0)
+
 	case "w":
 		e.SaveFile()
+
 	case "x", "wq":
 		e.SaveFile()
 		if len(e.b) > 1 {
@@ -57,30 +65,40 @@ func (e *Editor) execCommand() {
 		} else {
 			e.Exit(0)
 		}
+
 	case "help", "h":
-		e.OpenHelp(enums.HelpAbout)
+		e.OpenHelp(help.About)
+
 	case "rln":
 		cfg.RLN = !cfg.RLN
+
 	case "showmd":
 		cfg.ShowMD = !cfg.ShowMD
 		e.IsChanged = true
 		e.tui.PurgeCache()
 		e.PurgeCache()
+
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
 		e.IsChanged = true
 		e.tui.PurgeCache()
 		e.PurgeCache()
+
 	case "tn", "tabnames":
 		cfg.TabNames = !cfg.TabNames
+
 	case "gt":
 		e.nextTab()
+
 	case "gT":
 		e.prevTab()
+
 	case "newtab", "nt":
 		e.newBuffer()
+
 	case "theme":
 		e.tui.Message = fmt.Sprintf("Theme: %s", cfg.ThemeName)
+
 	default:
 		e.parseCommand()
 	}
@@ -105,13 +123,16 @@ func (e *Editor) parseCommand() {
 			e.CreateFile(arg)
 			e.b[e.curBuffer].Title = arg
 			e.SaveFile()
+
 		case "newtab", "nt":
 			e.newBuffer()
 			e.LoadFile(arg)
 			e.b[e.curBuffer].Title = arg
+
 		case "help", "h":
-			var topic enums.Help = enums.Help(arg)
+			var topic help.Topic = help.Topic(arg)
 			e.OpenHelp(topic)
+
 		case "theme":
 			if arg == "reload" {
 				arg = cfg.ThemeName
@@ -126,6 +147,7 @@ func (e *Editor) parseCommand() {
 			e.PurgeCache()
 			cfg.ThemeName = arg
 			config.Save()
+
 		case "gt":
 			page, err := strconv.Atoi(arg)
 			if err != nil {
@@ -140,6 +162,7 @@ func (e *Editor) parseCommand() {
 			}
 
 			e.curBuffer = page
+
 		default:
 			e.tui.Message = "unknown command"
 		}

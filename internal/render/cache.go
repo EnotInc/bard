@@ -1,7 +1,7 @@
 package render
 
 import (
-	"github.com/EnotInc/Bard/internal/enums"
+	render "github.com/EnotInc/Bard/internal/enums/render"
 )
 
 // About |cachedLine|
@@ -15,7 +15,7 @@ type cachedLine struct {
 	render string
 	diff   int
 	index  int
-	mode   enums.Render
+	mode   render.Render
 }
 
 // lines - list of chchedLine
@@ -37,7 +37,7 @@ func (c *cache) getCached(index int) (*cachedLine, bool) {
 	return l, ok && !c.dirty
 }
 
-func (c *cache) cacheLine(h uint32, render string, diff int, index int, m enums.Render) {
+func (c *cache) cacheLine(h uint32, render string, diff int, index int, m render.Render) {
 	// If the line exists in the map, update it
 	//var foo uint32
 	if l, ok := c.lines[index]; ok {

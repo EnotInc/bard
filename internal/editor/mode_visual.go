@@ -3,6 +3,9 @@ package editor
 import (
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
+	cases "github.com/EnotInc/Bard/internal/enums/cases"
+	"github.com/EnotInc/Bard/internal/enums/keys"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 const visual = false
@@ -19,42 +22,51 @@ func (e *Editor) caseVisual(key rune) {
 	switch key {
 	case 'y':
 		e.b[e.curBuffer].CopySelected(false, visual)
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	case 'x':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual)
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	case 'u':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
-		e.b[e.curBuffer].ChangeLetterCaseTo(enums.Lower, visual)
-		e.curMode = enums.Normal
+		e.b[e.curBuffer].ChangeLetterCaseTo(cases.Lower, visual)
+		e.curMode = mode.Normal
+
 	case 'U':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Visual.Line(), false)
+			e.b[e.curBuffer].Visual.Line(),
+			enums.Without)
 
-		e.b[e.curBuffer].ChangeLetterCaseTo(enums.Upper, visual)
-		e.curMode = enums.Normal
+		e.b[e.curBuffer].ChangeLetterCaseTo(cases.Upper, visual)
+		e.curMode = mode.Normal
+
 	case 'o', 'O':
 		e.b[e.curBuffer].SwapTail()
+
 	case 'd', 'D':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual)
-		e.curMode = enums.Normal
+		e.curMode = mode.Normal
+
 	case 's':
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual)
-		e.curMode = enums.Insert
-	case '\033':
-		e.curMode = enums.Normal
+		e.curMode = mode.Insert
+
+	case keys.Esc:
+		e.curMode = mode.Normal
 		e.ScrollLeft()
 	}
 }
@@ -65,10 +77,12 @@ func (e *Editor) saveSelected() {
 
 	e.b[e.curBuffer].SaveChanges(
 		buffer.Change,
-		from, to, false)
+		from, to,
+		enums.Without)
 	if from != to {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Delete,
-			from+1, to, true)
+			from+1, to,
+			enums.With)
 	}
 }

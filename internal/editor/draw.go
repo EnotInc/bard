@@ -10,6 +10,7 @@ import (
 	"github.com/EnotInc/Bard/internal/services"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 func (e *Editor) DrawDiff() {
@@ -71,22 +72,22 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 
 	// Different modes have different information on the last line
 	switch e.curMode {
-	case enums.Insert:
+	case mode.Insert:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorLine)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
-	case enums.Replace:
+	case mode.Replace:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorUnderline)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
-	case enums.Command:
+	case mode.Command:
 		fmt.Fprintf(&data, "\033[%d;%dH%s\033[%d;1H", y, x, ascii.Cursor, lastLine+1) // adding cursor as unicode symbol on last visual position, and returning it to the last line
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
-	case enums.Normal:
+	case mode.Normal:
 		var tabs []string
 		for _, t := range e.b {
 			tabs = append(tabs, t.Title)
@@ -97,7 +98,7 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
-	case enums.Visual, enums.Visual_line:
+	case mode.Visual, mode.Visual_line:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
@@ -139,7 +140,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 
 		isRender := e.b[e.curBuffer].IsMdFile && cfg.Render
 		switch e.curMode {
-		case enums.Visual, enums.Visual_line:
+		case mode.Visual, mode.Visual_line:
 			// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
 			if (i >= buf.Visual.Line() && i <= buf.Cursor.Line()) || (i <= e.b[e.curBuffer].Visual.Line() && i >= e.b[e.curBuffer].Cursor.Line()) {
 				visual := e.tui.AddVisual(e.curMode,

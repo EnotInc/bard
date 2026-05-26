@@ -3,6 +3,8 @@ package editor
 import (
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/enums/keys"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 // Called from Run() func
@@ -18,53 +20,63 @@ func (e *Editor) caseNormal(key rune) {
 	switch key {
 	case 'r':
 		e.subCmd += string(key)
+
 	case 'i':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 		}
 		e.ScrollLeft()
 		e.tui.ShowHello = false
+
 	case 'a':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 		}
 		e.b[e.curBuffer].Insert_a()
 		e.ScrollRight()
 		e.tui.ShowHello = false
+
 	case 'I':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 		}
 		e.b[e.curBuffer].MoveToFirstVisible()
 		e.tui.ShowHello = false
+
 	case 'A':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 		}
 		e.b[e.curBuffer].MoveToLastChar()
 		e.b[e.curBuffer].Insert_a()
 		e.tui.ShowHello = false
+
 	case ':':
-		e.curMode = enums.Command
+		e.curMode = mode.Command
+
 	case 'o':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 		}
 
 		e.b[e.curBuffer].InsertEmptyLine(enums.Below)
@@ -75,11 +87,13 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 		e.tui.ShowHello = false
+
 	case 'O':
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
 		e.moveToZero()
@@ -87,38 +101,46 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 		e.tui.ShowHello = false
+
 	case 'D':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].ClearLine()
 		e.b[e.curBuffer].MoveToFirstChar()
 		e.moveToZero()
+
 	case 'd':
 		e.subCmd += "d"
 		if e.subCmd == "dd" {
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Delete,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 
 			e.subCmd = ""
 			e.b[e.curBuffer].RemoveLine()
 			e.moveToZero()
 		}
+
 	case 'R':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Replace
+			e.curMode = mode.Replace
 		}
+
 	case 'J':
 		if len(e.b[e.curBuffer].Lines)-1 == e.b[e.curBuffer].Cursor.Line() {
 			return
@@ -126,7 +148,8 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		line := e.b[e.curBuffer].Cursor.Line()
 		e.b[e.curBuffer].J(1)
@@ -134,75 +157,91 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Delete,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), true)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.With)
 
 		e.b[e.curBuffer].DelAndMoveLineAt(line, line+1, 0)
 		e.b[e.curBuffer].K(1)
+
 	case 'x':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].Delkey()
 		if e.b[e.curBuffer].Cursor.Offset() == len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data) {
 			e.b[e.curBuffer].H(1)
 		}
 		e.ScrollLeft()
+
 	case 's':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].Delkey()
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 		}
+
 	case 'S':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].ClearLine()
 		if !e.b[e.curBuffer].IsReadOnly {
-			e.curMode = enums.Insert
+			e.curMode = mode.Insert
 		}
+
 	case 'v':
-		e.curMode = enums.Visual
+		e.curMode = mode.Visual
 		e.b[e.curBuffer].StartVisual()
 		e.tui.ShowHello = false
+
 	case 'V':
-		e.curMode = enums.Visual_line
+		e.curMode = mode.Visual_line
 		e.b[e.curBuffer].StartVisualLine()
 		e.tui.ShowHello = false
+
 	case 'p':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
-			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1, false)
+			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1,
+			enums.Without)
 
 		e.b[e.curBuffer].Paste(enums.After)
 		e.tui.ShowHello = false
+
 	case 'P':
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
-			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1, false)
+			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1,
+			enums.Without)
 
 		e.b[e.curBuffer].Paste(enums.Before)
 		e.tui.ShowHello = false
+
 	case 'u':
 		err := e.b[e.curBuffer].Undo()
 		if err != nil {
 			e.tui.Message = err.Error()
 		}
-	case 18: // ctrl + r
+
+	case keys.Ctrl_r:
 		err := e.b[e.curBuffer].Redo()
 		if err != nil {
 			e.tui.Message = err.Error()
 		}
+
 	default:
 		e.subCmd = ""
 	}

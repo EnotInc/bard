@@ -13,22 +13,22 @@ import (
 	"github.com/EnotInc/Bard/docs/help"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/buffer"
-	"github.com/EnotInc/Bard/internal/enums"
+	h "github.com/EnotInc/Bard/internal/enums/help"
 )
 
 // Used to create hew Buffer in Editor with selected help topic
-func (e *Editor) OpenHelp(topic enums.Help) {
+func (e *Editor) OpenHelp(topic h.Topic) {
 	var lines iter.Seq[string]
 	switch topic {
-	case enums.HelpAbout:
+	case h.About:
 		lines = strings.SplitSeq(help.About, "\n")
-	case enums.HelpModes:
+	case h.Modes:
 		lines = strings.SplitSeq(help.Modes, "\n")
-	case enums.HelpNormal:
+	case h.Normal:
 		lines = strings.SplitSeq(help.Noraml, "\n")
-	case enums.HelpCommand:
+	case h.Command:
 		lines = strings.SplitSeq(help.Command, "\n")
-	case enums.HelpVisual, enums.HelpVisualLine:
+	case h.Visual, h.VisualLine:
 		lines = strings.SplitSeq(help.Visual, "\n")
 	default:
 		e.tui.Message = "Unknown topic"

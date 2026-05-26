@@ -4,7 +4,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/EnotInc/Bard/internal/enums"
+	cases "github.com/EnotInc/Bard/internal/enums/cases"
 )
 
 type copied struct {
@@ -179,7 +179,7 @@ func (b *Buffer) Paste(shift int) {
 	b.FixOffset()
 }
 
-func (b *Buffer) ChangeLetterCaseTo(Case enums.Case, isVisualLine bool) {
+func (b *Buffer) ChangeLetterCaseTo(Case cases.Case, isVisualLine bool) {
 	if b.IsReadOnly {
 		return
 	}
@@ -217,9 +217,9 @@ func (b *Buffer) ChangeLetterCaseTo(Case enums.Case, isVisualLine bool) {
 
 		var changed_line string
 		switch Case {
-		case enums.Lower:
+		case cases.Lower:
 			changed_line = strings.ToLower(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
-		case enums.Upper:
+		case cases.Upper:
 			changed_line = strings.ToUpper(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
 		default:
 			changed_line = ""

@@ -6,6 +6,8 @@ import (
 
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/enums/keys"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 // Called from Run() func
@@ -13,11 +15,12 @@ import (
 // Some specific keys (like paired symbols) can be treated differently
 func (e *Editor) caseInsert(key rune) {
 	switch key {
-	case '\013', '\r', '\n':
+	case keys.Enter:
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		ok := e.b[e.curBuffer].DismissList()
 		if ok {
@@ -31,60 +34,72 @@ func (e *Editor) caseInsert(key rune) {
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), true)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.With)
 
-	case '\033':
-		e.curMode = enums.Normal
+	case keys.Esc:
+		e.curMode = mode.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
-	case '\x7f':
+
+	case keys.Backspace:
 		if e.b[e.curBuffer].Cursor.Offset() > 0 {
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 
 			e.b[e.curBuffer].RemoveKey()
 		} else {
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Delete,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
+
 			e.b[e.curBuffer].K(1)
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), true)
-			e.b[e.curBuffer].J(1)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.With)
 
+			e.b[e.curBuffer].J(1)
 			e.b[e.curBuffer].DelAndMoveLine()
 		}
 
 		e.ScrollLeft()
 
-	case '\t':
+	case keys.Tab:
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].InsertKey('\t')
+
 	case '[', '{', '(', ')', '}', ']', '\'', '"', '<', '>', '*', '_', '`':
 		e.b[e.curBuffer].InsertPair(key)
 		e.ScrollRight()
-	case 8:
+
+	case keys.Ctrl_Backspace:
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(), false)
+			e.b[e.curBuffer].Cursor.Line(),
+			enums.Without)
 
 		e.b[e.curBuffer].DeleteUntilSpace()
+
 	default:
-		if key == ' ' {
+		if key == keys.Space {
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
-				e.b[e.curBuffer].Cursor.Line(), false)
+				e.b[e.curBuffer].Cursor.Line(),
+				enums.Without)
 		}
 		if !unicode.IsPrint(key) {
 			e.tui.Message = fmt.Sprintf("Unknown key. Code: %d", int(key))

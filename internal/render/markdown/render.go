@@ -7,6 +7,8 @@ import (
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render/general"
+
+	render "github.com/EnotInc/Bard/internal/enums/render"
 )
 
 type Render struct {
@@ -32,8 +34,8 @@ func (r *Render) Reset() {
 	r.l.readPosition = 0
 }
 
-func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int, enums.Render) {
-	var renderMode enums.Render = enums.Markdown
+func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int, render.Render) {
+	var renderMode render.Render = render.Markdown
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
@@ -87,7 +89,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 				data.WriteString(string(tok.Literal))
 				data.WriteString(string(tok.Value))
 			}
-			renderMode = enums.Code
+			renderMode = render.Code
 		case listDash:
 			if isWhiteSpace {
 				data.WriteString(r.renderListDash(&tok, show))
