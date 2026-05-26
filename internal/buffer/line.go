@@ -5,6 +5,8 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/EnotInc/Bard/internal/enums"
 )
 
 type Line struct {
@@ -16,15 +18,18 @@ func (b *Buffer) InsertEmptyLine(lineShift int) {
 		return
 	}
 
-	keep := b.continueList()
+	keep := []rune{}
+	if lineShift != enums.Above {
+		keep = b.continueList()
+	}
 
 	index := b.Cursor.line + lineShift
 	newLine := make([]*Line, 0)
 	newLine = append(newLine, &Line{Data: keep})
 	b.Lines = append(b.Lines[:index], append(newLine, b.Lines[index:]...)...)
 
-	if len(keep) != 0 {
-		b.MoveToLastChar()
+	b.MoveToLastChar()
+	if len(keep) != 0 && keep != nil {
 		b.Insert_a()
 	}
 }
