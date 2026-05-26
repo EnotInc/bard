@@ -98,7 +98,7 @@ func (b *Buffer) Undo() error {
 	if b.Cursor.line > len(b.Lines)-1 {
 		b.Cursor.line = len(b.Lines) - 1
 	}
-	b.FixOffset()
+	b.MoveToFirstVisible()
 
 	if snapshot.prev {
 		err := b.Undo()
@@ -145,6 +145,7 @@ func (b *Buffer) Redo() error {
 	if b.Cursor.line > len(b.Lines)-1 {
 		b.Cursor.line = len(b.Lines) - 1
 	}
+	b.MoveToFirstVisible()
 
 	if snapshot.prev {
 		err := b.Redo()
@@ -154,7 +155,6 @@ func (b *Buffer) Redo() error {
 	}
 	b.moveToUndo(snapshot)
 
-	b.FixOffset()
 	return nil
 }
 
