@@ -56,7 +56,7 @@ func CursorShiftAt(line []rune, index int) int {
 	shift := 0
 	visual := 0
 	for i := range index {
-		if len(line) <= index {
+		if i == len(line) {
 			return shift
 		}
 		if line[i] == '\t' {

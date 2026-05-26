@@ -72,11 +72,9 @@ func (e *Editor) GeneralCase(key rune) {
 		e.ScrollLeft()
 	case 'j':
 		e.execWithSubCommand(e.b[e.curBuffer].J)
-		e.ScrollDown()
 		e.shiftLeft()
 	case 'k':
 		e.execWithSubCommand(e.b[e.curBuffer].K)
-		e.ScrollUp()
 		e.shiftLeft()
 	case 'l':
 		e.execWithSubCommand(e.b[e.curBuffer].L)

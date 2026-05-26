@@ -137,7 +137,8 @@ func (b *Buffer) continueList() []rune {
 
 	ofset := 0
 	for i := range len(b.Lines[b.Cursor.line].Data) {
-		if b.Lines[b.Cursor.line].Data[i] != ' ' {
+		ch := b.Lines[b.Cursor.line].Data[i]
+		if ch != ' ' && ch != '\t' {
 			break
 		}
 		ofset += 1
@@ -146,10 +147,10 @@ func (b *Buffer) continueList() []rune {
 	if strings.HasPrefix(trim, "-") {
 		// NOTE: yeah, this looks not rly good. Anyway, I'll refactor it later
 		if len(trim) > 5 && trim[2] == '[' && trim[4] == ']' {
-			newLine = append(newLine, []rune(strings.Repeat(" ", ofset))...)
+			newLine = append(newLine, curLine.Data[:ofset]...)
 			newLine = append(newLine, []rune("- [ ] ")...)
 		} else {
-			newLine = append(newLine, []rune(strings.Repeat(" ", ofset))...)
+			newLine = append(newLine, curLine.Data[:ofset]...)
 			newLine = append(newLine, []rune("- ")...)
 		}
 	} else {
@@ -163,7 +164,7 @@ func (b *Buffer) continueList() []rune {
 			}
 
 			number += 1
-			newLine = append(newLine, []rune(strings.Repeat(" ", ofset))...)
+			newLine = append(newLine, curLine.Data[:ofset]...)
 			newLine = append(newLine, []rune(fmt.Sprint(number))...)
 			newLine = append(newLine, []rune(suffix)...)
 			newLine = append(newLine, []rune(" ")...)

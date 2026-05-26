@@ -36,7 +36,6 @@ func (e *Editor) caseNormal(key rune) {
 				e.b[e.curBuffer].Cursor.Line(),
 				e.b[e.curBuffer].Cursor.Line(), false)
 		}
-		e.b[e.curBuffer].FixOffset()
 		e.b[e.curBuffer].Insert_a()
 		e.ScrollRight()
 		e.tui.ShowHello = false
@@ -49,7 +48,6 @@ func (e *Editor) caseNormal(key rune) {
 				e.b[e.curBuffer].Cursor.Line(), false)
 		}
 		e.b[e.curBuffer].MoveToFirstVisible()
-		e.moveLeft()
 		e.tui.ShowHello = false
 	case 'A':
 		if !e.b[e.curBuffer].IsReadOnly {
@@ -72,8 +70,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].InsertEmptyLine(enums.Below)
 		e.b[e.curBuffer].J(1)
 		e.b[e.curBuffer].Insert_a()
-		e.ScrollDown()
-		e.moveLeft()
+		e.moveToZero()
 
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
@@ -85,8 +82,7 @@ func (e *Editor) caseNormal(key rune) {
 			e.curMode = enums.Insert
 		}
 		e.b[e.curBuffer].InsertEmptyLine(enums.Above)
-		e.ScrollUp()
-		e.moveLeft()
+		e.moveToZero()
 
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
@@ -101,7 +97,7 @@ func (e *Editor) caseNormal(key rune) {
 
 		e.b[e.curBuffer].ClearLine()
 		e.b[e.curBuffer].MoveToFirstChar()
-		e.moveLeft()
+		e.moveToZero()
 	case 'd':
 		e.subCmd += "d"
 		if e.subCmd == "dd" {
@@ -112,7 +108,7 @@ func (e *Editor) caseNormal(key rune) {
 
 			e.subCmd = ""
 			e.b[e.curBuffer].RemoveLine()
-			e.moveLeft()
+			e.moveToZero()
 		}
 	case 'R':
 		e.b[e.curBuffer].SaveChanges(

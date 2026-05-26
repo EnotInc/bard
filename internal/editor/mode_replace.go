@@ -18,8 +18,7 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 
 		e.b[e.curBuffer].Delkey()
 		e.b[e.curBuffer].InsertLine()
-		e.ScrollDown()
-		e.moveLeft()
+		e.moveToZero()
 
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
@@ -57,8 +56,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 	switch key {
 	case '\013', '\r', '\n':
 		e.b[e.curBuffer].DelAndMoveLine()
-		e.ScrollDown()
-		e.moveLeft()
+		e.moveToZero()
 	case '\033':
 		e.curMode = enums.Normal
 		e.b[e.curBuffer].EscapeToNormal()
@@ -66,7 +64,6 @@ func (e *Editor) caseReplaceMode(key rune) {
 	case '\x7f':
 		e.b[e.curBuffer].RemoveKey()
 		e.ScrollLeft()
-		e.ScrollUp()
 	case '\t':
 		e.b[e.curBuffer].Delkey()
 		e.b[e.curBuffer].InsertKey('\t')

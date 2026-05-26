@@ -26,8 +26,7 @@ func (e *Editor) caseInsert(key rune) {
 		}
 
 		e.b[e.curBuffer].InsertLine()
-		e.ScrollDown()
-		e.moveLeft()
+		e.moveToZero()
 
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Insert,
@@ -62,7 +61,6 @@ func (e *Editor) caseInsert(key rune) {
 		}
 
 		e.ScrollLeft()
-		e.ScrollUp()
 
 	case '\t':
 		e.b[e.curBuffer].SaveChanges(

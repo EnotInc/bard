@@ -120,13 +120,14 @@ func (b *Buffer) MoveToFirstVisible() {
 
 func (b *Buffer) FindNext(ch rune) {
 	i := b.Cursor.offset + 1
-	for i < len(b.Lines[b.Cursor.line].Data)-1 && b.Lines[b.Cursor.line].Data[i] != ch {
+	curLine := b.Lines[b.Cursor.line]
+	for i < len(curLine.Data)-1 && curLine.Data[i] != ch {
 		i += 1
 	}
-	if b.Lines[b.Cursor.line].Data[i] != ch {
+	if i >= len(curLine.Data) || curLine.Data[i] != ch {
 		return
 	}
-	if i < len(b.Lines[b.Cursor.line].Data) && i != b.Cursor.offset {
+	if i < len(curLine.Data) && i != b.Cursor.offset {
 		b.Cursor.offset = i
 		b.Cursor.keepOffset = i
 	}
