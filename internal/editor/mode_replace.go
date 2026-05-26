@@ -9,7 +9,6 @@ import (
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
-// Unless `escape` key is pressed, replaces 1 chat (given key) at the time
 func (e *Editor) caseReplaceChar(key rune, amount int) {
 	switch key {
 	case keys.Enter:
@@ -59,8 +58,6 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 	e.subCmd = ""
 }
 
-// Called from Run() func
-// Untin `escape` key is pressed, replaces char and moves curosr forward
 func (e *Editor) caseReplaceMode(key rune) {
 	switch key {
 	case keys.Enter:
