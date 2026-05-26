@@ -146,7 +146,7 @@ func (b *Buffer) ShiftLineRight(amount int) {
 
 	for i := range to - from {
 		curLine := b.Lines[from+i]
-		tab := []rune(strings.Repeat("    ", amount))
+		tab := []rune(strings.Repeat("\t", amount))
 		newData := append(tab, curLine.Data...)
 		curLine.Data = []rune(newData)
 	}
@@ -163,7 +163,7 @@ func (b *Buffer) ShiftLineLeft(amount int) {
 
 	for i := range to - from {
 		curLine := b.Lines[from+i]
-		tab := strings.Repeat("    ", amount)
+		tab := strings.Repeat("\t", amount)
 		newData, _ := strings.CutPrefix(string(curLine.Data), tab)
 		curLine.Data = []rune(newData)
 	}

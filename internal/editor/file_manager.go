@@ -71,6 +71,10 @@ func (e *Editor) LoadFile(file string) {
 
 	scanner := bufio.NewScanner(f)
 
+	if scanner.Err() != nil {
+		e.Exit(1)
+	}
+
 	//clearing the list of lines, coz I make one line in InitEditor() func
 	e.b[e.curBuffer].Lines = []*buffer.Line{}
 	for scanner.Scan() {

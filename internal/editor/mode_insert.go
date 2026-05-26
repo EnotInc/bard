@@ -95,5 +95,4 @@ func (e *Editor) caseInsert(key rune) {
 		e.b[e.curBuffer].InsertKey(key)
 		e.ScrollRight()
 	}
-	e.setUiCursor()
 }

@@ -112,6 +112,7 @@ func (e *Editor) listenResize() {
 	}
 }
 
+// TODO: add message
 // Used to restore old terminal state, change terminal buffer (via ascii escape sequence) and stop Bard with status code
 func (e *Editor) Exit(code int) {
 	e.c.Save()

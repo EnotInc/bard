@@ -69,7 +69,6 @@ func (e *Editor) GeneralCase(key rune) {
 		return
 	case 'h':
 		e.execWithSubCommand(e.b[e.curBuffer].H)
-		e.setUiCursor()
 		e.ScrollLeft()
 	case 'j':
 		e.execWithSubCommand(e.b[e.curBuffer].J)
@@ -84,31 +83,23 @@ func (e *Editor) GeneralCase(key rune) {
 		e.ScrollRight()
 	case 'w':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveWord)
-		e.setUiCursor()
 	case 'W':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveWORD)
-		e.setUiCursor()
 	case 'b':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveBack)
-		e.setUiCursor()
 	case 'B':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveBACK)
-		e.setUiCursor()
 	case 'e':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveEnd)
-		e.setUiCursor()
 	case 'E':
 		e.execWithSubCommand(e.b[e.curBuffer].MoveEND)
-		e.setUiCursor()
 	case 'g':
 		e.subCmd += "g"
 		if e.subCmd == "gg" {
 			e.b[e.curBuffer].MoveToFirstLine()
-			e.setUiCursor()
 			e.subCmd = ""
 		}
 	case 'G':
 		e.b[e.curBuffer].MoveToLastLine()
-		e.setUiCursor()
 	}
 }

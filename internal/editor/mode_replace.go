@@ -29,7 +29,6 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 		e.curMode = enums.Normal
 		e.b[e.curBuffer].EscapeToNormal()
 		e.ScrollLeft()
-		e.setUiCursor()
 	case '\x7f': // just do nothing if backspace is pressed
 		return
 	case '\t':

@@ -55,11 +55,7 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 
 	fmt.Fprintf(&data, "\033[%d;1H", lastLine+1)
 
-	buf := e.b[e.curBuffer]
-	line := buf.Lines[buf.Cursor.Line()].Data
-	shift := services.CursorShiftAt(line, buf.Cursor.Offset())
-
-	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases) + shift
+	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
 	y := e.tui.CurRow + enums.CursorOffset
 
 	cursor := e.b[e.curBuffer].Cursor

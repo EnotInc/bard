@@ -109,7 +109,8 @@ func (b *Buffer) MoveToLastLine() {
 // Move buffer.Cursor to the first non-space character in the line
 func (b *Buffer) MoveToFirstVisible() {
 	for i := range len(b.Lines[b.Cursor.line].Data) {
-		if b.Lines[b.Cursor.line].Data[i] != ' ' {
+		ch := b.Lines[b.Cursor.line].Data[i]
+		if ch != ' ' && ch != '\t' {
 			b.Cursor.offset = i
 			break
 		}
