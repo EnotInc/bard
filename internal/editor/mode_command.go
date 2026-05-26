@@ -6,6 +6,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 )
 
@@ -37,6 +38,7 @@ func (e *Editor) caseCommand(key rune) {
 // For now I just compare commands, and run them
 // Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
+	cfg := config.Get()
 	switch e.command {
 	case "q":
 		if len(e.b) > 1 {
@@ -58,19 +60,19 @@ func (e *Editor) execCommand() {
 	case "help", "h":
 		e.OpenHelp(enums.HelpAbout)
 	case "rln":
-		e.c.RLN = !e.c.RLN
+		cfg.RLN = !cfg.RLN
 	case "showmd":
-		e.c.ShowMD = !e.c.ShowMD
+		cfg.ShowMD = !cfg.ShowMD
 		e.IsChanged = true
 		e.tui.PurgeCache()
 		e.PurgeCache()
 	case "render", "rnd":
-		e.c.Render = !e.c.Render
+		cfg.Render = !cfg.Render
 		e.IsChanged = true
 		e.tui.PurgeCache()
 		e.PurgeCache()
 	case "tn", "tabnames":
-		e.c.TabNames = !e.c.TabNames
+		cfg.TabNames = !cfg.TabNames
 	case "gt":
 		e.nextTab()
 	case "gT":
@@ -78,7 +80,7 @@ func (e *Editor) execCommand() {
 	case "newtab", "nt":
 		e.newBuffer()
 	case "theme":
-		e.tui.Message = fmt.Sprintf("Theme: %s", e.c.ThemeName)
+		e.tui.Message = fmt.Sprintf("Theme: %s", cfg.ThemeName)
 	default:
 		e.parseCommand()
 	}
@@ -92,6 +94,8 @@ func (e *Editor) parseCommand() {
 			e.tui.Message = "bad syntax"
 			return
 		}
+
+		cfg := config.Get()
 
 		cmd := parts[0]
 		arg := parts[1]
@@ -110,7 +114,7 @@ func (e *Editor) parseCommand() {
 			e.OpenHelp(topic)
 		case "theme":
 			if arg == "reload" {
-				arg = e.c.ThemeName
+				arg = cfg.ThemeName
 			}
 
 			msg := e.theme.ChangeTheme(arg)
@@ -120,8 +124,8 @@ func (e *Editor) parseCommand() {
 			}
 			e.tui.PurgeCache()
 			e.PurgeCache()
-			e.c.ThemeName = arg
-			e.c.Save()
+			cfg.ThemeName = arg
+			config.Save()
 		case "gt":
 			page, err := strconv.Atoi(arg)
 			if err != nil {

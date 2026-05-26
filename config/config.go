@@ -9,6 +9,13 @@ import (
 const defaultConfigFile = ".bard/config.json"
 const configDir = ".bard"
 
+// NOTE: is it alright to store config like that?
+var global *Config
+
+func Get() *Config {
+	return global
+}
+
 func getCongfigPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -25,7 +32,7 @@ func getConfigDir() string {
 	return filepath.Join(home, configDir)
 }
 
-func InitConfig() *Config {
+func InitConfig() {
 	defaultConfing := getDefaultConfig()
 	config := getCongfigPath()
 
@@ -35,27 +42,30 @@ func InitConfig() *Config {
 		dir := getConfigDir()
 		os.Mkdir(dir, 0755)
 		os.WriteFile(config, []byte(json), 0644)
-		return defaultConfing
+		global = defaultConfing
+		return
 	}
 
 	data, err := os.ReadFile(config)
 	if err != nil {
-		return defaultConfing
+		global = defaultConfing
+		return
 	}
 
 	cfg := &Config{}
 	err = json.Unmarshal(data, cfg)
 	if err != nil {
-		return defaultConfing
+		global = defaultConfing
+		return
 	}
 
-	return cfg
+	global = cfg
 }
 
 // saving current configuration
-func (c *Config) Save() {
+func Save() {
 	config := getCongfigPath()
-	json, _ := json.MarshalIndent(c, "", "    ")
+	json, _ := json.MarshalIndent(global, "", "    ")
 	os.WriteFile(config, []byte(json), 0644)
 }
 
@@ -66,6 +76,7 @@ func getDefaultConfig() *Config {
 		Render:    true,
 		TabNames:  true,
 		ThemeName: defaultThemeName,
+		TabStop:   4,
 	}
 	return config
 }

@@ -3,13 +3,13 @@ package services
 import (
 	"fmt"
 	"strings"
-)
 
-// TODO: move to config
-const tw = 4
+	"github.com/EnotInc/Bard/config"
+)
 
 func ClearTabs(line []rune) []rune {
 	var new strings.Builder
+	tw := config.Get().TabStop
 
 	visual := 0
 	for i := range line {
@@ -30,6 +30,7 @@ func ClearTabs(line []rune) []rune {
 
 func ReadTabAt(line []rune, index int) []rune {
 	var new strings.Builder
+	tw := config.Get().TabStop
 
 	visual := 0
 	for i := range line {
@@ -50,8 +51,9 @@ func ReadTabAt(line []rune, index int) []rune {
 }
 
 func CursorShiftAt(line []rune, index int) int {
-	shift := 0
+	tw := config.Get().TabStop
 
+	shift := 0
 	visual := 0
 	for i := range index {
 		if len(line) <= index {
@@ -70,8 +72,9 @@ func CursorShiftAt(line []rune, index int) int {
 }
 
 func CursorShift(line []rune) int {
-	shift := 0
+	tw := config.Get().TabStop
 
+	shift := 0
 	visual := 0
 	for i := range line {
 		if line[i] == '\t' {

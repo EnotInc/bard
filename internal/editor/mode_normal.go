@@ -210,5 +210,4 @@ func (e *Editor) caseNormal(key rune) {
 	default:
 		e.subCmd = ""
 	}
-	e.setUiCursor()
 }

@@ -11,6 +11,7 @@ type Config struct {
 	Render    bool   `json:"enable_render"`
 	TabNames  bool   `json:"show_tab_names"`
 	ThemeName string `json:"theme_name"`
+	TabStop   int    `json:"tab_stop"`
 }
 
 type Theme struct {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/services"
@@ -90,7 +91,8 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 		for _, t := range e.b {
 			tabs = append(tabs, t.Title)
 		}
-		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, e.c.TabNames)
+		cfg := config.Get()
+		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, cursorPos, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
@@ -108,8 +110,9 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 }
 
 func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) string {
+	cfg := config.Get()
 	buf := e.b[e.curBuffer]
-	show := buf.Cursor.Line() == i || e.c.ShowMD
+	show := buf.Cursor.Line() == i || cfg.ShowMD
 	isFirst := i == upperBorder
 
 	var l strings.Builder
@@ -132,9 +135,9 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 			str = []rune{}
 		}
 
-		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, e.c.RLN)
+		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, cfg.RLN)
 
-		isRender := e.b[e.curBuffer].IsMdFile && e.c.Render
+		isRender := e.b[e.curBuffer].IsMdFile && cfg.Render
 		switch e.curMode {
 		case enums.Visual, enums.Visual_line:
 			// This `if statement` let me render both selected lines with highlights, and not selected with markdown render

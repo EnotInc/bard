@@ -20,7 +20,6 @@ import (
 // oldState - used to work with raw terminal mode
 // b - list of Buffer. List is used in work with tabs
 // tui - TUI
-// c - current editor Config
 // CurMode - current editor Mode
 // hash - used in DrawDiff() func for diff rendering
 // command - used in command mode, stores user input
@@ -33,7 +32,6 @@ type Editor struct {
 	oldState  *term.State
 	b         []*buffer.Buffer
 	tui       *tui.TUI
-	c         *config.Config
 	theme     *config.Theme
 	curMode   enums.Mode
 	hash      map[int]uint32
@@ -63,8 +61,9 @@ func InitEditor() *Editor {
 		panic("Unable to run Bard. Window size is too small!")
 	}
 
-	_c := config.InitConfig()
-	_t, err := config.InitTheme(_c.ThemeName)
+	config.InitConfig()
+	cfg := config.Get()
+	_t, err := config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()
 	_tui := tui.InitTUI(_h, _w, _t)
 
@@ -72,7 +71,6 @@ func InitEditor() *Editor {
 		oldState:  old,
 		b:         _b,
 		tui:       _tui,
-		c:         _c,
 		theme:     _t,
 		curMode:   enums.Normal,
 		hash:      make(map[int]uint32),
@@ -84,7 +82,7 @@ func InitEditor() *Editor {
 	}
 
 	if err != nil {
-		e.c.ThemeName = _c.DefaultThemeName()
+		cfg.ThemeName = cfg.DefaultThemeName()
 	}
 
 	if _w < 80 || _h < 30 {
@@ -115,7 +113,7 @@ func (e *Editor) listenResize() {
 // TODO: add message
 // Used to restore old terminal state, change terminal buffer (via ascii escape sequence) and stop Bard with status code
 func (e *Editor) Exit(code int) {
-	e.c.Save()
+	config.Save()
 
 	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
 	term.Restore(e.fdIn, e.oldState)
@@ -146,7 +144,7 @@ func (e *Editor) execWithSubCommand(exec func(int)) {
 	e.subCmd = ""
 }
 
-// does not work...
+// FIXME: does not work...
 func (e *Editor) replaceWithAmount(key rune) {
 	if e.subCmd == "r" {
 		e.caseReplaceChar(key, 1)
