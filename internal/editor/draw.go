@@ -39,7 +39,7 @@ func (e *Editor) DrawDiff() {
 		oldHash, ok := e.hash[i-upperBorder]
 
 		// if row is 1 of cursor position, or hash isn't the same as prev render, or hash wasn't calculated - draw line
-		if /*(i-2 <= e.tui.CurRow && e.tui.CurRow <= i+2) ||*/ !ok || (ok && curHash != oldHash) {
+		if i-1 == e.tui.CurRow || !ok || (ok && curHash != oldHash) {
 			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
 			fmt.Fprint(&diff, l)
 			e.hash[i-upperBorder] = curHash
@@ -128,9 +128,6 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		str := buf.Lines[i].Data
 		clear := services.ClearTabs(str)
 
-		if len(clear) <= end {
-			end = len(clear)
-		}
 		if len(clear) < start {
 			start = 0
 			end = 0
@@ -150,7 +147,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 					buf.Visual.Line(),
 					buf.Cursor.Offset(),
 					buf.Cursor.Line(),
-					len(buf.Lines[buf.Cursor.Line()].Data), isRender)
+					isRender)
 
 				fmt.Fprint(&content, tui.VisibleSubString(visual, start, end))
 			} else {

@@ -10,7 +10,7 @@ import (
 )
 
 // This function is used to add visual highlight to the selected lines
-func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, lastLineLen int, isRender bool) string {
+func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, isRender bool) string {
 	var line []rune
 
 	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
@@ -29,8 +29,6 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			if len(l) > 0 {
 				endOffset += 1 // too highlight the whole char
 			}
-		} else if lastLineLen > 0 {
-			endOffset += 1 // too highlight the whole char
 		}
 
 		var rendered string
@@ -56,7 +54,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		} else if endLine == i {
 			selected := ui.paint(clear[:endOffset])
-			after := VisibleSubString(rendered, endOffset, len(l))
+			after := VisibleSubString(rendered, endOffset, len(clear))
 			line = []rune(string(selected) + after)
 
 		} else {
