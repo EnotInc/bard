@@ -154,7 +154,7 @@ func (l *Lexer) NextToken() Token {
 	case '<':
 		t = l.readHTMLBlock()
 	case 0:
-		t = Token{Type: eol, Literal: []rune("")}
+		t = Token{Type: eol}
 	default:
 		if services.IsNumber(l.ch) {
 			s := l.readNumber()
@@ -259,7 +259,9 @@ func (l *Lexer) readCodeLine() []rune {
 	for l.ch != '`' && l.ch != 0 {
 		l.readChar()
 	}
-	l.readChar()
+	if l.ch != 0 {
+		l.readChar()
+	}
 	return l.input[pos:l.position]
 }
 
