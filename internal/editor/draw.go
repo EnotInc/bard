@@ -39,7 +39,7 @@ func (e *Editor) DrawDiff() {
 		oldHash, ok := e.hash[i-upperBorder]
 
 		// if row is 1 of cursor position, or hash isn't the same as prev render, or hash wasn't calculated - draw line
-		if i-1 == e.tui.CurRow || !ok || (ok && curHash != oldHash) {
+		if !ok || (ok && curHash != oldHash) || (i-upperBorder == e.tui.CurRow) {
 			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
 			fmt.Fprint(&diff, l)
 			e.hash[i-upperBorder] = curHash
