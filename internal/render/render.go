@@ -15,10 +15,10 @@ import (
 // code - code redner
 // w - screen width
 type Renderer struct {
-	mode render.Render
 	c    *cache
 	md   *md.Render
 	code *code.Render
+	mode render.Render
 	w    int
 }
 

@@ -17,11 +17,11 @@ const (
 const capacity = 1000
 
 type snapshot struct {
-	prev  bool
-	op    operation
 	lines []Line
+	op    operation
 	start int
 	end   int
+	prev  bool
 }
 
 func (b *Buffer) SaveChanges(op operation, start int, end int, with_prev bool) {

@@ -13,8 +13,8 @@ import (
 
 type Render struct {
 	l     *Lexer
-	w     int
 	theme *config.Code
+	w     int
 }
 
 func NewRender(w int, theme *config.Code) *Render {

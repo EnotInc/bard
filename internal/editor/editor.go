@@ -29,20 +29,20 @@ import (
 // fdIn - used to work with raw input
 // curBuffer - current buffer index
 type Editor struct {
+	hash      map[int]uint32
 	oldState  *term.State
-	b         []*buffer.Buffer
 	tui       *tui.TUI
 	theme     *config.Theme
-	curMode   mode.Mode
-	hash      map[int]uint32
 	command   string
+	curMode   mode.Mode
 	subCmd    string
 	lastCmd   string
-	IsChanged bool
-	save      bool
+	b         []*buffer.Buffer
 	fdOut     int
 	fdIn      int
 	curBuffer int
+	IsChanged bool
+	save      bool
 }
 
 // Initialisation of editor

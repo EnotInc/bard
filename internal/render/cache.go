@@ -11,11 +11,11 @@ import (
 // index - the line number
 // mode - [render mode] that was used when cache is saved
 type cachedLine struct {
-	hash   uint32
 	render string
 	diff   int
 	index  int
 	mode   render.Render
+	hash   uint32
 }
 
 // lines - list of chchedLine

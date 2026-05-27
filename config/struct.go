@@ -6,12 +6,12 @@ package config
 // Render - enable or disable render
 // TabNames - show file name is tabs or not
 type Config struct {
+	ThemeName string `json:"theme_name"`
+	TabStop   int    `json:"tab_stop"`
 	RLN       bool   `json:"relative_line_numbers"`
 	ShowMD    bool   `json:"show_markdown_symbols"`
 	Render    bool   `json:"enable_render"`
 	TabNames  bool   `json:"show_tab_names"`
-	ThemeName string `json:"theme_name"`
-	TabStop   int    `json:"tab_stop"`
 }
 
 type Theme struct {

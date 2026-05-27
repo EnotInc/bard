@@ -32,19 +32,20 @@ type visual struct {
 // render - an instance of render. Used to buld line with ansi sybols
 // Redraw - chan, wich used to redraw the whole editor when window size is changed
 type TUI struct {
-	XScroll   int
-	YScroll   int
-	CurRow    int
-	CurOff    int
-	W, H      int
-	Save      bool
-	ShowHello bool
+	Redraw    chan bool
+	theme     *config.General
+	render    *render.Renderer
+	visual    *visual
 	Message   string
 	Hello     [][]rune
-	visual    *visual
-	render    *render.Renderer
-	theme     *config.General
-	Redraw    chan bool
+	CurOff    int
+	H         int
+	W         int
+	XScroll   int
+	CurRow    int
+	YScroll   int
+	ShowHello bool
+	Save      bool
 }
 
 func InitTUI(h int, w int, theme *config.Theme) *TUI {

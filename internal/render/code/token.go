@@ -3,8 +3,8 @@ package code
 type TokenType int
 
 type Token struct {
-	Type    TokenType
 	Literal []rune
+	Type    TokenType
 }
 
 const (

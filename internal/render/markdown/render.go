@@ -12,10 +12,10 @@ import (
 )
 
 type Render struct {
-	curAttr string
-	w       int
 	l       *Lexer
 	theme   *config.Markdown
+	curAttr string
+	w       int
 }
 
 func NewRender(w int, theme *config.Markdown) *Render {

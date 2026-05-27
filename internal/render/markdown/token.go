@@ -3,9 +3,9 @@ package markdown
 type TokenType int
 
 type Token struct {
-	Type    TokenType
 	Literal []rune
 	Value   []rune
+	Type    TokenType
 }
 
 const ( // maybe it's better to use iota for tokens?
