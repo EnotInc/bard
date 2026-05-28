@@ -145,7 +145,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			data.WriteString(string(tok.Value))
 		}
 		isFirst = false
-		if isWhiteSpace && tok.Type != whitespace {
+		if isWhiteSpace && (tok.Type != whitespace && tok.Type != tab) {
 			isWhiteSpace = false
 		}
 	}
