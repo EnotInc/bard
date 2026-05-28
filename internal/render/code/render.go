@@ -6,7 +6,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/render/general"
+	"github.com/EnotInc/Bard/internal/services"
 
 	render "github.com/EnotInc/Bard/internal/enums/render"
 )
@@ -94,25 +94,25 @@ func (r *Render) renderWSEOL(t *Token) string {
 }
 
 func (r *Render) renderBracket(t *Token) string {
-	return general.PaintString(r.theme.Bracket, string(t.Literal)) + ascii.ResetFg.Str()
+	return services.PaintString(r.theme.Bracket, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderSymbol(t *Token) string {
-	return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.ResetFg.Str()
+	return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderKeyWord(t *Token) string {
-	return general.PaintString(r.theme.Keyword, string(t.Literal)) + ascii.ResetFg.Str()
+	return services.PaintString(r.theme.Keyword, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderNumber(t *Token) string {
-	return general.PaintString(r.theme.Number, string(t.Literal)) + ascii.ResetFg.Str()
+	return services.PaintString(r.theme.Number, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderString(t *Token) string {
-	return general.PaintString(r.theme.String, string(t.Literal)) + ascii.ResetFg.Str()
+	return services.PaintString(r.theme.String, string(t.Literal)) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderComment(t *Token) string {
-	return general.PaintString(r.theme.Comment, string(t.Literal)) + ascii.ResetFg.Str()
+	return services.PaintString(r.theme.Comment, string(t.Literal)) + ascii.ResetFg.Str()
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/render"
+	"github.com/EnotInc/Bard/internal/services"
 	"golang.org/x/term"
 )
 
@@ -217,7 +218,9 @@ func VisibleSubString(text string, start int, end int) string {
 
 func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, isRender bool) string {
 	if !isRender { // returning stripped text if render is of (or it's not a md file)
-		return VisibleSubString(string(str), start, end)
+		clear := services.ClearTabs(str)
+		shift := services.CursorShift(str)
+		return VisibleSubString(string(clear), start, end+shift)
 	}
 
 	var l = ""

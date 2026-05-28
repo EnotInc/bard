@@ -6,7 +6,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/render/general"
+	"github.com/EnotInc/Bard/internal/services"
 
 	render "github.com/EnotInc/Bard/internal/enums/render"
 )
@@ -39,9 +39,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
-			return general.PaintString(r.theme.Symbol, string(line)), 0, renderMode
+			return services.PaintString(r.theme.Symbol, string(line)), 0, renderMode
 		}
-		return general.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
+		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
 	}
 
 	r.l.input = line
@@ -60,6 +60,12 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 		case header_1, header_2, header_3, header_4, header_5, header_6:
 			if isFirst {
 				data.WriteString(r.renderHeader(&tok))
+			} else {
+				data.WriteString(string(tok.Literal))
+			}
+		case listBoxComplete:
+			if isWhiteSpace {
+				data.WriteString(r.renderBoxComplete(&tok, show))
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
@@ -160,41 +166,48 @@ func (r *Render) renderWSEOL(t *Token) string {
 
 func (r *Render) renderCodeBlock(t *Token, show bool) string {
 	if show {
-		return r.theme.CodeHeader + general.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
+		return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
 	}
 
 	if i, ok := langIcon[strings.ToLower(string(t.Value))]; ok {
-		return r.theme.CodeHeader + " " + i + general.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace()
+		return r.theme.CodeHeader + " " + i + services.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace()
 	}
 	// fallback
-	return r.theme.CodeHeader + general.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace()
+	return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace()
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	if show {
-		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
 	return ascii.BoxEmpty.Str()
 }
 
+func (r *Render) renderBoxComplete(t *Token, show bool) string {
+	if show {
+		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+	}
+	return ascii.BoxComplete.Str()
+}
+
 func (r *Render) renderBoxFilled(t *Token, show bool) string {
 	if show {
-		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
 	return ascii.BoxField.Str()
 }
 
 func (r *Render) renderListNumber(t *Token) string {
 	var s strings.Builder
-	s.WriteString(general.PaintString(r.theme.NumberList, string(t.Value)))
-	s.WriteString(general.PaintString(r.theme.NumberList, string(t.Literal)))
+	s.WriteString(services.PaintString(r.theme.NumberList, string(t.Value)))
+	s.WriteString(services.PaintString(r.theme.NumberList, string(t.Literal)))
 	s.WriteString(ascii.Reset.Str())
 	return s.String()
 }
 
 func (r *Render) renderListDash(t *Token, show bool) string {
 	if show {
-		return general.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
 	}
 	return ascii.ListDash.Str()
 }
@@ -202,7 +215,7 @@ func (r *Render) renderListDash(t *Token, show bool) string {
 func (r *Render) renderShield(t *Token, show bool) string {
 	var s strings.Builder
 	if show {
-		s.WriteString(general.PaintString(r.theme.Symbol, string(t.Literal)))
+		s.WriteString(services.PaintString(r.theme.Symbol, string(t.Literal)))
 	}
 	s.WriteString(string(t.Value))
 	s.WriteString(ascii.Reset.Str())
@@ -213,7 +226,7 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 	var s strings.Builder
 	s.WriteString(r.theme.Quote)
 	if show {
-		s.WriteString(general.PaintString(r.theme.Symbol, string(t.Literal)))
+		s.WriteString(services.PaintString(r.theme.Symbol, string(t.Literal)))
 	} else {
 		s.WriteString(ascii.QuoteSymbol.Str())
 	}
@@ -223,7 +236,7 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 
 func (r *Render) renderText(t *Token) string {
 	if r.curAttr != ascii.Reset.Str() {
-		return general.PaintString(r.curAttr, string(t.Value))
+		return services.PaintString(r.curAttr, string(t.Value))
 	}
 	return string(t.Value)
 }
@@ -233,13 +246,13 @@ func (r *Render) renderTag(t *Token, show bool) string {
 	if !show {
 		s.WriteString(r.theme.Tag)
 		s.WriteString(ascii.TagS.Str())
-		s.WriteString(general.PaintString(r.theme.Tag, string(t.Literal)))
-		s.WriteString(general.PaintString(r.theme.Tag, string(t.Value)))
+		s.WriteString(services.PaintString(r.theme.Tag, string(t.Literal)))
+		s.WriteString(services.PaintString(r.theme.Tag, string(t.Value)))
 		s.WriteString(ascii.TagE.Str())
 		s.WriteString(ascii.Reset.Str())
 	} else {
-		s.WriteString(general.PaintString(r.theme.Tag, string(t.Literal)))
-		s.WriteString(general.PaintString(r.theme.Tag, string(t.Value)))
+		s.WriteString(services.PaintString(r.theme.Tag, string(t.Literal)))
+		s.WriteString(services.PaintString(r.theme.Tag, string(t.Value)))
 	}
 	s.WriteString(ascii.Reset.Str())
 	return s.String()
@@ -339,14 +352,14 @@ func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {
 	if r.curAttr == mode {
 		r.curAttr = ascii.Reset.Str()
 		if show {
-			s.WriteString(general.PaintString(r.theme.Symbol, attr))
+			s.WriteString(services.PaintString(r.theme.Symbol, attr))
 		}
 		s.WriteString(r.curAttr)
 	} else {
 		r.curAttr = mode
 		s.WriteString(r.curAttr)
 		if show {
-			s.WriteString(general.PaintString(r.theme.Symbol, attr))
+			s.WriteString(services.PaintString(r.theme.Symbol, attr))
 		}
 	}
 	return s.String()

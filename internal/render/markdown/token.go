@@ -20,11 +20,12 @@ const ( // maybe it's better to use iota for tokens?
 
 	eol // "eol" - End Of Line
 
-	listNumberDot // "n."
-	listNumberB   // "n)"
-	listDash      // "-"
-	listBoxEmpty  // "- [ ]"
-	listBoxFilled // "- [x]"
+	listNumberDot   // "n."
+	listNumberB     // "n)"
+	listDash        // "-"
+	listBoxEmpty    // "- [ ]"
+	listBoxFilled   // "- [?]"
+	listBoxComplete // "- [x]"
 
 	oneStar    // "*"
 	twoStars   // "**"

@@ -370,17 +370,20 @@ func (l *Lexer) readListOrCheckBox() Token {
 		ch := l.peekChar()
 		if ch == ' ' || services.IsLetter(ch) || ch == '?' {
 			l.readChar()
-			isField := ch != ' '
+			filled := ch
 
 			if l.peekChar() == ']' {
 				l.readChar() // reading the ']' symbol
 				l.readChar() // reading next symbol for lexer
 				literal := l.input[pos:l.position]
 
-				if isField {
-					return Token{Type: listBoxFilled, Literal: literal}
-				} else {
+				switch filled {
+				case ' ':
 					return Token{Type: listBoxEmpty, Literal: literal}
+				case 'x':
+					return Token{Type: listBoxComplete, Literal: literal}
+				default:
+					return Token{Type: listBoxFilled, Literal: literal}
 				}
 			}
 		}

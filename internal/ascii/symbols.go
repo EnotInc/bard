@@ -12,8 +12,9 @@ const (
 	Shield      Symbol = "\\"
 	SplitLIne   Symbol = "\u2015"
 	ListDash    Symbol = "\u2981"
-	BoxEmpty    Symbol = " \u25a1"
+	BoxEmpty    Symbol = " \u2610"
 	BoxField    Symbol = " \u25a0"
+	BoxComplete Symbol = " \u2612"
 
 	WSEOL   Symbol = "\u00b7"
 	NewLine Symbol = "\u21b5"
