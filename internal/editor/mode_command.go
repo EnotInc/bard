@@ -162,6 +162,18 @@ func (e *Editor) parseCommand() {
 			}
 
 			e.curBuffer = page
+		case "tabstop", "ts":
+			ts, err := strconv.Atoi(arg)
+			if err != nil {
+				e.tui.Message = "unable to get tabstop"
+				return
+			}
+
+			cfg.TabStop = ts
+			config.FixConfig()
+
+			e.tui.PurgeCache()
+			e.PurgeCache()
 
 		default:
 			e.tui.Message = "unknown command"

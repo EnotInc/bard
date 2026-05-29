@@ -8,6 +8,7 @@ import (
 
 const defaultConfigFile = ".bard/config.json"
 const configDir = ".bard"
+const defaultTabStop = 4
 
 // NOTE: is it alright to store config like that?
 var global *Config
@@ -60,6 +61,14 @@ func InitConfig() {
 	}
 
 	global = cfg
+	FixConfig()
+}
+
+func FixConfig() {
+	if global.TabStop <= 0 {
+		global.TabStop = defaultTabStop
+		Save()
+	}
 }
 
 // saving current configuration
@@ -76,7 +85,7 @@ func getDefaultConfig() *Config {
 		Render:    true,
 		TabNames:  true,
 		ThemeName: defaultThemeName,
-		TabStop:   4,
+		TabStop:   defaultTabStop,
 	}
 	return config
 }

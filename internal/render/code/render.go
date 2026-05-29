@@ -89,7 +89,8 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Ren
 }
 
 func (r *Render) renderTab(t *Token) string {
-	if len(t.Literal) == 4 {
+	cfg := config.Get()
+	if len(t.Literal) == cfg.TabStop {
 		return r.theme.Comment + ascii.CodeTab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
 	} else {
 		return r.theme.Comment + ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
