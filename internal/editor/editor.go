@@ -107,6 +107,9 @@ func (e *Editor) listenResize() {
 	for {
 		value := <-e.tui.Redraw
 		if value {
+			e.setUiCursor()
+			e.tui.PurgeCache()
+			e.PurgeCache()
 			e.DrawDiff()
 		}
 	}

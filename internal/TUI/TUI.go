@@ -86,10 +86,9 @@ func (tui *TUI) TermSizeMonitor(fdOut int) {
 			last_w = w
 			last_h = h
 
-			tui.resize(w, h)
 			tui.render.Resize(w)
+			tui.resize(w, h)
 		}
-		tui.Redraw <- false
 	}
 }
 
