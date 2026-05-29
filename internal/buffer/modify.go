@@ -77,6 +77,19 @@ func (b *Buffer) InsertPair(key rune) {
 		return
 	}
 
+	curLine := b.Lines[b.Cursor.line].Data
+	isTrippleKey := key == '*' || key == '`'
+	if isTrippleKey &&
+		b.Cursor.offset >= 2 &&
+		slices.Equal(curLine[b.Cursor.offset-2:b.Cursor.offset], []rune{key, key}) { // if last 2 keys is '``' or '**'
+
+		b.InsertKey(key)
+		b.InsertKey(key)
+		b.InsertKey(key)
+		b.InsertKey(key)
+		b.H(3)
+		return
+	}
 	if len(b.pairs) == 0 {
 		b.insertBoth(key)
 	} else {
