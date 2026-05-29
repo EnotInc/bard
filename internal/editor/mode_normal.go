@@ -211,21 +211,13 @@ func (e *Editor) caseNormal(key rune) {
 		e.tui.ShowHello = false
 
 	case 'p':
-		e.b[e.curBuffer].SaveChanges(
-			buffer.Insert,
-			e.b[e.curBuffer].Cursor.Line(),
-			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1,
-			enums.Without)
+		e.b[e.curBuffer].SaveCopied()
 
 		e.b[e.curBuffer].Paste(enums.After)
 		e.tui.ShowHello = false
 
 	case 'P':
-		e.b[e.curBuffer].SaveChanges(
-			buffer.Insert,
-			e.b[e.curBuffer].Cursor.Line(),
-			len(e.b[e.curBuffer].Copies)+e.b[e.curBuffer].Cursor.Line()-1,
-			enums.Without)
+		e.b[e.curBuffer].SaveCopied()
 
 		e.b[e.curBuffer].Paste(enums.Before)
 		e.tui.ShowHello = false

@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/EnotInc/Bard/internal/enums"
 	cases "github.com/EnotInc/Bard/internal/enums/cases"
 )
 
@@ -128,6 +129,27 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	}
 
 	b.Cursor.offset = startOffset
+}
+
+func (b *Buffer) SaveCopied() {
+	if len(b.Copies) > 1 {
+		b.SaveChanges(
+			Insert,
+			b.Cursor.Line(),
+			len(b.Copies)+b.Cursor.Line()-1,
+			enums.Without)
+
+	} else {
+		operation := Change
+		if b.Copies[0].isEnd && b.Copies[0].isStart {
+			operation = Insert
+		}
+		b.SaveChanges(
+			operation,
+			b.Cursor.Line(),
+			b.Cursor.Line(),
+			enums.Without)
+	}
 }
 
 func (b *Buffer) Paste(shift int) {

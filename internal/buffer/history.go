@@ -37,7 +37,11 @@ func (b *Buffer) SaveChanges(op operation, start int, end int, with_prev bool) {
 
 	for i := range e - s {
 		data := make([]rune, 0)
-		data = append(data, b.Lines[i+s].Data...)
+		if i+s < len(b.Lines) {
+			data = append(data, b.Lines[i+s].Data...)
+		} else {
+			data = append(data, []rune("")...)
+		}
 		lines = append(lines, Line{Data: data})
 	}
 
