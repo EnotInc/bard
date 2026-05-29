@@ -34,7 +34,8 @@ func (r *Render) Reset() {
 }
 
 func (r *Render) fillSpace() string {
-	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
+	clear := services.ClearTabs(r.l.input)
+	amount := max(r.w-len(clear)-enums.InitialOffset-1, 0)
 	return strings.Repeat(" ", amount)
 }
 
@@ -55,6 +56,7 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Ren
 
 	var mode render.Render = render.Code
 	var data strings.Builder
+	var diff int = 0
 
 	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {
 		switch tok.Type {
@@ -78,15 +80,20 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Ren
 			data.WriteString(r.renderWSEOL(&tok))
 		case tab:
 			data.WriteString(r.renderTab(&tok))
+			diff -= len(tok.Literal)
 		}
 	}
 	l := r.theme.Background + data.String() + r.fillSpace()
-	diff := -r.w - len(r.l.input) - enums.InitialOffset - 1
+	diff = -r.w - len(r.l.input) - enums.InitialOffset - 1
 	return l, diff, mode
 }
 
 func (r *Render) renderTab(t *Token) string {
-	return ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
+	if len(t.Literal) == 4 {
+		return r.theme.Comment + ascii.CodeTab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
+	} else {
+		return r.theme.Comment + ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
+	}
 }
 
 func (r *Render) renderWSEOL(t *Token) string {

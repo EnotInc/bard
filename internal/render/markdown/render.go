@@ -41,7 +41,9 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 		if show {
 			return services.PaintString(r.theme.Symbol, string(line)), 0, renderMode
 		}
-		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w)), 3 - r.w + enums.InitialOffset*2, renderMode
+		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w-enums.InitialOffset*2)),
+			3 - r.w + enums.InitialOffset*2,
+			renderMode
 	}
 
 	r.l.input = line
@@ -50,7 +52,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 	r.l.readChar()
 
 	var data strings.Builder
-	var diff = 0
+	var diff int = 0
 
 	isWhiteSpace := true
 	isFirst := true
@@ -88,14 +90,14 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 				data.WriteString(string(tok.Literal))
 			}
 		case codeBlock:
-			if isWhiteSpace {
+			if isFirst {
 				data.WriteString(r.renderCodeBlock(&tok, show))
 				diff = -r.w - len(r.l.input)
+				renderMode = render.Code
 			} else {
 				data.WriteString(string(tok.Literal))
 				data.WriteString(string(tok.Value))
 			}
-			renderMode = render.Code
 		case listDash:
 			if isWhiteSpace {
 				data.WriteString(r.renderListDash(&tok, show))
