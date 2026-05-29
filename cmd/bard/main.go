@@ -7,11 +7,16 @@ import (
 )
 
 func main() {
-	var file string
 	e := editor.InitEditor()
 	if len(os.Args) == 2 {
-		file = os.Args[1]
-		e.LoadFile(file)
+		arg := os.Args[1]
+
+		switch arg {
+		case "-h", "--help":
+			e.StartHelp()
+		default:
+			e.LoadFile(arg)
+		}
 	}
 
 	e.TermSizeMonitor()

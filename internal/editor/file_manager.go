@@ -49,14 +49,14 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 	}
 }
 
+func (e *Editor) StartHelp() {
+	e.OpenHelp(h.About)
+	e.delBuffer(0)
+	e.tui.ShowHello = false
+}
+
 // Used to read file data, and write it into current Buffer
 func (e *Editor) LoadFile(file string) {
-	if file == "-h" || file == "--help" {
-		e.OpenHelp(h.About)
-		e.delBuffer(0)
-		e.tui.ShowHello = false
-		return
-	}
 	if f, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
 		e.tui.ShowHello = true
