@@ -51,6 +51,12 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 
 // Used to read file data, and write it into current Buffer
 func (e *Editor) LoadFile(file string) {
+	if file == "-h" || file == "--help" {
+		e.OpenHelp(h.About)
+		e.delBuffer(0)
+		e.tui.ShowHello = false
+		return
+	}
 	if f, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
 		e.tui.ShowHello = true
@@ -133,17 +139,17 @@ func getLogPath() string {
 	return filepath.Join(home, ".bard")
 }
 
-func (e *Editor) saveLog(msg any) error {
+func (e *Editor) saveLog(err any) error {
 	path := getLogPath()
 	logs := filepath.Join(path, ".log")
 
 	file, err := os.OpenFile(logs, os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		return fmt.Errorf("%s%s%s%s%s", e.theme.General.Message, msg, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+		return fmt.Errorf("%s%s%s%s%s", e.theme.General.Message, err, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
 	}
 	defer file.Close()
 
 	log.SetOutput(file)
-	log.Print(strings.Repeat("=", 30), "\n\n", msg, "\n", string(debug.Stack()), "\n\n")
+	log.Print(strings.Repeat("=", 30), "\n\n", err, "\n", string(debug.Stack()), "\n\n")
 	return nil
 }

@@ -8,7 +8,7 @@ I wrote Bard because I wanted to have beautiful markdown rendering, similar to O
 ![WelcomePage](docs/assets/WelcomePage.png)
 
 ## **Usage**
-To run Bard, just type `bard` in the terminal. You can provide a file name to open it or create a new one
+To run Bard, just type `bard` in the terminal. You can provide a file name to open it or create a new one. You can also open 'help' page by runnig `bard -h` or `bard --help`.
 To navigate through text, you must use Vim motions, and if you are not familiar with any of this, it's a good time to learn so you can say "*I use vim, btw*" (and Bard, ofc)
 
 Quick render example:
