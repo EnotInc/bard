@@ -14,7 +14,7 @@ When you run bart you start in *NORMAL* mode, and in any other mode you can pres
 For more information run ` + "`" + `:h[elp] <topic>` + "`" + `, for example ` + "`" + `:h command` + "`" + ` to get list of available command in ***Command*** mode
 
 Anyways, here is some main vim keys.
-You can also find more information about some specific mode by running *:help <mode>* (not yet tho)
+You can also find more information about some specific mode by running *:help <mode>*
 
 ## **Main keys**
 ### **Movement**
@@ -34,8 +34,8 @@ Then you have:
 - ` + "`" + `:q` + "`" + ` - quit
 - ` + "`" + `:w` + "`" + ` - save (write)
 - ` + "`" + `:x` + "`" + ` / ` + "`" + `:wq` + "`" + ` - quit and save (write)
-- ` + "`" + "gt" + "`" + ` - move to next tab
-- ` + "`" + "gT" + "`" + ` - move to previous tab
+- ` + "`" + ":gt [<id>]" + "`" + ` - move to next tab, or tab with given <id>
+- ` + "`" + ":gT" + "`" + ` - move to previous tab
 
 ### **How do you type?**
 You can type in *INSERT* mode. Here is how you can enter it:

@@ -67,7 +67,6 @@ func InitConfig() {
 func FixConfig() {
 	if global.TabStop <= 0 {
 		global.TabStop = defaultTabStop
-		Save()
 	}
 }
 

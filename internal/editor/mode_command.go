@@ -143,10 +143,9 @@ func (e *Editor) parseCommand() {
 				e.tui.Message = msg
 				return
 			}
+			cfg.ThemeName = arg
 			e.tui.PurgeCache()
 			e.PurgeCache()
-			cfg.ThemeName = arg
-			config.Save()
 
 		case "gt":
 			page, err := strconv.Atoi(arg)

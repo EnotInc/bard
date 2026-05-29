@@ -14,7 +14,7 @@ var Noraml = `# Normal Mode
  - w/W - move to the next word
  - b/B - move to the start of the prev word
  - e/E - move to the end of the word
- - u - undo last change
+ - u / <ctrl+z> - undo last change
  - <ctrl+r> - redo last change
 
 ## Ways to change modes:
