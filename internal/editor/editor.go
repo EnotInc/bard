@@ -3,6 +3,7 @@ package editor
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/EnotInc/Bard/internal/buffer"
 
 	tui "github.com/EnotInc/Bard/internal/TUI"
+	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
@@ -170,7 +172,11 @@ func (e *Editor) Run() {
 		e.tui.Message = ""
 		key, _, err := reader.ReadRune()
 		if err != nil {
-			panic(err)
+			if err == io.EOF {
+				key = keys.Ctrl_z
+			} else {
+				panic(err)
+			}
 		}
 
 		switch e.curMode {

@@ -222,7 +222,7 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].Paste(enums.Before)
 		e.tui.ShowHello = false
 
-	case 'u':
+	case 'u', keys.Ctrl_z:
 		err := e.b[e.curBuffer].Undo()
 		if err != nil {
 			e.tui.Message = err.Error()
