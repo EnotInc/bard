@@ -6,11 +6,9 @@ import (
 
 // hash - hash of the raw text in line
 // render - stores the rendered string, without Markdown symbols, but with ANSI characters
-// index - the line number
 // mode - render mode that was used when cache is saved
 type cachedLine struct {
 	render string
-	index  int
 	mode   render.Render
 	hash   uint32
 	keep   bool
@@ -40,14 +38,12 @@ func (c *cache) cacheLine(h uint32, render string, index int, m render.Render, k
 	if l, ok := c.lines[index]; ok {
 		l.hash = h
 		l.render = render
-		l.index = index
 		l.mode = m
 		l.keep = keep
 	} else { // Otherwise, create a new one
 		newLine := &cachedLine{}
 		newLine.hash = h
 		newLine.render = render
-		newLine.index = index
 		newLine.mode = m
 		newLine.keep = keep
 
@@ -57,8 +53,5 @@ func (c *cache) cacheLine(h uint32, render string, index int, m render.Render, k
 
 func (c *cache) purge() {
 	c.dirty = false
-	for k := range c.lines {
-		delete(c.lines, k)
-	}
-
+	c.lines = make(map[int]*cachedLine)
 }
