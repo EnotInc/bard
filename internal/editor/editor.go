@@ -56,6 +56,8 @@ type cmd struct {
 func initCmd() *cmd {
 	return &cmd{
 		command: "",
+		history: []string{},
+		index:   0,
 	}
 }
 

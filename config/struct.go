@@ -1,6 +1,5 @@
 package config
 
-// About Config
 // RLN - relative line munber
 // ShowMD - always show markdown symbols
 // Render - enable or disable render

@@ -44,7 +44,6 @@ func (e *Editor) ScrollLeft() {
 	}
 }
 
-// About moveLeft()
 // sets XScroll to zero
 func (e *Editor) moveToZero() {
 	e.tui.XScroll = 0

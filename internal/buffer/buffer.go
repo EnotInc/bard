@@ -1,6 +1,5 @@
 package buffer
 
-// About Buffer
 // Title - name of the oppened file
 // pairs - used like a stask to keep track of paired brackets
 // copies - sores copied lines
