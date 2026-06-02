@@ -34,12 +34,12 @@ func (e *Editor) DrawDiff() {
 			continue
 		}
 
-		l := e.drawRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
+		l, keep := e.drawRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
 		curHash := services.GetHash(l)
 		oldHash, ok := e.hash[i-upperBorder]
 
 		// if row is 1 of cursor position, or hash isn't the same as prev render, or hash wasn't calculated - draw line
-		if !ok || (ok && curHash != oldHash) || (i-upperBorder == e.tui.CurRow) {
+		if keep || !ok || (ok && curHash != oldHash) || (i-upperBorder == e.tui.CurRow) {
 			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
 			fmt.Fprint(&diff, l)
 			e.hash[i-upperBorder] = curHash
@@ -110,13 +110,14 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 	return data.String()
 }
 
-func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) string {
+func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) (string, bool) {
 	cfg := config.Get()
 	buf := e.b[e.curBuffer]
 	show := buf.Cursor.Line() == i || cfg.ShowMD
 	isFirst := i == upperBorder
 
 	var l strings.Builder
+	var keep bool
 
 	// This 2 variables are used to get the horizontal borders of the visible content
 	if i < len(buf.Lines) { // rendering line
@@ -126,17 +127,13 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
 
 		str := buf.Lines[i].Data
-		clear := services.ClearTabs(str)
-
-		if len(clear) < start {
-			start = 0
-			end = 0
-			str = []rune{}
-		}
 
 		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, cfg.RLN)
 
 		isRender := e.b[e.curBuffer].IsMdFile && cfg.Render
+
+		var data string
+
 		switch e.curMode {
 		case mode.Visual, mode.Visual_line:
 			// This `if statement` let me render both selected lines with highlights, and not selected with markdown render
@@ -151,11 +148,13 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 
 				fmt.Fprint(&content, tui.VisibleSubString(visual, start, end))
 			} else {
-				fmt.Fprint(&content, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
+				data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender)
+				fmt.Fprint(&content, data)
 			}
 		// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 		default:
-			fmt.Fprint(&content, e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender))
+			data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender)
+			fmt.Fprint(&content, data)
 		}
 
 		// Here is where I add the line to the main data string
@@ -169,7 +168,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		}
 	}
 
-	return l.String()
+	return l.String(), keep
 }
 
 func (e *Editor) PurgeCache() {

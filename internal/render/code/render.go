@@ -33,21 +33,20 @@ func (r *Render) Reset() {
 	r.l.readPosition = 0
 }
 
-func (r *Render) fillSpace() string {
-	clear := services.ClearTabs(r.l.input)
+func (r *Render) fillSpace(xScroll int) string {
+	clear := services.ReplaceTabs(r.l.input)
 	amount := max(r.w-len(clear)-enums.InitialOffset-1, 0)
-	return strings.Repeat(" ", amount)
+	return strings.Repeat(" ", amount+xScroll)
 }
 
-func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Render) {
+func (r *Render) RenderCodeLine(line []rune, show bool, xScroll int) (string, render.Render, bool) {
 	r.l.input = line
 	if string(line) == "```" {
 		if !show {
 			line = []rune("   ")
 		}
-		l := r.theme.Background + string(line) + r.fillSpace()
-		diff := -r.w
-		return l, diff, render.Markdown
+		l := r.theme.Background + string(line) + r.fillSpace(xScroll)
+		return l, render.Markdown, true
 	}
 
 	r.l.position = 0
@@ -56,7 +55,6 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Ren
 
 	var mode render.Render = render.Code
 	var data strings.Builder
-	var diff int = 0
 
 	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {
 		switch tok.Type {
@@ -80,12 +78,10 @@ func (r *Render) RenderCodeLine(line []rune, show bool) (string, int, render.Ren
 			data.WriteString(r.renderWSEOL(&tok))
 		case tab:
 			data.WriteString(r.renderTab(&tok))
-			diff -= len(tok.Literal)
 		}
 	}
-	l := r.theme.Background + data.String() + r.fillSpace()
-	diff = -r.w - len(r.l.input) - enums.InitialOffset - 1
-	return l, diff, mode
+	l := r.theme.Background + data.String() + r.fillSpace(xScroll)
+	return l, mode, false
 }
 
 func (r *Render) renderTab(t *Token) string {

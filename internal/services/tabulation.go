@@ -7,7 +7,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 )
 
-func ClearTabs(line []rune) []rune {
+func ReplaceTabs(line []rune) []rune {
 	var new strings.Builder
 	tw := config.Get().TabStop
 

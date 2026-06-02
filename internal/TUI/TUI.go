@@ -215,23 +215,19 @@ func VisibleSubString(text string, start int, end int) string {
 	return res.String()
 }
 
-func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, isRender bool) string {
+func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, isRender bool) (string, bool) {
 	if !isRender { // returning stripped text if render is of (or it's not a md file)
-		clear := services.ClearTabs(str)
+		clear := services.ReplaceTabs(str)
 		shift := services.CursorShift(str)
-		return VisibleSubString(string(clear), start, end+shift)
+		return VisibleSubString(string(clear), start, end+shift), false
 	}
 
 	var l = ""
-	// diff is used for calculating the size of the line, where markdown symbols are hidden
-	var diff = 0
-	l, diff = ui.render.Render(str, i, show, isCurrent, isFirst)
-	if end < len(str) {
-		diff = 0
-	}
-	l = VisibleSubString(l, start, end-diff)
+	var keep = false
+	l, keep = ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll)
+	l = VisibleSubString(l, start, end)
 
-	return l
+	return l, keep
 }
 
 func (ui *TUI) ResetRender() {
@@ -239,8 +235,8 @@ func (ui *TUI) ResetRender() {
 }
 
 func (ui *TUI) Center(l []rune) string {
-	center := max((ui.W-len(l))/2, 0)
-	tabs := strings.Repeat(" ", center)
+	ofset := max((ui.W-len(l))/2, 0)
+	tabs := strings.Repeat(" ", ofset)
 	return tabs + string(l)
 }
 

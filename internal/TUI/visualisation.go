@@ -17,7 +17,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 		return string(ui.WithEndLine(string(l)))
 	}
 
-	clear := services.ClearTabs(l)
+	clear := services.ReplaceTabs(l)
 	switch curMode {
 	case mode.Visual:
 		startOffset += services.CursorShiftAt(l, startOffset)
@@ -33,7 +33,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		var rendered string
 		if isRender {
-			rendered, _ = ui.render.Render(l, i, true, true, i == startLine)
+			rendered, _ = ui.render.Render(l, i, true, true, i == startLine, ui.XScroll)
 		} else {
 			rendered = string(clear)
 		}
@@ -66,7 +66,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			startLine, endLine = endLine, startLine
 		}
 		if isRender {
-			ui.render.Render(l, i, true, true, i == startLine)
+			ui.render.Render(l, i, true, true, i == startLine, ui.XScroll)
 		}
 
 		l := ui.theme.Selection + string(clear) + ascii.Reset.Str()

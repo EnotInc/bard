@@ -34,16 +34,15 @@ func (r *Render) Reset() {
 	r.l.readPosition = 0
 }
 
-func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (string, int, render.Render) {
+func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOfset int) (string, render.Render, bool) {
 	var renderMode render.Render = render.Markdown
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
-			return services.PaintString(r.theme.Symbol, string(line)), 0, renderMode
+			return services.PaintString(r.theme.Symbol, string(line)), renderMode, false
 		}
-		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w-enums.InitialOffset*2)),
-			3 - r.w + enums.InitialOffset*2,
-			renderMode
+		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w-enums.InitialOffset*2+1+xOfset)),
+			renderMode, true
 	}
 
 	r.l.input = line
@@ -52,7 +51,6 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 	r.l.readChar()
 
 	var data strings.Builder
-	var diff int = 0
 
 	isWhiteSpace := true
 	isFirst := true
@@ -91,8 +89,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			}
 		case codeBlock:
 			if isFirst {
-				data.WriteString(r.renderCodeBlock(&tok, show))
-				diff = -r.w - len(r.l.input)
+				data.WriteString(r.renderCodeBlock(&tok, show, xOfset))
 				renderMode = render.Code
 			} else {
 				data.WriteString(string(tok.Literal))
@@ -113,7 +110,6 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			}
 		case tab:
 			data.WriteString(r.renderTab(&tok))
-			diff -= len(tok.Literal)
 		case hightlight:
 			data.WriteString(r.simpleAttrRender(r.theme.Highlight, string(tok.Value), show))
 		case link:
@@ -130,7 +126,6 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 			data.WriteString(r.renderShield(&tok, show))
 		case tag:
 			data.WriteString(r.renderTag(&tok, show))
-			diff -= 1
 		case oneStar, oneUnderLine:
 			data.WriteString(r.simpleAttrRender(ascii.Italic.Str(), string(tok.Literal), show))
 		case twoStars, twoUnderLines:
@@ -154,28 +149,28 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool) (stri
 
 	data.WriteString(ascii.Reset.Str())
 	r.curAttr = ascii.Reset.Str()
-	return data.String(), diff, renderMode
+	return data.String(), renderMode, false
 }
 
-func (r *Render) fillSpace() string {
+func (r *Render) fillSpace(xScroll int) string {
 	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
-	return strings.Repeat(" ", amount)
+	return strings.Repeat(" ", amount+xScroll)
 }
 
 func (r *Render) renderWSEOL(t *Token) string {
 	return strings.Repeat(r.theme.Symbol+ascii.WSEOL.Str(), len(t.Value))
 }
 
-func (r *Render) renderCodeBlock(t *Token, show bool) string {
+func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
 	if show {
-		return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace()
+		return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace(xScroll)
 	}
 
 	if i, ok := langIcon[strings.ToLower(string(t.Value))]; ok {
-		return r.theme.CodeHeader + " " + i + services.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace()
+		return r.theme.CodeHeader + " " + i + services.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace(xScroll)
 	}
 	// fallback
-	return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace()
+	return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace(xScroll)
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
