@@ -120,6 +120,9 @@ func (e *Editor) execCommand() {
 	case "theme":
 		e.tui.Message = fmt.Sprintf("Theme: %s", cfg.ThemeName)
 
+	case "keeptab", "kt":
+		cfg.KeepTabs = !cfg.KeepTabs
+
 	default:
 		e.parseCommand()
 	}
@@ -194,16 +197,6 @@ func (e *Editor) parseCommand() {
 
 			e.tui.PurgeCache()
 			e.PurgeCache()
-
-		case "keeptab", "kt":
-			switch arg {
-			case "true", "1":
-				cfg.KeepTabs = true
-			case "false", "0":
-				cfg.KeepTabs = false
-			default:
-				e.tui.Message = "unable to change setting"
-			}
 
 		default:
 			e.tui.Message = "unknown command"

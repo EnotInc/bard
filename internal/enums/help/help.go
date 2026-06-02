@@ -11,4 +11,5 @@ const (
 	Command    Topic = "command"
 	Visual     Topic = "visual"
 	VisualLine Topic = "visual-line"
+	Config     Topic = "config"
 )
