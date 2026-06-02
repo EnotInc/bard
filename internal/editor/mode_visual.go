@@ -21,16 +21,25 @@ func (e *Editor) caseVisual(key rune) {
 
 	switch key {
 	case 'y':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.b[e.curBuffer].CopySelected(false, visual)
 		e.curMode = mode.Normal
 
 	case 'x':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual)
 		e.curMode = mode.Normal
 
 	case 'u':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
@@ -41,6 +50,9 @@ func (e *Editor) caseVisual(key rune) {
 		e.curMode = mode.Normal
 
 	case 'U':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.b[e.curBuffer].SaveChanges(
 			buffer.Change,
 			e.b[e.curBuffer].Cursor.Line(),
@@ -51,15 +63,24 @@ func (e *Editor) caseVisual(key rune) {
 		e.curMode = mode.Normal
 
 	case 'o', 'O':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.b[e.curBuffer].SwapTail()
 
 	case 'd', 'D':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual)
 		e.curMode = mode.Normal
 
 	case 's':
+		if e.b[e.curBuffer].IsReadOnly {
+			return
+		}
 		e.saveSelected()
 
 		e.b[e.curBuffer].CopySelected(true, visual)
