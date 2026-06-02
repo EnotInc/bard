@@ -11,6 +11,7 @@ type Config struct {
 	ShowMD    bool   `json:"show_markdown_symbols"`
 	Render    bool   `json:"enable_render"`
 	TabNames  bool   `json:"show_tab_names"`
+	KeepTabs  bool   `json:"keep_tabs"`
 }
 
 type Theme struct {

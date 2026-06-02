@@ -85,6 +85,7 @@ func getDefaultConfig() *Config {
 		TabNames:  true,
 		ThemeName: defaultThemeName,
 		TabStop:   defaultTabStop,
+		KeepTabs:  true,
 	}
 	return config
 }

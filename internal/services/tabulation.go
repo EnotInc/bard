@@ -88,3 +88,9 @@ func CursorShift(line []rune) int {
 
 	return shift
 }
+
+func CursorShiftCalculateAt(line []rune, index int) int {
+	tw := config.Get().TabStop
+	shift := tw - (index % tw)
+	return shift
+}

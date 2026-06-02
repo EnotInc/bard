@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"unicode"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
+	"github.com/EnotInc/Bard/internal/services"
 )
 
 // Called from Run() func
@@ -72,13 +74,23 @@ func (e *Editor) caseInsert(key rune) {
 		e.ScrollLeft()
 
 	case keys.Tab:
-		e.b[e.curBuffer].SaveChanges(
+		buf := e.b[e.curBuffer]
+		buf.SaveChanges(
 			buffer.Change,
-			e.b[e.curBuffer].Cursor.Line(),
-			e.b[e.curBuffer].Cursor.Line(),
+			buf.Cursor.Line(),
+			buf.Cursor.Line(),
 			enums.Without)
 
-		e.b[e.curBuffer].InsertKey('\t')
+		cfg := config.Get()
+		if !cfg.KeepTabs {
+			curLine := buf.Lines[buf.Cursor.Line()]
+			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset())
+			for range tab {
+				buf.InsertKey(' ')
+			}
+		} else {
+			buf.InsertKey('\t')
+		}
 
 	case '[', '{', '(', ')', '}', ']', '\'', '"', '<', '>', '*', '_', '`':
 		e.b[e.curBuffer].InsertPair(key)
