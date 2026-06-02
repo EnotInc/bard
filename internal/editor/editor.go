@@ -38,6 +38,7 @@ type Editor struct {
 	cmd       *cmd
 	curMode   mode.Mode
 	subCmd    string
+	lastCmd   string
 	b         []*buffer.Buffer
 	fdOut     int
 	fdIn      int
@@ -48,13 +49,13 @@ type Editor struct {
 
 type cmd struct {
 	command string
-	lastCmd string
+	history []string
+	index   int
 }
 
 func initCmd() *cmd {
 	return &cmd{
 		command: "",
-		lastCmd: "",
 	}
 }
 
@@ -89,6 +90,7 @@ func InitEditor() *Editor {
 		cmd:       _cmd,
 		curMode:   mode.Normal,
 		hash:      make(map[int]uint32),
+		lastCmd:   "",
 		subCmd:    "",
 		fdOut:     _fdOut,
 		fdIn:      _fdIn,

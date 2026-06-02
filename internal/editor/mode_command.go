@@ -2,6 +2,7 @@ package editor
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -32,6 +33,16 @@ func (e *Editor) caseCommand(key rune) {
 		e.execCommand()
 		e.cmd.command = ""
 		e.curMode = mode.Normal
+	case '>':
+		if e.cmd.index < len(e.cmd.history) {
+			e.cmd.command = e.cmd.history[e.cmd.index]
+			e.cmd.index += 1
+		}
+	case '<':
+		if e.cmd.index > 0 {
+			e.cmd.index -= 1
+			e.cmd.command = e.cmd.history[e.cmd.index]
+		}
 
 	default:
 		if unicode.IsPrint(key) {
@@ -40,10 +51,20 @@ func (e *Editor) caseCommand(key rune) {
 	}
 }
 
+func (cmd *cmd) saveToHisory() {
+	// if we moved back on cmd history and change one of the commands, history will continue from this point
+	if cmd.index != len(cmd.history) {
+		cmd.history = slices.Delete(cmd.history, cmd.index, len(cmd.history))
+	}
+	cmd.history = append(cmd.history, cmd.command)
+	cmd.index = len(cmd.history)
+}
+
 // For now I just compare commands, and run them
 // Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
 	cfg := config.Get()
+	e.cmd.saveToHisory()
 	switch e.cmd.command {
 	case "q":
 		if len(e.b) > 1 {
