@@ -25,25 +25,25 @@ func (e *Editor) findSome(key rune) bool {
 		switch cmd[len(cmd)-1] {
 		case 'f':
 			e.b[e.curBuffer].FindNext(key)
-			e.lastCmd = e.subCmd + string(key)
+			e.cmd.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
 
 		case 'F':
 			e.b[e.curBuffer].FindPrev(key)
-			e.lastCmd = e.subCmd + string(key)
+			e.cmd.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
 
 		case 't':
 			e.b[e.curBuffer].FindBeforeNext(key)
-			e.lastCmd = e.subCmd + string(key)
+			e.cmd.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
 
 		case 'T':
 			e.b[e.curBuffer].FindBeforePrev(key)
-			e.lastCmd = e.subCmd + string(key)
+			e.cmd.lastCmd = e.subCmd + string(key)
 			e.subCmd = ""
 			return true
 		}
@@ -60,12 +60,12 @@ func (e *Editor) GeneralCase(key rune) {
 	case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'f', 'F', 't', 'T':
 		e.subCmd += string(key)
 	case ';':
-		if len(e.lastCmd) <= 0 {
+		if len(e.cmd.lastCmd) <= 0 {
 			return
 		}
 
-		e.subCmd = string(e.lastCmd[0])
-		key := e.lastCmd[len(e.lastCmd)-1]
+		e.subCmd = string(e.cmd.lastCmd[0])
+		key := e.cmd.lastCmd[len(e.cmd.lastCmd)-1]
 		if ok := e.findSome(rune(key)); !ok {
 			e.tui.Message = "nothing was found"
 		}

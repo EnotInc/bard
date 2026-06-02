@@ -35,16 +35,27 @@ type Editor struct {
 	oldState  *term.State
 	tui       *tui.TUI
 	theme     *config.Theme
-	command   string
+	cmd       *cmd
 	curMode   mode.Mode
 	subCmd    string
-	lastCmd   string
 	b         []*buffer.Buffer
 	fdOut     int
 	fdIn      int
 	curBuffer int
 	IsChanged bool
 	save      bool
+}
+
+type cmd struct {
+	command string
+	lastCmd string
+}
+
+func initCmd() *cmd {
+	return &cmd{
+		command: "",
+		lastCmd: "",
+	}
 }
 
 // Initialisation of editor
@@ -68,15 +79,16 @@ func InitEditor() *Editor {
 	_t, err := config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()
 	_tui := tui.InitTUI(_h, _w, _t)
+	_cmd := initCmd()
 
 	e := &Editor{
 		oldState:  old,
 		b:         _b,
 		tui:       _tui,
 		theme:     _t,
+		cmd:       _cmd,
 		curMode:   mode.Normal,
 		hash:      make(map[int]uint32),
-		command:   "",
 		subCmd:    "",
 		fdOut:     _fdOut,
 		fdIn:      _fdIn,

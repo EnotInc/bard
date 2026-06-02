@@ -17,25 +17,25 @@ import (
 func (e *Editor) caseCommand(key rune) {
 	switch key {
 	case keys.Esc:
-		e.command = ""
+		e.cmd.command = ""
 		e.curMode = mode.Normal
 
 	case keys.Backspace:
-		if len(e.command) > 0 {
-			e.command = e.command[:len(e.command)-1]
+		if len(e.cmd.command) > 0 {
+			e.cmd.command = e.cmd.command[:len(e.cmd.command)-1]
 		} else {
-			e.command = ""
+			e.cmd.command = ""
 			e.curMode = mode.Normal
 		}
 
 	case keys.Enter:
 		e.execCommand()
-		e.command = ""
+		e.cmd.command = ""
 		e.curMode = mode.Normal
 
 	default:
 		if unicode.IsPrint(key) {
-			e.command += string(key)
+			e.cmd.command += string(key)
 		}
 	}
 }
@@ -44,7 +44,7 @@ func (e *Editor) caseCommand(key rune) {
 // Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
 	cfg := config.Get()
-	switch e.command {
+	switch e.cmd.command {
 	case "q":
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)
@@ -106,8 +106,8 @@ func (e *Editor) execCommand() {
 
 // Used to parse some specific commands like `help`, or `w` (save)
 func (e *Editor) parseCommand() {
-	if len(e.command) >= 3 {
-		parts := strings.Split(e.command, " ")
+	if len(e.cmd.command) >= 3 {
+		parts := strings.Split(e.cmd.command, " ")
 		if len(parts) != 2 {
 			e.tui.Message = "bad syntax"
 			return

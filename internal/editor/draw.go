@@ -84,7 +84,7 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 
 	case mode.Command:
 		fmt.Fprintf(&data, "\033[%d;%dH%s\033[%d;1H", y, x, ascii.Cursor, lastLine+1) // adding cursor as unicode symbol on last visual position, and returning it to the last line
-		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.command)))
+		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.cmd.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
