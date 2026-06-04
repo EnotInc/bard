@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
 
-	tui "github.com/EnotInc/Bard/internal/TUI"
+	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 

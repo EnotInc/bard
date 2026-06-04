@@ -1,7 +1,7 @@
 package editor
 
 import (
-	"github.com/EnotInc/Bard/internal/buffer"
+	"github.com/EnotInc/Bard/internal/editor/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
 	cases "github.com/EnotInc/Bard/internal/enums/cases"
 	"github.com/EnotInc/Bard/internal/enums/keys"

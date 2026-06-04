@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/EnotInc/Bard/internal/buffer"
+	"github.com/EnotInc/Bard/internal/editor/buffer"
 )
 
 // used to create new buffer, and switch to it

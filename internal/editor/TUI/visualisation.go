@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/ascii"
+	"github.com/EnotInc/Bard/internal/enums/ascii"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/services"
 )

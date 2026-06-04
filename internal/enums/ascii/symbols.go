@@ -25,4 +25,11 @@ const (
 	TagE Symbol = "]"
 
 	Cursor Symbol = "\u2592"
+
+	BorderCUL string = "\u256d"
+	BorderCUR string = "\u256e"
+	BorderCDR string = "\u256f"
+	BorderCDL string = "\u2570"
+	BorderV   string = "\u2505"
+	BorderH   string = "\u2500"
 )

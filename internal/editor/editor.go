@@ -10,10 +10,10 @@ import (
 	"golang.org/x/term"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/ascii"
-	"github.com/EnotInc/Bard/internal/buffer"
+	"github.com/EnotInc/Bard/internal/editor/buffer"
+	"github.com/EnotInc/Bard/internal/enums/ascii"
 
-	tui "github.com/EnotInc/Bard/internal/TUI"
+	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )

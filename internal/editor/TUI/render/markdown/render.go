@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
 
 	render "github.com/EnotInc/Bard/internal/enums/render"

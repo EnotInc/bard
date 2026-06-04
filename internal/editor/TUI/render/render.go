@@ -1,9 +1,9 @@
 package render
 
 import (
+	code "github.com/EnotInc/Bard/internal/editor/TUI/render/code"
+	md "github.com/EnotInc/Bard/internal/editor/TUI/render/markdown"
 	render "github.com/EnotInc/Bard/internal/enums/render"
-	code "github.com/EnotInc/Bard/internal/render/code"
-	md "github.com/EnotInc/Bard/internal/render/markdown"
 	"github.com/EnotInc/Bard/internal/services"
 )
 
