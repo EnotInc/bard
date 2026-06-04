@@ -34,7 +34,6 @@ type Editor struct {
 	hash      map[int]uint32
 	oldState  *term.State
 	tui       *tui.TUI
-	theme     *config.Theme
 	cmd       *cmd
 	curMode   mode.Mode
 	subCmd    string
@@ -78,17 +77,16 @@ func InitEditor() *Editor {
 	}
 
 	config.InitConfig()
-	cfg := config.Get()
-	_t, err := config.InitTheme(cfg.ThemeName)
+	cfg := config.GetConfig()
+	err = config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()
-	_tui := tui.InitTUI(_h, _w, _t)
+	_tui := tui.InitTUI(_h, _w)
 	_cmd := initCmd()
 
 	e := &Editor{
 		oldState:  old,
 		b:         _b,
 		tui:       _tui,
-		theme:     _t,
 		cmd:       _cmd,
 		curMode:   mode.Normal,
 		hash:      make(map[int]uint32),

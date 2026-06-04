@@ -18,8 +18,9 @@ type Render struct {
 	w       int
 }
 
-func NewRender(w int, theme *config.Markdown) *Render {
-	r := &Render{w: w, theme: theme}
+func NewRender(w int) *Render {
+	theme := config.GetTheme().Markdown
+	r := &Render{w: w, theme: &theme}
 	r.l = newLexer()
 	return r
 }

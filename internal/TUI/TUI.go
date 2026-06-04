@@ -34,7 +34,6 @@ type visual struct {
 // Redraw - chan, wich used to redraw the whole editor when window size is changed
 type TUI struct {
 	Redraw    chan bool
-	theme     *config.General
 	render    *render.Renderer
 	visual    *visual
 	Message   string
@@ -49,8 +48,8 @@ type TUI struct {
 	Save      bool
 }
 
-func InitTUI(h int, w int, theme *config.Theme) *TUI {
-	r := render.InitRender(w, h, theme)
+func InitTUI(h int, w int) *TUI {
+	r := render.InitRender(w, h)
 	v := &visual{line: 0, offset: 0}
 	ui := &TUI{
 		XScroll: 0,
@@ -62,7 +61,6 @@ func InitTUI(h int, w int, theme *config.Theme) *TUI {
 		H:       h,
 		visual:  v,
 		render:  r,
-		theme:   &theme.General,
 		Redraw:  make(chan bool, 1),
 	}
 	return ui
@@ -125,10 +123,12 @@ func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 	}
 	fmt.Fprint(&num, ascii.Reset, strings.Repeat(" ", maxOffset-numLen))
 
+	theme := config.GetTheme().General
+
 	if curLine+1 == n {
-		fmt.Fprint(&num, ui.theme.CurrentLine, numStr)
+		fmt.Fprint(&num, theme.CurrentLine, numStr)
 	} else {
-		fmt.Fprint(&num, ui.theme.LineNumber, numStr)
+		fmt.Fprint(&num, theme.LineNumber, numStr)
 	}
 	fmt.Fprint(&num, ascii.Reset, " ")
 
@@ -154,9 +154,10 @@ func (ui *TUI) fillSpace() string {
 
 // Little func, that used to build lower bar
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
+	theme := config.GetTheme().General
 	var data strings.Builder
 	pos := fmt.Sprintf(" %d-%d ", x, y)
-	fmt.Fprintf(&data, "%s%s%s %s%s%s ", ui.theme.BottomBar, pos, curdata, ui.theme.Message, message, ui.theme.BottomBar)
+	fmt.Fprintf(&data, "%s%s%s %s%s%s ", theme.BottomBar, pos, curdata, theme.Message, message, theme.BottomBar)
 
 	ln := 0
 	if cmd != "" {
@@ -170,9 +171,10 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
 func (ui *TUI) BuildCommandBar(curdata string) string {
+	theme := config.GetTheme().General
 	var data strings.Builder
-	cmd := ui.theme.Command + " :" + ui.theme.BottomBar
-	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", ui.theme.BottomBar, cmd, curdata, ui.fillSpaceWith(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
+	cmd := theme.Command + " :" + theme.BottomBar
+	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", theme.BottomBar, cmd, curdata, ui.fillSpaceWith(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
 
 	return data.String()
 }
@@ -241,21 +243,22 @@ func (ui *TUI) Center(l []rune) string {
 }
 
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
+	theme := config.GetTheme().General
 	if len(tabs) == 1 {
-		return fmt.Sprintf("%s[%s]", ui.theme.Tab, tabs[0])
+		return fmt.Sprintf("%s[%s]", theme.Tab, tabs[0])
 	}
 
 	var s strings.Builder
 	for i, tab := range tabs {
 		if i == curTab {
-			fmt.Fprint(&s, ui.theme.Tab)
+			fmt.Fprint(&s, theme.Tab)
 		}
 		if show {
 			fmt.Fprintf(&s, "[%d|%s]", i+1, tab)
 		} else {
 			fmt.Fprintf(&s, "[%d]", i+1)
 		}
-		fmt.Fprint(&s, ascii.Reset, ui.theme.BottomBar)
+		fmt.Fprint(&s, ascii.Reset, theme.BottomBar)
 	}
 	return s.String()
 }

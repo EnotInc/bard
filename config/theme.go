@@ -7,6 +7,12 @@ import (
 	"path/filepath"
 )
 
+var theme *Theme
+
+func GetTheme() *Theme {
+	return theme
+}
+
 const defaultThemeName = "bard.json"
 const themeDir = ".bard/themes"
 
@@ -30,40 +36,43 @@ func getThemePath(themeName string) string {
 	return filepath.Join(home, themeDir, themeName)
 }
 
-func InitTheme(themeName string) (*Theme, error) {
+func InitTheme(themeName string) error {
 	defaultTheme := getDefaultTheme()
-	theme := getThemePath(themeName)
+	theme_path := getThemePath(themeName)
 
-	if _, err := os.Stat(theme); err != nil {
+	if _, err := os.Stat(theme_path); err != nil {
 		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
 		dir := getThemeDir()
 		os.Mkdir(dir, 0755)
 		os.WriteFile(getThemePath(defaultThemeName), []byte(json), 0644)
-		return defaultTheme, fmt.Errorf("Unable to load theme %s", themeName)
+		theme = defaultTheme
+		return fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
-	data, err := os.ReadFile(theme)
+	data, err := os.ReadFile(theme_path)
 	if err != nil {
-		return defaultTheme, fmt.Errorf("Unable to load theme %s", themeName)
+		theme = defaultTheme
+		return fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
 	t := &Theme{}
 	err = json.Unmarshal(data, t)
 	if err != nil {
-		return defaultTheme, fmt.Errorf("Unable to load theme %s", themeName)
+		theme = t
+		return fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
-	return t, nil
+	return nil
 }
 
 func (t *Theme) ChangeTheme(themeName string) string {
-	theme := getThemePath(themeName)
+	theme_path := getThemePath(themeName)
 
-	if _, err := os.Stat(theme); err != nil {
+	if _, err := os.Stat(theme_path); err != nil {
 		return "Unknown theme '" + themeName + "'"
 	}
 
-	data, err := os.ReadFile(theme)
+	data, err := os.ReadFile(theme_path)
 	if err != nil {
 		return "unable to read theme file '" + themeName + "'"
 	}

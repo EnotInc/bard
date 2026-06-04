@@ -42,7 +42,7 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 		buf := e.b[e.curBuffer]
 		buf.Delkey()
 
-		cfg := config.Get()
+		cfg := config.GetConfig()
 		if !cfg.KeepTabs {
 			curLine := buf.Lines[buf.Cursor.Line()]
 			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset())
@@ -90,7 +90,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 		buf := e.b[e.curBuffer]
 		buf.Delkey()
 
-		cfg := config.Get()
+		cfg := config.GetConfig()
 		if !cfg.KeepTabs {
 			curLine := buf.Lines[buf.Cursor.Line()]
 			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset())

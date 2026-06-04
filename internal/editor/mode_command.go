@@ -63,7 +63,7 @@ func (cmd *cmd) saveToHisory() {
 // For now I just compare commands, and run them
 // Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
-	cfg := config.Get()
+	cfg := config.GetConfig()
 	e.cmd.saveToHisory()
 	switch e.cmd.command {
 	case "q":
@@ -137,7 +137,7 @@ func (e *Editor) parseCommand() {
 			return
 		}
 
-		cfg := config.Get()
+		cfg := config.GetConfig()
 
 		cmd := parts[0]
 		arg := parts[1]
@@ -162,7 +162,8 @@ func (e *Editor) parseCommand() {
 				arg = cfg.ThemeName
 			}
 
-			msg := e.theme.ChangeTheme(arg)
+			theme := config.GetTheme()
+			msg := theme.ChangeTheme(arg)
 			if msg != "" {
 				e.tui.Message = msg
 				return

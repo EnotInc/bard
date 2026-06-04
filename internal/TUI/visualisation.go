@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/ascii"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/services"
@@ -69,7 +70,8 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			ui.render.Render(l, i, true, true, i == startLine, ui.XScroll)
 		}
 
-		l := ui.theme.Selection + string(clear) + ascii.Reset.Str()
+		theme := config.GetTheme().General
+		l := theme.Selection + string(clear) + ascii.Reset.Str()
 		line = ui.WithEndLine(l)
 	}
 
@@ -78,15 +80,17 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 // used to add 'new line' symbol to the givven selected line
 func (ui *TUI) WithEndLine(l string) []rune {
-	return []rune(l + ui.theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str())
+	theme := config.GetTheme().General
+	return []rune(l + theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str())
 }
 
 // used to colorise every single char in line
 // is just inserts selected ascii.StarSel [Color] before the char
 func (ui *TUI) paint(line []rune) []rune {
 	var s strings.Builder
+	theme := config.GetTheme().General
 	for _, ch := range line {
-		fmt.Fprintf(&s, "%s%c", ui.theme.Selection, ch)
+		fmt.Fprintf(&s, "%s%c", theme.Selection, ch)
 	}
 	s.WriteString(ascii.Reset.Str())
 	return []rune(s.String())

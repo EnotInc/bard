@@ -9,7 +9,7 @@ import (
 
 func ReplaceTabs(line []rune) []rune {
 	var new strings.Builder
-	tw := config.Get().TabStop
+	tw := config.GetConfig().TabStop
 
 	visual := 0
 	for i := range line {
@@ -30,7 +30,7 @@ func ReplaceTabs(line []rune) []rune {
 
 func ReadTabAt(line []rune, index int) []rune {
 	var new strings.Builder
-	tw := config.Get().TabStop
+	tw := config.GetConfig().TabStop
 
 	visual := 0
 	for i := range line {
@@ -51,7 +51,7 @@ func ReadTabAt(line []rune, index int) []rune {
 }
 
 func CursorShiftAt(line []rune, index int) int {
-	tw := config.Get().TabStop
+	tw := config.GetConfig().TabStop
 
 	shift := 0
 	visual := 0
@@ -72,7 +72,7 @@ func CursorShiftAt(line []rune, index int) int {
 }
 
 func CursorShift(line []rune) int {
-	tw := config.Get().TabStop
+	tw := config.GetConfig().TabStop
 
 	shift := 0
 	visual := 0
@@ -90,7 +90,7 @@ func CursorShift(line []rune) int {
 }
 
 func CursorShiftCalculateAt(line []rune, index int) int {
-	tw := config.Get().TabStop
+	tw := config.GetConfig().TabStop
 	shift := tw - (index % tw)
 	return shift
 }

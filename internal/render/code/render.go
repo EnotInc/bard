@@ -17,8 +17,9 @@ type Render struct {
 	w     int
 }
 
-func NewRender(w int, theme *config.Code) *Render {
-	r := &Render{w: w, theme: theme}
+func NewRender(w int) *Render {
+	theme := config.GetTheme().Code
+	r := &Render{w: w, theme: &theme}
 	r.l = newLexer()
 	return r
 }
@@ -85,7 +86,7 @@ func (r *Render) RenderCodeLine(line []rune, show bool, xScroll int) (string, re
 }
 
 func (r *Render) renderTab(t *Token) string {
-	cfg := config.Get()
+	cfg := config.GetConfig()
 	if len(t.Literal) == cfg.TabStop {
 		return r.theme.Comment + ascii.CodeTab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
 	} else {

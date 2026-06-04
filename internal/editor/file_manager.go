@@ -10,6 +10,7 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/docs/help"
 	"github.com/EnotInc/Bard/internal/ascii"
 	"github.com/EnotInc/Bard/internal/buffer"
@@ -146,8 +147,9 @@ func (e *Editor) saveLog(err any) error {
 	logs := filepath.Join(path, ".log")
 
 	file, err := os.OpenFile(logs, os.O_APPEND|os.O_CREATE, 0644)
+	theme := config.GetTheme().General
 	if err != nil {
-		return fmt.Errorf("%s%s%s%s%s", e.theme.General.Message, err, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
+		return fmt.Errorf("%s%s%s%s%s", theme.Message, err, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
 	}
 	defer file.Close()
 

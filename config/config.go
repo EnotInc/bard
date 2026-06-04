@@ -11,10 +11,10 @@ const configDir = ".bard"
 const defaultTabStop = 4
 
 // NOTE: is it alright to store config like that?
-var global *Config
+var config *Config
 
-func Get() *Config {
-	return global
+func GetConfig() *Config {
+	return config
 }
 
 func getCongfigPath() string {
@@ -35,46 +35,46 @@ func getConfigDir() string {
 
 func InitConfig() {
 	defaultConfing := getDefaultConfig()
-	config := getCongfigPath()
+	cfg_path := getCongfigPath()
 
 	// creating a default config if bard.json is not found
-	if _, err := os.Stat(config); err != nil {
+	if _, err := os.Stat(cfg_path); err != nil {
 		json, _ := json.MarshalIndent(defaultConfing, "", "    ")
 		dir := getConfigDir()
 		os.Mkdir(dir, 0755)
-		os.WriteFile(config, []byte(json), 0644)
-		global = defaultConfing
+		os.WriteFile(cfg_path, []byte(json), 0644)
+		config = defaultConfing
 		return
 	}
 
-	data, err := os.ReadFile(config)
+	data, err := os.ReadFile(cfg_path)
 	if err != nil {
-		global = defaultConfing
+		config = defaultConfing
 		return
 	}
 
 	cfg := &Config{}
 	err = json.Unmarshal(data, cfg)
 	if err != nil {
-		global = defaultConfing
+		config = defaultConfing
 		return
 	}
 
-	global = cfg
+	config = cfg
 	FixConfig()
 }
 
 func FixConfig() {
-	if global.TabStop <= 0 {
-		global.TabStop = defaultTabStop
+	if config.TabStop <= 0 {
+		config.TabStop = defaultTabStop
 	}
 }
 
 // saving current configuration
 func Save() {
-	config := getCongfigPath()
-	json, _ := json.MarshalIndent(global, "", "    ")
-	os.WriteFile(config, []byte(json), 0644)
+	cfg := getCongfigPath()
+	json, _ := json.MarshalIndent(config, "", "    ")
+	os.WriteFile(cfg, []byte(json), 0644)
 }
 
 func getDefaultConfig() *Config {

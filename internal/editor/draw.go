@@ -92,7 +92,7 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 		for _, t := range e.b {
 			tabs = append(tabs, t.Title)
 		}
-		cfg := config.Get()
+		cfg := config.GetConfig()
 		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, cursorPos, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
@@ -111,7 +111,7 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 }
 
 func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) (string, bool) {
-	cfg := config.Get()
+	cfg := config.GetConfig()
 	buf := e.b[e.curBuffer]
 	show := buf.Cursor.Line() == i || cfg.ShowMD
 	isFirst := i == upperBorder
@@ -161,10 +161,11 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		fmt.Fprint(&content, ascii.Reset)
 		fmt.Fprint(&l, n, content.String())
 	} else { // getting empty line
+		theme := config.GetTheme().General
 		if e.tui.ShowHello {
-			fmt.Fprint(&l, ascii.Reset, e.theme.General.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)))
+			fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)))
 		} else {
-			fmt.Fprint(&l, ascii.Reset, e.theme.General.EmptyLine, "~")
+			fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~")
 		}
 	}
 
