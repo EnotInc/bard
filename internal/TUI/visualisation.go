@@ -41,8 +41,8 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		if startLine == i && i == endLine {
 			selected := ui.paint(clear[startOffset:endOffset])
-			before := VisibleSubString(rendered, 0, startOffset-1)
-			after := VisibleSubString(rendered, endOffset, len(clear))
+			before := services.VisibleSubString(rendered, 0, startOffset-1)
+			after := services.VisibleSubString(rendered, endOffset, len(clear))
 			line = []rune(before + ascii.Reset.Str() + string(selected) + after)
 
 		} else if startLine < i && i < endLine {
@@ -50,12 +50,12 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		} else if startLine == i {
 			selected := ui.paint(clear[startOffset:])
-			before := VisibleSubString(rendered, 0, startOffset-1)
+			before := services.VisibleSubString(rendered, 0, startOffset-1)
 			line = ui.WithEndLine(before + ascii.Reset.Str() + string(selected))
 
 		} else if endLine == i {
 			selected := ui.paint(clear[:endOffset])
-			after := VisibleSubString(rendered, endOffset, len(clear))
+			after := services.VisibleSubString(rendered, endOffset, len(clear))
 			line = []rune(string(selected) + after)
 
 		} else {

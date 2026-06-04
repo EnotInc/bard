@@ -146,7 +146,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 					buf.Cursor.Line(),
 					isRender)
 
-				fmt.Fprint(&content, tui.VisibleSubString(visual, start, end))
+				fmt.Fprint(&content, services.VisibleSubString(visual, start, end))
 			} else {
 				data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender)
 				fmt.Fprint(&content, data)

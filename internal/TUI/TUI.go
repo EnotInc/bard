@@ -166,7 +166,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 	}
 	fmt.Fprintf(&data, "%s", ui.fillSpace())
 
-	return VisibleSubString(data.String(), 0, ui.W-1)
+	return services.VisibleSubString(data.String(), 0, ui.W-1)
 }
 
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
@@ -179,55 +179,17 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 	return data.String()
 }
 
-// So here is where I build the actual line, including the ASCII escape sequences
-// If I just use line.data[start:end], I'll get something like this:
-// ```
-// 033[0m and some text
-// ```
-// Here I just ignore the escape sequences and don't count them, so I can use them
-func VisibleSubString(text string, start int, end int) string {
-	var res strings.Builder
-	visibleCount := 0
-	inEscape := false
-	var escapeSeq strings.Builder
-
-	for _, r := range text {
-		if r == '\033' {
-			inEscape = true
-			escapeSeq.Reset()
-			escapeSeq.WriteRune(r)
-			continue
-		}
-		if inEscape {
-			escapeSeq.WriteRune(r)
-			if r == 'm' {
-				inEscape = false
-				if visibleCount <= start+end {
-					res.WriteString(escapeSeq.String())
-				}
-			}
-			continue
-		}
-		if visibleCount >= start && visibleCount <= start+end {
-			res.WriteRune(r)
-		}
-		visibleCount++
-	}
-
-	return res.String()
-}
-
 func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, isRender bool) (string, bool) {
 	if !isRender { // returning stripped text if render is of (or it's not a md file)
 		clear := services.ReplaceTabs(str)
 		shift := services.CursorShift(str)
-		return VisibleSubString(string(clear), start, end+shift), false
+		return services.VisibleSubString(string(clear), start, end+shift), false
 	}
 
 	var l = ""
 	var keep = false
 	l, keep = ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll)
-	l = VisibleSubString(l, start, end)
+	l = services.VisibleSubString(l, start, end)
 
 	return l, keep
 }
