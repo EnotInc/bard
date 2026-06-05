@@ -17,6 +17,11 @@ type Render struct {
 	w     int
 }
 
+func (r *Render) Update() {
+	theme := config.GetTheme().Code
+	r.theme = &theme
+}
+
 func NewRender(w int) *Render {
 	theme := config.GetTheme().Code
 	r := &Render{w: w, theme: &theme}

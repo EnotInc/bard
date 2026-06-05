@@ -8,20 +8,38 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	"golang.org/x/term"
 )
 
 var global *Screen
 
+func Get() *Screen {
+	return global
+}
+
+func SendCall(c calls.Call) {
+	global.call = c
+}
+
 type Screen struct {
 	oldState *term.State
 	tiles    []*tile // let's assume that there is only row layout. I'll figure out this later
+	call     calls.Call
 	focus    int
 	w, h     int
 	fdIn     int
 	fdOut    int
-	status   string
+	status   func(withBorder bool) string
+}
+
+func W() int {
+	return global.w
+}
+
+func H() int {
+	return global.h
 }
 
 func InitScreen() {
@@ -29,7 +47,7 @@ func InitScreen() {
 	_fdOut := int(os.Stdout.Fd())
 
 	old, err := term.MakeRaw(_fdIn)
-	if err != nil {
+	if err != nil && 1 == 2 {
 		panic(err)
 	}
 
@@ -42,22 +60,84 @@ func InitScreen() {
 		oldState: old,
 		tiles:    make([]*tile, 0),
 		focus:    0,
-		w:        0,
-		h:        0,
+		w:        _w,
+		h:        _h,
 		fdIn:     _fdIn,
 		fdOut:    _fdOut,
 	}
 	global = s
 }
 
+func AddTile(t *tile) {
+	global.tiles = append(global.tiles, t)
+}
+
+func ShiftFocus() {
+	if global.focus == len(global.tiles)-1 {
+		global.focus = 0
+		return
+	}
+
+	global.focus = len(global.tiles) - 1
+}
+
+func SetFocus(index int) {
+	if index < 0 {
+		global.focus = 0
+		return
+	}
+	if index > len(global.tiles)-1 {
+		global.focus = len(global.tiles) - 1
+		return
+	}
+
+	global.focus = index
+}
+
+func SetStatusBar(builder func(withBorder bool) string) {
+	global.status = builder
+}
+
 // NOTE: I don't rly shure will this work...
 func DrawAll() {
+	handleCalls()
+
 	var data strings.Builder
+
 	for _, t := range global.tiles {
 		tile := t.GetDiff()
 		data.WriteString(tile)
 	}
+
+	f_tile := global.tiles[global.focus]
+
+	ofset := 0
+	if f_tile.border {
+		ofset = 1
+	}
+
+	cX, cY := f_tile.object.GetCursor(f_tile.border)
+	cX += f_tile.x + ofset
+	cY += f_tile.y + ofset
+
+	status := global.status(f_tile.border)
+	data.WriteString(status)
+
+	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
+	data.WriteString(string(ascii.ShowCursor))
+
 	fmt.Print(data.String())
+}
+
+func handleCalls() {
+	switch global.call {
+	case calls.PurgeCache:
+		for i := range global.tiles {
+			global.tiles[i].hash = make(map[int]uint32, 0)
+		}
+	case calls.Rezise:
+	}
+	global.call = calls.None
 }
 
 func Run() {
@@ -66,6 +146,7 @@ func Run() {
 	DrawAll()
 	reader := bufio.NewReader(os.Stdin)
 	for {
+		// TODO: read as buffer. Add ascii escape sequances parser
 		key, _, err := reader.ReadRune()
 		if err != nil {
 			if err == io.EOF {
@@ -75,7 +156,11 @@ func Run() {
 			}
 		}
 
-		global.tiles[global.focus].object.Handle(key)
+		if key == '?' { // TODO: figure out better key
+			ShiftFocus()
+		} else {
+			global.tiles[global.focus].object.Handle(key)
+		}
 		DrawAll()
 	}
 }

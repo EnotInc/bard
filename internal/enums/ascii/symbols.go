@@ -30,6 +30,6 @@ const (
 	BorderCUR string = "\u256e"
 	BorderCDR string = "\u256f"
 	BorderCDL string = "\u2570"
-	BorderV   string = "\u2505"
+	BorderV   string = "\u2502"
 	BorderH   string = "\u2500"
 )

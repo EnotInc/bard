@@ -1,46 +1,33 @@
 package editor
 
 import (
-	"bufio"
 	"fmt"
-	"io"
-	"os"
 	"strconv"
-
-	"golang.org/x/term"
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/editor/buffer"
-	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums"
+	"github.com/EnotInc/Bard/internal/screen"
 
 	tui "github.com/EnotInc/Bard/internal/editor/TUI"
-	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 // This is main structure, that contains current editor state
-// oldState - used to work with raw terminal mode
 // b - list of Buffer. List is used in work with tabs
 // tui - TUI
 // CurMode - current editor Mode
-// hash - used in DrawDiff() func for diff rendering
 // command - used in command mode, stores user input
 // subCmd - sub command. Used to store commands like `12k`
 // save - is terminal save to work in (depends on window size, if w < 80 or h < 30 then terminal is not save)
-// fdOut - used to work with raw input
-// fdIn - used to work with raw input
 // curBuffer - current buffer index
 type Editor struct {
-	hash      map[int]uint32
-	oldState  *term.State
 	tui       *tui.TUI
 	cmd       *cmd
 	curMode   mode.Mode
 	subCmd    string
 	lastCmd   string
 	b         []*buffer.Buffer
-	fdOut     int
-	fdIn      int
 	curBuffer int
 	IsChanged bool
 	save      bool
@@ -63,37 +50,21 @@ func initCmd() *cmd {
 // Initialisation of editor
 // turn terminal into raw mode, saves old state, initializes Config, Buffer and TUI
 // checks if terminal save to work in
-func InitEditor() *Editor {
-	_fdIn := int(os.Stdin.Fd())
-	_fdOut := int(os.Stdout.Fd())
-
-	old, err := term.MakeRaw(_fdIn)
-	if err != nil {
-		panic(err)
-	}
-	_w, _h, _ := term.GetSize(_fdOut)
-	if _w <= 40 || _h < 15 {
-		panic("Unable to run Bard. Window size is too small!")
-	}
-
+func InitEditor(w, h int) *Editor {
 	config.InitConfig()
 	cfg := config.GetConfig()
-	err = config.InitTheme(cfg.ThemeName)
+	err := config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()
-	_tui := tui.InitTUI(_h, _w)
+	_tui := tui.InitTUI(h, w)
 	_cmd := initCmd()
 
 	e := &Editor{
-		oldState:  old,
 		b:         _b,
 		tui:       _tui,
 		cmd:       _cmd,
 		curMode:   mode.Normal,
-		hash:      make(map[int]uint32),
 		lastCmd:   "",
 		subCmd:    "",
-		fdOut:     _fdOut,
-		fdIn:      _fdIn,
 		curBuffer: 0,
 	}
 
@@ -101,50 +72,12 @@ func InitEditor() *Editor {
 		cfg.ThemeName = cfg.DefaultThemeName()
 	}
 
-	if _w < 80 || _h < 30 {
+	if w < 80 || h < 30 {
 		e.tui.Save = false
 	}
 
 	e.tui.BuidASCII()
 	return e
-}
-
-// Starts 2 goroutines to check if terminal window size was changed:
-// e.tui.TermSizeMotitor and e.listenResize
-func (e *Editor) TermSizeMonitor() {
-	go e.tui.TermSizeMonitor(e.fdOut)
-	go e.listenResize()
-}
-
-// wait till e.tui.Redraw is true, and then it Draw() editor with new size
-func (e *Editor) listenResize() {
-	for {
-		value := <-e.tui.Redraw
-		if value {
-			e.setUiCursor()
-			e.tui.PurgeCache()
-			e.PurgeCache()
-			e.DrawDiff()
-		}
-	}
-}
-
-// TODO: add message
-// Used to restore old terminal state, change terminal buffer (via ascii escape sequence) and stop Bard with status code
-func (e *Editor) Exit(code int) {
-	config.Save()
-
-	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
-	term.Restore(e.fdIn, e.oldState)
-	if r := recover(); r != nil {
-		err := e.saveLog(r)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
-		}
-	}
-	os.Exit(code)
 }
 
 // Used to get move func (one of 'H', 'J', 'K' or 'L'), and move cursor by some amout
@@ -179,53 +112,63 @@ func (e *Editor) replaceWithAmount(key rune) {
 	e.subCmd = ""
 }
 
-// Gets user input, switched by current mode to decide what to do with pressed key and calles DrawDiff() to display changes
-func (e *Editor) Run() {
-	defer e.Exit(1)
-	fmt.Print(ascii.SaveTerminal, ascii.ClearView, ascii.ClearHistory)
-	e.DrawDiff()
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		e.tui.Message = ""
-		key, _, err := reader.ReadRune()
-		if err != nil {
-			if err == io.EOF {
-				key = keys.Ctrl_z
-			} else {
-				panic(err)
-			}
+func (e *Editor) Handle(key rune) {
+	switch e.curMode {
+	case mode.Normal:
+		if e.IsGeneralMove(key) {
+			e.GeneralCase(key)
+		} else {
+			e.caseNormal(key)
 		}
-
-		switch e.curMode {
-		case mode.Normal:
-			if e.IsGeneralMove(key) {
-				e.GeneralCase(key)
-			} else {
-				e.caseNormal(key)
-			}
-		case mode.Visual:
-			if e.IsGeneralMove(key) {
-				e.GeneralCase(key)
-			} else {
-				e.caseVisual(key)
-			}
-		case mode.Visual_line:
-			if e.IsGeneralMove(key) {
-				e.GeneralCase(key)
-			} else {
-				e.caseVisualLine(key)
-			}
-		case mode.Command:
-			e.caseCommand(key)
-		case mode.Insert:
-			e.caseInsert(key)
-		case mode.Replace:
-			e.caseReplaceMode(key)
-		default:
-			e.Exit(1)
+	case mode.Visual:
+		if e.IsGeneralMove(key) {
+			e.GeneralCase(key)
+		} else {
+			e.caseVisual(key)
 		}
-
-		e.setUiCursor()
-		e.DrawDiff()
+	case mode.Visual_line:
+		if e.IsGeneralMove(key) {
+			e.GeneralCase(key)
+		} else {
+			e.caseVisualLine(key)
+		}
+	case mode.Command:
+		e.caseCommand(key)
+	case mode.Insert:
+		e.caseInsert(key)
+	case mode.Replace:
+		e.caseReplaceMode(key)
+	default:
+		screen.Exit(1)
 	}
+
+	e.setUiCursor()
+}
+
+func (e *Editor) GetCursor(withBorder bool) (int, int) {
+	// FIXME: move 'emptyLineSpaces' to somewhere
+	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
+	var x int
+	var y int
+	if e.curMode == mode.Command {
+		x = len(e.cmd.command) + len(emtpyLineSpases)
+		y = e.tui.H
+
+		if !withBorder {
+			x += 1
+		}
+	} else {
+		x = e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
+		y = e.tui.CurRow + enums.CursorOffset
+	}
+	return x, y
+}
+
+func (e *Editor) SetTitle() string {
+	var tabs []string
+	for _, t := range e.b {
+		tabs = append(tabs, t.Title)
+	}
+	cfg := config.GetConfig()
+	return e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
 }

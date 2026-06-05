@@ -8,9 +8,11 @@ import (
 	"unicode"
 
 	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/help"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
+	"github.com/EnotInc/Bard/internal/screen"
 )
 
 // Called from Run() func
@@ -70,11 +72,11 @@ func (e *Editor) execCommand() {
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)
 		} else {
-			e.Exit(0)
+			screen.Exit(0)
 		}
 
 	case "qa":
-		e.Exit(0)
+		screen.Exit(0)
 
 	case "w":
 		e.SaveFile()
@@ -84,7 +86,7 @@ func (e *Editor) execCommand() {
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)
 		} else {
-			e.Exit(0)
+			screen.Exit(0)
 		}
 
 	case "help", "h":
@@ -97,13 +99,13 @@ func (e *Editor) execCommand() {
 		cfg.ShowMD = !cfg.ShowMD
 		e.IsChanged = true
 		e.tui.PurgeCache()
-		e.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
 
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
 		e.IsChanged = true
 		e.tui.PurgeCache()
-		e.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
 
 	case "tn", "tabnames":
 		cfg.TabNames = !cfg.TabNames
@@ -162,15 +164,13 @@ func (e *Editor) parseCommand() {
 				arg = cfg.ThemeName
 			}
 
-			theme := config.GetTheme()
-			msg := theme.ChangeTheme(arg)
+			msg := config.ChangeTheme(arg)
 			if msg != "" {
 				e.tui.Message = msg
 				return
 			}
 			cfg.ThemeName = arg
 			e.tui.PurgeCache()
-			e.PurgeCache()
 
 		case "gt":
 			page, err := strconv.Atoi(arg)
@@ -197,7 +197,7 @@ func (e *Editor) parseCommand() {
 			config.FixConfig()
 
 			e.tui.PurgeCache()
-			e.PurgeCache()
+			screen.SendCall(calls.PurgeCache)
 
 		default:
 			e.tui.Message = "unknown command"

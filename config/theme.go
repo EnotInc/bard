@@ -58,14 +58,15 @@ func InitTheme(themeName string) error {
 	t := &Theme{}
 	err = json.Unmarshal(data, t)
 	if err != nil {
-		theme = t
+		theme = defaultTheme
 		return fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
+	theme = t
 	return nil
 }
 
-func (t *Theme) ChangeTheme(themeName string) string {
+func ChangeTheme(themeName string) string {
 	theme_path := getThemePath(themeName)
 
 	if _, err := os.Stat(theme_path); err != nil {
@@ -78,12 +79,12 @@ func (t *Theme) ChangeTheme(themeName string) string {
 	}
 
 	new := &Theme{}
-	err = json.Unmarshal(data, t)
+	err = json.Unmarshal(data, new)
 	if err != nil {
 		return "unable to set theme '" + themeName + "'"
 	}
 
-	t = new // just in case
+	theme = new
 	return ""
 }
 
@@ -97,7 +98,7 @@ func getDefaultTheme() *Theme {
 			Command:     "\033[33m",
 			EmptyLine:   "\033[36m",
 			Message:     "\033[31m",
-			Tab:         "\033[94m",
+			Tab:         "\033[34m",
 		},
 		Markdown: Markdown{
 			Header1:    "\033[34m",

@@ -5,60 +5,19 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
+	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
 
-	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
-func (e *Editor) DrawDiff() {
-	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
-	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
-
-	var diff strings.Builder
-
-	fmt.Fprint(&diff, ascii.HideCursor, ascii.MoveToStart)
-
-	upperBorder := e.tui.YScroll
-	lowerBorder := e.tui.YScroll + e.tui.H - 1
-
-	i := upperBorder
-	for j := range lowerBorder {
-		if j < upperBorder {
-			curLine := string(e.b[e.curBuffer].Lines[j].Data)
-			if strings.HasPrefix(curLine, "```") {
-				e.tui.ToggleRender()
-			}
-			continue
-		}
-
-		l, keep := e.drawRenderedLine(i, upperBorder, emtpyLineSpases, maxNumLen)
-		curHash := services.GetHash(l)
-		oldHash, ok := e.hash[i-upperBorder]
-
-		// if row is 1 of cursor position, or hash isn't the same as prev render, or hash wasn't calculated - draw line
-		if keep || !ok || (ok && curHash != oldHash) || (i-upperBorder == e.tui.CurRow) {
-			fmt.Fprintf(&diff, "\033[%d;1H\033[0K", i-upperBorder+1)
-			fmt.Fprint(&diff, l)
-			e.hash[i-upperBorder] = curHash
-		}
-		i++
-	}
-
-	status := e.drawStatusBar(emtpyLineSpases, lowerBorder-upperBorder)
-	fmt.Fprint(&diff, status)
-	fmt.Print(diff.String())
-}
-
-func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
+func (e *Editor) DrawStatusBar(withBorder bool) string {
 	var data strings.Builder
 
-	fmt.Fprintf(&data, "\033[%d;1H", lastLine+1)
-
-	x := e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
-	y := e.tui.CurRow + enums.CursorOffset
+	// NOTE: this coulb be borke if editor will be above another tile. But for now it's working
+	fmt.Fprintf(&data, "\033[%d;1H", e.tui.H+1)
 
 	cursor := e.b[e.curBuffer].Cursor
 	posx := cursor.Offset() + enums.CursorOffset
@@ -75,39 +34,52 @@ func (e *Editor) drawStatusBar(emtpyLineSpases string, lastLine int) string {
 	case mode.Insert:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorLine)
-		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Replace:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorUnderline)
-		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Command:
-		fmt.Fprintf(&data, "\033[%d;%dH%s\033[%d;1H", y, x, ascii.Cursor, lastLine+1) // adding cursor as unicode symbol on last visual position, and returning it to the last line
+		//FIXME: figure out how to draw a ghost cursor
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.cmd.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
-		var tabs []string
-		for _, t := range e.b {
-			tabs = append(tabs, t.Title)
+		tab := ""
+
+		if !withBorder {
+			var tabs []string
+			for _, t := range e.b {
+				tabs = append(tabs, t.Title)
+			}
+			cfg := config.GetConfig()
+			tab = e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
 		}
-		cfg := config.GetConfig()
-		cursorPos := e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, cursorPos, e.tui.Message, e.subCmd))
+
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, tab, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
-		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 
 	case mode.Visual, mode.Visual_line:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
-		fmt.Fprintf(&data, "\033[%d;%dH", y, x)
 	}
 
 	e.tui.ResetRender()
 	fmt.Fprint(&data, ascii.Reset, ascii.ShowCursor)
 
+	e.tui.Message = ""
+
 	return data.String()
+}
+
+func (e *Editor) DrawLineAt(index int) string {
+	upperBorder := e.tui.YScroll
+	// TODO: move this shit out, this could be calculated at the start of draw call
+	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
+	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
+	l, _ := e.drawRenderedLine(index+upperBorder, upperBorder, emtpyLineSpases, maxNumLen)
+
+	return l
 }
 
 func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) (string, bool) {
@@ -119,7 +91,6 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 	var l strings.Builder
 	var keep bool
 
-	// This 2 variables are used to get the horizontal borders of the visible content
 	if i < len(buf.Lines) { // rendering line
 		var content strings.Builder
 
@@ -170,8 +141,4 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 	}
 
 	return l.String(), keep
-}
-
-func (e *Editor) PurgeCache() {
-	e.hash = make(map[int]uint32)
 }

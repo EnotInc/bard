@@ -102,4 +102,6 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 
 func (r *Renderer) PurgeCache() {
 	r.c.purge()
+	r.md.Update()
+	r.code.Update()
 }

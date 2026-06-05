@@ -10,6 +10,8 @@ import (
 	"github.com/EnotInc/Bard/internal/editor/TUI/render"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/calls"
+	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
 	"golang.org/x/term"
 )
@@ -148,7 +150,7 @@ func (ui *TUI) fillSpaceWith(ln int) string {
 }
 
 func (ui *TUI) fillSpace() string {
-	amount := max(ui.W, 0)
+	amount := max(screen.W(), 0)
 	return strings.Repeat(" ", amount)
 }
 
@@ -166,7 +168,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd s
 	}
 	fmt.Fprintf(&data, "%s", ui.fillSpace())
 
-	return services.VisibleSubString(data.String(), 0, ui.W-1)
+	return services.VisibleSubString(data.String(), 0, screen.W()-1)
 }
 
 // Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
@@ -220,13 +222,14 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 		} else {
 			fmt.Fprintf(&s, "[%d]", i+1)
 		}
-		fmt.Fprint(&s, ascii.Reset, theme.BottomBar)
+		fmt.Fprint(&s, ascii.Reset)
 	}
 	return s.String()
 }
 
 func (ui *TUI) PurgeCache() {
 	ui.render.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }
 
 func (ui *TUI) ToggleRender() {

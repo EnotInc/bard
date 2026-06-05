@@ -39,3 +39,28 @@ func VisibleSubString(text string, start int, end int) string {
 
 	return res.String()
 }
+
+func CountClear(text string, start int, end int) int {
+	visibleCount := 0
+	inEscape := false
+	count := 0
+
+	for _, r := range text {
+		if r == '\033' {
+			inEscape = true
+			continue
+		}
+		if inEscape {
+			if r == 'm' {
+				inEscape = false
+			}
+			continue
+		}
+		if visibleCount >= start && visibleCount <= start+end {
+			count++
+		}
+		visibleCount++
+	}
+
+	return count
+}
