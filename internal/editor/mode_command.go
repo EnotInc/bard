@@ -45,8 +45,14 @@ func (e *Editor) caseCommand(key rune) {
 			e.cmd.index -= 1
 			e.cmd.command = e.cmd.history[e.cmd.index]
 		}
-
 	default:
+		cmdOfset := 10
+		if len(e.cmd.command) >= e.tui.W-cmdOfset {
+			e.cmd.command = ""
+			e.tui.Message = "Unable process command of this lenght"
+			e.curMode = mode.Normal
+			return
+		}
 		if unicode.IsPrint(key) {
 			e.cmd.command += string(key)
 		}
@@ -180,7 +186,7 @@ func (e *Editor) parseCommand() {
 			}
 
 			page -= 1
-			if page < 0 || page > len(e.b) {
+			if page < 0 || page > len(e.b)-1 {
 				e.tui.Message = "can't open this tab"
 				return
 			}
