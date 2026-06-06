@@ -105,6 +105,7 @@ func DrawAll() {
 	var data strings.Builder
 
 	for _, t := range global.tiles {
+		t.object.PreDraw()
 		tile := t.GetDiff()
 		data.WriteString(tile)
 	}
@@ -116,12 +117,12 @@ func DrawAll() {
 		ofset = 1
 	}
 
+	status := global.status(f_tile.border)
+	data.WriteString(status)
+
 	cX, cY := f_tile.object.GetCursor(f_tile.border)
 	cX += f_tile.x + ofset
 	cY += f_tile.y + ofset
-
-	status := global.status(f_tile.border)
-	data.WriteString(status)
 
 	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
 	data.WriteString(string(ascii.ShowCursor))
@@ -156,11 +157,7 @@ func Run() {
 			}
 		}
 
-		if key == '?' { // TODO: figure out better key
-			ShiftFocus()
-		} else {
-			global.tiles[global.focus].object.Handle(key)
-		}
+		global.tiles[global.focus].object.Handle(key)
 		DrawAll()
 	}
 }

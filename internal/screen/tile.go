@@ -13,6 +13,7 @@ type object interface {
 	Handle(key rune)
 	GetCursor(withBorderl bool) (int, int)
 	SetTitle() string
+	PreDraw()
 }
 
 type tile struct {

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
@@ -16,7 +15,7 @@ import (
 func (e *Editor) DrawStatusBar(withBorder bool) string {
 	var data strings.Builder
 
-	// NOTE: this coulb be borke if editor will be above another tile. But for now it's working
+	// NOTE: this could be borke if editor will be above another tile. But for now it's working
 	fmt.Fprintf(&data, "\033[%d;1H", e.tui.H+1)
 
 	cursor := e.b[e.curBuffer].Cursor
@@ -74,15 +73,13 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 
 func (e *Editor) DrawLineAt(index int) string {
 	upperBorder := e.tui.YScroll
-	// TODO: move this shit out, this could be calculated at the start of draw call
-	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
-	l, _ := e.drawRenderedLine(index+upperBorder, upperBorder, emtpyLineSpases, maxNumLen)
+	l, _ := e.drawRenderedLine(index+upperBorder, upperBorder, maxNumLen)
 
 	return l
 }
 
-func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string, maxNumLen int) (string, bool) {
+func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string, bool) {
 	cfg := config.GetConfig()
 	buf := e.b[e.curBuffer]
 	show := buf.Cursor.Line() == i || cfg.ShowMD
@@ -95,7 +92,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, emtpyLineSpases string
 		var content strings.Builder
 
 		start := e.tui.XScroll
-		end := e.tui.W - enums.InitialOffset - len(emtpyLineSpases)
+		end := e.tui.W - enums.InitialOffset - len(e.emtpyLineSpases)
 
 		str := buf.Lines[i].Data
 

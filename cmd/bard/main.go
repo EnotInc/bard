@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	if len(os.Args) == 2 {
 		arg := os.Args[1]
 

@@ -3,6 +3,7 @@ package editor
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/editor/buffer"
@@ -22,15 +23,16 @@ import (
 // save - is terminal save to work in (depends on window size, if w < 80 or h < 30 then terminal is not save)
 // curBuffer - current buffer index
 type Editor struct {
-	tui       *tui.TUI
-	cmd       *cmd
-	curMode   mode.Mode
-	subCmd    string
-	lastCmd   string
-	b         []*buffer.Buffer
-	curBuffer int
-	IsChanged bool
-	save      bool
+	tui             *tui.TUI
+	cmd             *cmd
+	curMode         mode.Mode
+	emtpyLineSpases string
+	subCmd          string
+	lastCmd         string
+	b               []*buffer.Buffer
+	curBuffer       int
+	IsChanged       bool
+	save            bool
 }
 
 type cmd struct {
@@ -146,19 +148,17 @@ func (e *Editor) Handle(key rune) {
 }
 
 func (e *Editor) GetCursor(withBorder bool) (int, int) {
-	// FIXME: move 'emptyLineSpaces' to somewhere
-	emtpyLineSpases := tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	var x int
 	var y int
 	if e.curMode == mode.Command {
-		x = len(e.cmd.command) + len(emtpyLineSpases)
+		x = len(e.cmd.command) + len(e.emtpyLineSpases)
 		y = e.tui.H
 
 		if !withBorder {
 			x += 1
 		}
 	} else {
-		x = e.tui.CurOff + enums.InitialOffset + len(emtpyLineSpases)
+		x = e.tui.CurOff + enums.InitialOffset + len(e.emtpyLineSpases)
 		y = e.tui.CurRow + enums.CursorOffset
 	}
 	return x, y
@@ -171,4 +171,14 @@ func (e *Editor) SetTitle() string {
 	}
 	cfg := config.GetConfig()
 	return e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
+}
+
+func (e *Editor) PreDraw() {
+	e.emtpyLineSpases = tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
+	for i := range e.tui.YScroll {
+		curLine := string(e.b[e.curBuffer].Lines[i].Data)
+		if strings.HasPrefix(curLine, "```") {
+			e.tui.ToggleRender()
+		}
+	}
 }
