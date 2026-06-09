@@ -12,4 +12,5 @@ const (
 	Visual     Topic = "visual"
 	VisualLine Topic = "visual-line"
 	Config     Topic = "config"
+	Explorer   Topic = "explorer"
 )
