@@ -39,6 +39,7 @@ func NewTile(o object, w, h int, b bool) (*tile, error) {
 	return tile, nil
 }
 
+// move to enums?
 const termShift = 1
 
 func (t *tile) GetDiff(tileOfset int) string {
@@ -48,12 +49,15 @@ func (t *tile) GetDiff(tileOfset int) string {
 
 	statusLine := 1
 	for i := range t.h - statusLine { // leaving one for status line
+		c := t.getColor()
 		var data strings.Builder
 		if t.border && i == 0 {
 			border := t.getBorder(true)
 			data.WriteString(string(ascii.Reset))
+			data.WriteString(c)
 			data.WriteString(string(ascii.BorderCUL))
 			data.WriteString(border)
+			data.WriteString(c)
 			data.WriteString(string(ascii.BorderCUR))
 
 			pos := fmt.Sprintf("\033[%d;%dH", termShift, tileOfset+termShift)
@@ -67,8 +71,10 @@ func (t *tile) GetDiff(tileOfset int) string {
 			diff.WriteString(pos)
 
 			data.WriteString(string(ascii.Reset))
+			data.WriteString(c)
 			data.WriteString(string(ascii.BorderCDL))
 			data.WriteString(border)
+			data.WriteString(c)
 			data.WriteString(string(ascii.BorderCDR))
 
 			diff.WriteString(data.String())
@@ -89,14 +95,17 @@ func (t *tile) GetDiff(tileOfset int) string {
 			pos := fmt.Sprintf("\033[%d;%dH\033[0K", i+termShift, tileOfset+termShift)
 			diff.WriteString(pos)
 			if t.border {
-				data.WriteString(string(ascii.Reset))
+				data.WriteString(c)
 				data.WriteString(string(ascii.BorderV))
+				data.WriteString(string(ascii.Reset))
 			}
 			data.WriteString(trim)
 			if t.border {
 				fmt.Fprintf(&data, "\033[%d;%dH", i+termShift, tileOfset+t.w)
 				data.WriteString(string(ascii.Reset))
+				data.WriteString(c)
 				data.WriteString(string(ascii.BorderV))
+				data.WriteString(string(ascii.Reset))
 			}
 
 			diff.WriteString(data.String())
@@ -108,6 +117,7 @@ func (t *tile) GetDiff(tileOfset int) string {
 
 func (t *tile) getBorder(withTitle bool) string {
 	var border strings.Builder
+	c := t.getColor()
 	if withTitle {
 		t.title = t.object.SetTitle()
 		visible := services.CountClear(t.title, 0, len(t.title))
@@ -117,12 +127,25 @@ func (t *tile) getBorder(withTitle bool) string {
 		}
 		amount := max(t.w-2-visible-termShift, 0)
 
+		border.WriteString(c)
 		border.WriteString(string(ascii.BorderH))
+		border.WriteString(ascii.Reset.Str())
 		border.WriteString(t.title)
 		border.WriteString(string(ascii.Reset))
+		border.WriteString(c)
 		border.WriteString(strings.Repeat(string(ascii.BorderH), amount))
 	} else {
+		border.WriteString(c)
 		border.WriteString(strings.Repeat(string(ascii.BorderH), t.w-2))
 	}
 	return border.String()
+}
+
+func (t *tile) getColor() string {
+	focused := global.tiles[global.focus].title
+	if focused == t.title {
+		return "\033[34m" // TODO: move to theme
+	} else {
+		return ""
+	}
 }

@@ -9,7 +9,11 @@ func GetFileIcon(s string) string {
 	var ext string = ""
 	if len(parts) > 1 {
 		ext = parts[len(parts)-1]
+	} else {
+		ext = strings.TrimPrefix(s, ".")
 	}
+
+	ext = strings.ToLower(ext)
 
 	if i, ok := langIcon[ext]; ok {
 		return i
@@ -54,6 +58,7 @@ var langIcon map[string]string = map[string]string{
 	"kts":               "\033[34m ",
 	"log":               " ",
 	"lua":               "\033[34m ",
+	"license":           "\033[33m ",
 	"md":                "\033[33m ",
 	"markdown":          "\033[33m ",
 	"mk":                " ",
@@ -92,7 +97,7 @@ func GetDirIcon(s string) string {
 	}
 }
 
-const defaultDir = "\033[36m "
+const defaultDir = "\033[96m "
 
 var dirIcon map[string]string = map[string]string{
 	"Pictures":     "\033[1;95m󰉏 ",

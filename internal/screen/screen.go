@@ -16,10 +16,6 @@ import (
 
 var global *Screen
 
-func Get() *Screen {
-	return global
-}
-
 func SendCall(c calls.Call) {
 	global.call = c
 }
