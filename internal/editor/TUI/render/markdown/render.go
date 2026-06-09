@@ -172,11 +172,8 @@ func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
 		return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace(xScroll)
 	}
 
-	if i, ok := langIcon[strings.ToLower(string(t.Value))]; ok {
-		return r.theme.CodeHeader + " " + i + services.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace(xScroll)
-	}
-	// fallback
-	return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, "["+string(t.Value)+"] ") + r.fillSpace(xScroll)
+	i := services.GetFileIcon(string(t.Value))
+	return r.theme.CodeHeader + " " + i + services.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace(xScroll)
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {

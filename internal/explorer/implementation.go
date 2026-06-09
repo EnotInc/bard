@@ -6,13 +6,21 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	"github.com/EnotInc/Bard/internal/screen"
+	"github.com/EnotInc/Bard/internal/services"
 )
 
 func (ex *Explorer) DrawLineAt(index int) string {
 	if index+ex.yScroll >= len(ex.entries) {
-		return "~"
+		return ""
 	}
-	return fmt.Sprintf("  %s", ex.entries[index+ex.yScroll].name)
+	entry := ex.entries[index+ex.yScroll]
+	var icon string
+	if entry.isDir {
+		icon = services.GetDirIcon(entry.name)
+	} else {
+		icon = services.GetFileIcon(entry.name)
+	}
+	return fmt.Sprintf("%s%s", icon, ex.entries[index+ex.yScroll].name)
 }
 
 func (ex *Explorer) Handle(key rune) {
@@ -34,11 +42,7 @@ func (ex *Explorer) Handle(key rune) {
 }
 
 func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
-	borderOfset := 0
-	if withBorder {
-		borderOfset = 1
-	}
-	return ex.visible.x + enums.InitialOffset, ex.visible.y + enums.CursorOffset + borderOfset
+	return ex.visible.x + enums.InitialOffset, ex.visible.y + enums.CursorOffset + 1
 }
 
 func (ex *Explorer) SetTitle() string {

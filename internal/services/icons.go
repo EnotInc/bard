@@ -1,4 +1,24 @@
-package markdown
+package services
+
+import (
+	"strings"
+)
+
+func GetFileIcon(s string) string {
+	parts := strings.Split(s, ".")
+	var ext string = ""
+	if len(parts) > 1 {
+		ext = parts[len(parts)-1]
+	}
+
+	if i, ok := langIcon[ext]; ok {
+		return i
+	} else {
+		return defaultFile
+	}
+}
+
+const defaultFile = " "
 
 var langIcon map[string]string = map[string]string{
 	"asm":               "\033[34m ",
@@ -62,4 +82,35 @@ var langIcon map[string]string = map[string]string{
 	"xhtml":             "\033[33m ",
 	"yml":               " ",
 	"yaml":              " ",
+}
+
+func GetDirIcon(s string) string {
+	if i, ok := dirIcon[s]; ok {
+		return i
+	} else {
+		return defaultDir
+	}
+}
+
+const defaultDir = "\033[36m "
+
+var dirIcon map[string]string = map[string]string{
+	"Pictures":     "\033[1;95m󰉏 ",
+	"Downloads":    "\033[1;92m󰉍 ",
+	".git":         "\033[1;31m ",
+	".ssh":         "\033[1;96m󰢬 ",
+	"Music":        "\033[1;95m󱍙 ",
+	"Desktop":      "\033[1;94m ",
+	".vscode":      "\033[1;36m󰨞 ",
+	".config":      "\033[1;96m ",
+	"config":       "\033[1;96m ",
+	"configs":      "\033[1;96m ",
+	"bin":          "\033[1;96m ",
+	"github":       "\033[1;36m ",
+	".github":      "\033[1;36m ",
+	"Videos":       "\033[1;95m󰃽 ",
+	".cache":       "\033[1;96m󰴌 ",
+	".chant":       "\033[1;33m󰝱 ",
+	".bard":        "\033[1;33m󰝱 ",
+	"node_modules": "\033[1;32m ",
 }
