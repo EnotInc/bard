@@ -5,6 +5,7 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/editor"
+	"github.com/EnotInc/Bard/internal/explorer"
 	"github.com/EnotInc/Bard/internal/screen"
 )
 
@@ -13,11 +14,18 @@ func main() {
 	screen.InitScreen()
 
 	border := true
-	w := screen.W()
 	h := screen.H()
+	ex_w := 30
+	ed_w := screen.W() - ex_w
 
-	e := editor.InitEditor(w, h)
-	e_tile, err := screen.NewTile(e, w, h, border)
+	ed := editor.InitEditor(ed_w, h)
+	ed_tile, err := screen.NewTile(ed, ed_w, h, border)
+	if err != nil {
+		panic(err)
+	}
+
+	ex := explorer.InitExplorer()
+	ex_tile, err := screen.NewTile(ex, ex_w, h, border)
 	if err != nil {
 		panic(err)
 	}
@@ -27,14 +35,15 @@ func main() {
 
 		switch arg {
 		case "-h", "--help":
-			e.StartHelp()
+			ed.StartHelp()
 		default:
-			e.LoadFile(arg)
+			ed.LoadFile(arg)
 		}
 	}
 
-	screen.SetStatusBar(e.DrawStatusBar)
-	screen.AddTile(e_tile)
+	screen.SetStatusBar(ed.DrawStatusBar)
+	screen.AddTile(ed_tile)
+	screen.AddTile(ex_tile)
 
 	screen.TermSizeMonitor()
 

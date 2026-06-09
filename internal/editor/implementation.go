@@ -5,8 +5,10 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
+	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
 
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
@@ -137,4 +139,80 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 	}
 
 	return l.String(), keep
+}
+
+func (e *Editor) Handle(key rune) {
+	switch e.curMode {
+	case mode.Normal:
+		if e.IsGeneralMove(key) {
+			e.GeneralCase(key)
+		} else {
+			e.caseNormal(key)
+		}
+	case mode.Visual:
+		if e.IsGeneralMove(key) {
+			e.GeneralCase(key)
+		} else {
+			e.caseVisual(key)
+		}
+	case mode.Visual_line:
+		if e.IsGeneralMove(key) {
+			e.GeneralCase(key)
+		} else {
+			e.caseVisualLine(key)
+		}
+	case mode.Command:
+		e.caseCommand(key)
+	case mode.Insert:
+		e.caseInsert(key)
+	case mode.Replace:
+		e.caseReplaceMode(key)
+	default:
+		screen.Exit(1)
+	}
+
+	e.setUiCursor()
+}
+
+func (e *Editor) GetCursor(withBorder bool) (int, int) {
+	var x int
+	var y int
+	if e.curMode == mode.Command {
+		x = len(e.cmd.command) + len(e.emtpyLineSpases)
+		y = e.tui.H
+
+		if !withBorder {
+			x += 1
+		}
+	} else {
+		x = e.tui.CurOff + enums.InitialOffset + len(e.emtpyLineSpases)
+		y = e.tui.CurRow + enums.CursorOffset
+	}
+	return x, y
+}
+
+func (e *Editor) SetTitle() string {
+	var tabs []string
+	for _, t := range e.b {
+		tabs = append(tabs, t.Title)
+	}
+	cfg := config.GetConfig()
+	return e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
+}
+
+func (e *Editor) PreDraw() {
+	e.emtpyLineSpases = tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
+	for i := range e.tui.YScroll {
+		curLine := string(e.b[e.curBuffer].Lines[i].Data)
+		if strings.HasPrefix(curLine, "```") {
+			e.tui.ToggleRender()
+		}
+	}
+}
+
+func (e *Editor) Resize(w, h int) {
+	e.tui.PurgeCache()
+	e.tui.ResizeRender(w)
+	e.tui.W = w
+	e.tui.H = h
 }

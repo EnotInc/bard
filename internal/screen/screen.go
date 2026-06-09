@@ -131,7 +131,7 @@ func DrawAll() {
 	data.WriteString(status)
 
 	cX, cY := f_tile.object.GetCursor(f_tile.border)
-	cX += focusedOfset + ofset
+	cX += ofset + focusedOfset
 	cY += ofset
 
 	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
@@ -167,7 +167,11 @@ func Run() {
 			}
 		}
 
-		global.tiles[global.focus].object.Handle(key)
+		if key == '-' {
+			ShiftFocus()
+		} else {
+			global.tiles[global.focus].object.Handle(key)
+		}
 		DrawAll()
 	}
 }

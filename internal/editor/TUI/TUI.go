@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/editor/TUI/render"
@@ -13,7 +12,6 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
-	"golang.org/x/term"
 )
 
 type visual struct {
@@ -66,36 +64,6 @@ func InitTUI(h int, w int) *TUI {
 		Redraw:  make(chan bool, 1),
 	}
 	return ui
-}
-
-// This function is called in the main.go file in a goroutine.
-// Here I just recalculate the terminal size and adjust Bard to it
-func (tui *TUI) TermSizeMonitor(fdOut int) {
-	ticker := time.NewTicker(500 * time.Millisecond)
-	defer ticker.Stop()
-
-	var last_w, last_h = tui.W, tui.H
-
-	for range ticker.C {
-		w, h, err := term.GetSize(fdOut)
-		if err != nil {
-			continue
-		}
-
-		if last_w != w || last_h != h {
-			last_w = w
-			last_h = h
-
-			tui.render.Resize(w)
-			tui.resize(w, h)
-		}
-	}
-}
-
-func (tui *TUI) resize(w int, h int) {
-	tui.W = w
-	tui.H = h
-	tui.Redraw <- true
 }
 
 func (tui *TUI) MakeDirty() {

@@ -11,7 +11,7 @@ import (
 type object interface {
 	DrawLineAt(index int) string
 	Handle(key rune)
-	GetCursor(withBorderl bool) (int, int)
+	GetCursor(withBorder bool) (int, int)
 	SetTitle() string
 	Resize(w, h int)
 	PreDraw()
