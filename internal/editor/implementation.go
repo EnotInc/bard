@@ -178,7 +178,7 @@ func (e *Editor) GetCursor(withBorder bool) (int, int) {
 	var x int
 	var y int
 	if e.curMode == mode.Command {
-		x = len(e.cmd.command) + len(e.emtpyLineSpases)
+		x = len(e.cmd.command) + enums.InitialOffset - 1
 		y = e.tui.H
 
 		if !withBorder {
