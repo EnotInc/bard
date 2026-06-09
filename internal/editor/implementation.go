@@ -217,8 +217,3 @@ func (e *Editor) Resize(w, h int) {
 	e.tui.W = w
 	e.tui.H = h
 }
-
-func (e *Editor) OpenFileCallback(file string) {
-	e.newBuffer()
-	e.LoadFile(file)
-}

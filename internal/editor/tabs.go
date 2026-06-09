@@ -44,3 +44,12 @@ func (e *Editor) prevTab() {
 		e.curBuffer -= 1
 	}
 }
+
+func (e *Editor) SwitchToTab(index int) {
+	if index > len(e.b)-1 || index < 0 {
+		e.tui.Message = fmt.Sprintf("Unable to open tab, index %d out of range", index)
+		return
+	}
+
+	e.curBuffer = index
+}

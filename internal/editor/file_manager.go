@@ -11,6 +11,7 @@ import (
 	"github.com/EnotInc/Bard/docs/help"
 	"github.com/EnotInc/Bard/internal/editor/buffer"
 	h "github.com/EnotInc/Bard/internal/enums/help"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
 )
 
@@ -57,6 +58,7 @@ func (e *Editor) StartHelp() {
 
 // Used to read file data, and write it into current Buffer
 func (e *Editor) LoadFile(file string) {
+	e.tui.ShowHello = false
 	if f, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
 		e.tui.ShowHello = true
@@ -98,10 +100,11 @@ func (e *Editor) LoadFile(file string) {
 
 // Called when new file is opened or created in Bard
 func (e *Editor) CreateFile(fileName string) {
-	_, err := os.Create(fileName)
+	f, err := os.Create(fileName)
 	if err != nil {
 		e.tui.Message = fmt.Sprintf("Unable to create file %s", fileName)
 	}
+	defer f.Close()
 }
 
 // saves current Buffer into file
@@ -129,4 +132,27 @@ func (e *Editor) SaveFile() {
 			e.tui.Message = "file name was not provided"
 		}
 	}
+}
+
+func (e *Editor) OpenFileCallback(file string) {
+	if len(e.b) == 1 && e.b[0].Title == "" && len(e.b[0].Lines) == 1 {
+		e.LoadFile(file)
+		return
+	}
+
+	for i, b := range e.b {
+		title := strings.TrimPrefix(b.Title, ".\\")
+		if title == file {
+			e.SwitchToTab(i)
+			return
+		}
+	}
+
+	e.newBuffer()
+	e.LoadFile(file)
+}
+
+func (e *Editor) RemoveFileCallback(file string) {
+	e.curMode = mode.Command
+	e.cmd.command = fmt.Sprintf("del %s", file)
 }

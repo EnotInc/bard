@@ -79,10 +79,9 @@ func AddTile(t *tile) {
 func ShiftFocus() {
 	if global.focus == len(global.tiles)-1 {
 		global.focus = 0
-		return
+	} else {
+		global.focus += 1
 	}
-
-	global.focus = len(global.tiles) - 1
 }
 
 func SetFocus(index int) {
@@ -147,7 +146,7 @@ func handleCalls() {
 		for i := range global.tiles {
 			global.tiles[i].hash = make(map[int]uint32, 0)
 		}
-	case calls.OpenFile:
+	case calls.OpenFile, calls.DelFile:
 		ShiftFocus()
 	}
 	global.call = calls.None

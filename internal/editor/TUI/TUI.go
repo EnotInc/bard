@@ -44,7 +44,7 @@ type TUI struct {
 	XScroll   int
 	CurRow    int
 	YScroll   int
-	ShowHello bool
+	ShowHello bool // TODO: move to buffer as 'is new'
 	Save      bool
 }
 

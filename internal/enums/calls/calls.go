@@ -7,4 +7,5 @@ const (
 	None
 	PurgeCache
 	OpenFile
+	DelFile
 )

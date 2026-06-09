@@ -2,6 +2,7 @@ package editor
 
 import (
 	"fmt"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -204,6 +205,29 @@ func (e *Editor) parseCommand() {
 
 			e.tui.PurgeCache()
 			screen.SendCall(calls.PurgeCache)
+
+		case "del": // This command used to delere files. Usually called from file explorer
+			file := arg
+			for i, b := range e.b {
+				title := strings.TrimPrefix(b.Title, ".\\")
+				if title == file {
+					if b.IsReadOnly {
+						return
+					}
+					if len(e.b) == 1 {
+						e.newBuffer()
+					}
+					e.delBuffer(i)
+					break
+				}
+			}
+
+			err := os.Remove(file)
+			if err != nil {
+				e.tui.Message = fmt.Sprintf("unable to remove file: %s", file)
+			}
+
+			e.tui.Message = fmt.Sprintf("file [%s] was removed", file)
 
 		default:
 			e.tui.Message = "unknown command"

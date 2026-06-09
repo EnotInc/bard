@@ -58,3 +58,9 @@ func (ex *Explorer) openFileWithCallback() {
 	ex.openFile(entry.name)
 	screen.SendCall(calls.OpenFile)
 }
+
+func (ex *Explorer) delFileWithCallback() {
+	entry := ex.entries[ex.cursor.y]
+	ex.delFile(entry.name)
+	screen.SendCall(calls.DelFile)
+}

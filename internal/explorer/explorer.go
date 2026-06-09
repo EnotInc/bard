@@ -6,16 +6,18 @@ type Explorer struct {
 	visible  *cursor
 	yScroll  int
 	openFile func(file string)
+	delFile  func(file string)
 }
 
-func InitExplorer(callback func(file string)) *Explorer {
+func InitExplorer(open func(file string), del func(file string)) *Explorer {
 
 	c := initCursor()
 	v := initCursor()
 	ex := &Explorer{
 		cursor:   c,
 		visible:  v,
-		openFile: callback,
+		openFile: open,
+		delFile:  del,
 	}
 	ex.entries = scanEntries()
 	ex.scroll()
