@@ -5,6 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/EnotInc/Bard/internal/enums/calls"
+	"github.com/EnotInc/Bard/internal/screen"
 )
 
 type entry struct {
@@ -45,4 +48,13 @@ func scanEntries() []entry {
 	}
 
 	return e
+}
+
+func (ex *Explorer) openFileWithCallback() {
+	entry := ex.entries[ex.cursor.y]
+	if entry.isDir {
+		return
+	}
+	ex.openFile(entry.name)
+	screen.SendCall(calls.OpenFile)
 }

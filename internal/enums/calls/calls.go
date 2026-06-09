@@ -6,4 +6,5 @@ const (
 	_ Call = iota
 	None
 	PurgeCache
+	OpenFile
 )

@@ -20,6 +20,7 @@ func (ex *Explorer) Handle(key rune) {
 	case keys.Esc:
 		screen.SetFocus(0)
 	case keys.Enter: // TODO: open file or [un]fold dir
+		ex.openFileWithCallback()
 	case 'o': // TODO: create new file
 	case 'r': // TODO: change file name (deletes it and let you type)
 	case 'i': // TODO: change file name (set cursor to the end of the file name)

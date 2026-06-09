@@ -147,6 +147,8 @@ func handleCalls() {
 		for i := range global.tiles {
 			global.tiles[i].hash = make(map[int]uint32, 0)
 		}
+	case calls.OpenFile:
+		ShiftFocus()
 	}
 	global.call = calls.None
 }
@@ -186,16 +188,17 @@ func Exit(code int) {
 	term.Restore(global.fdIn, global.oldState)
 
 	var error string = "unknown error"
-	if r := recover(); r != nil {
+	if r := recover(); r != nil && code != 0 {
 		error = fmt.Sprintf("%s", r)
+
+		err := global.saveLog(error)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
+		}
 	}
 
-	err := global.saveLog(error)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
-	}
 	os.Exit(code)
 }
 
