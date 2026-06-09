@@ -170,7 +170,7 @@ func Run() {
 		switch key {
 		case keys.Ctrl_o:
 			ShiftFocus()
-		case keys.Ctrl_i:
+		case keys.Ctrl_j:
 			HideTile()
 		default:
 			global.tiles[global.focus].object.Handle(key)

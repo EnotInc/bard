@@ -5,7 +5,7 @@ const (
 	Backspace      rune = 127
 	Ctrl_r         rune = 18
 	Ctrl_o         rune = 15
-	Ctrl_i         rune = 9
+	Ctrl_j         rune = 10
 	Ctrl_z         rune = 26
 	Space          rune = ' '
 	Enter          rune = 13
