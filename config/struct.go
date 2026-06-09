@@ -5,13 +5,14 @@ package config
 // Render - enable or disable render
 // TabNames - show file name is tabs or not
 type Config struct {
-	ThemeName string `json:"theme_name"`
-	TabStop   int    `json:"tab_stop"`
-	RLN       bool   `json:"relative_line_numbers"`
-	ShowMD    bool   `json:"show_markdown_symbols"`
-	Render    bool   `json:"enable_render"`
-	TabNames  bool   `json:"show_tab_names"`
-	KeepTabs  bool   `json:"keep_tabs"`
+	ThemeName  string `json:"theme_name,omitempty"`
+	ResizeTime int    `json:"resize_time_duration,omitempty"`
+	TabStop    int    `json:"tab_stop,omitempty"`
+	RLN        bool   `json:"relative_line_numbers,omitempty"`
+	ShowMD     bool   `json:"show_markdown_symbols,omitempty"`
+	Render     bool   `json:"enable_render,omitempty"`
+	TabNames   bool   `json:"show_tab_names,omitempty"`
+	KeepTabs   bool   `json:"keep_tabs,omitempty"`
 }
 
 type Theme struct {

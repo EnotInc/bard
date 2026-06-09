@@ -3,6 +3,7 @@ package screen
 import (
 	"time"
 
+	"github.com/EnotInc/Bard/config"
 	"golang.org/x/term"
 )
 
@@ -12,8 +13,9 @@ func TermSizeMonitor() {
 }
 
 func captureResize() {
-	// TODO: move resize time into config
-	ticker := time.NewTicker(500 * time.Microsecond)
+	cfg := config.GetConfig()
+	duration := time.Duration(cfg.ResizeTime)
+	ticker := time.NewTicker(duration * time.Microsecond)
 	defer ticker.Stop()
 
 	var last_w, last_h = global.w, global.h

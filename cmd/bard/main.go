@@ -3,16 +3,17 @@ package main
 import (
 	"os"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/editor"
 	"github.com/EnotInc/Bard/internal/screen"
 )
 
 func main() {
-	// e.TermSizeMonitor()
+	config.InitConfig()
 	screen.InitScreen()
 
 	border := true
-	w := screen.W() / 2
+	w := screen.W()
 	h := screen.H()
 
 	e := editor.InitEditor(w, h)

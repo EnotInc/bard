@@ -39,7 +39,6 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 		fmt.Fprintf(&data, ascii.CursorUnderline)
 
 	case mode.Command:
-		//FIXME: figure out how to draw a ghost cursor
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.cmd.command)))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 

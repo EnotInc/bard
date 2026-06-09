@@ -53,8 +53,6 @@ func initCmd() *cmd {
 // turn terminal into raw mode, saves old state, initializes Config, Buffer and TUI
 // checks if terminal save to work in
 func InitEditor(w, h int) *Editor {
-	// TODO: move init config into main
-	config.InitConfig()
 	cfg := config.GetConfig()
 	err := config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()

@@ -9,6 +9,7 @@ Default config looks like this:
 {
 ` + "\t" + `theme_name: "bard.json" ` + "     " + `# Used to set theme. This field is required '.josn' at the end. All themes is stored at '~/.bard/themes' directory.
 ` + "\t" + `tab_stop: 4 ` + "                 " + `# Can't be less thant 1. Used to set max tab width.
+` + "\t" + `resize_time_duration: 200 ` + "   " + `# Time in milliceconds. Used to set timer to handle terminal resize. Can't be less than 200 and greater than 1000 milliseconds
 ` + "\t" + `relative_line_number: false ` + " " + `# Used to turn on or off relative line numeration.
 ` + "\t" + `show_markdown_symbols: false ` + "" + `# If true - always show markdonw symbols (like starts or underlines). By default they are hidden.
 ` + "\t" + `enable_render: true ` + "         " + `# Turns render on and off.

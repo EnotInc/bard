@@ -9,6 +9,7 @@ import (
 const defaultConfigFile = ".bard/config.json"
 const configDir = ".bard"
 const defaultTabStop = 4
+const defaultResizeDuration = 200
 
 // NOTE: is it alright to store config like that?
 var config *Config
@@ -68,6 +69,13 @@ func FixConfig() {
 	if config.TabStop <= 0 {
 		config.TabStop = defaultTabStop
 	}
+
+	if config.ResizeTime < 200 {
+		config.ResizeTime = 200
+	}
+	if config.ResizeTime > 1000 {
+		config.ResizeTime = 1000
+	}
 }
 
 // saving current configuration
@@ -79,13 +87,14 @@ func Save() {
 
 func getDefaultConfig() *Config {
 	config := &Config{
-		RLN:       false,
-		ShowMD:    false,
-		Render:    true,
-		TabNames:  true,
-		ThemeName: defaultThemeName,
-		TabStop:   defaultTabStop,
-		KeepTabs:  true,
+		RLN:        false,
+		ShowMD:     false,
+		Render:     true,
+		TabNames:   true,
+		ThemeName:  defaultThemeName,
+		TabStop:    defaultTabStop,
+		ResizeTime: defaultResizeDuration,
+		KeepTabs:   true,
 	}
 	return config
 }
