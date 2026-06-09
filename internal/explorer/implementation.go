@@ -20,7 +20,9 @@ func (ex *Explorer) DrawLineAt(index int) string {
 	} else {
 		icon = services.GetFileIcon(entry.name)
 	}
-	return fmt.Sprintf("%s%s", icon, ex.entries[index+ex.yScroll].name)
+	e := fmt.Sprintf("%s%s", icon, ex.entries[index+ex.yScroll].name)
+	e = services.VisibleSubString(e, 0, ex.w)
+	return e
 }
 
 func (ex *Explorer) Handle(key rune) {
@@ -49,7 +51,9 @@ func (ex *Explorer) SetTitle() string {
 	return " Explorer "
 }
 
-func (ex *Explorer) Resize(w, h int) {}
+func (ex *Explorer) Resize(w, h int) {
+	ex.w = w
+}
 
 func (ex *Explorer) PreDraw() {
 	ex.entries = scanEntries()

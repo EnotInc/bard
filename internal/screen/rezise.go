@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/enums/calls"
 	"golang.org/x/term"
 )
 
@@ -54,9 +55,10 @@ func listenResize() {
 				t.w += diff_w
 				t.h += diff_h
 				t.hash = make(map[int]uint32)
-				t.object.Resize(t.w, t.w)
+				t.object.Resize(t.w, t.h)
 			}
 
+			global.call = calls.PurgeCache
 			DrawAll()
 		}
 	}

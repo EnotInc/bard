@@ -209,7 +209,7 @@ func HideTile() {
 
 		ed := global.tiles[0]
 		ed.w = global.w
-		ed.object.Resize(ed.w, ed.w)
+		ed.object.Resize(ed.w, ed.h)
 	} else {
 		t := global.hiden
 		AddTile(&t)
@@ -218,7 +218,7 @@ func HideTile() {
 
 		ed := global.tiles[0]
 		ed.w = global.w - t.w
-		ed.object.Resize(ed.w, ed.w)
+		ed.object.Resize(ed.w, ed.h)
 	}
 	global.call = calls.PurgeCache
 }
