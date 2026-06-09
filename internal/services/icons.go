@@ -2,9 +2,16 @@ package services
 
 import (
 	"strings"
+
+	"github.com/EnotInc/Bard/config"
 )
 
 func GetFileIcon(s string) string {
+	cfg := config.GetConfig()
+	if !cfg.ShowIcons {
+		return "  "
+	}
+
 	parts := strings.Split(s, ".")
 	var ext string = ""
 	if len(parts) > 1 {
@@ -90,6 +97,11 @@ var langIcon map[string]string = map[string]string{
 }
 
 func GetDirIcon(s string) string {
+	cfg := config.GetConfig()
+	if !cfg.ShowIcons {
+		return "  "
+	}
+
 	if i, ok := dirIcon[s]; ok {
 		return i
 	} else {

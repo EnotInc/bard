@@ -14,7 +14,8 @@ Default config looks like this:
 ` + "\t" + `show_markdown_symbols: false ` + "" + `# If true - always show markdonw symbols (like starts or underlines). By default they are hidden.
 ` + "\t" + `enable_render: true ` + "         " + `# Turns render on and off.
 ` + "\t" + `show_tab_names: true ` + "        " + `# Used to toggle tabs information in status bar. true: [1|filename], false: [1].
-` + "\t" + `keep_tabs: true ` + "             " + `# True by default. If false - replaces inserted tabs with spaces. Doesn't replace tabs in opened file
+` + "\t" + `keep_tabs: true ` + "             " + `# True by default. If false - replaces inserted tabs with spaces. Doesn't replace tabs in opened file.
+` + "\t" + `show_icons: true` + "             " + `# Used in render do decide should it draw nerdfont icons or not.
 }
 ` + "```" + `
 `

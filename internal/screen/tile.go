@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
 )
@@ -144,7 +145,8 @@ func (t *tile) getBorder(withTitle bool) string {
 func (t *tile) getColor() string {
 	focused := global.tiles[global.focus].title
 	if focused == t.title {
-		return "\033[34m" // TODO: move to theme
+		theme := config.GetTheme()
+		return theme.General.SelectedTile
 	} else {
 		return ""
 	}

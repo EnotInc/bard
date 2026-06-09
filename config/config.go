@@ -11,7 +11,6 @@ const configDir = ".bard"
 const defaultTabStop = 4
 const defaultResizeDuration = 200
 
-// NOTE: is it alright to store config like that?
 var config *Config
 
 func GetConfig() *Config {
@@ -81,8 +80,14 @@ func FixConfig() {
 // saving current configuration
 func Save() {
 	cfg := getCongfigPath()
-	json, _ := json.MarshalIndent(config, "", "    ")
-	os.WriteFile(cfg, []byte(json), 0644)
+	json, err := json.MarshalIndent(config, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+	err = os.WriteFile(cfg, []byte(json), 0644)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getDefaultConfig() *Config {
@@ -95,6 +100,7 @@ func getDefaultConfig() *Config {
 		TabStop:    defaultTabStop,
 		ResizeTime: defaultResizeDuration,
 		KeepTabs:   true,
+		ShowIcons:  true,
 	}
 	return config
 }

@@ -13,6 +13,7 @@ type Config struct {
 	Render     bool   `json:"enable_render,omitempty"`
 	TabNames   bool   `json:"show_tab_names,omitempty"`
 	KeepTabs   bool   `json:"keep_tabs,omitempty"`
+	ShowIcons  bool   `json:"show_icons,omitempty"`
 }
 
 type Theme struct {
@@ -22,14 +23,15 @@ type Theme struct {
 }
 
 type General struct {
-	CurrentLine string `json:"current_line"`
-	LineNumber  string `json:"line_number"`
-	BottomBar   string `json:"bottom_bar"`
-	EmptyLine   string `json:"empty_line"`
-	Selection   string `json:"selection"`
-	Command     string `json:"command"`
-	Message     string `json:"message"`
-	Tab         string `json:"tab"`
+	SelectedTile string `json:"selected_tile"`
+	CurrentLine  string `json:"current_line"`
+	LineNumber   string `json:"line_number"`
+	BottomBar    string `json:"bottom_bar"`
+	EmptyLine    string `json:"empty_line"`
+	Selection    string `json:"selection"`
+	Command      string `json:"command"`
+	Message      string `json:"message"`
+	Tab          string `json:"tab"`
 }
 
 type Markdown struct {

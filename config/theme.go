@@ -91,14 +91,15 @@ func ChangeTheme(themeName string) string {
 func getDefaultTheme() *Theme {
 	theme := &Theme{
 		General: General{
-			LineNumber:  "\033[90m",
-			CurrentLine: "\033[33m",
-			BottomBar:   "\033[48;5;16m",
-			Selection:   "\033[100m",
-			Command:     "\033[33m",
-			EmptyLine:   "\033[36m",
-			Message:     "\033[31m",
-			Tab:         "\033[34m",
+			SelectedTile: "\033[34m",
+			LineNumber:   "\033[90m",
+			CurrentLine:  "\033[33m",
+			BottomBar:    "\033[48;5;16m",
+			Selection:    "\033[100m",
+			Command:      "\033[33m",
+			EmptyLine:    "\033[36m",
+			Message:      "\033[31m",
+			Tab:          "\033[34m",
 		},
 		Markdown: Markdown{
 			Header1:    "\033[34m",

@@ -108,6 +108,12 @@ func (e *Editor) execCommand() {
 		e.tui.PurgeCache()
 		screen.SendCall(calls.PurgeCache)
 
+	case "showicon", "si":
+		cfg.ShowIcons = !cfg.ShowIcons
+		e.IsChanged = true
+		e.tui.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
+
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
 		e.IsChanged = true
