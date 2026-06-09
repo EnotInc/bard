@@ -235,3 +235,7 @@ func (ui *TUI) PurgeCache() {
 func (ui *TUI) ToggleRender() {
 	ui.render.ToggleRender()
 }
+
+func (ui *TUI) ResizeRender(w int) {
+	ui.render.Resize(w)
+}

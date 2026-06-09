@@ -34,6 +34,7 @@ func (r *Renderer) MakeDirty() {
 }
 
 func (r *Renderer) Resize(w int) {
+	r.c.purge()
 	r.md.Resize(w)
 	r.code.Resize(w)
 }

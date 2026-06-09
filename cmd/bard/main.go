@@ -12,11 +12,11 @@ func main() {
 	screen.InitScreen()
 
 	border := true
-	w := screen.W()
+	w := screen.W() / 2
 	h := screen.H()
 
 	e := editor.InitEditor(w, h)
-	e_tile, err := screen.NewTile(e, w, h, 0, 0, border)
+	e_tile, err := screen.NewTile(e, w, h, border)
 	if err != nil {
 		panic(err)
 	}
@@ -34,6 +34,8 @@ func main() {
 
 	screen.SetStatusBar(e.DrawStatusBar)
 	screen.AddTile(e_tile)
+
+	screen.TermSizeMonitor()
 
 	screen.Run()
 }

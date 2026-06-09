@@ -13,6 +13,7 @@ type object interface {
 	Handle(key rune)
 	GetCursor(withBorderl bool) (int, int)
 	SetTitle() string
+	Resize(w, h int)
 	PreDraw()
 }
 
@@ -21,21 +22,18 @@ type tile struct {
 	object object
 	title  string
 	w, h   int
-	x, y   int
 	border bool
 }
 
-func NewTile(o object, w, h, x, y int, b bool) (*tile, error) {
-	if w+x > global.w || h+y > global.h {
-		return nil, fmt.Errorf("Can't layout tile. Size is too big:\nw: %d\th: %d\nx: %d\ty: %d\n\n\rGlobal Screen:\nw: %d\th: %d",
-			w, h, x, y, global.w, global.h)
+func NewTile(o object, w, h int, b bool) (*tile, error) {
+	if w > global.w || h > global.h {
+		return nil, fmt.Errorf("Can't layout tile. Size is too big:\nw: %d\th: %d\n\n\rGlobal Screen:\nw: %d\th: %d",
+			w, h, global.w, global.h)
 	}
 	tile := &tile{
 		object: o,
 		w:      w,
 		h:      h,
-		x:      x,
-		y:      y,
 		border: b,
 	}
 	return tile, nil
@@ -43,7 +41,7 @@ func NewTile(o object, w, h, x, y int, b bool) (*tile, error) {
 
 const termShift = 1
 
-func (t *tile) GetDiff() string {
+func (t *tile) GetDiff(tileOfset int) string {
 	var diff strings.Builder
 	diff.WriteString(string(ascii.HideCursor))
 	diff.WriteString(string(ascii.MoveToStart))
@@ -58,14 +56,14 @@ func (t *tile) GetDiff() string {
 			data.WriteString(border)
 			data.WriteString(string(ascii.BorderCUR))
 
-			pos := fmt.Sprintf("\033[%d;%dH", t.y+termShift, t.x+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH", +termShift, tileOfset+termShift)
 			diff.WriteString(pos)
 			diff.WriteString(data.String())
 			continue
 		}
 		if t.border && i == t.h-1-statusLine {
 			border := t.getBorder(false)
-			pos := fmt.Sprintf("\033[%d;%dH", t.y+t.h-statusLine, t.x+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH", t.h-statusLine, tileOfset+termShift)
 			diff.WriteString(pos)
 
 			data.WriteString(string(ascii.Reset))
@@ -88,7 +86,7 @@ func (t *tile) GetDiff() string {
 		oldHash, ok := t.hash[i]
 
 		if !ok || (ok && curHash != oldHash) { // add check for current line
-			pos := fmt.Sprintf("\033[%d;%dH\033[0K", t.y+i+termShift, t.x+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH\033[0K", i+termShift, tileOfset+termShift)
 			diff.WriteString(pos)
 			if t.border {
 				data.WriteString(string(ascii.Reset))
@@ -96,7 +94,7 @@ func (t *tile) GetDiff() string {
 			}
 			data.WriteString(trim)
 			if t.border {
-				fmt.Fprintf(&data, "\033[%d;%dH", t.y+i+termShift, t.x+t.w)
+				fmt.Fprintf(&data, "\033[%d;%dH", i+termShift, tileOfset+t.w)
 				data.WriteString(string(ascii.Reset))
 				data.WriteString(string(ascii.BorderV))
 			}

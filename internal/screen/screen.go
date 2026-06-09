@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/keys"
@@ -24,6 +25,7 @@ func SendCall(c calls.Call) {
 }
 
 type Screen struct {
+	redraw   chan bool
 	oldState *term.State
 	tiles    []*tile // let's assume that there is only row layout. I'll figure out this later
 	call     calls.Call
@@ -57,6 +59,7 @@ func InitScreen() {
 	}
 
 	s := &Screen{
+		redraw:   make(chan bool, 1),
 		oldState: old,
 		tiles:    make([]*tile, 0),
 		focus:    0,
@@ -103,11 +106,18 @@ func DrawAll() {
 	handleCalls()
 
 	var data strings.Builder
+	var tilesOfset int = 0
+	var focusedOfset = 0
 
-	for _, t := range global.tiles {
+	for i, t := range global.tiles {
 		t.object.PreDraw()
-		tile := t.GetDiff()
+		tile := t.GetDiff(tilesOfset)
 		data.WriteString(tile)
+
+		if i == global.focus {
+			focusedOfset = tilesOfset
+		}
+		tilesOfset += t.w
 	}
 
 	f_tile := global.tiles[global.focus]
@@ -121,8 +131,8 @@ func DrawAll() {
 	data.WriteString(status)
 
 	cX, cY := f_tile.object.GetCursor(f_tile.border)
-	cX += f_tile.x + ofset
-	cY += f_tile.y + ofset
+	cX += focusedOfset + ofset
+	cY += ofset
 
 	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
 	data.WriteString(string(ascii.ShowCursor))
@@ -136,7 +146,7 @@ func handleCalls() {
 		for i := range global.tiles {
 			global.tiles[i].hash = make(map[int]uint32, 0)
 		}
-	case calls.Rezise:
+		//case calls.Rezise:
 	}
 	global.call = calls.None
 }
@@ -160,4 +170,24 @@ func Run() {
 		global.tiles[global.focus].object.Handle(key)
 		DrawAll()
 	}
+}
+
+func Exit(code int) {
+	config.Save()
+
+	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
+	term.Restore(global.fdIn, global.oldState)
+
+	var error string = "unknown error"
+	if r := recover(); r != nil {
+		error = fmt.Sprintf("%s", r)
+	}
+
+	err := global.saveLog(error)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
+	}
+	os.Exit(code)
 }
