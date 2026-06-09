@@ -32,7 +32,7 @@ func captureResize() {
 
 			global.w = w
 			global.h = h
-			global.redraw <- true
+			global.resize <- true
 		}
 	}
 }
@@ -40,7 +40,7 @@ func captureResize() {
 func listenResize() {
 	var last_w, last_h = global.w, global.h
 	for {
-		changed := <-global.redraw
+		changed := <-global.resize
 		if changed {
 			ofset := len(global.tiles)
 

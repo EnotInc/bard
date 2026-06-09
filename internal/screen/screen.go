@@ -25,9 +25,10 @@ func SendCall(c calls.Call) {
 }
 
 type Screen struct {
-	redraw   chan bool
+	resize   chan bool
 	oldState *term.State
 	tiles    []*tile // let's assume that there is only row layout. I'll figure out this later
+	hiden    tile
 	call     calls.Call
 	focus    int
 	w, h     int
@@ -59,7 +60,7 @@ func InitScreen() {
 	}
 
 	s := &Screen{
-		redraw:   make(chan bool, 1),
+		resize:   make(chan bool, 1),
 		oldState: old,
 		tiles:    make([]*tile, 0),
 		focus:    0,
@@ -146,7 +147,6 @@ func handleCalls() {
 		for i := range global.tiles {
 			global.tiles[i].hash = make(map[int]uint32, 0)
 		}
-		//case calls.Rezise:
 	}
 	global.call = calls.None
 }
@@ -167,9 +167,12 @@ func Run() {
 			}
 		}
 
-		if key == '-' {
+		switch key {
+		case keys.Ctrl_o:
 			ShiftFocus()
-		} else {
+		case keys.Ctrl_i:
+			HideTile()
+		default:
 			global.tiles[global.focus].object.Handle(key)
 		}
 		DrawAll()
@@ -194,4 +197,30 @@ func Exit(code int) {
 		fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
 	}
 	os.Exit(code)
+}
+
+// TODO: rewrite in tiles.
+// Make shure that I can hide any tiles, not only the last one
+// For now this works only with setup 'editor' + 'explorer' tiles
+func HideTile() {
+	global.call = calls.PurgeCache
+	if len(global.tiles) == 2 {
+		global.hiden = *global.tiles[1]
+		global.tiles = global.tiles[:len(global.tiles)-1]
+		SetFocus(0)
+
+		ed := global.tiles[0]
+		ed.w = global.w
+		ed.object.Resize(ed.w, ed.w)
+	} else {
+		t := global.hiden
+		AddTile(&t)
+		SetFocus(1)
+		global.hiden = tile{}
+
+		ed := global.tiles[0]
+		ed.w = global.w - t.w
+		ed.object.Resize(ed.w, ed.w)
+	}
+	global.call = calls.PurgeCache
 }

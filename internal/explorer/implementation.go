@@ -40,7 +40,7 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 }
 
 func (ex *Explorer) SetTitle() string {
-	return "Explorer"
+	return " Explorer "
 }
 
 func (ex *Explorer) Resize(w, h int) {}

@@ -44,6 +44,7 @@ func main() {
 	screen.SetStatusBar(ed.DrawStatusBar)
 	screen.AddTile(ed_tile)
 	screen.AddTile(ex_tile)
+	screen.HideTile()
 
 	screen.TermSizeMonitor()
 

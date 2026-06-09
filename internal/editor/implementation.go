@@ -201,6 +201,7 @@ func (e *Editor) SetTitle() string {
 }
 
 func (e *Editor) PreDraw() {
+	e.setUiCursor()
 	e.emtpyLineSpases = tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	for i := range e.tui.YScroll {
 		curLine := string(e.b[e.curBuffer].Lines[i].Data)

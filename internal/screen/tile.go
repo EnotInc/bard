@@ -56,7 +56,7 @@ func (t *tile) GetDiff(tileOfset int) string {
 			data.WriteString(border)
 			data.WriteString(string(ascii.BorderCUR))
 
-			pos := fmt.Sprintf("\033[%d;%dH", +termShift, tileOfset+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH", termShift, tileOfset+termShift)
 			diff.WriteString(pos)
 			diff.WriteString(data.String())
 			continue
