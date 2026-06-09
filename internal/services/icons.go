@@ -1,16 +1,13 @@
 package services
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
 )
 
 func GetFileIcon(s string) string {
-	cfg := config.GetConfig()
-	if !cfg.ShowIcons {
-		return "  "
-	}
 
 	parts := strings.Split(s, ".")
 	var ext string = ""
@@ -21,12 +18,20 @@ func GetFileIcon(s string) string {
 	}
 
 	ext = strings.ToLower(ext)
+	var icon string
 
 	if i, ok := langIcon[ext]; ok {
-		return i
+		icon = i
 	} else {
-		return defaultFile
+		icon = defaultFile
 	}
+
+	cfg := config.GetConfig()
+	if !cfg.ShowIcons {
+		icon = "  "
+	}
+
+	return icon
 }
 
 const defaultFile = " "
@@ -97,16 +102,19 @@ var langIcon map[string]string = map[string]string{
 }
 
 func GetDirIcon(s string) string {
-	cfg := config.GetConfig()
-	if !cfg.ShowIcons {
-		return "  "
+	var icon string
+	if i, ok := dirIcon[s]; ok {
+		icon = i
+	} else {
+		icon = defaultDir
 	}
 
-	if i, ok := dirIcon[s]; ok {
-		return i
-	} else {
-		return defaultDir
+	cfg := config.GetConfig()
+	if !cfg.ShowIcons {
+		icon = fmt.Sprintf("  \033[96m%s", s)
 	}
+
+	return icon
 }
 
 const defaultDir = "\033[96m "
