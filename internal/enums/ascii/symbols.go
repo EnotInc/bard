@@ -32,4 +32,7 @@ const (
 	BorderCDL string = "\u2570"
 	BorderV   string = "\u2502"
 	BorderH   string = "\u2500"
+
+	ArrowUp   Symbol = "\u2303"
+	ArrowDown Symbol = "\u2304"
 )
