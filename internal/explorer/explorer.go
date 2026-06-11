@@ -27,6 +27,7 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 	v := initCursor()
 	ex := &Explorer{
 		root:       defaultRoot,
+		curPath:    defaultRoot,
 		w:          w,
 		h:          h,
 		cursor:     c,
