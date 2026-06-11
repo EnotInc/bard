@@ -2,6 +2,7 @@ package editor
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
@@ -194,7 +195,14 @@ func (e *Editor) GetCursor(withBorder bool) (int, int) {
 func (e *Editor) SetTitle() string {
 	var tabs []string
 	for _, t := range e.b {
-		tabs = append(tabs, t.Title)
+
+		tab := t.Title
+		if t.Title != "" {
+			tab = t.Title
+		}
+
+		filepath.Base(t.Title)
+		tabs = append(tabs, tab)
 	}
 	cfg := config.GetConfig()
 	return e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)

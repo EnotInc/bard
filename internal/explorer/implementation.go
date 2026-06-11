@@ -40,11 +40,12 @@ func (ex *Explorer) Handle(key rune) {
 	switch key {
 	case keys.Esc:
 		screen.SetFocus(0)
-	case keys.Enter: // TODO: [un]fold dir
+	case keys.Enter:
 		ex.openFileWithCallback()
+		ex.cursor.y = 0
 	case 'o':
 		ex.typing = true
-		ex.buffer = entry{name: "", isDir: false}
+		ex.buffer = entry{name: "", isDir: false, path: ex.root}
 		ex.cursor.y = len(ex.entries) - 1
 	case 'r': // TODO: change file name (deletes it and let you type)
 	case 'i': // TODO: change file name (set cursor to the end of the file name)
@@ -55,6 +56,8 @@ func (ex *Explorer) Handle(key rune) {
 	case 'k':
 		ex.k()
 	}
+	ex.fixCursor()
+	ex.scroll()
 }
 
 func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
@@ -65,7 +68,10 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 }
 
 func (ex *Explorer) SetTitle() string {
-	return " Explorer "
+	if ex.root == root {
+		return " Explorer "
+	}
+	return fmt.Sprintf(" %s ", ex.root)
 }
 
 func (ex *Explorer) Resize(w, h int) {

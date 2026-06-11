@@ -43,3 +43,12 @@ func (ex *Explorer) scroll() {
 
 	ex.visible.y = ex.cursor.y - ex.yScroll - 1
 }
+
+func (ex *Explorer) fixCursor() {
+	if ex.cursor.y < 0 {
+		ex.cursor.y = 0
+	}
+	if ex.cursor.y > len(ex.entries)-1 {
+		ex.cursor.y = len(ex.entries) - 1
+	}
+}

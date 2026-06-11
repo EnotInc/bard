@@ -56,8 +56,7 @@ var langIcon map[string]string = map[string]string{
 	"exs":               "\033[35m ",
 	"elixir":            "\033[35m ",
 	"flutter":           "\033[34m ",
-	"go":                "\033[36m ",
-	"golang":            "\033[36m ",
+	"go":                "\033[34m ",
 	"hs":                "\033[35m ",
 	"haskell":           "\033[35m ",
 	"html":              "\033[33m ",
@@ -117,9 +116,10 @@ func GetDirIcon(s string) string {
 	return icon
 }
 
-const defaultDir = "\033[96m "
+const defaultDir = "\033[1;96m "
 
 var dirIcon map[string]string = map[string]string{
+	"..":           "\033[1;90m ",
 	"Pictures":     "\033[1;95m󰉏 ",
 	"Downloads":    "\033[1;92m󰉍 ",
 	".git":         "\033[1;31m ",
