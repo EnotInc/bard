@@ -76,7 +76,7 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 }
 
 func (ex *Explorer) SetTitle() string {
-	if ex.root == root {
+	if ex.curPath == ex.root {
 		return " Explorer "
 	}
 	return fmt.Sprintf(" %s ", ex.root)

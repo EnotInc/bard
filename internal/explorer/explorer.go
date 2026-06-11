@@ -9,6 +9,7 @@ type Explorer struct {
 	delFile    func(file string)
 	changeMode func(mode mode.Mode)
 	root       string
+	curPath    string
 	buffer     entry
 	entries    []entry
 	w          int
@@ -17,7 +18,7 @@ type Explorer struct {
 	typing     bool
 }
 
-const root = "."
+const defaultRoot = "."
 const back = ".."
 
 func InitExplorer(open func(file string), del func(file string), change func(mode mode.Mode), w, h int) *Explorer {
@@ -25,7 +26,7 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 	c := initCursor()
 	v := initCursor()
 	ex := &Explorer{
-		root:       root,
+		root:       defaultRoot,
 		w:          w,
 		h:          h,
 		cursor:     c,
@@ -40,4 +41,9 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 	ex.scroll()
 
 	return ex
+}
+
+func (ex *Explorer) SetRoot(root string) {
+	ex.root = root
+	ex.curPath = root
 }

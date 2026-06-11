@@ -23,7 +23,7 @@ func (ex *Explorer) scanEntries() {
 	if err != nil {
 		panic(err)
 	}
-	if ex.root != "." {
+	if ex.curPath != ex.root {
 		e = append(e, entry{name: back, isDir: true})
 	}
 	for _, en := range entries {

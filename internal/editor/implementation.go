@@ -46,18 +46,22 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
-		tab := ""
+		tabNames := ""
 
 		if !withBorder {
 			var tabs []string
 			for _, t := range e.b {
-				tabs = append(tabs, t.Title)
+				tab := t.Title
+				if t.Title != "" {
+					tab = filepath.Base(t.Title)
+				}
+				tabs = append(tabs, tab)
 			}
 			cfg := config.GetConfig()
-			tab = e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
+			tabNames = e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
 		}
 
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, tab, e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, tabNames, e.tui.Message, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Visual, mode.Visual_line:

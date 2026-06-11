@@ -40,9 +40,18 @@ func main() {
 		case "-h", "--help":
 			ed.StartHelp()
 		default:
-			ed.LoadFile(arg)
+			f, err := os.Stat(arg)
+			if err != nil {
+				panic(err)
+			}
+
+			if !f.IsDir() {
+				ed.LoadFile(arg)
+				screen.HideTile()
+			} else {
+				ex.SetRoot(arg)
+			}
 		}
-		screen.HideTile()
 	}
 	screen.ShiftFocus()
 
