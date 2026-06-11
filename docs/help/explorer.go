@@ -9,6 +9,7 @@ You can change focused tile without hiding file explorer with ` + "`<ctrl+o>`" +
 - ` + "`<esc>`" + ` - switch focus to the editor tile
 - ` + "`k`" + ` - move cursor up
 - ` + "`j`" + ` - move cursor down
-- ` + "`<enter>`" + ` - open file
+- ` + "`<enter>`" + ` - open file or change directory
 - ` + "`d`" + ` - delete file. You must confirm this by pressings ` + "`<enter>`" + `. This will run ` + "`:del <file>`" + ` command
+- ` + "`o`" + ` - create a new file or dir. Press ` + "`/`" + ` to change type, ` + "`<enter>`" + ` to create or ` + "`<esc>`" + ` to cancel
 `

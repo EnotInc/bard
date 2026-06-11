@@ -5,6 +5,7 @@ var Command = `# Command Mode
 To get back to ***Normal*** mode press <ESC>
 
 ## List of commands:
+ - c[lose] - close current buffer. If there is only 1 buffer left, new one will be created
  - q - Close current buffer. Changes will now be saved
  - qa - Close all buffers. Changes will now be saved
  - w <file> - saves file or creates a new one if <file> provided

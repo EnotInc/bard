@@ -75,6 +75,13 @@ func (e *Editor) execCommand() {
 	cfg := config.GetConfig()
 	e.cmd.saveToHisory()
 	switch e.cmd.command {
+	case "c", "close":
+		if len(e.b) == 1 {
+			e.newBuffer()
+			e.delBuffer(0)
+			return
+		}
+		e.delBuffer(e.curBuffer)
 	case "q":
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)
