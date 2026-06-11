@@ -23,14 +23,15 @@ func SendCall(c calls.Call) {
 type Screen struct {
 	resize   chan bool
 	oldState *term.State
-	tiles    []*tile // let's assume that there is only row layout. I'll figure out this later
+	status   func(withBorder bool) string
+	tiles    []*tile
 	hiden    tile
 	call     calls.Call
 	focus    int
-	w, h     int
+	w        int
+	h        int
 	fdIn     int
 	fdOut    int
-	status   func(withBorder bool) string
 }
 
 func W() int {
@@ -118,15 +119,17 @@ func DrawAll() {
 
 	f_tile := global.tiles[global.focus]
 
+	border := config.GetConfig().ShwoBorder
+
 	ofset := 0
-	if f_tile.border {
+	if border {
 		ofset = 1
 	}
 
-	status := global.status(f_tile.border)
+	status := global.status(border)
 	data.WriteString(status)
 
-	cX, cY := f_tile.object.GetCursor(f_tile.border)
+	cX, cY := f_tile.object.GetCursor(border)
 	cX += ofset + focusedOfset
 	cY += ofset
 

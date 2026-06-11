@@ -101,6 +101,7 @@ func getDefaultConfig() *Config {
 		ResizeTime: defaultResizeDuration,
 		KeepTabs:   true,
 		ShowIcons:  true,
+		ShwoBorder: true,
 	}
 	return config
 }

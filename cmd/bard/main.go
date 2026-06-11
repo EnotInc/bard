@@ -13,19 +13,18 @@ func main() {
 	config.InitConfig()
 	screen.InitScreen()
 
-	border := true
 	h := screen.H()
 	ex_w := 30
 	ed_w := screen.W() - ex_w
 
 	ed := editor.InitEditor(ed_w, h)
-	ed_tile, err := screen.NewTile(ed, ed_w, h, border)
+	ed_tile, err := screen.NewTile(ed, ed_w, h)
 	if err != nil {
 		panic(err)
 	}
 
 	ex := explorer.InitExplorer(ed.OpenFileCallback, ed.RemoveFileCallback, ex_w, h)
-	ex_tile, err := screen.NewTile(ex, ex_w, h, border)
+	ex_tile, err := screen.NewTile(ex, ex_w, h)
 	if err != nil {
 		panic(err)
 	}

@@ -23,4 +23,5 @@ To get back to ***Normal*** mode press <ESC>
  - theme <name>.json - set bard theme to given <name> (if file not exists, default theme will be used)
  - ts / tabstop <amount> - change tab stop to given amount. If amount is less or equal to zero, it will be changed to 4 (as default value)
  - si / showicon - used to toggle icons. If off, nerdfont icons will not be used in render
+ - border - used to toggel tiles borders on and off
 `

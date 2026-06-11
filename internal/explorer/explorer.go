@@ -1,15 +1,16 @@
 package explorer
 
 type Explorer struct {
-	root     string
-	entries  []entry
 	cursor   *cursor
 	visible  *cursor
-	w, h     int
-	yScroll  int
 	openFile func(file string)
 	delFile  func(file string)
+	root     string
 	buffer   entry
+	entries  []entry
+	w        int
+	h        int
+	yScroll  int
 	typing   bool
 }
 

@@ -147,6 +147,11 @@ func (e *Editor) execCommand() {
 	case "keeptab", "kt":
 		cfg.KeepTabs = !cfg.KeepTabs
 
+	case "border":
+		cfg := config.GetConfig()
+		cfg.ShwoBorder = !cfg.ShwoBorder
+		screen.SendCall(calls.PurgeCache)
+
 	default:
 		e.parseCommand()
 	}

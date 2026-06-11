@@ -23,10 +23,9 @@ type tile struct {
 	object object
 	title  string
 	w, h   int
-	border bool
 }
 
-func NewTile(o object, w, h int, b bool) (*tile, error) {
+func NewTile(o object, w, h int) (*tile, error) {
 	if w > global.w || h > global.h {
 		return nil, fmt.Errorf("Can't layout tile. Size is too big:\nw: %d\th: %d\n\n\rGlobal Screen:\nw: %d\th: %d",
 			w, h, global.w, global.h)
@@ -35,7 +34,6 @@ func NewTile(o object, w, h int, b bool) (*tile, error) {
 		object: o,
 		w:      w,
 		h:      h,
-		border: b,
 	}
 	return tile, nil
 }
@@ -48,11 +46,13 @@ func (t *tile) GetDiff(tileOfset int) string {
 	diff.WriteString(string(ascii.HideCursor))
 	diff.WriteString(string(ascii.MoveToStart))
 
+	border := config.GetConfig().ShwoBorder
+
 	statusLine := 1
 	for i := range t.h - statusLine { // leaving one for status line
 		c := t.getColor()
 		var data strings.Builder
-		if t.border && i == 0 {
+		if border && i == 0 {
 			border := t.getBorder(true)
 			data.WriteString(string(ascii.Reset))
 			data.WriteString(c)
@@ -66,7 +66,7 @@ func (t *tile) GetDiff(tileOfset int) string {
 			diff.WriteString(data.String())
 			continue
 		}
-		if t.border && i == t.h-1-statusLine {
+		if border && i == t.h-1-statusLine {
 			border := t.getBorder(false)
 			pos := fmt.Sprintf("\033[%d;%dH", t.h-statusLine, tileOfset+termShift)
 			diff.WriteString(pos)
@@ -83,25 +83,29 @@ func (t *tile) GetDiff(tileOfset int) string {
 		}
 
 		ofset := 0
-		if t.border {
+		if border {
 			ofset = 1
 		}
 		line := t.object.DrawLineAt(i - ofset)
 
 		trim := services.VisibleSubString(line, 0, t.w-ofset*2)
+		if !border { // used to make borderlett tiles more readable
+			trim = fmt.Sprintf(" %s", trim)
+		}
+
 		curHash := services.GetHash(trim)
 		oldHash, ok := t.hash[i]
 
 		if !ok || (ok && curHash != oldHash) { // add check for current line
 			pos := fmt.Sprintf("\033[%d;%dH\033[0K", i+termShift, tileOfset+termShift)
 			diff.WriteString(pos)
-			if t.border {
+			if border {
 				data.WriteString(c)
 				data.WriteString(string(ascii.BorderV))
 				data.WriteString(string(ascii.Reset))
 			}
 			data.WriteString(trim)
-			if t.border {
+			if border {
 				fmt.Fprintf(&data, "\033[%d;%dH", i+termShift, tileOfset+t.w)
 				data.WriteString(string(ascii.Reset))
 				data.WriteString(c)

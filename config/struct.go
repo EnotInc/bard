@@ -14,6 +14,7 @@ type Config struct {
 	TabNames   bool   `json:"show_tab_names,omitempty"`
 	KeepTabs   bool   `json:"keep_tabs,omitempty"`
 	ShowIcons  bool   `json:"show_icons,omitempty"`
+	ShwoBorder bool   `json:"show_borders,omitempty"`
 }
 
 type Theme struct {
