@@ -82,6 +82,8 @@ func (e *Editor) execCommand() {
 			return
 		}
 		e.delBuffer(e.curBuffer)
+	case "ca":
+		e.ClearAllBuffers()
 	case "q":
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)
@@ -220,10 +222,10 @@ func (e *Editor) parseCommand() {
 			screen.SendCall(calls.PurgeCache)
 
 		case "del": // This command used to delere files. Usually called from file explorer
-			file := arg
+			entry := arg
 			for i, b := range e.b {
 				title := strings.TrimPrefix(b.Title, ".\\")
-				if title == file {
+				if title == entry {
 					if b.IsReadOnly {
 						return
 					}
@@ -235,12 +237,12 @@ func (e *Editor) parseCommand() {
 				}
 			}
 
-			err := os.Remove(file)
+			err := os.RemoveAll(entry)
 			if err != nil {
-				e.tui.Message = fmt.Sprintf("unable to remove file: %s", file)
+				e.tui.Message = fmt.Sprintf("unable to remove %s", entry)
 			}
 
-			e.tui.Message = fmt.Sprintf("file [%s] was removed", file)
+			e.tui.Message = fmt.Sprintf("[%s] was removed", entry)
 
 		default:
 			e.tui.Message = "unknown command"

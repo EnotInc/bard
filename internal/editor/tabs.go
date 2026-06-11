@@ -7,6 +7,11 @@ import (
 	"github.com/EnotInc/Bard/internal/editor/buffer"
 )
 
+func (e *Editor) ClearAllBuffers() {
+	e.curBuffer = 0
+	e.b = buffer.InitBuffer()
+}
+
 // used to create new buffer, and switch to it
 func (e *Editor) newBuffer() {
 	b := buffer.InitBuffer()
