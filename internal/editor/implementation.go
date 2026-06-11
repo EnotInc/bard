@@ -198,10 +198,9 @@ func (e *Editor) SetTitle() string {
 
 		tab := t.Title
 		if t.Title != "" {
-			tab = t.Title
+			tab = filepath.Base(t.Title)
 		}
 
-		filepath.Base(t.Title)
 		tabs = append(tabs, tab)
 	}
 	cfg := config.GetConfig()

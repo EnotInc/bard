@@ -69,7 +69,7 @@ var langIcon map[string]string = map[string]string{
 	"kts":               "\033[34m ",
 	"log":               " ",
 	"lua":               "\033[34m ",
-	"license":           "\033[33m ",
+	"license":           "\033[33m ",
 	"md":                "\033[33m ",
 	"markdown":          "\033[33m ",
 	"mk":                " ",

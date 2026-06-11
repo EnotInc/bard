@@ -107,11 +107,12 @@ func DrawAll() {
 	var focusedOfset = 0
 
 	for i, t := range global.tiles {
+		focused := i == global.focus
 		t.object.PreDraw()
-		tile := t.GetDiff(tilesOfset)
+		tile := t.GetDiff(tilesOfset, focused)
 		data.WriteString(tile)
 
-		if i == global.focus {
+		if focused {
 			focusedOfset = tilesOfset
 		}
 		tilesOfset += t.w

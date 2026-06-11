@@ -29,6 +29,10 @@ func main() {
 		panic(err)
 	}
 
+	screen.SetStatusBar(ed.DrawStatusBar)
+	screen.AddTile(ed_tile)
+	screen.AddTile(ex_tile)
+
 	if len(os.Args) == 2 {
 		arg := os.Args[1]
 
@@ -38,12 +42,9 @@ func main() {
 		default:
 			ed.LoadFile(arg)
 		}
+		screen.HideTile()
 	}
-
-	screen.SetStatusBar(ed.DrawStatusBar)
-	screen.AddTile(ed_tile)
-	screen.AddTile(ex_tile)
-	screen.HideTile()
+	screen.ShiftFocus()
 
 	screen.TermSizeMonitor()
 

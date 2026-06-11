@@ -41,7 +41,7 @@ func NewTile(o object, w, h int) (*tile, error) {
 // move to enums?
 const termShift = 1
 
-func (t *tile) GetDiff(tileOfset int) string {
+func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 	var diff strings.Builder
 	diff.WriteString(string(ascii.HideCursor))
 	diff.WriteString(string(ascii.MoveToStart))
@@ -50,10 +50,10 @@ func (t *tile) GetDiff(tileOfset int) string {
 
 	statusLine := 1
 	for i := range t.h - statusLine { // leaving one for status line
-		c := t.getColor()
+		c := t.getColor(isFocused)
 		var data strings.Builder
 		if border && i == 0 {
-			border := t.getBorder(true)
+			border := t.getBorder(true, isFocused)
 			data.WriteString(string(ascii.Reset))
 			data.WriteString(c)
 			data.WriteString(string(ascii.BorderCUL))
@@ -67,7 +67,7 @@ func (t *tile) GetDiff(tileOfset int) string {
 			continue
 		}
 		if border && i == t.h-1-statusLine {
-			border := t.getBorder(false)
+			border := t.getBorder(false, isFocused)
 			pos := fmt.Sprintf("\033[%d;%dH", t.h-statusLine, tileOfset+termShift)
 			diff.WriteString(pos)
 
@@ -120,9 +120,9 @@ func (t *tile) GetDiff(tileOfset int) string {
 	return diff.String()
 }
 
-func (t *tile) getBorder(withTitle bool) string {
+func (t *tile) getBorder(withTitle bool, isFocused bool) string {
 	var border strings.Builder
-	c := t.getColor()
+	c := t.getColor(isFocused)
 	if withTitle {
 		t.title = t.object.SetTitle()
 		visible := services.CountClear(t.title, 0, len(t.title))
@@ -146,9 +146,8 @@ func (t *tile) getBorder(withTitle bool) string {
 	return border.String()
 }
 
-func (t *tile) getColor() string {
-	focused := global.tiles[global.focus].title
-	if focused == t.title {
+func (t *tile) getColor(focused bool) string {
+	if focused {
 		theme := config.GetTheme()
 		return theme.General.SelectedTile
 	} else {
