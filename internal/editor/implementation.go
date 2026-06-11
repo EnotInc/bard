@@ -178,17 +178,20 @@ func (e *Editor) Handle(key rune) {
 func (e *Editor) GetCursor(withBorder bool) (int, int) {
 	var x int
 	var y int
+
 	if e.curMode == mode.Command {
 		x = len(e.cmd.command) + enums.InitialOffset - 1
 		y = e.tui.H
 
-		if !withBorder {
-			x += 1
-		}
 	} else {
 		x = e.tui.CurOff + enums.InitialOffset + len(e.emtpyLineSpases)
 		y = e.tui.CurRow + enums.CursorOffset
 	}
+
+	if !withBorder {
+		x += 1
+	}
+
 	return x, y
 }
 
