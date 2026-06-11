@@ -110,8 +110,8 @@ func (t *tile) GetDiff(tileOfset int) string {
 				data.WriteString(string(ascii.Reset))
 				data.WriteString(c)
 				data.WriteString(string(ascii.BorderV))
-				data.WriteString(string(ascii.Reset))
 			}
+			data.WriteString(string(ascii.Reset))
 
 			diff.WriteString(data.String())
 		}

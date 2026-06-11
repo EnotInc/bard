@@ -158,3 +158,7 @@ func (e *Editor) RemoveFileCallback(file string) {
 	e.curMode = mode.Command
 	e.cmd.command = fmt.Sprintf("del %s", file)
 }
+
+func (e *Editor) ChangeModeCallback(mode mode.Mode) {
+	e.curMode = mode
+}

@@ -190,7 +190,7 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 		} else {
 			fmt.Fprintf(&s, "[%d]", i+1)
 		}
-		fmt.Fprint(&s, ascii.Reset)
+		fmt.Fprint(&s, ascii.ResetFg)
 	}
 	return s.String()
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/keys"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
 )
@@ -55,6 +56,9 @@ func (ex *Explorer) Handle(key rune) {
 		ex.j()
 	case 'k':
 		ex.k()
+	case ':':
+		screen.SetFocus(0)
+		ex.changeMode(mode.Command)
 	}
 	ex.fixCursor()
 	ex.scroll()
@@ -63,6 +67,10 @@ func (ex *Explorer) Handle(key rune) {
 func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 	x := ex.visible.x + enums.InitialOffset + len(ex.buffer.name)
 	y := ex.visible.y + enums.CursorOffset + 1
+
+	if !withBorder {
+		x += 1
+	}
 
 	return x, y
 }
