@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	"github.com/EnotInc/Bard/internal/screen"
@@ -18,6 +20,7 @@ type entry struct {
 }
 
 func (ex *Explorer) scanEntries() {
+	cfg := config.GetConfig()
 	var e []entry
 	entries, err := os.ReadDir(ex.path)
 	if err != nil {
@@ -27,6 +30,9 @@ func (ex *Explorer) scanEntries() {
 		e = append(e, entry{name: back, isDir: true})
 	}
 	for _, en := range entries {
+		if strings.HasPrefix(en.Name(), ".") && !cfg.ShowDot {
+			continue
+		}
 		ent := entry{
 			name:  en.Name(),
 			path:  filepath.Join(ex.path, en.Name()),

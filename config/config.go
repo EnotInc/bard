@@ -102,6 +102,7 @@ func getDefaultConfig() *Config {
 		KeepTabs:   true,
 		ShowIcons:  true,
 		ShwoBorder: true,
+		ShowDot:    true,
 	}
 	return config
 }

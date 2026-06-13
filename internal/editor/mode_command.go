@@ -123,6 +123,11 @@ func (e *Editor) execCommand() {
 		e.tui.PurgeCache()
 		screen.SendCall(calls.PurgeCache)
 
+	case "showdot", "sdot":
+		cfg.ShowDot = !cfg.ShowDot
+		e.tui.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
+
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
 		e.IsChanged = true
