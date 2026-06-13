@@ -22,7 +22,7 @@ type Editor struct {
 	tui             *tui.TUI
 	cmd             *cmd
 	curMode         mode.Mode
-	emtpyLineSpases string
+	emptyLineSpaces string
 	subCmd          string
 	lastCmd         string
 	b               []*buffer.Buffer

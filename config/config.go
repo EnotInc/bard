@@ -17,7 +17,7 @@ func GetConfig() *Config {
 	return config
 }
 
-func getCongfigPath() string {
+func getConfigPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return defaultConfigFile
@@ -35,7 +35,7 @@ func getConfigDir() string {
 
 func InitConfig() {
 	defaultConfing := getDefaultConfig()
-	cfg_path := getCongfigPath()
+	cfg_path := getConfigPath()
 
 	// creating a default config if bard.json is not found
 	if _, err := os.Stat(cfg_path); err != nil {
@@ -79,7 +79,7 @@ func FixConfig() {
 
 // saving current configuration
 func Save() {
-	cfg := getCongfigPath()
+	cfg := getConfigPath()
 	json, err := json.MarshalIndent(config, "", "    ")
 	if err != nil {
 		panic(err)
@@ -101,7 +101,7 @@ func getDefaultConfig() *Config {
 		ResizeTime: defaultResizeDuration,
 		KeepTabs:   true,
 		ShowIcons:  true,
-		ShwoBorder: true,
+		ShowBorder: true,
 		ShowDot:    true,
 	}
 	return config

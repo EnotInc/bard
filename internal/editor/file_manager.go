@@ -24,7 +24,7 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 	case h.Modes:
 		lines = strings.SplitSeq(help.Modes, "\n")
 	case h.Normal:
-		lines = strings.SplitSeq(help.Noraml, "\n")
+		lines = strings.SplitSeq(help.Normal, "\n")
 	case h.Command:
 		lines = strings.SplitSeq(help.Command, "\n")
 	case h.Visual, h.VisualLine:

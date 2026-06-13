@@ -64,7 +64,7 @@ func (r *Renderer) ToggleRender() {
 // If rednered line has change render mode (if '```' is found), render switches modes, and makes all lines bellow dirty
 // And then - caches the result of the render
 // Basically, I render only line with the cursor on it, and dirty lines
-func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool, xOfset int) (string, bool) {
+func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool, xOffset int) (string, bool) {
 	//lineHash := services.GetHash(string(line))
 	lineHash := services.GetHash(string(line))
 	if !isCurrent {
@@ -84,9 +84,9 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 
 	switch r.mode {
 	case render.Markdown:
-		data, mode, keep = r.md.RenderMarkdownLine(line, lineIndex, show, xOfset)
+		data, mode, keep = r.md.RenderMarkdownLine(line, lineIndex, show, xOffset)
 	case render.Code:
-		data, mode, keep = r.code.RenderCodeLine(line, show, xOfset)
+		data, mode, keep = r.code.RenderCodeLine(line, show, xOffset)
 	}
 
 	// If mode has changed, lines below becomes dirty

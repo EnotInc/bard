@@ -50,7 +50,7 @@ func (e *Editor) caseCommand(key rune) {
 		cmdOfset := 10
 		if len(e.cmd.command) >= e.tui.W-cmdOfset {
 			e.cmd.command = ""
-			e.tui.Message = "Unable process command of this lenght"
+			e.tui.Message = "Unable process command of this length"
 			e.curMode = mode.Normal
 			return
 		}
@@ -154,7 +154,7 @@ func (e *Editor) execCommand() {
 
 	case "border":
 		cfg := config.GetConfig()
-		cfg.ShwoBorder = !cfg.ShwoBorder
+		cfg.ShowBorder = !cfg.ShowBorder
 		screen.SendCall(calls.PurgeCache)
 
 	default:

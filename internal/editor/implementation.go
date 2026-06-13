@@ -98,7 +98,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 		var content strings.Builder
 
 		start := e.tui.XScroll
-		end := e.tui.W - enums.InitialOffset - len(e.emtpyLineSpases)
+		end := e.tui.W - enums.InitialOffset - len(e.emptyLineSpaces)
 
 		str := buf.Lines[i].Data
 
@@ -188,7 +188,7 @@ func (e *Editor) GetCursor(withBorder bool) (int, int) {
 		y = e.tui.H
 
 	} else {
-		x = e.tui.CurOff + enums.InitialOffset + len(e.emtpyLineSpases)
+		x = e.tui.CurOff + enums.InitialOffset + len(e.emptyLineSpaces)
 		y = e.tui.CurRow + enums.CursorOffset
 	}
 
@@ -216,7 +216,7 @@ func (e *Editor) SetTitle() string {
 
 func (e *Editor) PreDraw() {
 	e.setUiCursor()
-	e.emtpyLineSpases = tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
+	e.emptyLineSpaces = tui.BuildSpaces(len(fmt.Sprint(len(e.b[e.curBuffer].Lines))))
 	for i := range e.tui.YScroll {
 		curLine := string(e.b[e.curBuffer].Lines[i].Data)
 		if strings.HasPrefix(curLine, "```") {

@@ -40,14 +40,14 @@ func (r *Render) Reset() {
 	r.l.readPosition = 0
 }
 
-func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOfset int) (string, render.Render, bool) {
+func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffset int) (string, render.Render, bool) {
 	var renderMode render.Render = render.Markdown
 
 	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
 			return services.PaintString(r.theme.Symbol, string(line)), renderMode, false
 		}
-		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLIne.Str(), r.w-enums.InitialOffset*2+1+xOfset)),
+		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+1+xOffset)),
 			renderMode, true
 	}
 
@@ -95,7 +95,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOfse
 			}
 		case codeBlock:
 			if isFirst {
-				data.WriteString(r.renderCodeBlock(&tok, show, xOfset))
+				data.WriteString(r.renderCodeBlock(&tok, show, xOffset))
 				renderMode = render.Code
 			} else {
 				data.WriteString(string(tok.Literal))

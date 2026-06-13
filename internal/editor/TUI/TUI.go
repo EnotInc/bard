@@ -169,8 +169,8 @@ func (ui *TUI) ResetRender() {
 }
 
 func (ui *TUI) Center(l []rune) string {
-	ofset := max((ui.W-len(l))/2, 0)
-	tabs := strings.Repeat(" ", ofset)
+	offset := max((ui.W-len(l))/2, 0)
+	tabs := strings.Repeat(" ", offset)
 	return tabs + string(l)
 }
 

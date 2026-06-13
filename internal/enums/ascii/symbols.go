@@ -10,7 +10,7 @@ func (s Symbol) Str() string {
 const (
 	QuoteSymbol Symbol = "\u2503"
 	Shield      Symbol = "\\"
-	SplitLIne   Symbol = "\u2015"
+	SplitLine   Symbol = "\u2015"
 	ListDash    Symbol = "\u2981"
 	BoxEmpty    Symbol = " \u2610"
 	BoxField    Symbol = " \u25a0"

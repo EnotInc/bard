@@ -43,9 +43,9 @@ func listenResize() {
 	for {
 		changed := <-global.resize
 		if changed {
-			ofset := len(global.tiles)
+			offset := len(global.tiles)
 
-			diff_w := (global.w - last_w) / ofset
+			diff_w := (global.w - last_w) / offset
 			diff_h := global.h - last_h
 
 			last_w = global.w

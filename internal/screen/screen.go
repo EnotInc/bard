@@ -120,19 +120,19 @@ func DrawAll() {
 
 	f_tile := global.tiles[global.focus]
 
-	border := config.GetConfig().ShwoBorder
+	border := config.GetConfig().ShowBorder
 
-	ofset := 0
+	offset := 0
 	if border {
-		ofset = 1
+		offset = 1
 	}
 
 	status := global.status(border)
 	data.WriteString(status)
 
 	cX, cY := f_tile.object.GetCursor(border)
-	cX += ofset + focusedOfset
-	cY += ofset
+	cX += offset + focusedOfset
+	cY += offset
 
 	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
 	data.WriteString(string(ascii.ShowCursor))

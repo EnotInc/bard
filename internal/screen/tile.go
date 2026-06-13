@@ -46,7 +46,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 	diff.WriteString(string(ascii.HideCursor))
 	diff.WriteString(string(ascii.MoveToStart))
 
-	border := config.GetConfig().ShwoBorder
+	border := config.GetConfig().ShowBorder
 
 	statusLine := 1
 	for i := range t.h - statusLine { // leaving one for status line
@@ -82,13 +82,13 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 			break
 		}
 
-		ofset := 0
+		offset := 0
 		if border {
-			ofset = 1
+			offset = 1
 		}
-		line := t.object.DrawLineAt(i - ofset)
+		line := t.object.DrawLineAt(i - offset)
 
-		trim := services.VisibleSubString(line, 0, t.w-ofset*2)
+		trim := services.VisibleSubString(line, 0, t.w-offset*2)
 		if !border { // used to make borderlett tiles more readable
 			trim = fmt.Sprintf(" %s", trim)
 		}
