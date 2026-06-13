@@ -2,6 +2,7 @@ package explorer
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
@@ -46,7 +47,7 @@ func (ex *Explorer) Handle(key rune) {
 		ex.cursor.y = 0
 	case 'o':
 		ex.typing = true
-		ex.buffer = entry{name: "", isDir: false, path: ex.root}
+		ex.buffer = entry{name: "", isDir: false, path: ex.path}
 		ex.cursor.y = len(ex.entries) - 1
 	case 'r': // TODO: change file name (deletes it and let you type)
 	case 'i': // TODO: change file name (set cursor to the end of the file name)
@@ -76,10 +77,10 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 }
 
 func (ex *Explorer) SetTitle() string {
-	if ex.curPath == ex.root {
+	if ex.root == ex.path {
 		return " Explorer "
 	}
-	return fmt.Sprintf(" %s ", ex.root)
+	return fmt.Sprintf(" %s ", filepath.Base(ex.path))
 }
 
 func (ex *Explorer) Resize(w, h int) {

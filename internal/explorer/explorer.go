@@ -8,8 +8,8 @@ type Explorer struct {
 	openFile   func(file string)
 	delFile    func(file string)
 	changeMode func(mode mode.Mode)
+	path       string
 	root       string
-	curPath    string
 	buffer     entry
 	entries    []entry
 	w          int
@@ -26,8 +26,8 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 	c := initCursor()
 	v := initCursor()
 	ex := &Explorer{
+		path:       defaultRoot,
 		root:       defaultRoot,
-		curPath:    defaultRoot,
 		w:          w,
 		h:          h,
 		cursor:     c,
@@ -45,6 +45,6 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 }
 
 func (ex *Explorer) SetRoot(root string) {
+	ex.path = root
 	ex.root = root
-	ex.curPath = root
 }

@@ -19,17 +19,17 @@ type entry struct {
 
 func (ex *Explorer) scanEntries() {
 	var e []entry
-	entries, err := os.ReadDir(ex.root)
+	entries, err := os.ReadDir(ex.path)
 	if err != nil {
 		panic(err)
 	}
-	if ex.curPath != ex.root {
+	if ex.root != ex.path {
 		e = append(e, entry{name: back, isDir: true})
 	}
 	for _, en := range entries {
 		ent := entry{
 			name:  en.Name(),
-			path:  filepath.Join(ex.root, en.Name()),
+			path:  filepath.Join(ex.path, en.Name()),
 			isDir: en.IsDir(),
 		}
 		e = append(e, ent)
@@ -45,9 +45,9 @@ func (ex *Explorer) openFileWithCallback() {
 	entry := ex.entries[ex.cursor.y]
 	if entry.isDir {
 		if entry.name == back {
-			ex.root = filepath.Dir(ex.root)
+			ex.path = filepath.Dir(ex.path)
 		} else {
-			ex.root = filepath.Join(ex.root, entry.name)
+			ex.path = filepath.Join(ex.path, entry.name)
 		}
 		return
 	}
@@ -87,7 +87,7 @@ func (ex *Explorer) typeNewEntry(key rune) {
 		}
 		if services.IsLetterOrNumber(key) || key == '.' {
 			ex.buffer.name = fmt.Sprintf("%s%c", ex.buffer.name, key)
-			ex.buffer.path = filepath.Join(ex.root, ex.buffer.name)
+			ex.buffer.path = filepath.Join(ex.path, ex.buffer.name)
 		}
 	}
 }
