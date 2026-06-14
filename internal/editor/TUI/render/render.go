@@ -3,6 +3,7 @@ package render
 import (
 	code "github.com/EnotInc/Bard/internal/editor/TUI/render/code"
 	md "github.com/EnotInc/Bard/internal/editor/TUI/render/markdown"
+	"github.com/EnotInc/Bard/internal/enums/buffers"
 	render "github.com/EnotInc/Bard/internal/enums/render"
 	"github.com/EnotInc/Bard/internal/services"
 )
@@ -64,7 +65,7 @@ func (r *Renderer) ToggleRender() {
 // If rednered line has change render mode (if '```' is found), render switches modes, and makes all lines bellow dirty
 // And then - caches the result of the render
 // Basically, I render only line with the cursor on it, and dirty lines
-func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool, xOffset int) (string, bool) {
+func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool, xOffset int, Type buffers.BufferType) (string, bool) {
 	//lineHash := services.GetHash(string(line))
 	lineHash := services.GetHash(string(line))
 	if !isCurrent {
@@ -81,6 +82,11 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 	var data string
 	var mode render.Render
 	var keep = false
+
+	if Type == buffers.Code { // forsing editor to use code render if code file is opened
+		r.mode = render.Code
+		mode = render.Code
+	}
 
 	switch r.mode {
 	case render.Markdown:

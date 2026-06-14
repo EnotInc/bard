@@ -6,12 +6,13 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/buffers"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/services"
 )
 
 // This function is used to add visual highlight to the selected lines
-func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, isRender bool) string {
+func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startLine, endOffset, endLine int, Type buffers.BufferType) string {
 	var line []rune
 
 	if len(l) == 0 { // if line is empty, returning selected 'new line' symbol
@@ -33,8 +34,8 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 		}
 
 		var rendered string
-		if isRender {
-			rendered, _ = ui.render.Render(l, i, true, true, i == startLine, ui.XScroll)
+		if Type != buffers.Other {
+			rendered, _ = ui.render.Render(l, i, true, true, i == startLine, ui.XScroll, Type)
 		} else {
 			rendered = string(clear)
 		}
@@ -66,8 +67,8 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 		if startLine > endLine {
 			startLine, endLine = endLine, startLine
 		}
-		if isRender {
-			ui.render.Render(l, i, true, true, i == startLine, ui.XScroll)
+		if Type != buffers.Other {
+			ui.render.Render(l, i, true, true, i == startLine, ui.XScroll, Type)
 		}
 
 		theme := config.GetTheme().General

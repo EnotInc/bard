@@ -10,6 +10,7 @@ import (
 
 	"github.com/EnotInc/Bard/docs/help"
 	"github.com/EnotInc/Bard/internal/editor/buffer"
+	"github.com/EnotInc/Bard/internal/enums/buffers"
 	h "github.com/EnotInc/Bard/internal/enums/help"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
@@ -41,7 +42,7 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 	e.newBuffer()
 	e.b[e.curBuffer].Lines = []*buffer.Line{}
 	e.b[e.curBuffer].IsReadOnly = true
-	e.b[e.curBuffer].IsMdFile = true
+	e.b[e.curBuffer].Type = buffers.Markdown
 	e.b[e.curBuffer].Title = string(topic)
 
 	for line := range lines {
@@ -76,8 +77,7 @@ func (e *Editor) LoadFile(file string) {
 	}
 	defer f.Close()
 
-	ext := filepath.Ext(file)
-	e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
+	e.setBufferType(file)
 
 	scanner := bufio.NewScanner(f)
 
@@ -125,8 +125,9 @@ func (e *Editor) SaveFile() {
 			if err != nil {
 				e.tui.Message = err.Error()
 			} else {
-				ext := filepath.Ext(e.b[e.curBuffer].Title)
-				e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
+				//ext := filepath.Ext(e.b[e.curBuffer].Title)
+				//e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
+				e.setBufferType(e.b[e.curBuffer].Title)
 
 				e.tui.Message = "file saved"
 			}
@@ -161,4 +162,17 @@ func (e *Editor) RemoveFileCallback(file string) {
 
 func (e *Editor) ChangeModeCallback(mode mode.Mode) {
 	e.curMode = mode
+}
+
+func (e *Editor) setBufferType(file string) {
+	ext := filepath.Ext(file)
+	ext = strings.TrimPrefix(ext, ".")
+	ext = strings.ToLower(ext)
+	if ext == "md" || ext == "MD" {
+		e.b[e.curBuffer].Type = buffers.Markdown
+	} else if ok := buffers.CodeExt[ext]; ok {
+		e.b[e.curBuffer].Type = buffers.Code
+	} else {
+		e.b[e.curBuffer].Type = buffers.Other
+	}
 }

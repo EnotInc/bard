@@ -9,6 +9,7 @@ import (
 	"github.com/EnotInc/Bard/internal/editor/TUI/render"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/buffers"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
@@ -149,8 +150,8 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 	return data.String()
 }
 
-func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, isRender bool) (string, bool) {
-	if !isRender { // returning stripped text if render is of (or it's not a md file)
+func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, Type buffers.BufferType) (string, bool) {
+	if Type == buffers.Other {
 		clear := services.ReplaceTabs(str)
 		shift := services.CursorShift(str)
 		return services.VisibleSubString(string(clear), start, end+shift), false
@@ -158,7 +159,7 @@ func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent
 
 	var l = ""
 	var keep = false
-	l, keep = ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll)
+	l, keep = ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll, Type)
 	l = services.VisibleSubString(l, start, end)
 
 	return l, keep

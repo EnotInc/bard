@@ -104,7 +104,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 
 		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, cfg.RLN)
 
-		isRender := e.b[e.curBuffer].IsMdFile && cfg.Render
+		//isRender := e.b[e.curBuffer].Type == buffers.Markdown && cfg.Render
 
 		var data string
 
@@ -118,16 +118,16 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 					buf.Visual.Line(),
 					buf.Cursor.Offset(),
 					buf.Cursor.Line(),
-					isRender)
+					buf.Type)
 
 				fmt.Fprint(&content, services.VisibleSubString(visual, start, end))
 			} else {
-				data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender)
+				data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
 				fmt.Fprint(&content, data)
 			}
 		// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 		default:
-			data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, isRender)
+			data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
 			fmt.Fprint(&content, data)
 		}
 

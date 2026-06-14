@@ -47,7 +47,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 		if show {
 			return services.PaintString(r.theme.Symbol, string(line)), renderMode, false
 		}
-		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+1+xOffset)),
+		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+xOffset)),
 			renderMode, true
 	}
 

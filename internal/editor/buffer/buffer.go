@@ -1,5 +1,7 @@
 package buffer
 
+import buffers "github.com/EnotInc/Bard/internal/enums/buffers"
+
 // Title - name of the oppened file
 // pairs - used like a stask to keep track of paired brackets
 // copies - sores copied lines
@@ -19,7 +21,7 @@ type Buffer struct {
 	UndoStack  []snapshot
 	RedoStack  []snapshot
 	IsReadOnly bool
-	IsMdFile   bool
+	Type       buffers.BufferType
 }
 
 func InitBuffer() []*Buffer {
@@ -31,7 +33,7 @@ func InitBuffer() []*Buffer {
 		UndoStack:  []snapshot{},
 		pairs:      []rune{},
 		IsReadOnly: false,
-		IsMdFile:   false,
+		Type:       buffers.Other,
 	}
 	b.Lines = append(b.Lines, &Line{Data: []rune("")})
 	var bfs []*Buffer
