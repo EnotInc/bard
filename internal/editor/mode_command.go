@@ -79,6 +79,7 @@ func (e *Editor) execCommand() {
 		if len(e.b) == 1 {
 			e.newBuffer()
 			e.delBuffer(0)
+			screen.ShiftFocus()
 			return
 		}
 		e.delBuffer(e.curBuffer)
