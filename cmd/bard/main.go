@@ -42,7 +42,7 @@ func main() {
 		default:
 			f, err := os.Stat(arg)
 			if err != nil {
-				panic(err)
+				ed.CreateFile(arg)
 			}
 
 			if !f.IsDir() {

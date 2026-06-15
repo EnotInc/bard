@@ -66,7 +66,6 @@ func (r *Renderer) ToggleRender() {
 // And then - caches the result of the render
 // Basically, I render only line with the cursor on it, and dirty lines
 func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool, xOffset int, Type buffers.BufferType) (string, bool) {
-	//lineHash := services.GetHash(string(line))
 	lineHash := services.GetHash(string(line))
 	if !isCurrent {
 		if l, ok := r.c.getCached(lineIndex); ok && !l.keep {
@@ -83,22 +82,26 @@ func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool,
 	var mode render.Render
 	var keep = false
 
-	if Type == buffers.Code { // forsing editor to use code render if code file is opened
+	switch Type {
+	case buffers.Code:
+		data, _, keep = r.code.RenderCodeLine(line, show, xOffset)
 		r.mode = render.Code
-		mode = render.Code
-	}
 
-	switch r.mode {
-	case render.Markdown:
-		data, mode, keep = r.md.RenderMarkdownLine(line, lineIndex, show, xOffset)
-	case render.Code:
-		data, mode, keep = r.code.RenderCodeLine(line, show, xOffset)
-	}
+	case buffers.Markdown:
+		switch r.mode {
+		case render.Markdown:
+			data, mode, keep = r.md.RenderMarkdownLine(line, lineIndex, show, xOffset)
+		case render.Code:
+			data, mode, keep = r.code.RenderCodeLine(line, show, xOffset)
+		}
 
-	// If mode has changed, lines below becomes dirty
-	if r.mode != mode {
-		r.mode = mode
-		r.c.dirty = true
+		// If mode has changed, lines below becomes dirty
+		if r.mode != mode {
+			r.mode = mode
+			r.c.dirty = true
+		}
+	case buffers.Other:
+		data = string(line)
 	}
 
 	if !isCurrent {

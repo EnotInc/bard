@@ -6,6 +6,7 @@ const (
 	hello   = "Oh, hello there!"
 	info    = ":q - quit        :w <file name?> - save        :x - save and quit"
 	motions = "If you didn't know this, well, it's time to learn some vim motions"
+	help    = "You can run :h to open general help page"
 )
 
 // Called when used starts emtpy editor
@@ -23,6 +24,7 @@ func (tui *TUI) BuidASCII() {
 	data = append(data, []rune(""))
 	data = append(data, []rune(info))
 	data = append(data, []rune(motions))
+	data = append(data, []rune(help))
 
 	tui.Hello = data
 }

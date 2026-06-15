@@ -5,11 +5,16 @@ import (
 	"slices"
 
 	"github.com/EnotInc/Bard/internal/editor/buffer"
+	"github.com/EnotInc/Bard/internal/enums/calls"
+	"github.com/EnotInc/Bard/internal/screen"
 )
 
 func (e *Editor) ClearAllBuffers() {
 	e.curBuffer = 0
 	e.b = buffer.InitBuffer()
+
+	e.tui.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }
 
 // used to create new buffer, and switch to it
@@ -17,6 +22,9 @@ func (e *Editor) newBuffer() {
 	b := buffer.InitBuffer()
 	e.b = append(e.b, b...)
 	e.curBuffer = len(e.b) - 1
+
+	e.tui.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }
 
 // deletes buffer by given index, unless current buffer is the last one
@@ -29,6 +37,9 @@ func (e *Editor) delBuffer(index int) {
 	} else {
 		e.tui.Message = "Last buffer can't be removed"
 	}
+
+	e.tui.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }
 
 // changes tabs, by increasing curBuffer
@@ -38,6 +49,9 @@ func (e *Editor) nextTab() {
 	} else {
 		e.curBuffer += 1
 	}
+
+	e.tui.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }
 
 // changes tabs, by decreasing curBuffer
@@ -48,6 +62,9 @@ func (e *Editor) prevTab() {
 	} else {
 		e.curBuffer -= 1
 	}
+
+	e.tui.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }
 
 func (e *Editor) SwitchToTab(index int) {
@@ -57,4 +74,7 @@ func (e *Editor) SwitchToTab(index int) {
 	}
 
 	e.curBuffer = index
+
+	e.tui.PurgeCache()
+	screen.SendCall(calls.PurgeCache)
 }

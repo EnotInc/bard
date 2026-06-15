@@ -27,7 +27,6 @@ type Editor struct {
 	lastCmd         string
 	b               []*buffer.Buffer
 	curBuffer       int
-	IsChanged       bool
 	save            bool
 }
 

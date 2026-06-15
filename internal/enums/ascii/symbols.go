@@ -19,7 +19,7 @@ const (
 	WSEOL   Symbol = "\u00b7"
 	NewLine Symbol = "\u21b5"
 	Tab     Symbol = "\u21a6"
-	CodeTab Symbol = "\u007c"
+	CodeTab Symbol = "\u2502"
 
 	TagS Symbol = "["
 	TagE Symbol = "]"

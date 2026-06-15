@@ -114,13 +114,13 @@ func (e *Editor) execCommand() {
 
 	case "showmd":
 		cfg.ShowMD = !cfg.ShowMD
-		e.IsChanged = true
+
 		e.tui.PurgeCache()
 		screen.SendCall(calls.PurgeCache)
 
 	case "showicon", "si":
 		cfg.ShowIcons = !cfg.ShowIcons
-		e.IsChanged = true
+
 		e.tui.PurgeCache()
 		screen.SendCall(calls.PurgeCache)
 
@@ -131,7 +131,7 @@ func (e *Editor) execCommand() {
 
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
-		e.IsChanged = true
+
 		e.tui.PurgeCache()
 		screen.SendCall(calls.PurgeCache)
 
@@ -141,11 +141,20 @@ func (e *Editor) execCommand() {
 	case "gt":
 		e.nextTab()
 
+		e.tui.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
+
 	case "gT":
 		e.prevTab()
 
+		e.tui.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
+
 	case "newtab", "nt":
 		e.newBuffer()
+
+		e.tui.PurgeCache()
+		screen.SendCall(calls.PurgeCache)
 
 	case "theme":
 		e.tui.Message = fmt.Sprintf("Theme: %s", cfg.ThemeName)
@@ -250,7 +259,7 @@ func (e *Editor) parseCommand() {
 
 			err := os.RemoveAll(entry)
 			if err != nil {
-				e.tui.Message = fmt.Sprintf("unable to remove %s", entry)
+				e.tui.Message = fmt.Sprintf("unable to remove [%s]", entry)
 			}
 
 			e.tui.Message = fmt.Sprintf("[%s] was removed", entry)
