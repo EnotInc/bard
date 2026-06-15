@@ -152,7 +152,7 @@ func (b *Buffer) continueList() []rune {
 	if strings.HasPrefix(trim, ">") {
 		newLine = append(newLine, curLine.Data[:offset]...)
 		newLine = append(newLine, []rune("> ")...)
-	} else if strings.HasPrefix(trim, "-") { // NOTE: yeah, this looks not rly good. Anyway, I'll refactor it later
+	} else if strings.HasPrefix(trim, "-") && trim != "---" { // NOTE: yeah, this looks not rly good. Anyway, I'll refactor it later
 		if len(trim) > 5 && trim[2] == '[' && trim[4] == ']' {
 			newLine = append(newLine, curLine.Data[:offset]...)
 			newLine = append(newLine, []rune("- [ ] ")...)
@@ -189,9 +189,13 @@ func (b *Buffer) DismissList() bool {
 
 	trim := strings.TrimSpace(string(curLine.Data))
 
+	if len(trim) == 0 {
+		return false
+	}
 	if trim == "-" || trim == "- [ ]" || trim == ">" {
 		return true
-	} else if trim[len(trim)-1] == ')' || trim[len(trim)-1] == '.' {
+	}
+	if trim[len(trim)-1] == ')' || trim[len(trim)-1] == '.' {
 		prefix := trim[:len(trim)-1]
 		_, err := strconv.Atoi(prefix)
 		if err != nil {
