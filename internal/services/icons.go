@@ -1,15 +1,17 @@
 package services
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/enums/ascii"
 )
 
 func GetFileIcon(s string) string {
 
 	cfg := config.GetConfig()
-	if !cfg.ShowIcons {
+	if !cfg.ShowIcons || len(s) == 0 {
 		return "  "
 	}
 
@@ -30,7 +32,7 @@ func GetFileIcon(s string) string {
 		icon = defaultFile
 	}
 
-	return icon
+	return fmt.Sprintf("%s%s", icon, ascii.ResetFg)
 }
 
 const defaultFile = " "

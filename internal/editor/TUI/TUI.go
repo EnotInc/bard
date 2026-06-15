@@ -174,18 +174,23 @@ func (ui *TUI) Center(l []rune) string {
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	theme := config.GetTheme().General
 	if len(tabs) == 1 {
-		return fmt.Sprintf("%s[%s]", theme.Tab, tabs[0])
+		icon := services.GetFileIcon(tabs[0])
+		icon = strings.TrimPrefix(icon, "  ")
+		return fmt.Sprintf("%s[%s%s%s]", theme.Tab, icon, tabs[0], theme.Tab)
 	}
 
 	var s strings.Builder
 	for i, tab := range tabs {
+		icon := services.GetFileIcon(tab)
+		icon = strings.TrimPrefix(icon, "  ")
+		color := ascii.Reset
 		if i == curTab {
-			fmt.Fprint(&s, theme.Tab)
+			color = ascii.Color(theme.Tab)
 		}
 		if show {
-			fmt.Fprintf(&s, "[%d|%s]", i+1, tab)
+			fmt.Fprintf(&s, "%s[%d|%s%s%s]", color, i+1, icon, color, tab)
 		} else {
-			fmt.Fprintf(&s, "[%d]", i+1)
+			fmt.Fprintf(&s, "%s[%d%s%s]", color, i+1, color, icon)
 		}
 		fmt.Fprint(&s, ascii.ResetFg)
 	}
