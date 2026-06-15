@@ -80,19 +80,18 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 func (e *Editor) DrawLineAt(index int) string {
 	upperBorder := e.tui.YScroll
 	maxNumLen := len(fmt.Sprint(len(e.b[e.curBuffer].Lines)))
-	l, _ := e.drawRenderedLine(index+upperBorder, upperBorder, maxNumLen)
+	l := e.drawRenderedLine(index+upperBorder, upperBorder, maxNumLen)
 
 	return l
 }
 
-func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string, bool) {
+func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string {
 	cfg := config.GetConfig()
 	buf := e.b[e.curBuffer]
 	show := buf.Cursor.Line() == i || cfg.ShowMD
 	isFirst := i == upperBorder
 
 	var l strings.Builder
-	var keep bool
 
 	if i < len(buf.Lines) { // rendering line
 		var content strings.Builder
@@ -122,12 +121,12 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 
 				fmt.Fprint(&content, services.VisibleSubString(visual, start, end))
 			} else {
-				data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
+				data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
 				fmt.Fprint(&content, data)
 			}
 		// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 		default:
-			data, keep = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
+			data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
 			fmt.Fprint(&content, data)
 		}
 
@@ -139,7 +138,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 		fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~")
 	}
 
-	return l.String(), keep
+	return l.String()
 }
 
 func (e *Editor) Handle(key rune) {

@@ -148,19 +148,17 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 	return data.String()
 }
 
-func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, Type buffers.BufferType) (string, bool) {
+func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, Type buffers.BufferType) string {
 	if Type == buffers.Other {
 		clear := services.ReplaceTabs(str)
 		shift := services.CursorShift(str)
-		return services.VisibleSubString(string(clear), start, end+shift), false
+		return services.VisibleSubString(string(clear), start, end+shift)
 	}
 
-	var l = ""
-	var keep = false
-	l, keep = ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll, Type)
+	l := ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll, Type)
 	l = services.VisibleSubString(l, start, end)
 
-	return l, keep
+	return l
 }
 
 func (ui *TUI) ResetRender() {

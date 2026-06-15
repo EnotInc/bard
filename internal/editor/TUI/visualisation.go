@@ -35,7 +35,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		var rendered string
 		if Type != buffers.Other {
-			rendered, _ = ui.render.Render(l, i, true, true, i == startLine, ui.XScroll, Type)
+			rendered = ui.render.Render(l, i, true, true, i == startLine, ui.XScroll, Type)
 		} else {
 			rendered = string(clear)
 		}
