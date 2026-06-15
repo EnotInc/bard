@@ -183,14 +183,14 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	for i, tab := range tabs {
 		icon := services.GetFileIcon(tab)
 		icon = strings.TrimPrefix(icon, "  ")
-		color := ascii.Reset
+		color := ascii.ResetFg
 		if i == curTab {
 			color = ascii.Color(theme.Tab)
 		}
 		if show {
 			fmt.Fprintf(&s, "%s[%d|%s%s%s]", color, i+1, icon, color, tab)
 		} else {
-			fmt.Fprintf(&s, "%s[%d%s%s]", color, i+1, color, icon)
+			fmt.Fprintf(&s, "%s[%d %s%s]", color, i+1, icon, color)
 		}
 		fmt.Fprint(&s, ascii.ResetFg)
 	}

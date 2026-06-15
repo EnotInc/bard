@@ -51,6 +51,14 @@ func (ex *Explorer) Handle(key rune) {
 		ex.cursor.y = len(ex.entries) - 1
 	case 'r': // TODO: change file name (deletes it and let you type)
 	case 'i': // TODO: change file name (set cursor to the end of the file name)
+	case 'g':
+		if ex.root == ex.path || len(ex.entries) == 0 {
+			ex.cursor.y = 0
+		} else {
+			ex.cursor.y = 1
+		}
+	case 'G':
+		ex.cursor.y = len(ex.entries) - 1
 	case 'd':
 		ex.delFileWithCallback()
 	case 'j':
