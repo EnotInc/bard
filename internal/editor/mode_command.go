@@ -21,20 +21,20 @@ import (
 func (e *Editor) caseCommand(key rune) {
 	switch key {
 	case keys.Esc:
-		e.cmd.command = ""
+		e.cmd.command = []rune{}
 		e.curMode = mode.Normal
 
 	case keys.Backspace:
 		if len(e.cmd.command) > 0 {
 			e.cmd.command = e.cmd.command[:len(e.cmd.command)-1]
 		} else {
-			e.cmd.command = ""
+			e.cmd.command = []rune{}
 			e.curMode = mode.Normal
 		}
 
 	case keys.Enter:
 		e.execCommand()
-		e.cmd.command = ""
+		e.cmd.command = []rune{}
 		e.curMode = mode.Normal
 	case '>':
 		if e.cmd.index < len(e.cmd.history) {
@@ -49,13 +49,13 @@ func (e *Editor) caseCommand(key rune) {
 	default:
 		cmdOfset := 10
 		if len(e.cmd.command) >= e.tui.W-cmdOfset {
-			e.cmd.command = ""
+			e.cmd.command = []rune{}
 			e.tui.Message = "Unable process command of this length"
 			e.curMode = mode.Normal
 			return
 		}
 		if unicode.IsPrint(key) {
-			e.cmd.command += string(key)
+			e.cmd.command = append(e.cmd.command, key)
 		}
 	}
 }
@@ -74,7 +74,7 @@ func (cmd *cmd) saveToHisory() {
 func (e *Editor) execCommand() {
 	cfg := config.GetConfig()
 	e.cmd.saveToHisory()
-	switch e.cmd.command {
+	switch string(e.cmd.command) {
 	case "c", "close":
 		if len(e.b) == 1 {
 			e.newBuffer()
@@ -131,8 +131,6 @@ func (e *Editor) execCommand() {
 
 	case "showempty", "se":
 		cfg.ShowEmpty = !cfg.ShowEmpty
-		// e.tui.PurgeCache()
-		// screen.SendCall(calls.PurgeCache)
 
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
@@ -180,7 +178,7 @@ func (e *Editor) execCommand() {
 // Used to parse some specific commands like `help`, or `w` (save)
 func (e *Editor) parseCommand() {
 	if len(e.cmd.command) >= 3 {
-		parts := strings.Split(e.cmd.command, " ")
+		parts := strings.Split(string(e.cmd.command), " ")
 		if len(parts) != 2 {
 			e.tui.Message = "bad syntax"
 			return
@@ -192,10 +190,10 @@ func (e *Editor) parseCommand() {
 		arg := parts[1]
 
 		switch cmd {
-		case "w":
-			e.CreateFile(arg)
-			e.b[e.curBuffer].Title = arg
-			e.SaveFile()
+		// case "w": // FIXME: get current open dir
+		// 	e.CreateFile(arg)
+		// 	e.b[e.curBuffer].Title = arg
+		// 	e.SaveFile()
 
 		case "newtab", "nt":
 			e.newBuffer()

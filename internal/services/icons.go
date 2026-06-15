@@ -11,7 +11,7 @@ import (
 func GetFileIcon(s string) string {
 
 	cfg := config.GetConfig()
-	if !cfg.ShowIcons || len(s) == 0 {
+	if !cfg.ShowIcons {
 		return "  "
 	}
 
@@ -121,6 +121,7 @@ func GetDirIcon(s string) string {
 const defaultDir = "\033[1;96m "
 
 var dirIcon map[string]string = map[string]string{
+	".":            "\033[1;90m ",
 	"..":           "\033[1;90m ",
 	"Pictures":     "\033[1;95m󰉏 ",
 	"Downloads":    "\033[1;92m󰉍 ",

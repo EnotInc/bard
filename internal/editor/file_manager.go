@@ -154,7 +154,8 @@ func (e *Editor) OpenFileCallback(file string) {
 
 func (e *Editor) RemoveFileCallback(file string) {
 	e.curMode = mode.Command
-	e.cmd.command = fmt.Sprintf("del %s", file)
+	del := []rune("del ")
+	e.cmd.command = append(del, []rune(file)...)
 }
 
 func (e *Editor) ChangeModeCallback(mode mode.Mode) {

@@ -31,15 +31,15 @@ type Editor struct {
 }
 
 type cmd struct {
-	command string
-	history []string
+	command []rune
+	history [][]rune
 	index   int
 }
 
 func initCmd() *cmd {
 	return &cmd{
-		command: "",
-		history: []string{},
+		command: []rune{},
+		history: [][]rune{},
 		index:   0,
 	}
 }

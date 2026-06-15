@@ -11,6 +11,7 @@ import (
 
 func main() {
 	config.InitConfig()
+	config.CreateSpace()
 	screen.InitScreen()
 
 	h := screen.H()
@@ -39,6 +40,9 @@ func main() {
 		switch arg {
 		case "-h", "--help":
 			ed.StartHelp()
+		case "--space", "-s":
+			space := config.GetSpacePath()
+			ex.SetRoot(space)
 		default:
 			f, err := os.Stat(arg)
 			if err != nil {

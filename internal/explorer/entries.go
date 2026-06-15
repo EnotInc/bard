@@ -1,9 +1,9 @@
 package explorer
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
@@ -14,28 +14,34 @@ import (
 )
 
 type entry struct {
-	name  string
-	path  string
+	name  []rune
+	path  []rune
 	isDir bool
 }
 
 func (ex *Explorer) scanEntries() {
 	cfg := config.GetConfig()
 	var e []entry
-	entries, err := os.ReadDir(ex.path)
+	entries, err := os.ReadDir(string(ex.path))
 	if err != nil {
 		panic(err)
 	}
-	if ex.root != ex.path {
-		e = append(e, entry{name: back, isDir: true})
+
+	if len(entries) == 0 && !ex.typing { // cur dir is added if dir is empty
+		e = append(e, entry{name: []rune(defaultRoot), isDir: true})
 	}
+
+	if !slices.Equal(ex.root, ex.path) { // 'go back' entry
+		e = append(e, entry{name: []rune(back), isDir: true})
+	}
+
 	for _, en := range entries {
 		if strings.HasPrefix(en.Name(), ".") && !cfg.ShowDot {
 			continue
 		}
 		ent := entry{
-			name:  en.Name(),
-			path:  filepath.Join(ex.path, en.Name()),
+			name:  []rune(en.Name()),
+			path:  []rune(filepath.Join(string(ex.path), en.Name())),
 			isDir: en.IsDir(),
 		}
 		e = append(e, ent)
@@ -50,20 +56,20 @@ func (ex *Explorer) scanEntries() {
 func (ex *Explorer) openFileWithCallback() {
 	entry := ex.entries[ex.cursor.y]
 	if entry.isDir {
-		if entry.name == back {
-			ex.path = filepath.Dir(ex.path)
+		if slices.Equal(entry.name, []rune(back)) {
+			ex.path = []rune(filepath.Dir(string(ex.path)))
 		} else {
-			ex.path = filepath.Join(ex.path, entry.name)
+			ex.path = []rune(filepath.Join(string(ex.path), string(entry.name)))
 		}
 		return
 	}
-	ex.openFile(entry.path)
+	ex.openFile(string(entry.path))
 	screen.SendCall(calls.OpenFile)
 }
 
 func (ex *Explorer) delFileWithCallback() {
 	entry := ex.entries[ex.cursor.y]
-	ex.delFile(entry.path)
+	ex.delFile(string(entry.path))
 	screen.SendCall(calls.DelFile)
 }
 
@@ -73,7 +79,7 @@ func (ex *Explorer) typeNewEntry(key rune) {
 		ex.typing = false
 		ex.buffer = entry{}
 		ex.entries = ex.entries[:len(ex.entries)-1]
-		ex.cursor.y = len(ex.entries) - 1
+		ex.cursor.y = max(len(ex.entries)-1, 0)
 		ex.scroll()
 	case keys.Enter:
 		ex.typing = false
@@ -92,20 +98,20 @@ func (ex *Explorer) typeNewEntry(key rune) {
 			return
 		}
 		if services.IsLetterOrNumber(key) || key == '.' {
-			ex.buffer.name = fmt.Sprintf("%s%c", ex.buffer.name, key)
-			ex.buffer.path = filepath.Join(ex.path, ex.buffer.name)
+			ex.buffer.name = append(ex.buffer.name, key)
+			ex.buffer.path = []rune(filepath.Join(string(ex.path), string(ex.buffer.name)))
 		}
 	}
 }
 
 func (ex *Explorer) create(e entry) {
 	if e.isDir {
-		err := os.Mkdir(e.path, 0755)
+		err := os.Mkdir(string(e.path), 0755)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		f, err := os.Create(e.path)
+		f, err := os.Create(string(e.path))
 		if err != nil {
 			panic(err)
 		}
