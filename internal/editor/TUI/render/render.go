@@ -67,7 +67,7 @@ func (r *Renderer) ToggleRender() {
 // Basically, I render only line with the cursor on it, and dirty lines
 func (r *Renderer) Render(line []rune, lineIndex int, show bool, isCurrent bool, isFirst bool, xOffset int, Type buffers.BufferType) string {
 	lineHash := services.GetHash(string(line))
-	if !isCurrent {
+	if !isCurrent && Type != buffers.Code {
 		if l, ok := r.c.getCached(lineIndex); ok && !l.keep {
 			if isFirst && l.mode == render.Code {
 				r.mode = render.Code
