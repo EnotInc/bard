@@ -27,26 +27,24 @@ type visual struct {
 // CurOff - visual offset where cursor is located
 // W, H - width and height of terminal window
 // Save - is terminal save (is is big enough)
-// ShowHello - used to how 'hello message' and bard logo in empty editor
 // Message - shows at the bottom of the screen, in 'lower bar'. Used to display some messages
 // Hello - ascii art of bard
 // visual - anchor of wisual row and offset. Used to calculate visual selection between this point and the cursor
 // render - an instance of render. Used to buld line with ansi sybols
 // Redraw - chan, wich used to redraw the whole editor when window size is changed
 type TUI struct {
-	Redraw    chan bool
-	render    *render.Renderer
-	visual    *visual
-	Message   string
-	Hello     [][]rune
-	CurOff    int
-	H         int
-	W         int
-	XScroll   int
-	CurRow    int
-	YScroll   int
-	ShowHello bool // TODO: move to buffer as 'is new'
-	Save      bool
+	Redraw  chan bool
+	render  *render.Renderer
+	visual  *visual
+	Message string
+	Hello   [][]rune
+	CurOff  int
+	H       int
+	W       int
+	XScroll int
+	CurRow  int
+	YScroll int
+	Save    bool
 }
 
 func InitTUI(h int, w int) *TUI {

@@ -72,7 +72,6 @@ func InitEditor(w, h int) *Editor {
 		e.tui.Save = false
 	}
 
-	e.tui.BuidASCII()
 	return e
 }
 

@@ -94,6 +94,7 @@ func getDefaultConfig() *Config {
 	config := &Config{
 		RLN:        false,
 		ShowMD:     false,
+		ShowEmpty:  true,
 		Render:     true,
 		TabNames:   true,
 		ThemeName:  defaultThemeName,

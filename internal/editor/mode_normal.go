@@ -31,7 +31,6 @@ func (e *Editor) caseNormal(key rune) {
 				enums.Without)
 		}
 		e.ScrollLeft()
-		e.tui.ShowHello = false
 
 	case 'a':
 		if !e.b[e.curBuffer].IsReadOnly {
@@ -44,7 +43,6 @@ func (e *Editor) caseNormal(key rune) {
 		}
 		e.b[e.curBuffer].Insert_a()
 		e.ScrollRight()
-		e.tui.ShowHello = false
 
 	case 'I':
 		if !e.b[e.curBuffer].IsReadOnly {
@@ -56,7 +54,6 @@ func (e *Editor) caseNormal(key rune) {
 				enums.Without)
 		}
 		e.b[e.curBuffer].MoveToFirstVisible()
-		e.tui.ShowHello = false
 
 	case 'A':
 		if !e.b[e.curBuffer].IsReadOnly {
@@ -69,7 +66,6 @@ func (e *Editor) caseNormal(key rune) {
 		}
 		e.b[e.curBuffer].MoveToLastChar()
 		e.b[e.curBuffer].Insert_a()
-		e.tui.ShowHello = false
 
 	case ':':
 		e.curMode = mode.Command
@@ -89,7 +85,6 @@ func (e *Editor) caseNormal(key rune) {
 			e.b[e.curBuffer].Cursor.Line(),
 			e.b[e.curBuffer].Cursor.Line(),
 			enums.Without)
-		e.tui.ShowHello = false
 
 	case 'O':
 		if !e.b[e.curBuffer].IsReadOnly {
@@ -103,7 +98,6 @@ func (e *Editor) caseNormal(key rune) {
 			e.b[e.curBuffer].Cursor.Line(),
 			e.b[e.curBuffer].Cursor.Line(),
 			enums.Without)
-		e.tui.ShowHello = false
 
 	case 'D':
 		e.b[e.curBuffer].SaveChanges(
@@ -203,12 +197,10 @@ func (e *Editor) caseNormal(key rune) {
 	case 'v':
 		e.curMode = mode.Visual
 		e.b[e.curBuffer].StartVisual()
-		e.tui.ShowHello = false
 
 	case 'V':
 		e.curMode = mode.Visual_line
 		e.b[e.curBuffer].StartVisualLine()
-		e.tui.ShowHello = false
 
 	case 'p':
 		if e.b[e.curBuffer].IsReadOnly {
@@ -218,7 +210,6 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].SaveCopied()
 
 		e.b[e.curBuffer].Paste(enums.After)
-		e.tui.ShowHello = false
 
 	case 'P':
 		if e.b[e.curBuffer].IsReadOnly {
@@ -228,7 +219,6 @@ func (e *Editor) caseNormal(key rune) {
 		e.b[e.curBuffer].SaveCopied()
 
 		e.b[e.curBuffer].Paste(enums.Before)
-		e.tui.ShowHello = false
 
 	case 'u', keys.Ctrl_z:
 		err := e.b[e.curBuffer].Undo()

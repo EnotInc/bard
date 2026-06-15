@@ -9,6 +9,7 @@ type Config struct {
 	ResizeTime int    `json:"resize_time_duration,omitempty"`
 	TabStop    int    `json:"tab_stop,omitempty"`
 	RLN        bool   `json:"relative_line_numbers,omitempty"`
+	ShowEmpty  bool   `json:"show_empty_line_symbol,omitempty"`
 	ShowMD     bool   `json:"show_markdown_symbols,omitempty"`
 	Render     bool   `json:"enable_render,omitempty"`
 	TabNames   bool   `json:"show_tab_names,omitempty"`

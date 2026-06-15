@@ -134,13 +134,9 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) (string
 		// Here is where I add the line to the main data string
 		fmt.Fprint(&content, ascii.Reset)
 		fmt.Fprint(&l, n, content.String())
-	} else { // getting empty line
+	} else if cfg.ShowEmpty && !buf.IsReadOnly { // getting empty line
 		theme := config.GetTheme().General
-		if e.tui.ShowHello {
-			fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~", ascii.Reset, e.tui.Center(e.tui.GetASCIIInfo(i)))
-		} else {
-			fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~")
-		}
+		fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~")
 	}
 
 	return l.String(), keep

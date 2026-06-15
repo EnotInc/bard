@@ -129,6 +129,11 @@ func (e *Editor) execCommand() {
 		e.tui.PurgeCache()
 		screen.SendCall(calls.PurgeCache)
 
+	case "showempty", "se":
+		cfg.ShowEmpty = !cfg.ShowEmpty
+		// e.tui.PurgeCache()
+		// screen.SendCall(calls.PurgeCache)
+
 	case "render", "rnd":
 		cfg.Render = !cfg.Render
 
