@@ -190,10 +190,10 @@ func (e *Editor) parseCommand() {
 		arg := parts[1]
 
 		switch cmd {
-		// case "w": // FIXME: get current open dir
-		// 	e.CreateFile(arg)
-		// 	e.b[e.curBuffer].Title = arg
-		// 	e.SaveFile()
+		case "w": // FIXME: get current open dir
+			e.CreateFileAtRoot(arg)
+			e.b[e.curBuffer].Title = arg
+			e.SaveFile()
 
 		case "newtab", "nt":
 			e.newBuffer()

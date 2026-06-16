@@ -233,3 +233,7 @@ func HideTile() {
 	}
 	global.call = calls.PurgeCache
 }
+
+func SetRoot(root string) {
+	global.root = []rune(root)
+}

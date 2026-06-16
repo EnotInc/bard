@@ -53,6 +53,7 @@ func main() {
 				ed.LoadFile(arg)
 				screen.HideTile()
 			} else {
+				screen.SetRoot(arg)
 				ex.SetRoot(arg)
 			}
 		}

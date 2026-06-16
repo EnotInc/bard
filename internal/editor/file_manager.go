@@ -106,6 +106,16 @@ func (e *Editor) CreateFile(fileName string) {
 	defer f.Close()
 }
 
+func (e *Editor) CreateFileAtRoot(fileName string) {
+	root := screen.Root()
+	path := filepath.Join(string(root), fileName)
+	f, err := os.Create(path)
+	if err != nil {
+		e.tui.Message = fmt.Sprintf("Unable to create file %s", fileName)
+	}
+	defer f.Close()
+}
+
 // saves current Buffer into file
 func (e *Editor) SaveFile() {
 	if !e.b[e.curBuffer].IsReadOnly {
