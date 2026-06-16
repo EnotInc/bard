@@ -92,8 +92,8 @@ func getDefaultTheme() *Theme {
 	theme := &Theme{
 		General: General{
 			SelectedTile: "\033[34m",
-			LineNumber:   "\033[90m",
-			CurrentLine:  "\033[33m",
+			LineNumber:   "\033[1;90m",
+			CurrentLine:  "\033[1;33m",
 			BottomBar:    "\033[48;5;16m",
 			Selection:    "\033[100m",
 			Command:      "\033[33m",
