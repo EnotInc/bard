@@ -106,14 +106,15 @@ func (e *Editor) CreateFile(fileName string) {
 	defer f.Close()
 }
 
-func (e *Editor) CreateFileAtRoot(fileName string) {
+func (e *Editor) CreateFileAtRoot(fileName string) string {
 	root := screen.Root()
-	path := filepath.Join(string(root), fileName)
-	f, err := os.Create(path)
+	entry := filepath.Join(string(root), fileName)
+	f, err := os.Create(entry)
 	if err != nil {
-		e.tui.Message = fmt.Sprintf("Unable to create file %s", fileName)
+		e.tui.Message = fmt.Sprintf("Unable to create file %s", entry)
 	}
 	defer f.Close()
+	return entry
 }
 
 // saves current Buffer into file
