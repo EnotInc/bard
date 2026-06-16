@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	"github.com/EnotInc/Bard/internal/screen"
@@ -28,11 +29,11 @@ func (ex *Explorer) scanEntries() {
 	}
 
 	if len(entries) == 0 && !ex.typing { // cur dir is added if dir is empty
-		e = append(e, entry{name: []rune(defaultRoot), isDir: true})
+		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
 	}
 
-	if !slices.Equal(ex.root, ex.path) { // 'go back' entry
-		e = append(e, entry{name: []rune(back), isDir: true})
+	if !slices.Equal(screen.Root(), ex.path) { // 'go back' entry
+		e = append(e, entry{name: []rune(enums.Back), isDir: true})
 	}
 
 	for _, en := range entries {
@@ -56,7 +57,7 @@ func (ex *Explorer) scanEntries() {
 func (ex *Explorer) openFileWithCallback() {
 	entry := ex.entries[ex.cursor.y]
 	if entry.isDir {
-		if slices.Equal(entry.name, []rune(back)) {
+		if slices.Equal(entry.name, []rune(enums.Back)) {
 			ex.path = []rune(filepath.Dir(string(ex.path)))
 		} else {
 			ex.path = []rune(filepath.Join(string(ex.path), string(entry.name)))

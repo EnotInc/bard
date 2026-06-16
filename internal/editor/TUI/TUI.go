@@ -83,7 +83,7 @@ func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 			rn *= -1
 		}
 	}
-	var numStr = strconv.Itoa(rn)
+	numStr := strconv.Itoa(rn)
 	numLen := len(numStr)
 	var num strings.Builder
 
@@ -91,6 +91,7 @@ func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 		maxOffset = enums.InitialOffset
 	}
 	fmt.Fprint(&num, ascii.Reset, strings.Repeat(" ", maxOffset-numLen))
+	fmt.Fprint(&num, ascii.Bold)
 
 	theme := config.GetTheme().General
 

@@ -1,6 +1,9 @@
 package explorer
 
-import mode "github.com/EnotInc/Bard/internal/enums/mode"
+import (
+	"github.com/EnotInc/Bard/internal/enums"
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
+)
 
 type Explorer struct {
 	cursor     *cursor
@@ -9,25 +12,20 @@ type Explorer struct {
 	delFile    func(file string)
 	changeMode func(mode mode.Mode)
 	path       []rune
-	root       []rune
-	buffer     entry
 	entries    []entry
+	buffer     entry
 	w          int
 	h          int
 	yScroll    int
 	typing     bool
 }
 
-const defaultRoot = "."
-const back = ".."
-
 func InitExplorer(open func(file string), del func(file string), change func(mode mode.Mode), w, h int) *Explorer {
 
 	c := initCursor()
 	v := initCursor()
 	ex := &Explorer{
-		path:       []rune(defaultRoot),
-		root:       []rune(defaultRoot),
+		path:       []rune(enums.DefaultRoot),
 		w:          w,
 		h:          h,
 		cursor:     c,
@@ -46,5 +44,4 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 
 func (ex *Explorer) SetRoot(root string) {
 	ex.path = []rune(root)
-	ex.root = []rune(root)
 }

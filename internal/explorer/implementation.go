@@ -53,7 +53,7 @@ func (ex *Explorer) Handle(key rune) {
 	case 'r': // TODO: change file name (deletes it and let you type)
 	case 'i': // TODO: change file name (set cursor to the end of the file name)
 	case 'g':
-		if slices.Equal(ex.root, ex.path) || len(ex.entries) == 0 {
+		if slices.Equal(screen.Root(), ex.path) || len(ex.entries) == 0 {
 			ex.cursor.y = 0
 		} else {
 			ex.cursor.y = 1
@@ -86,7 +86,7 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 }
 
 func (ex *Explorer) SetTitle() string {
-	if slices.Equal(ex.root, ex.path) {
+	if slices.Equal(screen.Root(), ex.path) {
 		return " Explorer "
 	}
 	return fmt.Sprintf(" %s ", filepath.Base(string(ex.path)))

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/keys"
@@ -24,6 +25,7 @@ type Screen struct {
 	resize   chan bool
 	oldState *term.State
 	status   func(withBorder bool) string
+	root     []rune
 	tiles    []*tile
 	hiden    tile
 	call     calls.Call
@@ -40,6 +42,10 @@ func W() int {
 
 func H() int {
 	return global.h
+}
+
+func Root() []rune {
+	return global.root
 }
 
 func InitScreen() {
@@ -65,6 +71,7 @@ func InitScreen() {
 		h:        _h,
 		fdIn:     _fdIn,
 		fdOut:    _fdOut,
+		root:     []rune(enums.DefaultRoot),
 	}
 	global = s
 }
