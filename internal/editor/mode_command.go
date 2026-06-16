@@ -3,6 +3,7 @@ package editor
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -245,9 +246,9 @@ func (e *Editor) parseCommand() {
 			screen.SendCall(calls.PurgeCache)
 
 		case "del": // This command used to delere files. Usually called from file explorer
-			entry := arg
+			entry := filepath.Clean(arg)
 			for i, b := range e.b {
-				title := strings.TrimPrefix(b.Title, ".\\")
+				title := filepath.Clean(b.Title)
 				if title == entry {
 					if b.IsReadOnly {
 						return
