@@ -42,6 +42,7 @@ func main() {
 			ed.StartHelp()
 		case "--space", "-s":
 			space := config.GetSpacePath()
+			screen.SetRoot(space)
 			ex.SetRoot(space)
 		default:
 			f, err := os.Stat(arg)
