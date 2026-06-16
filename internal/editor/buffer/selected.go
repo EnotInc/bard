@@ -131,7 +131,7 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	if startOffset > len(b.Lines[b.Cursor.line].Data) {
 		startOffset = len(b.Lines[b.Cursor.line].Data)
 	}
-	b.Cursor.offset = startOffset
+	b.Cursor.offset = min(startOffset, len(b.Lines[b.Cursor.line].Data)-1)
 }
 
 func (b *Buffer) SaveCopied() {

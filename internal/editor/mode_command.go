@@ -191,7 +191,7 @@ func (e *Editor) parseCommand() {
 		arg := parts[1]
 
 		switch cmd {
-		case "w": // FIXME: get current open dir
+		case "w":
 			name := e.CreateFileAtRoot(arg)
 			e.b[e.curBuffer].Title = name
 			e.SaveFile()
