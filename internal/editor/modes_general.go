@@ -9,7 +9,7 @@ func (e *Editor) IsGeneralMove(key rune) bool {
 }
 
 func (e *Editor) replaceWith(key rune) bool {
-	cmd := []byte(e.subCmd)
+	cmd := []rune(e.subCmd)
 	if len(cmd) > 0 {
 		if cmd[len(cmd)-1] == 'r' {
 			e.replaceWithAmount(key)
@@ -54,6 +54,9 @@ func (e *Editor) findSome(key rune) bool {
 func (e *Editor) GeneralCase(key rune) {
 	if e.subCmd == "" && key == '0' {
 		e.b[e.curBuffer].MoveToFirstChar()
+		return
+	}
+	if ok := e.replaceWith(key); ok {
 		return
 	}
 	switch key {
