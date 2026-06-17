@@ -104,25 +104,25 @@ func (r *Render) renderWSEOL(t *Token) string {
 }
 
 func (r *Render) renderBracket(t *Token) string {
-	return services.PaintString(r.theme.Bracket, string(t.Literal)) + ascii.ResetFg.Str()
+	return r.theme.Bracket + string(t.Literal) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderSymbol(t *Token) string {
-	return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.ResetFg.Str()
+	return r.theme.Symbol + string(t.Literal) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderKeyWord(t *Token) string {
-	return services.PaintString(r.theme.Keyword, string(t.Literal)) + ascii.ResetFg.Str()
+	return r.theme.Keyword + string(t.Literal) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderNumber(t *Token) string {
-	return services.PaintString(r.theme.Number, string(t.Literal)) + ascii.ResetFg.Str()
+	return r.theme.Number + string(t.Literal) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderString(t *Token) string {
-	return services.PaintString(r.theme.String, string(t.Literal)) + ascii.ResetFg.Str()
+	return r.theme.String + string(t.Literal) + ascii.ResetFg.Str()
 }
 
 func (r *Render) renderComment(t *Token) string {
-	return services.PaintString(r.theme.Comment, string(t.Literal)) + ascii.ResetFg.Str()
+	return r.theme.Comment + string(t.Literal) + ascii.ResetFg.Str()
 }

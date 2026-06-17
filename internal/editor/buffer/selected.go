@@ -128,8 +128,8 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 		b.Cursor.line = max(len(b.Lines)-1, 0)
 	}
 
-	if startOffset > len(b.Lines[b.Cursor.line].Data) {
-		startOffset = len(b.Lines[b.Cursor.line].Data)
+	if startOffset > len(b.Lines[b.Cursor.line].Data)-1 {
+		startOffset = len(b.Lines[b.Cursor.line].Data) - 1
 	}
 	b.Cursor.offset = min(startOffset, len(b.Lines[b.Cursor.line].Data)-1)
 }

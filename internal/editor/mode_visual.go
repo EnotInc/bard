@@ -78,12 +78,16 @@ func (e *Editor) caseVisual(key rune) {
 		e.curMode = mode.Normal
 
 	case 's':
-		if e.b[e.curBuffer].IsReadOnly {
+		buf := e.b[e.curBuffer]
+		if buf.IsReadOnly {
 			return
 		}
 		e.saveSelected()
 
-		e.b[e.curBuffer].CopySelected(true, visual)
+		buf.CopySelected(true, visual)
+		if buf.Cursor.Offset() == len(buf.Lines[buf.Cursor.Line()].Data)-1 {
+			buf.Insert_a()
+		}
 		e.curMode = mode.Insert
 
 	case keys.Esc:

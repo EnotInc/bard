@@ -40,14 +40,19 @@ func (r *Render) Reset() {
 	r.l.readPosition = 0
 }
 
+func isLine(line []rune, key rune) bool {
+	return len(line) == 3 && line[0] == line[1] && line[1] == line[2] && line[2] == key
+}
+
 func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffset int) (string, render.Render, bool) {
 	var renderMode render.Render = render.Markdown
 
-	if string(line) == "---" || string(line) == "***" || string(line) == "___" {
+	if isLine(line, '-') || isLine(line, '*') || isLine(line, '_') {
+		//if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
-			return services.PaintString(r.theme.Symbol, string(line)), renderMode, false
+			return r.theme.Symbol + string(line), renderMode, false
 		}
-		return services.PaintString(r.theme.Symbol, strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+xOffset)),
+		return r.theme.Symbol + strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+xOffset),
 			renderMode, true
 	}
 
@@ -169,45 +174,49 @@ func (r *Render) renderWSEOL(t *Token) string {
 
 func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
 	if show {
-		return r.theme.CodeHeader + services.PaintString(r.theme.Symbol, string(t.Literal)+string(t.Value)) + r.fillSpace(xScroll)
+		return r.theme.CodeHeader + r.theme.Symbol + string(t.Literal) + string(t.Value) + r.fillSpace(xScroll)
 	}
 
-	i := services.GetFileIcon(string(t.Value))
-	return r.theme.CodeHeader + " " + i + services.PaintString(r.theme.Symbol, string(t.Value)) + r.fillSpace(xScroll)
+	i := ""
+	if len(t.Value) > 0 {
+		i = services.GetFileIcon(string(t.Value))
+	}
+	return r.theme.CodeHeader + " " + i + r.theme.Symbol + string(t.Value) + r.fillSpace(xScroll)
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
 	if show {
-		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
 	}
 	return ascii.BoxEmpty.Str()
 }
 
 func (r *Render) renderBoxComplete(t *Token, show bool) string {
 	if show {
-		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
 	}
 	return ascii.BoxComplete.Str()
 }
 
 func (r *Render) renderBoxFilled(t *Token, show bool) string {
 	if show {
-		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
 	}
 	return ascii.BoxField.Str()
 }
 
 func (r *Render) renderListNumber(t *Token) string {
 	var s strings.Builder
-	s.WriteString(services.PaintString(r.theme.NumberList, string(t.Value)))
-	s.WriteString(services.PaintString(r.theme.NumberList, string(t.Literal)))
+	s.WriteString(r.theme.NumberList)
+	s.WriteString(string(t.Value))
+	s.WriteString(string(t.Literal))
 	s.WriteString(ascii.Reset.Str())
 	return s.String()
 }
 
 func (r *Render) renderListDash(t *Token, show bool) string {
 	if show {
-		return services.PaintString(r.theme.Symbol, string(t.Literal)) + ascii.Reset.Str()
+		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
 	}
 	return ascii.ListDash.Str()
 }
@@ -215,7 +224,8 @@ func (r *Render) renderListDash(t *Token, show bool) string {
 func (r *Render) renderShield(t *Token, show bool) string {
 	var s strings.Builder
 	if show {
-		s.WriteString(services.PaintString(r.theme.Symbol, string(t.Literal)))
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
 	}
 	s.WriteString(string(t.Value))
 	s.WriteString(ascii.Reset.Str())
@@ -226,7 +236,8 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 	var s strings.Builder
 	s.WriteString(r.theme.Quote)
 	if show {
-		s.WriteString(services.PaintString(r.theme.Symbol, string(t.Literal)))
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
 	} else {
 		s.WriteString(ascii.QuoteSymbol.Str())
 	}
@@ -236,7 +247,7 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 
 func (r *Render) renderText(t *Token) string {
 	if r.curAttr != ascii.Reset.Str() {
-		return services.PaintString(r.curAttr, string(t.Value))
+		return r.curAttr + string(t.Value)
 	}
 	return string(t.Value)
 }
@@ -246,13 +257,15 @@ func (r *Render) renderTag(t *Token, show bool) string {
 	if !show {
 		s.WriteString(r.theme.Tag)
 		s.WriteString(ascii.TagS.Str())
-		s.WriteString(services.PaintString(r.theme.Tag, string(t.Literal)))
-		s.WriteString(services.PaintString(r.theme.Tag, string(t.Value)))
+		s.WriteString(r.theme.Tag)
+		s.WriteString(string(t.Literal))
+		s.WriteString(string(t.Value))
 		s.WriteString(ascii.TagE.Str())
 		s.WriteString(ascii.Reset.Str())
 	} else {
-		s.WriteString(services.PaintString(r.theme.Tag, string(t.Literal)))
-		s.WriteString(services.PaintString(r.theme.Tag, string(t.Value)))
+		s.WriteString(r.theme.Tag)
+		s.WriteString(string(t.Literal))
+		s.WriteString(string(t.Value))
 	}
 	s.WriteString(ascii.Reset.Str())
 	return s.String()
@@ -352,14 +365,16 @@ func (r *Render) simpleAttrRender(mode string, attr string, show bool) string {
 	if r.curAttr == mode {
 		r.curAttr = ascii.Reset.Str()
 		if show {
-			s.WriteString(services.PaintString(r.theme.Symbol, attr))
+			s.WriteString(r.theme.Symbol)
+			s.WriteString(attr)
 		}
 		s.WriteString(r.curAttr)
 	} else {
 		r.curAttr = mode
 		s.WriteString(r.curAttr)
 		if show {
-			s.WriteString(services.PaintString(r.theme.Symbol, attr))
+			s.WriteString(r.theme.Symbol)
+			s.WriteString(attr)
 		}
 	}
 	return s.String()

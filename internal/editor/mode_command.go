@@ -86,6 +86,7 @@ func (e *Editor) execCommand() {
 		e.delBuffer(e.curBuffer)
 	case "ca":
 		e.ClearAllBuffers()
+		screen.ShiftFocus()
 	case "q":
 		if len(e.b) > 1 {
 			e.delBuffer(e.curBuffer)

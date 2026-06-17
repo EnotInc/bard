@@ -157,9 +157,8 @@ func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent
 	}
 
 	l := ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll, Type)
-	l = services.VisibleSubString(l, start, end)
 
-	return l
+	return services.VisibleSubString(l, start, end)
 }
 
 func (ui *TUI) ResetRender() {

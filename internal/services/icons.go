@@ -15,6 +15,7 @@ func GetFileIcon(s string) string {
 		return "  "
 	}
 
+	s = strings.TrimSpace(s)
 	parts := strings.Split(s, ".")
 	var ext string = ""
 	if len(parts) > 1 {
