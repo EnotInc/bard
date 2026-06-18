@@ -39,20 +39,17 @@ func captureResize() {
 }
 
 func listenResize() {
-	var last_w, last_h = global.w, global.h
+	var last_h = global.h
 	for {
 		changed := <-global.resize
 		if changed {
-			offset := len(global.tiles)
-
-			diff_w := (global.w - last_w) / offset
 			diff_h := global.h - last_h
 
-			last_w = global.w
 			last_h = global.h
 
 			for _, t := range global.tiles {
-				t.w += diff_w
+				_w, _ := calcWithSpacing(t.spacing)
+				t.w = _w
 				t.h += diff_h
 				t.hash = make(map[int]uint32)
 				t.object.Resize(t.w, t.h)

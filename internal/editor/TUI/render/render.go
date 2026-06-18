@@ -22,7 +22,7 @@ type Renderer struct {
 	w    int
 }
 
-func InitRender(w, h int) *Renderer {
+func InitRender(w int) *Renderer {
 	_c := initCache()
 	r := &Renderer{c: _c, w: w, mode: render.Markdown}
 	r.md = md.NewRender(w)

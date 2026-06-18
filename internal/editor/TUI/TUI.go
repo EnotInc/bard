@@ -47,8 +47,8 @@ type TUI struct {
 	Save    bool
 }
 
-func InitTUI(h int, w int) *TUI {
-	r := render.InitRender(w, h)
+func InitTUI(w int) *TUI {
+	r := render.InitRender(w)
 	v := &visual{line: 0, offset: 0}
 	ui := &TUI{
 		XScroll: 0,
@@ -57,7 +57,6 @@ func InitTUI(h int, w int) *TUI {
 		CurOff:  0,
 		Save:    true,
 		W:       w,
-		H:       h,
 		visual:  v,
 		render:  r,
 		Redraw:  make(chan bool, 1),

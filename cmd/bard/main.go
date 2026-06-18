@@ -18,14 +18,14 @@ func main() {
 	ex_w := 30
 	ed_w := screen.W() - ex_w
 
-	ed := editor.InitEditor(ed_w, h)
-	ed_tile, err := screen.NewTile(ed, ed_w, h)
+	ed := editor.InitEditor(ed_w)
+	ed_tile, err := screen.NewTile(ed, 0.75)
 	if err != nil {
 		panic(err)
 	}
 
 	ex := explorer.InitExplorer(ed.OpenFileCallback, ed.RemoveFileCallback, ed.ChangeModeCallback, ex_w, h)
-	ex_tile, err := screen.NewTile(ex, ex_w, h)
+	ex_tile, err := screen.NewTile(ex, 0.25)
 	if err != nil {
 		panic(err)
 	}

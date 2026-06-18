@@ -47,11 +47,11 @@ func initCmd() *cmd {
 // Initialisation of editor
 // turn terminal into raw mode, saves old state, initializes Config, Buffer and TUI
 // checks if terminal save to work in
-func InitEditor(w, h int) *Editor {
+func InitEditor(w int) *Editor {
 	cfg := config.GetConfig()
 	err := config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()
-	_tui := tui.InitTUI(h, w)
+	_tui := tui.InitTUI(w)
 	_cmd := initCmd()
 
 	e := &Editor{
@@ -68,7 +68,7 @@ func InitEditor(w, h int) *Editor {
 		cfg.ThemeName = cfg.DefaultThemeName()
 	}
 
-	if w < 80 || h < 30 {
+	if w < 80 {
 		e.tui.Save = false
 	}
 

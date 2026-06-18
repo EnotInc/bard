@@ -2,8 +2,11 @@ package services
 
 import "hash/fnv"
 
+// NOTE: this is save, for now.
+var hash = fnv.New32()
+
 func GetHash(s string) uint32 {
-	h := fnv.New32a()
-	h.Write([]byte(s))
-	return h.Sum32()
+	hash.Reset()
+	hash.Write([]byte(s))
+	return hash.Sum32()
 }

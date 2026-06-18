@@ -19,21 +19,34 @@ type object interface {
 }
 
 type tile struct {
-	hash   map[int]uint32
-	object object
-	title  string
-	w, h   int
+	hash    map[int]uint32
+	object  object
+	title   string
+	spacing float32
+	w, h    int
 }
 
-func NewTile(o object, w, h int) (*tile, error) {
-	if w > global.w || h > global.h {
-		return nil, fmt.Errorf("Can't layout tile. Size is too big:\nw: %d\th: %d\n\n\rGlobal Screen:\nw: %d\th: %d",
-			w, h, global.w, global.h)
+func calcWithSpacing(spacing float32) (int, error) {
+	if 0.0 > spacing || spacing > 1.0 {
+		return 0, fmt.Errorf("spacing can't be less then 0, or greater then 1\nCurrent value: %f", spacing)
 	}
+
+	_w := float32(global.w) * spacing
+	return int(_w), nil
+}
+
+func NewTile(o object, spacing float32) (*tile, error) {
+	_h := global.h
+	_w, err := calcWithSpacing(spacing)
+	if err != nil {
+		return nil, err
+	}
+
 	tile := &tile{
-		object: o,
-		w:      w,
-		h:      h,
+		object:  o,
+		spacing: spacing,
+		w:       _w,
+		h:       _h,
 	}
 	return tile, nil
 }
