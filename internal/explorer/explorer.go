@@ -42,6 +42,6 @@ func InitExplorer(open func(file string), del func(file string), change func(mod
 	return ex
 }
 
-func (ex *Explorer) SetRoot(root string) {
-	ex.path = []rune(root)
+func (ex *Explorer) SetPath(path string) {
+	ex.path = []rune(path)
 }

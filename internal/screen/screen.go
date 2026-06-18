@@ -135,6 +135,7 @@ func DrawAll() {
 	}
 
 	status := global.status(border)
+	fmt.Fprintf(&data, "\033[%d;1H", global.h)
 	data.WriteString(status)
 
 	cX, cY := f_tile.object.GetCursor(border)

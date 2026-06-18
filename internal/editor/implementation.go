@@ -19,7 +19,6 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 	var data strings.Builder
 
 	// NOTE: this could be borke if editor will be above another tile. But for now it's working
-	fmt.Fprintf(&data, "\033[%d;1H", screen.H())
 
 	cursor := e.b[e.curBuffer].Cursor
 	posx := cursor.Offset() + enums.CursorOffset

@@ -42,6 +42,8 @@ func NewTile(o object, spacing float32) (*tile, error) {
 		return nil, err
 	}
 
+	o.Resize(_w, _h)
+
 	tile := &tile{
 		object:  o,
 		spacing: spacing,

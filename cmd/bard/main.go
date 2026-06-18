@@ -43,7 +43,7 @@ func main() {
 		case "--space", "-s":
 			space := config.GetSpacePath()
 			screen.SetRoot(space)
-			ex.SetRoot(space)
+			ex.SetPath(space)
 		default:
 			f, err := os.Stat(arg)
 			if err != nil {
@@ -55,7 +55,7 @@ func main() {
 				screen.HideTile()
 			} else {
 				screen.SetRoot(arg)
-				ex.SetRoot(arg)
+				ex.SetPath(arg)
 			}
 		}
 	}
