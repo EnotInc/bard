@@ -119,29 +119,31 @@ func (e *Editor) CreateFileAtRoot(fileName string) string {
 
 // saves current Buffer into file
 func (e *Editor) SaveFile() {
-	if !e.b[e.curBuffer].IsReadOnly {
-		if !(e.b[e.curBuffer].Title == "" || len(e.b[e.curBuffer].Title) == 0) {
-			var data []byte
+	if e.b[e.curBuffer].IsReadOnly {
+		return
+	}
+	if e.b[e.curBuffer].Title == "" || len(e.b[e.curBuffer].Title) == 0 {
+		e.tui.Message = "file name was not provided"
+		return
+	}
 
-			for _, v := range e.b[e.curBuffer].Lines {
-				byteLine := []byte(string(v.Data))
-				data = append(data, byteLine...)
-				data = append(data, byte('\n'))
-			}
+	var data []byte
 
-			err := os.WriteFile(e.b[e.curBuffer].Title, data, 0644)
-			if err != nil {
-				e.tui.Message = err.Error()
-			} else {
-				//ext := filepath.Ext(e.b[e.curBuffer].Title)
-				//e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
-				e.setBufferType(e.b[e.curBuffer].Title)
+	for _, v := range e.b[e.curBuffer].Lines {
+		byteLine := []byte(string(v.Data))
+		data = append(data, byteLine...)
+		data = append(data, byte('\n'))
+	}
 
-				e.tui.Message = "file saved"
-			}
-		} else {
-			e.tui.Message = "file name was not provided"
-		}
+	err := os.WriteFile(e.b[e.curBuffer].Title, data, 0644)
+	if err != nil {
+		e.tui.Message = err.Error()
+	} else {
+		//ext := filepath.Ext(e.b[e.curBuffer].Title)
+		//e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
+		e.setBufferType(e.b[e.curBuffer].Title)
+
+		e.tui.Message = "file saved"
 	}
 }
 

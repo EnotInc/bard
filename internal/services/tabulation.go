@@ -1,14 +1,11 @@
 package services
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/EnotInc/Bard/config"
 )
 
 func ReplaceTabs(line []rune) []rune {
-	var new strings.Builder
+	var new []rune
 	tw := config.GetConfig().TabStop
 
 	visual := 0
@@ -17,19 +14,20 @@ func ReplaceTabs(line []rune) []rune {
 			tab_width := tw - (visual % tw)
 			visual += tab_width
 
-			spaces := strings.Repeat(" ", tab_width)
-			fmt.Fprint(&new, spaces)
+			for range tab_width {
+				new = append(new, ' ')
+			}
 		} else {
-			fmt.Fprintf(&new, "%c", line[i])
+			new = append(new, line[i])
 			visual += 1
 		}
 	}
 
-	return []rune(new.String())
+	return []rune(new)
 }
 
 func ReadTabAt(line []rune, index int) []rune {
-	var new strings.Builder
+	var new []rune
 	tw := config.GetConfig().TabStop
 
 	visual := 0
@@ -39,15 +37,16 @@ func ReadTabAt(line []rune, index int) []rune {
 			visual += tab_width
 
 			if i == index {
-				spaces := strings.Repeat(" ", tab_width)
-				fmt.Fprint(&new, spaces)
+				for range tab_width {
+					new = append(new, ' ')
+				}
 			}
 		} else {
 			visual += 1
 		}
 	}
 
-	return []rune(new.String())
+	return []rune(new)
 }
 
 func CursorShiftAt(line []rune, index int) int {
