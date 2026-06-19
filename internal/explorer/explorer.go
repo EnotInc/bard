@@ -23,6 +23,7 @@ type Explorer struct {
 	delFile    func(file string)
 	rename     func(old, new string)
 	changeMode func(mode mode.Mode)
+	setError   func(err string)
 	path       []rune
 	entries    []entry
 	buffer     entry
@@ -34,7 +35,7 @@ type Explorer struct {
 	showDot    bool
 }
 
-func InitExplorer(open, del func(file string), ren func(old, new string), change func(mode mode.Mode), w, h int) *Explorer {
+func InitExplorer(open, del func(file string), ren func(old, new string), change func(mode mode.Mode), err func(text string), w, h int) *Explorer {
 
 	c := initCursor()
 	v := initCursor()
@@ -50,6 +51,7 @@ func InitExplorer(open, del func(file string), ren func(old, new string), change
 		changeMode: change,
 		rename:     ren,
 		action:     none,
+		setError:   err,
 		update:     true,
 		showDot:    cfg.ShowDot,
 	}

@@ -59,6 +59,8 @@ var langIcon map[string]string = map[string]string{
 	"help":              "\033[33m ",
 	"hs":                "\033[35m ",
 	"haskell":           "\033[35m ",
+	"http":              " ",
+	"https":             " ",
 	"html":              "\033[33m ",
 	"java":              "\033[36m ",
 	"js":                "\033[33m ",

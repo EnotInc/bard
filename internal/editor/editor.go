@@ -106,3 +106,7 @@ func (e *Editor) replaceWithAmount(key rune) {
 	e.caseReplaceChar(key, amount)
 	e.subCmd = ""
 }
+
+func (e *Editor) SetErrorCallback(err string) {
+	e.tui.Error = err
+}

@@ -48,16 +48,15 @@ func (ex *Explorer) handleCreate(key rune) {
 }
 
 func (ex *Explorer) create(e entry) {
-	// TODO: remove panic, add message (maybe as a callback)
 	if e.isDir {
 		err := os.Mkdir(string(e.path), 0755)
 		if err != nil {
-			panic(err)
+			ex.setError(err.Error())
 		}
 	} else {
 		f, err := os.Create(string(e.path))
 		if err != nil {
-			panic(err)
+			ex.setError(err.Error())
 		}
 		defer f.Close()
 		ex.openEntryWithCallback()

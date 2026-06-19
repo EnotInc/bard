@@ -209,9 +209,6 @@ func Exit(code int) {
 	os.Exit(code)
 }
 
-// TODO: rewrite in tiles.
-// Make shure that I can hide any tiles, not only the last one
-// For now this works only with setup 'editor' + 'explorer' tiles
 func HideTile() {
 	global.call = calls.PurgeCache
 	if len(global.tiles) == 2 {

@@ -29,6 +29,7 @@ func main() {
 		ed.RemoveFileCallback,
 		ed.RenameCallback,
 		ed.ChangeModeCallback,
+		ed.SetErrorCallback,
 		ex_w, h)
 
 	ex_tile, err := screen.NewTile(ex, 0.25)
