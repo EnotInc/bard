@@ -139,8 +139,6 @@ func (e *Editor) SaveFile() {
 	if err != nil {
 		e.tui.Message = err.Error()
 	} else {
-		//ext := filepath.Ext(e.b[e.curBuffer].Title)
-		//e.b[e.curBuffer].IsMdFile = (ext == ".md" || ext == ".MD")
 		e.setBufferType(e.b[e.curBuffer].Title)
 
 		e.tui.Message = "file saved"
@@ -166,9 +164,28 @@ func (e *Editor) OpenFileCallback(file string) {
 }
 
 func (e *Editor) RemoveFileCallback(file string) {
-	e.curMode = mode.Command
-	del := []rune("del ")
-	e.cmd.command = append(del, []rune(file)...)
+
+	entry := filepath.Clean(file)
+	for i, b := range e.b {
+		title := filepath.Clean(b.Title)
+		if title == entry {
+			if b.IsReadOnly {
+				return
+			}
+			if len(e.b) == 1 {
+				e.newBuffer()
+			}
+			e.delBuffer(i)
+			break
+		}
+	}
+
+	err := os.RemoveAll(file)
+	if err != nil {
+		e.tui.Message = fmt.Sprintf("unable to remove [%s]", file)
+	}
+
+	e.tui.Message = fmt.Sprintf("[%s] was removed", file)
 }
 
 func (e *Editor) ChangeModeCallback(mode mode.Mode) {
@@ -186,4 +203,28 @@ func (e *Editor) setBufferType(file string) {
 	} else {
 		e.b[e.curBuffer].Type = buffers.Other
 	}
+}
+
+func (e *Editor) RenameCallback(old, new string) {
+	_old := filepath.Clean(old)
+	_new := filepath.Clean(new)
+	for _, b := range e.b {
+		title := filepath.Clean(b.Title)
+		if title == _old {
+			if b.IsReadOnly {
+				return
+			}
+			b.Title = filepath.Clean(_new)
+			break
+		}
+	}
+
+	err := os.Rename(old, new)
+	if err != nil {
+		e.tui.Message = fmt.Sprintf("unable to rename [%s]", old)
+		return
+	}
+
+	e.tui.Message = fmt.Sprintf("[%s] was renamed to [%s]", _old, _new)
+	e.tui.PurgeCache()
 }

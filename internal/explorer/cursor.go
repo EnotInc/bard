@@ -1,6 +1,8 @@
 package explorer
 
 import (
+	"slices"
+
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/screen"
 )
@@ -51,4 +53,15 @@ func (ex *Explorer) fixCursor() {
 	if ex.cursor.y > len(ex.entries)-1 {
 		ex.cursor.y = len(ex.entries) - 1
 	}
+}
+
+func (ex *Explorer) moveToTop() {
+	ex.cursor.y = 0
+	if !slices.Equal(ex.path, screen.Root()) && len(ex.entries) > 1 {
+		ex.cursor.y = 1
+	}
+}
+
+func (ex *Explorer) moveToBottom() {
+	ex.cursor.y = max(len(ex.entries)-1, 0)
 }

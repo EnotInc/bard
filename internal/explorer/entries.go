@@ -9,9 +9,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/calls"
-	"github.com/EnotInc/Bard/internal/enums/keys"
 	"github.com/EnotInc/Bard/internal/screen"
-	"github.com/EnotInc/Bard/internal/services"
 )
 
 type entry struct {
@@ -28,12 +26,12 @@ func (ex *Explorer) scanEntries() {
 		panic(err)
 	}
 
-	if len(entries) == 0 && !ex.typing { // cur dir is added if dir is empty
-		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
+	if !slices.Equal(screen.Root(), ex.path) {
+		e = append(e, entry{name: []rune(enums.Back), isDir: true})
 	}
 
-	if !slices.Equal(screen.Root(), ex.path) { // 'go back' entry
-		e = append(e, entry{name: []rune(enums.Back), isDir: true})
+	if len(e) == 0 && len(entries) == 0 {
+		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
 	}
 
 	for _, en := range entries {
@@ -48,20 +46,18 @@ func (ex *Explorer) scanEntries() {
 		e = append(e, ent)
 	}
 
-	if ex.typing {
-		e = append(e, ex.buffer)
-	}
 	ex.entries = e
 }
 
-func (ex *Explorer) openFileWithCallback() {
+func (ex *Explorer) openEntryWithCallback() {
 	entry := ex.entries[ex.cursor.y]
 	if entry.isDir {
 		if slices.Equal(entry.name, []rune(enums.Back)) {
 			ex.path = []rune(filepath.Dir(string(ex.path)))
-		} else {
+		} else if !slices.Equal(entry.name, []rune(enums.DefaultRoot)) {
 			ex.path = []rune(filepath.Join(string(ex.path), string(entry.name)))
 		}
+		ex.update = true
 		return
 	}
 	ex.openFile(string(entry.path))
@@ -72,52 +68,4 @@ func (ex *Explorer) delFileWithCallback() {
 	entry := ex.entries[ex.cursor.y]
 	ex.delFile(string(entry.path))
 	screen.SendCall(calls.DelFile)
-}
-
-func (ex *Explorer) typeNewEntry(key rune) {
-	switch key {
-	case keys.Esc:
-		ex.typing = false
-		ex.buffer = entry{}
-		ex.entries = ex.entries[:len(ex.entries)-1]
-		ex.cursor.y = max(len(ex.entries)-1, 0)
-		ex.scroll()
-	case keys.Enter:
-		ex.typing = false
-		ex.create(ex.buffer)
-		ex.buffer = entry{}
-		ex.entries = ex.entries[:len(ex.entries)-1]
-		ex.cursor.y = 0
-		ex.scroll()
-	case keys.Backspace:
-		if len(ex.buffer.name) > 0 {
-			ex.buffer.name = ex.buffer.name[:len(ex.buffer.name)-1]
-		}
-	default:
-		if key == '/' {
-			ex.buffer.isDir = !ex.buffer.isDir
-			return
-		}
-		if services.IsLetterOrNumber(key) || key == '.' {
-			ex.buffer.name = append(ex.buffer.name, key)
-			ex.buffer.path = []rune(filepath.Join(string(ex.path), string(ex.buffer.name)))
-		}
-	}
-}
-
-func (ex *Explorer) create(e entry) {
-	if e.isDir {
-		err := os.Mkdir(string(e.path), 0755)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		f, err := os.Create(string(e.path))
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-		ex.openFileWithCallback()
-	}
-
 }

@@ -20,6 +20,7 @@ func getLogPath() string {
 	return filepath.Join(home, ".bard")
 }
 
+// TODO: make global, save some useful log
 func (s *Screen) saveLog(error string) error {
 	path := getLogPath()
 	logs := filepath.Join(path, ".log")

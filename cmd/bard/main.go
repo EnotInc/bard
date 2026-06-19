@@ -24,7 +24,13 @@ func main() {
 		panic(err)
 	}
 
-	ex := explorer.InitExplorer(ed.OpenFileCallback, ed.RemoveFileCallback, ed.ChangeModeCallback, ex_w, h)
+	ex := explorer.InitExplorer(
+		ed.OpenFileCallback,
+		ed.RemoveFileCallback,
+		ed.RenameCallback,
+		ed.ChangeModeCallback,
+		ex_w, h)
+
 	ex_tile, err := screen.NewTile(ex, 0.25)
 	if err != nil {
 		panic(err)

@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"slices"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/keys"
@@ -17,11 +18,19 @@ func (ex *Explorer) DrawLineAt(index int) string {
 	if index+ex.yScroll >= len(ex.entries) {
 		return ""
 	}
+
+	cfg := config.GetConfig()
+	ofset := 2
+	if cfg.ShowBorder {
+		ofset *= 2
+	}
+
 	if ex.yScroll > 0 && index == 0 {
 		return ascii.ArrowUp.Str()
-	} else if index == ex.h-4 { // magic -4
+	} else if index == ex.h-ofset {
 		return ascii.ArrowDown.Str()
 	}
+
 	entry := ex.entries[index+ex.yScroll]
 	var icon string
 	if entry.isDir {
@@ -29,14 +38,25 @@ func (ex *Explorer) DrawLineAt(index int) string {
 	} else {
 		icon = services.GetFileIcon(string(entry.name))
 	}
+	if ex.action == deleting && index == ex.visible.y+1 {
+		icon = fmt.Sprintf(" y/n: %s%s", ascii.Stricked, icon)
+	}
+
 	e := fmt.Sprintf("%s%s", icon, string(ex.entries[index+ex.yScroll].name))
 	e = services.VisibleSubString(e, 0, ex.w)
 	return e
 }
 
 func (ex *Explorer) Handle(key rune) {
-	if ex.typing {
-		ex.typeNewEntry(key)
+	switch ex.action {
+	case creating:
+		ex.handleCreate(key)
+		return
+	case changing:
+		ex.handleChanges(key)
+		return
+	case deleting:
+		ex.handleDeletion(key)
 		return
 	}
 
@@ -44,24 +64,20 @@ func (ex *Explorer) Handle(key rune) {
 	case keys.Esc:
 		screen.SetFocus(0)
 	case keys.Enter:
-		ex.openFileWithCallback()
-		ex.cursor.y = 0
+		ex.openEntryWithCallback()
+		ex.moveToTop()
 	case 'o':
-		ex.typing = true
-		ex.buffer = entry{name: []rune{}, isDir: false, path: ex.path}
-		ex.cursor.y = len(ex.entries) - 1
-	case 'r': // TODO: change file name (deletes it and let you type)
-	case 'i': // TODO: change file name (set cursor to the end of the file name)
+		ex.beginCreation()
+	case 's':
+		ex.beginChanges(true)
+	case 'r':
+		ex.beginChanges(false)
 	case 'g':
-		if slices.Equal(screen.Root(), ex.path) || len(ex.entries) == 0 {
-			ex.cursor.y = 0
-		} else {
-			ex.cursor.y = 1
-		}
+		ex.moveToTop()
 	case 'G':
-		ex.cursor.y = len(ex.entries) - 1
+		ex.moveToBottom()
 	case 'd':
-		ex.delFileWithCallback()
+		ex.beginDeletion()
 	case 'j':
 		ex.j()
 	case 'k':
@@ -75,8 +91,12 @@ func (ex *Explorer) Handle(key rune) {
 }
 
 func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
-	x := ex.visible.x + enums.InitialOffset + len(ex.buffer.name)
+	x := ex.visible.x + enums.InitialOffset
 	y := ex.visible.y + enums.CursorOffset + 1
+
+	if ex.action != none && ex.action != deleting {
+		x += len(ex.entries[ex.cursor.y].name)
+	}
 
 	if !withBorder {
 		x += 1
@@ -94,11 +114,15 @@ func (ex *Explorer) SetTitle() string {
 
 func (ex *Explorer) Resize(w, h int) {
 	ex.w = w
+	ex.h = h
 }
 
 func (ex *Explorer) PreDraw() {
-	ex.scanEntries()
-	if ex.typing {
+	if ex.update {
+		ex.scanEntries()
+		ex.update = false
+	}
+	if ex.action == creating {
 		ex.cursor.y = len(ex.entries) - 1
 		ex.scroll()
 	}
