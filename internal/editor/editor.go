@@ -91,20 +91,11 @@ func (e *Editor) execWithSubCommand(exec func(int)) {
 	e.subCmd = ""
 }
 
-// FIXME: does not work...
 func (e *Editor) replaceWithAmount(key rune) {
 	if e.subCmd == "r" {
-		e.caseReplaceChar(key, 1)
+		e.caseReplaceChar(key)
 		return
 	}
-
-	amount, err := strconv.Atoi(e.subCmd[:len(e.subCmd)-1])
-	if err != nil {
-		e.subCmd = ""
-		return
-	}
-	e.caseReplaceChar(key, amount)
-	e.subCmd = ""
 }
 
 func (e *Editor) SetErrorCallback(err string) {

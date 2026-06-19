@@ -11,7 +11,7 @@ import (
 	"github.com/EnotInc/Bard/internal/services"
 )
 
-func (e *Editor) caseReplaceChar(key rune, amount int) {
+func (e *Editor) caseReplaceChar(key rune) {
 	switch key {
 	case keys.Enter:
 		e.b[e.curBuffer].SaveChanges(
@@ -60,7 +60,7 @@ func (e *Editor) caseReplaceChar(key rune, amount int) {
 			enums.Without)
 	default:
 		if unicode.IsPrint(key) {
-			e.b[e.curBuffer].ReplaceKeys(key, amount)
+			e.b[e.curBuffer].ReplaceKeys(key, 1)
 			e.b[e.curBuffer].SaveChanges(
 				buffer.Change,
 				e.b[e.curBuffer].Cursor.Line(),
