@@ -49,7 +49,7 @@ func (e *Editor) caseCommand(key rune) {
 		cmdOfset := 10
 		if len(e.cmd.command) >= e.tui.W-cmdOfset {
 			e.cmd.command = []rune{}
-			e.tui.Message = "Unable process command of this length"
+			e.tui.Error = "Unable process command of this length"
 			e.curMode = mode.Normal
 			return
 		}
@@ -180,7 +180,7 @@ func (e *Editor) parseCommand() {
 	if len(e.cmd.command) >= 3 {
 		parts := strings.Split(string(e.cmd.command), " ")
 		if len(parts) != 2 {
-			e.tui.Message = "bad syntax"
+			e.tui.Error = "bad syntax"
 			return
 		}
 
@@ -220,13 +220,13 @@ func (e *Editor) parseCommand() {
 		case "gt":
 			page, err := strconv.Atoi(arg)
 			if err != nil {
-				e.tui.Message = "unable to get tab number"
+				e.tui.Error = "unable to get tab number"
 				return
 			}
 
 			page -= 1
 			if page < 0 || page > len(e.b)-1 {
-				e.tui.Message = "can't open this tab"
+				e.tui.Error = "can't open this tab"
 				return
 			}
 
@@ -234,7 +234,7 @@ func (e *Editor) parseCommand() {
 		case "tabstop", "ts":
 			ts, err := strconv.Atoi(arg)
 			if err != nil {
-				e.tui.Message = "unable to get tabstop"
+				e.tui.Error = "unable to get tabstop"
 				return
 			}
 
@@ -245,7 +245,7 @@ func (e *Editor) parseCommand() {
 			screen.SendCall(calls.PurgeCache)
 
 		default:
-			e.tui.Message = "unknown command"
+			e.tui.Error = "unknown command"
 		}
 	}
 }

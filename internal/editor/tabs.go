@@ -35,7 +35,7 @@ func (e *Editor) delBuffer(index int) {
 		e.curBuffer = 0
 		e.tui.Message = fmt.Sprintf("Buffer '%s' closed", title)
 	} else {
-		e.tui.Message = "Last buffer can't be removed"
+		e.tui.Error = "Last buffer can't be removed"
 	}
 
 	e.tui.PurgeCache()

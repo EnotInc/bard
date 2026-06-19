@@ -70,7 +70,7 @@ func (e *Editor) GeneralCase(key rune) {
 		e.subCmd = string(e.lastCmd[0])
 		key := e.lastCmd[len(e.lastCmd)-1]
 		if ok := e.findSome(rune(key)); !ok {
-			e.tui.Message = "nothing was found"
+			e.tui.Error = "nothing was found"
 		}
 		return
 

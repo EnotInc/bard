@@ -223,13 +223,13 @@ func (e *Editor) caseNormal(key rune) {
 	case 'u', keys.Ctrl_z:
 		err := e.b[e.curBuffer].Undo()
 		if err != nil {
-			e.tui.Message = err.Error()
+			e.tui.Error = err.Error()
 		}
 
 	case keys.Ctrl_r:
 		err := e.b[e.curBuffer].Redo()
 		if err != nil {
-			e.tui.Message = err.Error()
+			e.tui.Error = err.Error()
 		}
 
 	default:

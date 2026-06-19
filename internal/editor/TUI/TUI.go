@@ -37,6 +37,7 @@ type TUI struct {
 	render  *render.Renderer
 	visual  *visual
 	Message string
+	Error   string
 	Hello   [][]rune
 	CurOff  int
 	H       int
@@ -122,11 +123,11 @@ func (ui *TUI) fillSpace() string {
 }
 
 // Little func, that used to build lower bar
-func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, cmd string) string {
+func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err string, cmd string) string {
 	theme := config.GetTheme().General
 	var data strings.Builder
 	pos := fmt.Sprintf(" %d-%d ", x, y)
-	fmt.Fprintf(&data, "%s%s%s %s%s%s ", theme.BottomBar, pos, curdata, theme.Message, message, theme.BottomBar)
+	fmt.Fprintf(&data, "%s%s%s %s%s %s%s%s ", theme.BottomBar, pos, curdata, theme.Message, message, theme.Error, err, theme.BottomBar)
 
 	ln := 0
 	if cmd != "" {

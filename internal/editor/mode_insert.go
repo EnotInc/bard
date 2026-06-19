@@ -114,7 +114,7 @@ func (e *Editor) caseInsert(key rune) {
 				enums.Without)
 		}
 		if !unicode.IsPrint(key) {
-			e.tui.Message = fmt.Sprintf("Unknown key. Code: %d", int(key))
+			e.tui.Error = fmt.Sprintf("Unknown key. Code: %d", int(key))
 			return
 		}
 		e.b[e.curBuffer].InsertKey(key)

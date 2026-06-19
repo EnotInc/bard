@@ -26,18 +26,18 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 
 	fmt.Fprintf(&data, "%s", ascii.Reset)
 
-	if e.b[e.curBuffer].IsReadOnly && e.tui.Message == "" {
-		e.tui.Message = "read only file"
+	if e.b[e.curBuffer].IsReadOnly && e.tui.Error == "" {
+		e.tui.Error = "read only file"
 	}
 
 	// Different modes have different information on the last line
 	switch e.curMode {
 	case mode.Insert:
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorLine)
 
 	case mode.Replace:
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorUnderline)
 
 	case mode.Command:
@@ -60,11 +60,11 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 			tabNames = e.tui.BuildTabs(tabs, e.curBuffer, cfg.TabNames)
 		}
 
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, tabNames, e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, tabNames, e.tui.Message, e.tui.Error, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Visual, mode.Visual_line:
-		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.subCmd))
+		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
 		fmt.Fprintf(&data, ascii.CursorBloc)
 	}
 
@@ -72,6 +72,7 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 	fmt.Fprint(&data, ascii.Reset, ascii.ShowCursor)
 
 	e.tui.Message = ""
+	e.tui.Error = ""
 
 	return data.String()
 }

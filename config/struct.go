@@ -30,6 +30,7 @@ type General struct {
 	Selection    string `json:"selection"`
 	Command      string `json:"command"`
 	Message      string `json:"message"`
+	Error        string `json:"error"`
 	Tab          string `json:"tab"`
 }
 

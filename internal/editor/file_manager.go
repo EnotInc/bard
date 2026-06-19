@@ -39,7 +39,7 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 	case h.Theme:
 		lines = strings.SplitSeq(help.Theme, "\n")
 	default:
-		e.tui.Message = "Unknown topic"
+		e.tui.Error = "Unknown topic"
 		return
 	}
 
@@ -105,7 +105,7 @@ func (e *Editor) LoadFile(file string) {
 func (e *Editor) CreateFile(fileName string) {
 	f, err := os.Create(fileName)
 	if err != nil {
-		e.tui.Message = fmt.Sprintf("Unable to create file %s", fileName)
+		e.tui.Error = fmt.Sprintf("Unable to create file %s", fileName)
 	}
 	defer f.Close()
 }
@@ -115,7 +115,7 @@ func (e *Editor) CreateFileAtRoot(fileName string) string {
 	entry := filepath.Join(string(root), fileName)
 	f, err := os.Create(entry)
 	if err != nil {
-		e.tui.Message = fmt.Sprintf("Unable to create file %s", entry)
+		e.tui.Error = fmt.Sprintf("Unable to create file %s", entry)
 	}
 	defer f.Close()
 	return entry
@@ -127,7 +127,7 @@ func (e *Editor) SaveFile() {
 		return
 	}
 	if e.b[e.curBuffer].Title == "" || len(e.b[e.curBuffer].Title) == 0 {
-		e.tui.Message = "file name was not provided"
+		e.tui.Error = "file name was not provided"
 		return
 	}
 
@@ -141,7 +141,7 @@ func (e *Editor) SaveFile() {
 
 	err := os.WriteFile(e.b[e.curBuffer].Title, data, 0644)
 	if err != nil {
-		e.tui.Message = err.Error()
+		e.tui.Error = err.Error()
 	} else {
 		e.setBufferType(e.b[e.curBuffer].Title)
 
@@ -186,7 +186,7 @@ func (e *Editor) RemoveFileCallback(file string) {
 
 	err := os.RemoveAll(file)
 	if err != nil {
-		e.tui.Message = fmt.Sprintf("unable to remove [%s]", file)
+		e.tui.Error = fmt.Sprintf("unable to remove [%s]", file)
 	}
 
 	e.tui.Message = fmt.Sprintf("[%s] was removed", file)
@@ -225,7 +225,7 @@ func (e *Editor) RenameCallback(old, new string) {
 
 	err := os.Rename(old, new)
 	if err != nil {
-		e.tui.Message = fmt.Sprintf("unable to rename [%s]", old)
+		e.tui.Error = fmt.Sprintf("unable to rename [%s]", old)
 		return
 	}
 
