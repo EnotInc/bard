@@ -26,7 +26,7 @@ func (ex *Explorer) handleChanges(key rune) {
 		ex.buffer = entry{}
 		ex.action = none
 	case keys.Enter:
-		ex.rename(string(ex.buffer.name), string(_entry.name))
+		ex.rename(string(ex.buffer.path), string(_entry.path))
 		ex.action = none
 		ex.update = true
 	case keys.Backspace:

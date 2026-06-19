@@ -40,7 +40,9 @@ func (ex *Explorer) DrawLineAt(index int) string {
 		icon = services.GetFileIcon(string(entry.name))
 	}
 	if ex.action == deleting && index == ex.visible.y+1 {
-		icon = fmt.Sprintf(" y/n: %s%s", ascii.Stricked, icon)
+		red := "\033[31m"
+		green := "\033[32m"
+		icon = fmt.Sprintf(" %sy%s/%sn%s: %s%s", red, ascii.ResetFg, green, ascii.Reset, ascii.Stricked, icon)
 	}
 
 	e := fmt.Sprintf("%s%s", icon, string(ex.entries[index+ex.yScroll].name))
