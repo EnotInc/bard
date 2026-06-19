@@ -131,7 +131,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err s
 
 	ln := 0
 	if cmd != "" {
-		fmt.Fprintf(&data, "<%s>", cmd)
+		fmt.Fprintf(&data, "%s<%s>", ascii.ResetFg, cmd)
 		ln += len(cmd) + 2
 	}
 	fmt.Fprintf(&data, "%s", ui.fillSpace())
@@ -144,7 +144,7 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 	theme := config.GetTheme().General
 	var data strings.Builder
 	cmd := theme.Command + " :" + theme.BottomBar
-	fmt.Fprintf(&data, "%s%s%s%s\033[%d;%dH%s", theme.BottomBar, cmd, curdata, ui.fillSpaceWith(len(curdata)+2), ui.H, len(curdata)+enums.InitialOffset, ascii.Reset)
+	fmt.Fprintf(&data, "%s%s%s%s%s", theme.BottomBar, cmd, curdata, ui.fillSpaceWith(len(curdata)+2), ascii.Reset)
 
 	return data.String()
 }

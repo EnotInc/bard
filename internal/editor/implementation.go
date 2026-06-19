@@ -19,8 +19,6 @@ import (
 func (e *Editor) DrawStatusBar(withBorder bool) string {
 	var data strings.Builder
 
-	// NOTE: this could be borke if editor will be above another tile. But for now it's working
-
 	cursor := e.b[e.curBuffer].Cursor
 	posx := cursor.Offset() + enums.CursorOffset
 	posy := cursor.Line() + enums.CursorOffset
@@ -35,15 +33,12 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 	switch e.curMode {
 	case mode.Insert:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
-		//fmt.Fprintf(&data, ascii.CursorLine)
 
 	case mode.Replace:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
-		//fmt.Fprintf(&data, ascii.CursorUnderline)
 
 	case mode.Command:
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.cmd.command)))
-		//fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
 		tabNames := ""
