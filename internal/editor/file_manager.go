@@ -47,7 +47,7 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 	e.b[e.curBuffer].Lines = []*buffer.Line{}
 	e.b[e.curBuffer].IsReadOnly = true
 	e.b[e.curBuffer].Type = buffers.Markdown
-	e.b[e.curBuffer].Title = string(topic)
+	e.b[e.curBuffer].Title = fmt.Sprintf("%s.help", topic)
 
 	for line := range lines {
 		l := &buffer.Line{}
