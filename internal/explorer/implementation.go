@@ -8,6 +8,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	cursorType "github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
@@ -90,7 +91,8 @@ func (ex *Explorer) Handle(key rune) {
 	ex.scroll()
 }
 
-func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
+func (ex *Explorer) GetCursor(withBorder bool) (int, int, cursorType.CursorType) {
+	var c cursorType.CursorType
 	x := ex.visible.x + enums.InitialOffset
 	y := ex.visible.y + enums.CursorOffset + 1
 
@@ -102,7 +104,16 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int) {
 		x += 1
 	}
 
-	return x, y
+	switch ex.action {
+	case none:
+		c = cursorType.CursorBloc
+	case creating, changing:
+		c = cursorType.CursorLine
+	case deleting:
+		c = cursorType.CursorUnderline
+	}
+
+	return x, y, c
 }
 
 func (ex *Explorer) SetTitle() string {

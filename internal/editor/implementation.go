@@ -9,6 +9,7 @@ import (
 	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
 
@@ -34,15 +35,15 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 	switch e.curMode {
 	case mode.Insert:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
-		fmt.Fprintf(&data, ascii.CursorLine)
+		//fmt.Fprintf(&data, ascii.CursorLine)
 
 	case mode.Replace:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
-		fmt.Fprintf(&data, ascii.CursorUnderline)
+		//fmt.Fprintf(&data, ascii.CursorUnderline)
 
 	case mode.Command:
 		fmt.Fprint(&data, e.tui.BuildCommandBar(string(e.cmd.command)))
-		fmt.Fprintf(&data, ascii.CursorBloc)
+		//fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Normal:
 		tabNames := ""
@@ -61,11 +62,11 @@ func (e *Editor) DrawStatusBar(withBorder bool) string {
 		}
 
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, tabNames, e.tui.Message, e.tui.Error, e.subCmd))
-		fmt.Fprintf(&data, ascii.CursorBloc)
+		//fmt.Fprintf(&data, ascii.CursorBloc)
 
 	case mode.Visual, mode.Visual_line:
 		fmt.Fprintf(&data, "%s", e.tui.BuildLowerBar(posx, posy, fmt.Sprintf("-- %s --", e.curMode), e.tui.Message, e.tui.Error, e.subCmd))
-		fmt.Fprintf(&data, ascii.CursorBloc)
+		//fmt.Fprintf(&data, ascii.CursorBloc)
 	}
 
 	e.tui.ResetRender()
@@ -178,24 +179,34 @@ func (e *Editor) Handle(key rune) {
 	e.setUiCursor()
 }
 
-func (e *Editor) GetCursor(withBorder bool) (int, int) {
+func (e *Editor) GetCursor(withBorder bool) (int, int, cursor.CursorType) {
+	var c cursor.CursorType
+
 	var x int
 	var y int
 
 	if e.curMode == mode.Command {
 		x = len(e.cmd.command) + enums.InitialOffset - 1
 		y = e.tui.H
-
 	} else {
 		x = e.tui.CurOff + enums.InitialOffset + len(e.emptyLineSpaces)
 		y = e.tui.CurRow + enums.CursorOffset
+	}
+
+	switch e.curMode {
+	case mode.Command, mode.Normal, mode.Visual, mode.Visual_line:
+		c = cursor.CursorBloc
+	case mode.Replace:
+		c = cursor.CursorUnderline
+	case mode.Insert:
+		c = cursor.CursorLine
 	}
 
 	if !withBorder {
 		x += 1
 	}
 
-	return x, y
+	return x, y, c
 }
 
 func (e *Editor) SetTitle() string {

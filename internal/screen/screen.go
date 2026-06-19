@@ -138,11 +138,12 @@ func DrawAll() {
 	fmt.Fprintf(&data, "\033[%d;1H", global.h)
 	data.WriteString(status)
 
-	cX, cY := f_tile.object.GetCursor(border)
+	cX, cY, cursor := f_tile.object.GetCursor(border)
 	cX += offset + focusedOfset
 	cY += offset
 
 	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
+	data.WriteString(string(cursor))
 	data.WriteString(string(ascii.ShowCursor))
 
 	fmt.Print(data.String())

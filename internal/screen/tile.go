@@ -6,13 +6,14 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/services"
 )
 
 type object interface {
 	DrawLineAt(index int) string
 	Handle(key rune)
-	GetCursor(withBorder bool) (int, int)
+	GetCursor(withBorder bool) (int, int, cursor.CursorType)
 	SetTitle() string
 	Resize(w, h int)
 	PreDraw()

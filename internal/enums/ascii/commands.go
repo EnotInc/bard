@@ -10,11 +10,7 @@ const (
 	SaveTerminal  = "\033[?1049h"
 	ResetTerminal = "\033[?1049l"
 
-	ResetCursor     = "\x1b[0 q"
-	CursorBloc      = "\x1b[2 q"
-	CursorLine      = "\x1b[6 q"
-	CursorUnderline = "\x1b[4 q"
-
-	HideCursor = "\x1b[?25l"
-	ShowCursor = "\x1b[?25h"
+	ResetCursor = "\x1b[0 q"
+	HideCursor  = "\x1b[?25l"
+	ShowCursor  = "\x1b[?25h"
 )
