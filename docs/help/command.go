@@ -1,6 +1,6 @@
 package help
 
-var Command = `# Command Mode
+const Command = `# Command Mode
 
 To get back to ***Normal*** mode press <ESC>
 

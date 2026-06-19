@@ -1,6 +1,6 @@
 package help
 
-var Explorer = `# **Explorer**
+const Explorer = `# **Explorer**
 
 To open file explorer press ` + "`<ctrl+j>`" + `. This button combination also hides it if it's already opened.
 You can change focused tile without hiding file explorer with ` + "`<ctrl+o>`" + `.

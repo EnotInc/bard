@@ -1,6 +1,6 @@
 package help
 
-var Modes = `# Supported Modes:
+const Modes = `# Supported Modes:
 
 Now Bard supports next vim modes:
  - ***normal*** mode - main mode where you can move around

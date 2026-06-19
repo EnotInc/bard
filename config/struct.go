@@ -1,9 +1,5 @@
 package config
 
-// RLN - relative line munber
-// ShowMD - always show markdown symbols
-// Render - enable or disable render
-// TabNames - show file name is tabs or not
 type Config struct {
 	ThemeName  string `json:"theme_name,omitempty"`
 	ResizeTime int    `json:"resize_time_duration,omitempty"`

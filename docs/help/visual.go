@@ -1,6 +1,6 @@
 package help
 
-var Visual = `# Visual and Visual-Line Modes
+const Visual = `# Visual and Visual-Line Modes
 
 To get back to ***Normal*** mode press <ESC>
 

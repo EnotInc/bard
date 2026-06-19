@@ -1,6 +1,6 @@
 package help
 
-var Config = `# **Config**
+const Config = `# **Config**
 
 Config is located at ` + "`~/.bard/config.json`" + ` file. You can edit it manually, or with commands inside bard
 

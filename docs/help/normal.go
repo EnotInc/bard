@@ -1,6 +1,6 @@
 package help
 
-var Normal = `# Normal Mode
+const Normal = `# Normal Mode
 
 ## Basic vim motion:
  - h, j, k, l - move left, down, up, right

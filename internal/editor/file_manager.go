@@ -34,6 +34,10 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 		lines = strings.SplitSeq(help.Config, "\n")
 	case h.Explorer:
 		lines = strings.SplitSeq(help.Explorer, "\n")
+	case h.Space:
+		lines = strings.SplitSeq(help.Space, "\n")
+	case h.Theme:
+		lines = strings.SplitSeq(help.Theme, "\n")
 	default:
 		e.tui.Message = "Unknown topic"
 		return

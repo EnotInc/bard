@@ -1,6 +1,6 @@
 package help
 
-var About = `# **Bard help**
+const About = `# **Bard help**
 
 So Bard is vim-like TUI text editor, so if you know some vim motions you'll be fine
 
@@ -12,7 +12,17 @@ Anyways, there are some modes available:
 
 When you run bart you start in *NORMAL* mode, and in any other mode you can press *ESC* to get back to here
 For more information run ` + "`" + `:h[elp] <topic>` + "`" + `, for example ` + "`" + `:h command` + "`" + ` to get list of available command in ***Command*** mode
-You can also can run ` + "`:h[help] config`" + ` to get move information about config
+List of all topics:
+	- 'about' (you are here)
+	- 'modes'
+	- 'normal'
+	- 'insert'
+	- 'command'
+	- 'visual' and 'visual-line'
+	- 'explorer'
+	- 'config'
+	- 'theme'
+	- 'space'
 
 Anyways, here is some main vim keys.
 You can also find more information about some specific mode by running *:help <mode>*

@@ -13,4 +13,6 @@ const (
 	VisualLine Topic = "visual-line"
 	Config     Topic = "config"
 	Explorer   Topic = "explorer"
+	Space      Topic = "spase"
+	Theme      Topic = "theme"
 )
