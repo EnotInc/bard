@@ -91,7 +91,6 @@ func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 		maxOffset = enums.InitialOffset
 	}
 	fmt.Fprint(&num, ascii.Reset, strings.Repeat(" ", maxOffset-numLen))
-	//fmt.Fprint(&num, ascii.Bold)
 
 	theme := config.GetTheme().General
 
@@ -122,7 +121,6 @@ func (ui *TUI) fillSpace() string {
 	return strings.Repeat(" ", amount)
 }
 
-// Little func, that used to build lower bar
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err string, cmd string) string {
 	theme := config.GetTheme().General
 	var data strings.Builder
@@ -139,7 +137,6 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err s
 	return services.VisibleSubString(data.String(), 0, screen.W()-1)
 }
 
-// Used when used is is command mode. It simply moves curos to the bottom of the scneed and at the end of the input command
 func (ui *TUI) BuildCommandBar(curdata string) string {
 	theme := config.GetTheme().General
 	var data strings.Builder

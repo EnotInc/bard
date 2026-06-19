@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
@@ -85,14 +84,11 @@ func (ui *TUI) WithEndLine(l string) []rune {
 	return []rune(l + theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str())
 }
 
-// used to colorise every single char in line
-// is just inserts selected ascii.StarSel [Color] before the char
 func (ui *TUI) paint(line []rune) []rune {
 	var s strings.Builder
 	theme := config.GetTheme().General
-	for _, ch := range line {
-		fmt.Fprintf(&s, "%s%c", theme.Selection, ch)
-	}
+	s.WriteString(theme.Selection)
+	s.WriteString(string(line))
 	s.WriteString(ascii.Reset.Str())
 	return []rune(s.String())
 }
