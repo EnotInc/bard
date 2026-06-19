@@ -159,6 +159,11 @@ func (b *Buffer) FindBeforeNext(ch rune) {
 	for i < len(b.Lines[b.Cursor.line].Data)-1 && b.Lines[b.Cursor.line].Data[i] != ch {
 		i += 1
 	}
+
+	if i > len(b.Lines[b.Cursor.line].Data)-1 {
+		return
+	}
+
 	if b.Lines[b.Cursor.line].Data[i] != ch {
 		return
 	}
