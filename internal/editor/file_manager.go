@@ -67,14 +67,14 @@ func (e *Editor) LoadFile(file string) {
 	if f, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
 	} else if f.IsDir() {
-		fmt.Printf("'%s' is a dir, not file", file)
-		os.Exit(1)
+		e.tui.Error = fmt.Sprintf("[%s] is a dir, which Bard can't open", file)
 		return
 	}
 
 	f, err := os.Open(file)
 	if err != nil {
-		panic(err)
+		e.tui.Error = fmt.Sprintf("unable to load file [%s]", file)
+		return
 	}
 	defer f.Close()
 

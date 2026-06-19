@@ -23,14 +23,17 @@ func (ex *Explorer) scanEntries() {
 	var e []entry
 	entries, err := os.ReadDir(string(ex.path))
 	if err != nil {
-		panic(err)
+		ex.setError("Unable to load this dir")
+		ex.entries = []entry{}
+		ex.entries = append(ex.entries, entry{name: []rune(enums.DefaultRoot), isDir: true})
+		return
 	}
 
 	if !slices.Equal(screen.Root(), ex.path) {
 		e = append(e, entry{name: []rune(enums.Back), isDir: true})
 	}
 
-	if len(e) == 0 && len(entries) == 0 {
+	if len(entries) == 0 {
 		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
 	}
 
