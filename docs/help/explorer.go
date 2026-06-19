@@ -15,4 +15,5 @@ You can change focused tile without hiding file explorer with ` + "`<ctrl+o>`" +
 - ` + "`g/G`" + ` - move to the top/bottom of the files
 - ` + "`r`" + ` - rename file
 - ` + "`s`" + ` - clear file name and rename it
+- ` + "`/`" + ` - enable search. Press ` + "`<esc>` or <enter>" + ` to exit. If you not searching, you can press ` + "`<esc>`" + ` one more time to clear search bar
 `
