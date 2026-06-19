@@ -143,3 +143,14 @@ var dirIcon map[string]string = map[string]string{
 	".bard":        "\033[1;33m󰝱 ",
 	"node_modules": "\033[1;32m ",
 }
+
+const search = " "
+
+func SearchIcon() string {
+	cfg := config.GetConfig()
+	if cfg.ShowIcons {
+		return search
+	} else {
+		return "> "
+	}
+}

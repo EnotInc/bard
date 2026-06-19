@@ -18,4 +18,5 @@ const (
 	Italic     Color = "\033[3m"
 	BoldItalic Color = "\033[1m\033[3m"
 	Stricked   Color = "\033[9m"
+	UnderLine  Color = "\033[4m"
 )

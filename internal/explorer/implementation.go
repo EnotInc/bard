@@ -16,7 +16,7 @@ import (
 )
 
 func (ex *Explorer) DrawLineAt(index int) string {
-	if index+ex.yScroll >= len(ex.entries) {
+	if index+ex.yScroll > len(ex.entries) {
 		return ""
 	}
 
@@ -26,26 +26,31 @@ func (ex *Explorer) DrawLineAt(index int) string {
 		ofset *= 2
 	}
 
-	if ex.yScroll > 0 && index == 0 {
+	if index == 0 {
+		return ex.buildSearchBar()
+	}
+
+	if ex.yScroll > 0 && index == 1 {
 		return ascii.ArrowUp.Str()
 	} else if index == ex.h-ofset {
 		return ascii.ArrowDown.Str()
 	}
 
-	entry := ex.entries[index+ex.yScroll]
+	entry := ex.entries[index+ex.yScroll-searchBarOfset]
 	var icon string
 	if entry.isDir {
 		icon = services.GetDirIcon(string(entry.name))
 	} else {
 		icon = services.GetFileIcon(string(entry.name))
 	}
+
 	if ex.action == deleting && index == ex.visible.y+1 {
 		red := "\033[31m"
 		green := "\033[32m"
 		icon = fmt.Sprintf(" %sy%s/%sn%s: %s%s", red, ascii.ResetFg, green, ascii.Reset, ascii.Stricked, icon)
 	}
 
-	e := fmt.Sprintf("%s%s", icon, string(ex.entries[index+ex.yScroll].name))
+	e := fmt.Sprintf("%s%s", icon, string(entry.name))
 	e = services.VisibleSubString(e, 0, ex.w)
 	return e
 }
@@ -61,11 +66,19 @@ func (ex *Explorer) Handle(key rune) {
 	case deleting:
 		ex.handleDeletion(key)
 		return
+	case searching:
+		ex.handleSearch(key)
+		return
 	}
 
 	switch key {
 	case keys.Esc:
-		screen.SetFocus(0)
+		if len(ex.search) > 0 {
+			ex.search = []rune{}
+			ex.update = true
+		} else {
+			screen.SetFocus(0)
+		}
 	case keys.Enter:
 		ex.openEntryWithCallback()
 		ex.moveToTop()
@@ -88,9 +101,14 @@ func (ex *Explorer) Handle(key rune) {
 	case ':':
 		screen.SetFocus(0)
 		ex.changeMode(mode.Command)
+	case '/':
+		ex.beginSearch()
 	}
-	ex.fixCursor()
-	ex.scroll()
+
+	if ex.action != searching {
+		ex.fixCursor()
+		ex.scroll()
+	}
 }
 
 func (ex *Explorer) GetCursor(withBorder bool) (int, int, cursorType.CursorType) {
@@ -98,8 +116,15 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int, cursorType.CursorType)
 	x := ex.visible.x + enums.InitialOffset
 	y := ex.visible.y + enums.CursorOffset + 1
 
-	if ex.action != none && ex.action != deleting {
-		x += len(ex.entries[ex.cursor.y].name)
+	switch ex.action {
+	case changing:
+		x += len(ex.entries[ex.cursor.y-searchBarOfset].name)
+	case creating:
+		x += len(ex.entries[len(ex.entries)-1].name)
+		y += searchBarOfset
+	case searching:
+		x += len(ex.search)
+		y = enums.CursorOffset
 	}
 
 	if !withBorder {
@@ -109,7 +134,7 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int, cursorType.CursorType)
 	switch ex.action {
 	case none:
 		c = cursorType.CursorBloc
-	case creating, changing:
+	case creating, changing, searching:
 		c = cursorType.CursorLine
 	case deleting:
 		c = cursorType.CursorUnderline
@@ -136,7 +161,7 @@ func (ex *Explorer) PreDraw() {
 		ex.update = true
 		ex.showDot = cfg.ShowDot
 	}
-	if ex.update {
+	if ex.update || ex.action == searching {
 		ex.scanEntries()
 		ex.update = false
 	}

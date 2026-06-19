@@ -33,14 +33,17 @@ func (ex *Explorer) scanEntries() {
 		e = append(e, entry{name: []rune(enums.Back), isDir: true})
 	}
 
-	if len(entries) == 0 {
-		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
-	}
-
 	for _, en := range entries {
 		if strings.HasPrefix(en.Name(), ".") && !cfg.ShowDot {
 			continue
 		}
+
+		lowerFilename := strings.ToLower(en.Name())
+		lowerSearch := strings.ToLower(string(ex.search))
+		if len(ex.search) > 0 && !strings.Contains(lowerFilename, lowerSearch) {
+			continue
+		}
+
 		ent := entry{
 			name:  []rune(en.Name()),
 			path:  []rune(filepath.Join(string(ex.path), en.Name())),
@@ -49,11 +52,14 @@ func (ex *Explorer) scanEntries() {
 		e = append(e, ent)
 	}
 
+	if len(entries) == 0 {
+		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
+	}
+
 	ex.entries = e
 }
 
-func (ex *Explorer) openEntryWithCallback() {
-	entry := ex.entries[ex.cursor.y]
+func (ex *Explorer) openEntry(entry *entry) {
 	if entry.isDir {
 		if slices.Equal(entry.name, []rune(enums.Back)) {
 			ex.path = []rune(filepath.Dir(string(ex.path)))
@@ -61,6 +67,23 @@ func (ex *Explorer) openEntryWithCallback() {
 			ex.path = []rune(filepath.Join(string(ex.path), string(entry.name)))
 		}
 		ex.update = true
+		ex.search = []rune{}
+		return
+	}
+	ex.openFile(string(entry.path))
+	screen.SendCall(calls.OpenFile)
+}
+
+func (ex *Explorer) openEntryWithCallback() {
+	entry := ex.entries[ex.cursor.y-searchBarOfset]
+	if entry.isDir {
+		if slices.Equal(entry.name, []rune(enums.Back)) {
+			ex.path = []rune(filepath.Dir(string(ex.path)))
+		} else if !slices.Equal(entry.name, []rune(enums.DefaultRoot)) {
+			ex.path = []rune(filepath.Join(string(ex.path), string(entry.name)))
+		}
+		ex.update = true
+		ex.search = []rune{}
 		return
 	}
 	ex.openFile(string(entry.path))
@@ -68,7 +91,7 @@ func (ex *Explorer) openEntryWithCallback() {
 }
 
 func (ex *Explorer) delFileWithCallback() {
-	entry := ex.entries[ex.cursor.y]
+	entry := ex.entries[ex.cursor.y-searchBarOfset]
 	ex.delFile(string(entry.path))
 	screen.SendCall(calls.DelFile)
 }

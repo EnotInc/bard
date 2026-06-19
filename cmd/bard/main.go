@@ -52,9 +52,13 @@ func main() {
 			screen.SetRoot(space)
 			ex.SetPath(space)
 		default:
-			f, err := os.Stat(arg)
+			_, err := os.Stat(arg)
 			if err != nil {
 				ed.CreateFile(arg)
+			}
+			f, err := os.Stat(arg)
+			if err != nil {
+				panic(err)
 			}
 
 			if !f.IsDir() {

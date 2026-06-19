@@ -13,11 +13,11 @@ func (ex *Explorer) beginCreation() {
 
 	entry := entry{name: []rune{}, path: ex.path, isDir: false}
 	ex.entries = append(ex.entries, entry)
-	ex.cursor.y = len(ex.entries) - 1
+	ex.cursor.y = len(ex.entries) + searchBarOfset
 }
 
 func (ex *Explorer) handleCreate(key rune) {
-	_entry := &ex.entries[ex.cursor.y]
+	_entry := &ex.entries[len(ex.entries)-1]
 	switch key {
 	case keys.Esc:
 		ex.entries = ex.entries[:len(ex.entries)-1]
@@ -26,7 +26,7 @@ func (ex *Explorer) handleCreate(key rune) {
 		ex.action = none
 		ex.update = true
 	case keys.Enter:
-		ex.create(*_entry)
+		ex.create(_entry)
 		ex.moveToTop()
 		ex.scroll()
 		ex.action = none
@@ -47,7 +47,7 @@ func (ex *Explorer) handleCreate(key rune) {
 	}
 }
 
-func (ex *Explorer) create(e entry) {
+func (ex *Explorer) create(e *entry) {
 	if e.isDir {
 		err := os.Mkdir(string(e.path), 0755)
 		if err != nil {
@@ -59,7 +59,6 @@ func (ex *Explorer) create(e entry) {
 			ex.setError(err.Error())
 		}
 		defer f.Close()
-		ex.openEntryWithCallback()
 	}
-
+	ex.openEntry(e)
 }

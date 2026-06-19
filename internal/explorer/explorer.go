@@ -14,6 +14,7 @@ const (
 	changing
 	creating
 	deleting
+	searching
 )
 
 type Explorer struct {
@@ -24,6 +25,7 @@ type Explorer struct {
 	rename     func(old, new string)
 	changeMode func(mode mode.Mode)
 	setError   func(err string)
+	search     []rune
 	path       []rune
 	entries    []entry
 	buffer     entry
