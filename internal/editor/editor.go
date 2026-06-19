@@ -10,14 +10,6 @@ import (
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
-// This is main structure, that contains current editor state
-// b - list of Buffer. List is used in work with tabs
-// tui - TUI
-// CurMode - current editor Mode
-// command - used in command mode, stores user input
-// subCmd - sub command. Used to store commands like `12k`
-// save - is terminal save to work in (depends on window size, if w < 80 or h < 30 then terminal is not save)
-// curBuffer - current buffer index
 type Editor struct {
 	tui             *tui.TUI
 	cmd             *cmd
@@ -27,7 +19,6 @@ type Editor struct {
 	lastCmd         string
 	b               []*buffer.Buffer
 	curBuffer       int
-	save            bool
 }
 
 type cmd struct {
@@ -66,10 +57,6 @@ func InitEditor(w int) *Editor {
 
 	if err != nil {
 		cfg.ThemeName = cfg.DefaultThemeName()
-	}
-
-	if w < 80 {
-		e.tui.Save = false
 	}
 
 	return e

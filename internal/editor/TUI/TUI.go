@@ -20,18 +20,6 @@ type visual struct {
 	line   int
 }
 
-// so this is a struct where I store a data about visual intermretation of bard
-// XScroll - stores a upped border of editor 'view window'
-// YScroll - stores a left border of editor 'view window'
-// CurRow - visual row where cursor is located
-// CurOff - visual offset where cursor is located
-// W, H - width and height of terminal window
-// Save - is terminal save (is is big enough)
-// Message - shows at the bottom of the screen, in 'lower bar'. Used to display some messages
-// Hello - ascii art of bard
-// visual - anchor of wisual row and offset. Used to calculate visual selection between this point and the cursor
-// render - an instance of render. Used to buld line with ansi sybols
-// Redraw - chan, wich used to redraw the whole editor when window size is changed
 type TUI struct {
 	Redraw  chan bool
 	render  *render.Renderer
@@ -45,7 +33,6 @@ type TUI struct {
 	XScroll int
 	CurRow  int
 	YScroll int
-	Save    bool
 }
 
 func InitTUI(w int) *TUI {
@@ -56,7 +43,6 @@ func InitTUI(w int) *TUI {
 		YScroll: 0,
 		CurRow:  0,
 		CurOff:  0,
-		Save:    true,
 		W:       w,
 		visual:  v,
 		render:  r,
