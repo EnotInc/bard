@@ -118,6 +118,11 @@ func (ex *Explorer) Resize(w, h int) {
 }
 
 func (ex *Explorer) PreDraw() {
+	cfg := config.GetConfig()
+	if ex.showDot != cfg.ShowDot {
+		ex.update = true
+		ex.showDot = cfg.ShowDot
+	}
 	if ex.update {
 		ex.scanEntries()
 		ex.update = false

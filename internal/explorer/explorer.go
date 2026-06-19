@@ -1,6 +1,7 @@
 package explorer
 
 import (
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
@@ -30,12 +31,14 @@ type Explorer struct {
 	yScroll    int
 	action     action
 	update     bool
+	showDot    bool
 }
 
 func InitExplorer(open, del func(file string), ren func(old, new string), change func(mode mode.Mode), w, h int) *Explorer {
 
 	c := initCursor()
 	v := initCursor()
+	cfg := config.GetConfig()
 	ex := &Explorer{
 		path:       []rune(enums.DefaultRoot),
 		w:          w,
@@ -48,6 +51,7 @@ func InitExplorer(open, del func(file string), ren func(old, new string), change
 		rename:     ren,
 		action:     none,
 		update:     true,
+		showDot:    cfg.ShowDot,
 	}
 	ex.scanEntries()
 	ex.scroll()
