@@ -148,18 +148,21 @@ func (e *Editor) Handle(key rune) {
 		} else {
 			e.caseNormal(key)
 		}
+		e.b[e.curBuffer].FixOffset()
 	case mode.Visual:
 		if e.IsGeneralMove(key) {
 			e.GeneralCase(key)
 		} else {
 			e.caseVisual(key)
 		}
+		e.b[e.curBuffer].FixOffset()
 	case mode.Visual_line:
 		if e.IsGeneralMove(key) {
 			e.GeneralCase(key)
 		} else {
 			e.caseVisualLine(key)
 		}
+		e.b[e.curBuffer].FixOffset()
 	case mode.Command:
 		e.caseCommand(key)
 	case mode.Insert:
