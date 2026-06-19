@@ -48,7 +48,6 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 	var renderMode render.Render = render.Markdown
 
 	if isLine(line, '-') || isLine(line, '*') || isLine(line, '_') {
-		//if string(line) == "---" || string(line) == "***" || string(line) == "___" {
 		if show {
 			return r.theme.Symbol + string(line), renderMode, false
 		}
@@ -164,7 +163,7 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 }
 
 func (r *Render) fillSpace(xScroll int) string {
-	amount := max(r.w-len(r.l.input)-enums.InitialOffset-1, 0)
+	amount := max(r.w-len(r.l.input)-enums.InitialOffset, 0)
 	return strings.Repeat(" ", amount+xScroll)
 }
 

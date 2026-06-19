@@ -45,9 +45,13 @@ func (r *Render) fillSpace(xScroll int) string {
 	return strings.Repeat(" ", amount+xScroll)
 }
 
+func isLine(line []rune, key rune) bool {
+	return len(line) == 3 && line[0] == line[1] && line[1] == line[2] && line[2] == key
+}
+
 func (r *Render) RenderCodeLine(line []rune, show bool, xScroll int) (string, render.Render, bool) {
 	r.l.input = line
-	if string(line) == "```" {
+	if isLine(line, '`') {
 		if !show {
 			line = []rune("   ")
 		}
@@ -61,6 +65,7 @@ func (r *Render) RenderCodeLine(line []rune, show bool, xScroll int) (string, re
 
 	var mode render.Render = render.Code
 	var data strings.Builder
+	isWhiteSpace := true
 
 	for tok := r.l.NextToken(); tok.Type != EOL; tok = r.l.NextToken() {
 		switch tok.Type {
@@ -83,14 +88,21 @@ func (r *Render) RenderCodeLine(line []rune, show bool, xScroll int) (string, re
 		case wseol:
 			data.WriteString(r.renderWSEOL(&tok))
 		case tab:
-			data.WriteString(r.renderTab(&tok))
+			data.WriteString(r.renderTab(&tok, isWhiteSpace))
+		}
+		if isWhiteSpace && (tok.Type != whiteSpace && tok.Type != tab) {
+			isWhiteSpace = false
 		}
 	}
 	l := r.theme.Background + data.String() + r.fillSpace(xScroll)
 	return l, mode, false
 }
 
-func (r *Render) renderTab(t *Token) string {
+func (r *Render) renderTab(t *Token, iswhiteSpace bool) string {
+	if !iswhiteSpace {
+		return string(t.Literal)
+	}
+
 	cfg := config.GetConfig()
 	if len(t.Literal) == cfg.TabStop {
 		return r.theme.Comment + ascii.CodeTab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
@@ -104,25 +116,49 @@ func (r *Render) renderWSEOL(t *Token) string {
 }
 
 func (r *Render) renderBracket(t *Token) string {
-	return r.theme.Bracket + string(t.Literal) + ascii.ResetFg.Str()
+	var data strings.Builder
+	data.WriteString(r.theme.Bracket)
+	data.WriteString(string(t.Literal))
+	data.WriteString(ascii.ResetFg.Str())
+	return data.String()
 }
 
 func (r *Render) renderSymbol(t *Token) string {
-	return r.theme.Symbol + string(t.Literal) + ascii.ResetFg.Str()
+	var data strings.Builder
+	data.WriteString(r.theme.Symbol)
+	data.WriteString(string(t.Literal))
+	data.WriteString(ascii.ResetFg.Str())
+	return data.String()
 }
 
 func (r *Render) renderKeyWord(t *Token) string {
-	return r.theme.Keyword + string(t.Literal) + ascii.ResetFg.Str()
+	var data strings.Builder
+	data.WriteString(r.theme.Keyword)
+	data.WriteString(string(t.Literal))
+	data.WriteString(ascii.ResetFg.Str())
+	return data.String()
 }
 
 func (r *Render) renderNumber(t *Token) string {
-	return r.theme.Number + string(t.Literal) + ascii.ResetFg.Str()
+	var data strings.Builder
+	data.WriteString(r.theme.Number)
+	data.WriteString(string(t.Literal))
+	data.WriteString(ascii.ResetFg.Str())
+	return data.String()
 }
 
 func (r *Render) renderString(t *Token) string {
-	return r.theme.String + string(t.Literal) + ascii.ResetFg.Str()
+	var data strings.Builder
+	data.WriteString(r.theme.String)
+	data.WriteString(string(t.Literal))
+	data.WriteString(ascii.ResetFg.Str())
+	return data.String()
 }
 
 func (r *Render) renderComment(t *Token) string {
-	return r.theme.Comment + string(t.Literal) + ascii.ResetFg.Str()
+	var data strings.Builder
+	data.WriteString(r.theme.Comment)
+	data.WriteString(string(t.Literal))
+	data.WriteString(ascii.ResetFg.Str())
+	return data.String()
 }
