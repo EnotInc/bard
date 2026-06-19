@@ -52,7 +52,7 @@ func (ex *Explorer) scanEntries() {
 		e = append(e, ent)
 	}
 
-	if len(entries) == 0 {
+	if len(entries) == 0 || len(e) == 0 {
 		e = append(e, entry{name: []rune(enums.DefaultRoot), isDir: true})
 	}
 

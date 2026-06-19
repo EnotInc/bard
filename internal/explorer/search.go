@@ -47,6 +47,8 @@ func (ex *Explorer) handleSearch(key rune) {
 	case keys.Esc, keys.Enter:
 		ex.action = none
 		ex.moveToTop()
+		ex.fixCursor()
+		ex.scroll()
 	case keys.Backspace:
 		if len(ex.search) > 0 {
 			ex.search = ex.search[:len(ex.search)-1]
