@@ -100,6 +100,7 @@ var langIcon map[string]string = map[string]string{
 	"xhtml":             "\033[33m ",
 	"yml":               " ",
 	"yaml":              " ",
+	"zig":               "\033[33m ",
 }
 
 func GetDirIcon(s string) string {

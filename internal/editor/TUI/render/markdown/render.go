@@ -180,6 +180,7 @@ func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
 	if len(t.Value) > 0 {
 		i = services.GetFileIcon(string(t.Value))
 	}
+
 	return r.theme.CodeHeader + " " + i + r.theme.Symbol + string(t.Value) + r.fillSpace(xScroll)
 }
 
@@ -294,7 +295,11 @@ func (r *Render) renderHeader(t *Token) string {
 }
 
 func (r *Render) renderTab(t *Token) string {
-	return r.theme.Symbol + ascii.Tab.Str() + ascii.Reset.Str() + string(t.Literal[1:])
+	if len(t.Literal) > 0 {
+		return r.theme.Symbol + ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
+	} else {
+		return r.theme.Symbol + ascii.Tab.Str() + ascii.ResetFg.Str()
+	}
 }
 
 func (r *Render) renderLink(t *Token, show bool) string {

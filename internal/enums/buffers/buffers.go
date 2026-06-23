@@ -61,4 +61,5 @@ var CodeExt map[string]bool = map[string]bool{
 	"xhtml":             true,
 	"yml":               true,
 	"yaml":              true,
+	"zig":               true,
 }
