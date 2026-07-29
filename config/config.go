@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -33,6 +34,28 @@ func getConfigDir() string {
 	return filepath.Join(home, configDir)
 }
 
+func ReadConfig() error {
+	defaultConfing := getDefaultConfig()
+	cfg_path := getConfigPath()
+
+	data, err := os.ReadFile(cfg_path)
+	if err != nil {
+		config = defaultConfing
+		return fmt.Errorf("unable to read config file. Using default config instead")
+	}
+
+	cfg := &Config{}
+	err = json.Unmarshal(data, cfg)
+	if err != nil {
+		config = defaultConfing
+		return fmt.Errorf("Unable to parce config. Using default settings instead")
+	}
+
+	config = cfg
+	FixConfig()
+	return nil
+}
+
 func InitConfig() {
 	defaultConfing := getDefaultConfig()
 	cfg_path := getConfigPath()
@@ -47,21 +70,7 @@ func InitConfig() {
 		return
 	}
 
-	data, err := os.ReadFile(cfg_path)
-	if err != nil {
-		config = defaultConfing
-		return
-	}
-
-	cfg := &Config{}
-	err = json.Unmarshal(data, cfg)
-	if err != nil {
-		config = defaultConfing
-		return
-	}
-
-	config = cfg
-	FixConfig()
+	ReadConfig()
 }
 
 func FixConfig() {

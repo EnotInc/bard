@@ -206,7 +206,12 @@ func (e *Editor) parseCommand() {
 
 		case "theme":
 			if arg == "reload" {
+				err := config.ReadConfig()
+				cfg = config.GetConfig()
 				arg = cfg.ThemeName
+				if err != nil {
+					e.tui.Error = err.Error()
+				}
 			}
 
 			msg := config.ChangeTheme(arg)

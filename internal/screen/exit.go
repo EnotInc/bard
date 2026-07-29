@@ -10,6 +10,7 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"golang.org/x/term"
 )
 
 func getLogPath() string {
@@ -20,7 +21,7 @@ func getLogPath() string {
 	return filepath.Join(home, ".bard")
 }
 
-func (s *Screen) saveLog(error string) error {
+func SaveLog(e string) error {
 	path := getLogPath()
 	logs := filepath.Join(path, ".log")
 
@@ -32,6 +33,27 @@ func (s *Screen) saveLog(error string) error {
 	defer file.Close()
 
 	log.SetOutput(file)
-	log.Print(strings.Repeat("=", 30), "\n\n", error, "\n", string(debug.Stack()), "\n\n")
+	log.Print(strings.Repeat("=", 30), "\n\n", e, "\n", string(debug.Stack()), "\n\n")
 	return nil
+}
+
+func Exit(code int) {
+	config.Save()
+
+	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
+	term.Restore(global.fdIn, global.oldState)
+
+	var error string = "unknown error"
+	if r := recover(); r != nil && code != 0 {
+		error = fmt.Sprintf("%s", r)
+
+		err := SaveLog(error)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
+		}
+	}
+
+	os.Exit(code)
 }

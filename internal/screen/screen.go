@@ -189,27 +189,6 @@ func Run() {
 	}
 }
 
-func Exit(code int) {
-	config.Save()
-
-	fmt.Print(ascii.ClearView, ascii.ClearHistory, ascii.MoveToStart, ascii.CursorReset, ascii.ResetTerminal, ascii.ResetCursor)
-	term.Restore(global.fdIn, global.oldState)
-
-	var error string = "unknown error"
-	if r := recover(); r != nil && code != 0 {
-		error = fmt.Sprintf("%s", r)
-
-		err := global.saveLog(error)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Bard stopped with error. More information you can find in '~/.bard/.log' file")
-		}
-	}
-
-	os.Exit(code)
-}
-
 func HideTile() {
 	global.call = calls.PurgeCache
 	if len(global.tiles) == 2 {
