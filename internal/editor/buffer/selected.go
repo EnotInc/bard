@@ -142,7 +142,7 @@ func (b *Buffer) SaveCopied() {
 			len(b.Copies)+b.Cursor.Line()-1,
 			enums.Without)
 
-	} else {
+	} else if len(b.Copies) > 0 {
 		operation := Change
 		if b.Copies[0].isEnd && b.Copies[0].isStart {
 			operation = Insert

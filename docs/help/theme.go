@@ -11,4 +11,6 @@ For example you can make bold red numbers with ` + "`\\033[1;31m`" + `
 
 To change theme, you can run ` + "`:theme <name>.json`" + ` in bard, or change it in config
 You can also get current theme name by running ` + "`:theme`" + ` command
+
+To hot reload themes type ` + "`:theme reload`" + `
 `

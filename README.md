@@ -69,7 +69,7 @@ Requirements:
 - Go 1.25.5.
 
 Bard is not available in any package managers yet, so to use it you have to build it:
-```bash
+```sh
 git clone https://github.com/EnotInc/bard.git
 cd bard/cmd/bard
 go install
