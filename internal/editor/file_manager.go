@@ -64,16 +64,17 @@ func (e *Editor) StartHelp() {
 
 // Used to read file data, and write it into current Buffer
 func (e *Editor) LoadFile(file string) {
+	name := filepath.Base(file)
 	if f, err := os.Stat(file); err != nil {
 		e.CreateFile(file)
 	} else if f.IsDir() {
-		e.tui.Error = fmt.Sprintf("[%s] is a dir, which Bard can't open", file)
+		e.tui.Error = fmt.Sprintf("[%s] is a dir, which Bard can't open", name)
 		return
 	}
 
 	f, err := os.Open(file)
 	if err != nil {
-		e.tui.Error = fmt.Sprintf("unable to load file [%s]", file)
+		e.tui.Error = fmt.Sprintf("unable to load file [%s]", name)
 		return
 	}
 	defer f.Close()
@@ -170,6 +171,7 @@ func (e *Editor) OpenFileCallback(file string) {
 func (e *Editor) RemoveFileCallback(file string) {
 
 	entry := filepath.Clean(file)
+	name := filepath.Base(entry)
 	for i, b := range e.b {
 		title := filepath.Clean(b.Title)
 		if title == entry {
@@ -184,12 +186,12 @@ func (e *Editor) RemoveFileCallback(file string) {
 		}
 	}
 
-	err := os.RemoveAll(file)
+	err := os.RemoveAll(entry)
 	if err != nil {
-		e.tui.Error = fmt.Sprintf("unable to remove [%s]", file)
+		e.tui.Error = fmt.Sprintf("unable to remove [%s]", name)
 	}
 
-	e.tui.Message = fmt.Sprintf("[%s] was removed", file)
+	e.tui.Message = fmt.Sprintf("[%s] was removed", name)
 }
 
 func (e *Editor) ChangeModeCallback(mode mode.Mode) {
@@ -212,6 +214,9 @@ func (e *Editor) setBufferType(file string) {
 func (e *Editor) RenameCallback(old, new string) {
 	_old := filepath.Clean(old)
 	_new := filepath.Clean(new)
+
+	name_old := filepath.Base(_old)
+	name_new := filepath.Base(_new)
 	for _, b := range e.b {
 		title := filepath.Clean(b.Title)
 		if title == _old {
@@ -223,12 +228,12 @@ func (e *Editor) RenameCallback(old, new string) {
 		}
 	}
 
-	err := os.Rename(old, new)
+	err := os.Rename(_old, _new)
 	if err != nil {
-		e.tui.Error = fmt.Sprintf("unable to rename [%s]", old)
+		e.tui.Error = fmt.Sprintf("unable to rename [%s]", name_old)
 		return
 	}
 
-	e.tui.Message = fmt.Sprintf("[%s] was renamed to [%s]", _old, _new)
+	e.tui.Message = fmt.Sprintf("[%s] was renamed to [%s]", name_old, name_new)
 	e.tui.PurgeCache()
 }
