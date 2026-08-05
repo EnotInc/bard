@@ -9,6 +9,7 @@ import (
 	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/internal/enums/buffers"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
@@ -99,7 +100,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string 
 
 		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, cfg.RLN)
 
-		//isRender := e.b[e.curBuffer].Type == buffers.Markdown && cfg.Render
+		enable_render := buf.Type == buffers.Markdown && cfg.Render
 
 		var data string
 
@@ -113,16 +114,17 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string 
 					buf.Visual.Line(),
 					buf.Cursor.Offset(),
 					buf.Cursor.Line(),
+					enable_render,
 					buf.Type)
 
 				fmt.Fprint(&content, services.VisibleSubString(visual, start, end))
 			} else {
-				data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
+				data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, enable_render, buf.Type)
 				fmt.Fprint(&content, data)
 			}
 		// Some other modes can use different logic for rendering, but now I just call the default for non-visual or visual_line modes
 		default:
-			data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, buf.Type)
+			data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, enable_render, buf.Type)
 			fmt.Fprint(&content, data)
 		}
 

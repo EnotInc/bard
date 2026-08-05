@@ -132,8 +132,8 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 	return data.String()
 }
 
-func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, Type buffers.BufferType) string {
-	if Type == buffers.Other {
+func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, enable_render bool, Type buffers.BufferType) string {
+	if Type == buffers.Other || enable_render {
 		clear := services.ReplaceTabs(str)
 		shift := services.CursorShift(str)
 		return services.VisibleSubString(string(clear), start, end+shift)

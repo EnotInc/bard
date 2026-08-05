@@ -4,15 +4,15 @@ type Config struct {
 	ThemeName  string `json:"theme_name,omitempty"`
 	ResizeTime int    `json:"resize_time_duration,omitempty"`
 	TabStop    int    `json:"tab_stop,omitempty"`
-	RLN        bool   `json:"relative_line_numbers,omitempty"`
-	ShowEmpty  bool   `json:"show_empty_line_symbol,omitempty"`
-	ShowMD     bool   `json:"show_markdown_symbols,omitempty"`
-	Render     bool   `json:"enable_render,omitempty"`
-	TabNames   bool   `json:"show_tab_names,omitempty"`
-	KeepTabs   bool   `json:"keep_tabs,omitempty"`
-	ShowIcons  bool   `json:"show_icons,omitempty"`
-	ShowBorder bool   `json:"show_borders,omitempty"`
-	ShowDot    bool   `json:"show_dot_files,omitempty"`
+	RLN        bool   `json:"relative_line_numbers"`
+	ShowEmpty  bool   `json:"show_empty_line_symbol"`
+	ShowMD     bool   `json:"show_markdown_symbols"`
+	Render     bool   `json:"enable_render"`
+	TabNames   bool   `json:"show_tab_names"`
+	KeepTabs   bool   `json:"keep_tabs"`
+	ShowIcons  bool   `json:"show_icons"`
+	ShowBorder bool   `json:"show_borders"`
+	ShowDot    bool   `json:"show_dot_files"`
 }
 
 type Theme struct {
