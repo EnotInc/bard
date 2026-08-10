@@ -1,6 +1,9 @@
 package code
 
-import "github.com/EnotInc/Bard/internal/services"
+import (
+	"github.com/EnotInc/Bard/config"
+	"github.com/EnotInc/Bard/internal/services"
+)
 
 type Lexer struct {
 	input        []rune
@@ -75,7 +78,8 @@ func islinkSymbol(ch rune) bool {
 }
 
 func (l *Lexer) readTab() Token {
-	new := services.ReadTabAt(l.input, l.position)
+	ts := config.GetConfig().TabStop
+	new := services.ReadTabAt(l.input, l.position, ts)
 	return Token{Type: tab, Literal: new}
 }
 

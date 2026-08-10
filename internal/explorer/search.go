@@ -3,6 +3,7 @@ package explorer
 import (
 	"strings"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	"github.com/EnotInc/Bard/internal/services"
@@ -16,7 +17,8 @@ func (ex *Explorer) buildSearchBar() string {
 	var searchBar strings.Builder
 	searchBar.WriteString(string(ascii.UnderLine))
 
-	icon := services.SearchIcon()
+	si := config.GetConfig().ShowIcons
+	icon := services.SearchIcon(si)
 	searchBar.WriteString(icon)
 
 	if len(ex.search) == 0 {

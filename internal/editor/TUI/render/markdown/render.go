@@ -177,8 +177,9 @@ func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
 	}
 
 	i := ""
+	si := config.GetConfig().ShowIcons
 	if len(t.Value) > 0 {
-		i = services.GetFileIcon(string(t.Value))
+		i = services.GetFileIcon(string(t.Value), si)
 	}
 
 	return r.theme.CodeHeader + " " + i + r.theme.Symbol + string(t.Value) + r.fillSpace(xScroll)

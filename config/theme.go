@@ -6,7 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"strings"
+
+	"github.com/EnotInc/Bard/internal/services"
 )
 
 var theme *Theme
@@ -50,29 +51,6 @@ const (
 	background apply = false
 )
 
-func hexToAscii(c string, a apply) (string, error) {
-	hex := strings.TrimPrefix(c, "#")
-	if len(hex) != 6 {
-		return "", fmt.Errorf("Invalid hex len in string: %s", c)
-	}
-
-	var r, g, b uint8
-	_, err := fmt.Sscanf(hex, "%2x%2x%2x", &r, &g, &b)
-	if err != nil {
-		return "", err
-	}
-
-	var escape string
-	switch a {
-	case foreground:
-		escape = fmt.Sprintf("\033[38;2;%d;%d;%dm", r, g, b)
-	case background:
-		escape = fmt.Sprintf("\033[48;2;%d;%d;%dm", r, g, b)
-	}
-
-	return escape, nil
-}
-
 func (t *Theme) parceColors() {
 	t.parceRecursive(reflect.ValueOf(t).Elem())
 }
@@ -98,9 +76,9 @@ func (t *Theme) parceRecursive(val reflect.Value) {
 
 			switch apply {
 			case "foreground":
-				ascii, err = hexToAscii(hex, foreground)
+				ascii, err = services.HexToAscii(hex, services.Foreground)
 			case "background":
-				ascii, err = hexToAscii(hex, background)
+				ascii, err = services.HexToAscii(hex, services.Background)
 			default:
 				continue
 			}

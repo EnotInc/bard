@@ -4,14 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 )
 
-func GetFileIcon(s string) string {
-
-	cfg := config.GetConfig()
-	if !cfg.ShowIcons {
+func GetFileIcon(s string, showIcons bool) string {
+	if !showIcons {
 		return "  "
 	}
 
@@ -103,10 +100,8 @@ var langIcon map[string]string = map[string]string{
 	"zig":               "\033[33m ",
 }
 
-func GetDirIcon(s string) string {
-
-	cfg := config.GetConfig()
-	if !cfg.ShowIcons {
+func GetDirIcon(s string, showIcons bool) string {
+	if !showIcons {
 		return "  \033[96m" // default dir icon color
 	}
 
@@ -147,9 +142,8 @@ var dirIcon map[string]string = map[string]string{
 
 const search = " "
 
-func SearchIcon() string {
-	cfg := config.GetConfig()
-	if cfg.ShowIcons {
+func SearchIcon(showIcons bool) string {
+	if showIcons {
 		return search
 	} else {
 		return "> "

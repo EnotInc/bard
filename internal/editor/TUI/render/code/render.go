@@ -40,7 +40,8 @@ func (r *Render) Reset() {
 }
 
 func (r *Render) fillSpace(xScroll int) string {
-	clear := services.ReplaceTabs(r.l.input)
+	ts := config.GetConfig().TabStop
+	clear := services.ReplaceTabs(r.l.input, ts)
 	amount := max(r.w-len(clear)-enums.InitialOffset-1, 0)
 	return strings.Repeat(" ", amount+xScroll)
 }

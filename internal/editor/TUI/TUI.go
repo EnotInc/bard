@@ -133,9 +133,10 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 }
 
 func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, enable_render bool, Type buffers.BufferType) string {
+	ts := config.GetConfig().TabStop
 	if Type == buffers.Other || enable_render {
-		clear := services.ReplaceTabs(str)
-		shift := services.CursorShift(str)
+		clear := services.ReplaceTabs(str, ts)
+		shift := services.CursorShift(str, ts)
 		return services.VisibleSubString(string(clear), start, end+shift)
 	}
 
@@ -156,10 +157,11 @@ func (ui *TUI) Center(l []rune) string {
 
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	theme := config.GetTheme().General
+	si := config.GetConfig().ShowIcons
 	if len(tabs) == 1 {
 		icon := ""
 		if len(tabs[0]) != 0 {
-			icon = services.GetFileIcon(tabs[0])
+			icon = services.GetFileIcon(tabs[0], si)
 			icon = strings.TrimPrefix(icon, "  ")
 		}
 		return fmt.Sprintf("%s[%s%s%s]", theme.Tab, icon, tabs[0], theme.Tab)
@@ -169,7 +171,7 @@ func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
 	for i, tab := range tabs {
 		icon := ""
 		if len(tab) != 0 {
-			icon = services.GetFileIcon(tab)
+			icon = services.GetFileIcon(tab, si)
 			icon = strings.TrimPrefix(icon, "  ")
 		}
 

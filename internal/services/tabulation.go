@@ -1,17 +1,12 @@
 package services
 
-import (
-	"github.com/EnotInc/Bard/config"
-)
-
-func ReplaceTabs(line []rune) []rune {
+func ReplaceTabs(line []rune, tabstop int) []rune {
 	var new []rune
-	tw := config.GetConfig().TabStop
 
 	visual := 0
 	for i := range line {
 		if line[i] == '\t' {
-			tab_width := tw - (visual % tw)
+			tab_width := tabstop - (visual % tabstop)
 			visual += tab_width
 
 			for range tab_width {
@@ -26,14 +21,13 @@ func ReplaceTabs(line []rune) []rune {
 	return []rune(new)
 }
 
-func ReadTabAt(line []rune, index int) []rune {
+func ReadTabAt(line []rune, index int, tabstop int) []rune {
 	var new []rune
-	tw := config.GetConfig().TabStop
 
 	visual := 0
 	for i := range line {
 		if line[i] == '\t' {
-			tab_width := tw - (visual % tw)
+			tab_width := tabstop - (visual % tabstop)
 			visual += tab_width
 
 			if i == index {
@@ -49,8 +43,7 @@ func ReadTabAt(line []rune, index int) []rune {
 	return []rune(new)
 }
 
-func CursorShiftAt(line []rune, index int) int {
-	tw := config.GetConfig().TabStop
+func CursorShiftAt(line []rune, index int, tabstop int) int {
 
 	shift := 0
 	visual := 0
@@ -59,7 +52,7 @@ func CursorShiftAt(line []rune, index int) int {
 			return shift
 		}
 		if line[i] == '\t' {
-			tab_width := tw - (visual % tw)
+			tab_width := tabstop - (visual % tabstop)
 			visual += tab_width
 			shift += tab_width - 1
 		} else {
@@ -70,14 +63,13 @@ func CursorShiftAt(line []rune, index int) int {
 	return shift
 }
 
-func CursorShift(line []rune) int {
-	tw := config.GetConfig().TabStop
+func CursorShift(line []rune, tabstop int) int {
 
 	shift := 0
 	visual := 0
 	for i := range line {
 		if line[i] == '\t' {
-			tab_width := tw - (visual % tw)
+			tab_width := tabstop - (visual % tabstop)
 			visual += tab_width
 			shift += tab_width - 1
 		} else {
@@ -88,8 +80,7 @@ func CursorShift(line []rune) int {
 	return shift
 }
 
-func CursorShiftCalculateAt(line []rune, index int) int {
-	tw := config.GetConfig().TabStop
-	shift := tw - (index % tw)
+func CursorShiftCalculateAt(line []rune, index int, tabstop int) int {
+	shift := tabstop - (index % tabstop)
 	return shift
 }

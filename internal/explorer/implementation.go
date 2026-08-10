@@ -39,9 +39,9 @@ func (ex *Explorer) DrawLineAt(index int) string {
 	entry := ex.entries[index+ex.yScroll-searchBarOfset]
 	var icon string
 	if entry.isDir {
-		icon = services.GetDirIcon(string(entry.name))
+		icon = services.GetDirIcon(string(entry.name), cfg.ShowIcons)
 	} else {
-		icon = services.GetFileIcon(string(entry.name))
+		icon = services.GetFileIcon(string(entry.name), cfg.ShowIcons)
 	}
 
 	if ex.action == deleting && index == ex.visible.y+1 {

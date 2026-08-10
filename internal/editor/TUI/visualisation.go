@@ -18,11 +18,13 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 		return string(ui.WithEndLine(string(l)))
 	}
 
-	clear := services.ReplaceTabs(l)
+	ts := config.GetConfig().TabStop
+
+	clear := services.ReplaceTabs(l, ts)
 	switch curMode {
 	case mode.Visual:
-		startOffset += services.CursorShiftAt(l, startOffset)
-		endOffset += services.CursorShiftAt(l, endOffset)
+		startOffset += services.CursorShiftAt(l, startOffset, ts)
+		endOffset += services.CursorShiftAt(l, endOffset, ts)
 
 		if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 			startLine, endLine = endLine, startLine
