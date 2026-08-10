@@ -14,6 +14,10 @@ const (
 
 func HexToAscii(c string, a Apply) (string, error) {
 	hex := strings.TrimPrefix(c, "#")
+	if len(hex) == 8 {
+		hex = hex[:len(hex)-2]
+	}
+
 	if len(hex) != 6 {
 		return "", fmt.Errorf("Invalid hex len in string: %s", c)
 	}

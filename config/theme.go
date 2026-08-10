@@ -44,13 +44,6 @@ func getThemePath(themeName string) string {
 	return filepath.Join(home, themeDir, themeName)
 }
 
-type apply bool
-
-const (
-	foreground apply = true
-	background apply = false
-)
-
 func (t *Theme) parceColors() {
 	t.parceRecursive(reflect.ValueOf(t).Elem())
 }

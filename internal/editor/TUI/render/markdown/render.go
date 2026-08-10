@@ -136,6 +136,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 			data.WriteString(r.renderShield(&tok, show))
 		case tag:
 			data.WriteString(r.renderTag(&tok, show))
+		case colorBlock:
+			data.WriteString(r.renderColorBlock(&tok, show))
 		case oneStar, oneUnderLine:
 			data.WriteString(r.simpleAttrRender(ascii.Italic.Str(), string(tok.Literal), show))
 		case twoStars, twoUnderLines:
@@ -269,6 +271,29 @@ func (r *Render) renderTag(t *Token, show bool) string {
 		s.WriteString(string(t.Value))
 	}
 	s.WriteString(ascii.Reset.Str())
+	return s.String()
+}
+
+func (r *Render) renderColorBlock(t *Token, show bool) string {
+	var s strings.Builder
+
+	color, err := services.HexToAscii(string(t.Value), services.Foreground)
+	if err != nil {
+		s.WriteString(string(t.Literal))
+		s.WriteString(string(t.Value))
+		return s.String()
+	}
+
+	s.WriteString(color)
+
+	if !show {
+		s.WriteString(ascii.ColorBox.Str())
+	} else {
+		s.WriteString(string(t.Literal))
+	}
+
+	s.WriteString(ascii.ResetFg.Str())
+	s.WriteString(string(t.Value))
 	return s.String()
 }
 

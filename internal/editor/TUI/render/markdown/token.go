@@ -55,4 +55,6 @@ const ( // maybe it's better to use iota for tokens?
 	image // "![text](link)"
 
 	html // any html block in <>
+
+	colorBlock // visible representation of color in hex
 )

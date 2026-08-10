@@ -1,6 +1,8 @@
 package markdown
 
 import (
+	"strings"
+
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/services"
 )
@@ -106,9 +108,7 @@ func (l *Lexer) NextToken() Token {
 		lit := []rune(l.input[pos:end])
 
 		if count == 1 && services.IsLetterOrNumber(l.peekChar()) {
-			l.readChar()
-			text := l.readText()
-			t = Token{Type: tag, Literal: lit, Value: text}
+			t = l.readTagOrHex(lit)
 		} else if count > 6 || l.peekChar() != ' ' {
 			t = Token{Type: symbol, Value: lit}
 			l.readChar()
@@ -178,6 +178,30 @@ func (l *Lexer) NextToken() Token {
 		}
 	}
 
+	return t
+}
+
+func (l *Lexer) readTagOrHex(lit []rune) Token {
+	l.readChar()
+	text := l.readText()
+	iscolor := true
+	if len(text) == 6 || len(text) == 8 {
+		for _, c := range text {
+			if !strings.Contains("abcdefABCDEF1234567890", string(c)) {
+				iscolor = false
+				break
+			}
+		}
+	} else {
+		iscolor = false
+	}
+
+	var t Token
+	if iscolor {
+		t = Token{Type: colorBlock, Literal: lit, Value: text}
+	} else {
+		t = Token{Type: tag, Literal: lit, Value: text}
+	}
 	return t
 }
 

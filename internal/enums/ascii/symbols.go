@@ -35,4 +35,6 @@ const (
 
 	ArrowUp   Symbol = "\u2303"
 	ArrowDown Symbol = "\u2304"
+
+	ColorBox Symbol = "\u25a0"
 )
