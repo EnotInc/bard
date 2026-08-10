@@ -47,6 +47,7 @@ func main() {
 		switch arg {
 		case "-h", "--help":
 			ed.StartHelp()
+			screen.HideTile()
 		case "--space", "-s":
 			space := config.GetSpacePath()
 			screen.SetRoot(space)
