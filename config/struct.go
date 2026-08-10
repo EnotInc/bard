@@ -22,45 +22,45 @@ type Theme struct {
 }
 
 type General struct {
-	SelectedTile string `json:"selected_tile"`
-	CurrentLine  string `json:"current_line"`
-	LineNumber   string `json:"line_number"`
-	BottomBar    string `json:"bottom_bar"`
-	EmptyLine    string `json:"empty_line"`
-	Selection    string `json:"selection"`
-	Command      string `json:"command"`
-	Message      string `json:"message"`
-	Error        string `json:"error"`
-	Tab          string `json:"tab"`
+	SelectedTile string `json:"selected_tile" type:"foreground"`
+	CurrentLine  string `json:"current_line" type:"foreground"`
+	LineNumber   string `json:"line_number" type:"foreground"`
+	BottomBar    string `json:"bottom_bar" type:"background"`
+	EmptyLine    string `json:"empty_line" type:"foreground"`
+	Selection    string `json:"selection" type:"background"`
+	Command      string `json:"command" type:"foreground"`
+	Message      string `json:"message" type:"foreground"`
+	Error        string `json:"error" type:"foreground"`
+	Tab          string `json:"tab" type:"foreground"`
 }
 
 type Markdown struct {
-	NumberList string `json:"number_list"`
-	Highlight  string `json:"highlight"`
-	CodeLineBg string `json:"code_line_bg"`
-	CodeHeader string `json:"code_header"`
-	HTMLSymbol string `json:"html_tag_symbol"`
-	HTMLText   string `json:"html_tag_text"`
-	CodeText   string `json:"code_text"`
-	Header1    string `json:"header_1"`
-	Header2    string `json:"header_2"`
-	Header3    string `json:"header_3"`
-	Header4    string `json:"header_4"`
-	Header5    string `json:"header_5"`
-	Header6    string `json:"header_6"`
-	Symbol     string `json:"symbol"`
-	Quote      string `json:"quote"`
-	Image      string `json:"image"`
-	Link       string `json:"link"`
-	Tag        string `json:"tag"`
+	NumberList string `json:"number_list" type:"foreground"`
+	Highlight  string `json:"highlight" type:"background"`
+	CodeLineBg string `json:"code_line_bg" type:"background"`
+	CodeHeader string `json:"code_header" type:"background"`
+	HTMLSymbol string `json:"html_tag_symbol" type:"foreground"`
+	HTMLText   string `json:"html_tag_text" type:"foreground"`
+	CodeText   string `json:"code_text" type:"foreground"`
+	Header1    string `json:"header_1" type:"foreground"`
+	Header2    string `json:"header_2" type:"foreground"`
+	Header3    string `json:"header_3" type:"foreground"`
+	Header4    string `json:"header_4" type:"foreground"`
+	Header5    string `json:"header_5" type:"foreground"`
+	Header6    string `json:"header_6" type:"foreground"`
+	Symbol     string `json:"symbol" type:"foreground"`
+	Quote      string `json:"quote" type:"foreground"`
+	Image      string `json:"image" type:"foreground"`
+	Link       string `json:"link" type:"foreground"`
+	Tag        string `json:"tag" type:"foreground"`
 }
 
 type Code struct {
-	Background string `json:"background"`
-	Keyword    string `json:"keyword"`
-	Bracket    string `json:"bracket"`
-	Comment    string `json:"comment"`
-	String     string `json:"string"`
-	Number     string `json:"number"`
-	Symbol     string `json:"symbol"`
+	Background string `json:"background" type:"background"`
+	Keyword    string `json:"keyword" type:"foreground"`
+	Bracket    string `json:"bracket" type:"foreground"`
+	Comment    string `json:"comment" type:"foreground"`
+	String     string `json:"string" type:"foreground"`
+	Number     string `json:"number" type:"foreground"`
+	Symbol     string `json:"symbol" type:"foreground"`
 }

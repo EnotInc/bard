@@ -5,9 +5,16 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
+	"strings"
 )
 
 var theme *Theme
+
+func setTheme(t *Theme) {
+	t.parceColors()
+	theme = t
+}
 
 func GetTheme() *Theme {
 	return theme
@@ -36,6 +43,77 @@ func getThemePath(themeName string) string {
 	return filepath.Join(home, themeDir, themeName)
 }
 
+type apply bool
+
+const (
+	foreground apply = true
+	background apply = false
+)
+
+func hexToAscii(c string, a apply) (string, error) {
+	hex := strings.TrimPrefix(c, "#")
+	if len(hex) != 6 {
+		return "", fmt.Errorf("Invalid hex len in string: %s", c)
+	}
+
+	var r, g, b uint8
+	_, err := fmt.Sscanf(hex, "%2x%2x%2x", &r, &g, &b)
+	if err != nil {
+		return "", err
+	}
+
+	var escape string
+	switch a {
+	case foreground:
+		escape = fmt.Sprintf("\033[38;2;%d;%d;%dm", r, g, b)
+	case background:
+		escape = fmt.Sprintf("\033[48;2;%d;%d;%dm", r, g, b)
+	}
+
+	return escape, nil
+}
+
+func (t *Theme) parceColors() {
+	t.parceRecursive(reflect.ValueOf(t).Elem())
+}
+
+func (t *Theme) parceRecursive(val reflect.Value) {
+	typ := val.Type()
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := typ.Field(i)
+
+		if field.Kind() == reflect.Struct {
+			t.parceRecursive(field)
+			continue
+		}
+
+		if field.CanSet() && field.Kind() == reflect.String {
+			hex := field.String()
+			apply := fieldType.Tag.Get("type")
+
+			var ascii string
+			var err error
+
+			switch apply {
+			case "foreground":
+				ascii, err = hexToAscii(hex, foreground)
+			case "background":
+				ascii, err = hexToAscii(hex, background)
+			default:
+				continue
+			}
+
+			if err != nil {
+				panic(err)
+			}
+
+			field.SetString(ascii)
+		}
+	}
+}
+
 func InitTheme(themeName string) error {
 	defaultTheme := getDefaultTheme()
 	theme_path := getThemePath(themeName)
@@ -45,7 +123,7 @@ func InitTheme(themeName string) error {
 		dir := getThemeDir()
 		os.Mkdir(dir, 0755)
 		os.WriteFile(getThemePath(defaultThemeName), []byte(json), 0644)
-		theme = defaultTheme
+		setTheme(defaultTheme)
 		return fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
@@ -58,11 +136,11 @@ func InitTheme(themeName string) error {
 	t := &Theme{}
 	err = json.Unmarshal(data, t)
 	if err != nil {
-		theme = defaultTheme
+		setTheme(defaultTheme)
 		return fmt.Errorf("Unable to load theme %s", themeName)
 	}
 
-	theme = t
+	setTheme(t)
 	return nil
 }
 
@@ -84,52 +162,52 @@ func ChangeTheme(themeName string) string {
 		return "unable to set theme '" + themeName + "'"
 	}
 
-	theme = new
+	setTheme(new)
 	return ""
 }
 
 func getDefaultTheme() *Theme {
 	theme := &Theme{
 		General: General{
-			SelectedTile: "\033[34m",
-			LineNumber:   "\033[1;90m",
-			CurrentLine:  "\033[1;33m",
-			BottomBar:    "\033[48;5;16m",
-			Selection:    "\033[100m",
-			Command:      "\033[33m",
-			EmptyLine:    "\033[36m",
-			Message:      "\033[32m",
-			Error:        "\033[31m",
-			Tab:          "\033[34m",
+			SelectedTile: "#0000ff",
+			LineNumber:   "#555555",
+			CurrentLine:  "#ffff00",
+			BottomBar:    "#000000",
+			Selection:    "#cccccc",
+			Command:      "#ffff00",
+			EmptyLine:    "#00ffff",
+			Message:      "#00ff00",
+			Error:        "#ff0000",
+			Tab:          "#0000ff",
 		},
 		Markdown: Markdown{
-			Header1:    "\033[34m",
-			Header2:    "\033[34m",
-			Header3:    "\033[34m",
-			Header4:    "\033[34m",
-			Header5:    "\033[34m",
-			Header6:    "\033[34m",
-			Highlight:  "\033[43m",
-			HTMLSymbol: "\033[90m",
-			HTMLText:   "\033[31m",
-			Symbol:     "\033[90m",
-			Quote:      "\033[32m",
-			NumberList: "\033[35m",
-			Tag:        "\033[35m",
-			CodeLineBg: "\033[48;5;234m",
-			CodeHeader: "\033[48;5;234m",
-			CodeText:   "\033[33m",
-			Image:      "\033[4;36m",
-			Link:       "\033[4;36m",
+			Header1:    "#0000ff",
+			Header2:    "#0000ff",
+			Header3:    "#0000ff",
+			Header4:    "#0000ff",
+			Header5:    "#0000ff",
+			Header6:    "#0000ff",
+			Highlight:  "#ffff00",
+			HTMLSymbol: "#555555",
+			HTMLText:   "#ff0000",
+			Symbol:     "#555555",
+			Quote:      "#00ff00",
+			NumberList: "#ff00ff",
+			Tag:        "#ff00ff",
+			CodeLineBg: "#1c1c1c",
+			CodeHeader: "#1c1c1c",
+			CodeText:   "#ffff00",
+			Image:      "#00ffff",
+			Link:       "#00ffff",
 		},
 		Code: Code{
-			Background: "\033[48;5;234m",
-			Keyword:    "\033[33m",
-			String:     "\033[32m",
-			Number:     "\033[35m",
-			Bracket:    "\033[35m",
-			Symbol:     "\033[33m",
-			Comment:    "\033[90m",
+			Background: "#1c1c1c",
+			Keyword:    "#ffff00",
+			String:     "#00ff00",
+			Number:     "#ff00ff",
+			Bracket:    "#ff00ff",
+			Symbol:     "#ffff00",
+			Comment:    "#555555",
 		},
 	}
 	return theme
