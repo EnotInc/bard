@@ -43,7 +43,13 @@ func (e *Editor) OpenHelp(topic h.Topic) {
 		return
 	}
 
-	e.newBuffer()
+	buf := e.b[e.curBuffer]
+	if !(len(buf.Lines) == 1 && len(buf.Lines[0].Data) == 0 && buf.Title == "") {
+		// if cur buffer is not empty, create a new one
+		// otherwise help page will be openned in current buffer
+		e.newBuffer()
+	}
+
 	e.b[e.curBuffer].Lines = []*buffer.Line{}
 	e.b[e.curBuffer].IsReadOnly = true
 	e.b[e.curBuffer].Type = buffers.Markdown
