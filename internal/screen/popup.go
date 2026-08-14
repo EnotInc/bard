@@ -15,18 +15,24 @@ type popup struct {
 }
 
 func (p *popup) Draw() {
-	var window strings.Builder
+	var diff strings.Builder
+
 	for i := range p.h {
-		x, y := p.calcPos()
-		pos := fmt.Sprintf("\033[%d;%dH", i+y, x)
+		_l := p.object.DrawLineAt(i)
+		trim := services.VisibleSubString(_l, 0, p.w)
 
-		line := p.object.DrawLineAt(i)
-		trim := services.VisibleSubString(line, 0, p.w)
+		curHash := services.GetHash(trim)
+		oldHash, ok := p.hash[i]
 
-		window.WriteString(pos)
-		window.WriteString(trim)
+		if !ok || (ok && curHash != oldHash) {
+			x, y := p.calcPos()
+			pos := fmt.Sprintf("\033[%d;%dH", i+y, x)
+			diff.WriteString(pos)
+			diff.WriteString(trim)
+		}
 	}
-	fmt.Print(window.String())
+
+	fmt.Print(diff.String())
 }
 
 const width int = 48
