@@ -9,8 +9,8 @@ Theme contains 3 parts:
 In each theme you can provide a hex color code without transparency (it will be ignored).
 For exmaple code #FF0000 gives you a red color
 
-To change theme, you can run ` + "`:theme <name>.json`" + ` in bard, or change it in config
-You can also get current theme name by running ` + "`:theme`" + ` command
+To change theme, you can run ` + "`:themes`" + `, ` + "`:theme <name>.json`" + ` commands, or change it in config.
+You can also get current theme name by running ` + "`:theme`" + ` command.
 
 To hot reload themes type ` + "`:theme reload`" + `
 `

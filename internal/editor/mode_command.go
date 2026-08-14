@@ -217,9 +217,9 @@ func (e *Editor) parseCommand() {
 				}
 			}
 
-			msg := config.ChangeTheme(arg)
-			if msg != "" {
-				e.tui.Message = msg
+			err := config.ChangeTheme(arg)
+			if err != "" {
+				e.tui.Error = err
 				return
 			}
 			cfg.ThemeName = arg
