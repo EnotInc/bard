@@ -20,7 +20,7 @@ func (t *Themes) k() {
 
 func (t *Themes) change() {
 	cfg := config.GetConfig()
-	name := t.list[t.cursor]
+	name := t.list[t.cursor].name
 
 	msg := config.ChangeTheme(name)
 	if msg != "" {

@@ -28,7 +28,7 @@ func (c *Config) DefaultThemeName() string {
 	return defaultThemeName
 }
 
-func GetThemeList() ([]string, error) {
+func GetThemeList() (map[string][9]string, error) {
 	var path string
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -38,17 +38,21 @@ func GetThemeList() ([]string, error) {
 
 	files, err := os.ReadDir(path)
 	if err != nil {
-		return []string{}, err
+		return map[string][9]string{}, err
 	}
 
-	var themes []string
+	themes := make(map[string][9]string, 0)
 	for _, file := range files {
 		if !file.IsDir() {
-			themes = append(themes, file.Name())
+			pallete, err := getThemePallete(file.Name())
+			if err != nil {
+				continue
+			}
+			themes[file.Name()] = pallete
 		}
 	}
 
-	return themes, err
+	return themes, nil
 }
 
 func getThemeDir() string {
@@ -160,33 +164,34 @@ func ChangeTheme(themeName string) string {
 	return ""
 }
 
-func GetThemePallete(name string) ([8]string, error) {
+func getThemePallete(name string) ([9]string, error) {
 	path := getThemePath(name)
 	if _, err := os.Stat(path); err != nil {
-		return [8]string{}, fmt.Errorf("Unknown theme: %s", name)
+		return [9]string{}, fmt.Errorf("Unknown theme: %s", name)
 	}
 
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return [8]string{}, fmt.Errorf("Unable to read theme file '%s'", name)
+		return [9]string{}, fmt.Errorf("Unable to read theme file '%s'", name)
 	}
 
 	tmp := &Theme{}
 	err = json.Unmarshal(data, tmp)
 	if err != nil {
-		return [8]string{}, fmt.Errorf("Unable to parce theme '%s'", name)
+		return [9]string{}, fmt.Errorf("Unable to parce theme '%s'", name)
 	}
 	tmp.parceColors()
 
-	var pallete [8]string
+	var pallete [9]string
 	pallete[0] = tmp.Markdown.Header1
-	pallete[1] = tmp.Markdown.Header2
-	pallete[2] = tmp.Markdown.Header3
-	pallete[3] = tmp.Markdown.Header4
-	pallete[4] = tmp.Markdown.Header5
-	pallete[5] = tmp.Markdown.Header6
+	pallete[1] = tmp.General.Tab
+	pallete[2] = tmp.General.SelectedTile
+	pallete[3] = tmp.General.Error
+	pallete[4] = tmp.General.Message
+	pallete[5] = tmp.General.Command
 	pallete[6] = tmp.Markdown.CodeText
-	pallete[7] = tmp.Markdown.NumberList
+	pallete[7] = tmp.Code.Comment
+	pallete[8] = tmp.General.BottomBar
 
 	return pallete, nil
 }

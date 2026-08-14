@@ -21,6 +21,7 @@ func (t *Themes) DrawLineAt(index int) string {
 		text := " k/j - up/down   <enter> - select   <esc> - exit"
 		data.WriteString(theme.BottomBar)
 		data.WriteString(theme.Message)
+		data.WriteString(ascii.Italic.Str())
 		data.WriteString(text)
 		data.WriteString(strings.Repeat(" ", max(0, t.w-len(text))))
 		data.WriteString(ascii.Reset.Str())
@@ -31,9 +32,7 @@ func (t *Themes) DrawLineAt(index int) string {
 	name := t.rednerNameAt(index, int(offset))
 	preview := t.renderPreviewAt(index, int(offset))
 
-	data.WriteString(theme.BottomBar)
 	data.WriteString(name)
-	data.WriteString(theme.BottomBar)
 	data.WriteString(preview)
 	data.WriteString(ascii.Reset.Str())
 
@@ -70,9 +69,4 @@ func (t *Themes) Resize(w, h int) {
 }
 
 func (t *Themes) PreDraw() {
-	var err error
-	t.list, err = config.GetThemeList()
-	if err != nil {
-		t.SetError(err.Error())
-	}
 }
