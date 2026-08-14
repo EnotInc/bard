@@ -29,7 +29,7 @@ func (p *popup) Draw() {
 	fmt.Print(window.String())
 }
 
-const width int = 64
+const width int = 48
 
 func calcSize() (w, h int) {
 	_w := width

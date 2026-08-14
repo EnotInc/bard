@@ -10,12 +10,22 @@ import (
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
-const sep float32 = 0.32
+const sep float32 = 0.5
 
 func (t *Themes) DrawLineAt(index int) string {
 	var data strings.Builder
 
 	theme := config.GetTheme().General
+
+	if index == t.h-1 {
+		text := " k/j - up/down   <enter> - select   <esc> - exit"
+		data.WriteString(theme.BottomBar)
+		data.WriteString(theme.Message)
+		data.WriteString(text)
+		data.WriteString(strings.Repeat(" ", max(0, t.w-len(text))))
+		data.WriteString(ascii.Reset.Str())
+		return data.String()
+	}
 
 	offset := float32(t.w) * sep
 	name := t.rednerNameAt(index, int(offset))

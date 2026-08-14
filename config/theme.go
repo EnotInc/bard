@@ -160,6 +160,37 @@ func ChangeTheme(themeName string) string {
 	return ""
 }
 
+func GetThemePallete(name string) ([8]string, error) {
+	path := getThemePath(name)
+	if _, err := os.Stat(path); err != nil {
+		return [8]string{}, fmt.Errorf("Unknown theme: %s", name)
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return [8]string{}, fmt.Errorf("Unable to read theme file '%s'", name)
+	}
+
+	tmp := &Theme{}
+	err = json.Unmarshal(data, tmp)
+	if err != nil {
+		return [8]string{}, fmt.Errorf("Unable to parce theme '%s'", name)
+	}
+	tmp.parceColors()
+
+	var pallete [8]string
+	pallete[0] = tmp.Markdown.Header1
+	pallete[1] = tmp.Markdown.Header2
+	pallete[2] = tmp.Markdown.Header3
+	pallete[3] = tmp.Markdown.Header4
+	pallete[4] = tmp.Markdown.Header5
+	pallete[5] = tmp.Markdown.Header6
+	pallete[6] = tmp.Markdown.CodeText
+	pallete[7] = tmp.Markdown.NumberList
+
+	return pallete, nil
+}
+
 func getDefaultTheme() *Theme {
 	return &Theme{
 		General: General{

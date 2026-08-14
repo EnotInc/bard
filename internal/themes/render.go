@@ -10,25 +10,36 @@ import (
 
 func (t *Themes) rednerNameAt(index int, offset int) string {
 	var name strings.Builder
+
+	if index == 0 {
+		header := " Available themes"
+		name.WriteString(ascii.Bold.Str())
+		name.WriteString(ascii.UnderLine.Str())
+		name.WriteString(header)
+		name.WriteString(strings.Repeat(" ", max(0, offset-len(header))))
+		name.WriteString(ascii.Reset.Str())
+		return services.VisibleSubString(name.String(), 0, offset)
+	}
+
+	index -= 1 // removeing header offset
 	if index >= len(t.list) {
 		emtpy := strings.Repeat(" ", int(offset))
 		name.WriteString(emtpy)
 	} else {
 		item := t.list[index]
-		_w := max(0, offset-len(item)-2) // -2 - saved space for cursor
+		_w := max(0, offset-len(item)-2) // -2 - saved space for offset
 		emtpy := strings.Repeat(" ", _w)
 
 		if item == config.GetConfig().ThemeName {
 			name.WriteString(config.GetTheme().Markdown.Highlight)
 		}
 
-		// cursor
 		if index == t.cursor {
-			name.WriteString("> ")
-		} else {
-			name.WriteString("  ")
+			name.WriteString(ascii.UnderLine.Str())
+			name.WriteString(ascii.OverLine.Str())
 		}
 
+		name.WriteString("  ")
 		name.WriteString(item)
 		name.WriteString(emtpy)
 	}
@@ -39,65 +50,37 @@ func (t *Themes) rednerNameAt(index int, offset int) string {
 
 func (t *Themes) renderPreviewAt(index int, offset int) string {
 	var preview strings.Builder
-	var text string = ""
-	theme := config.GetTheme()
-	switch index {
-	case 0:
-		preview.WriteString(theme.Markdown.Header1)
-		text = "Header 1"
-	case 1:
-		preview.WriteString(theme.Markdown.Image)
-		text = "Image"
-	case 2:
-		preview.WriteString(theme.Markdown.CodeText)
-		text = "CodeLine"
-	case 3:
-		preview.WriteString(theme.Markdown.Quote)
-		text = "Quote"
-	case 4:
-		preview.WriteString(theme.Markdown.NumberList)
-		text = "NumberList"
-	case 5:
-		preview.WriteString(theme.General.SelectedTile)
-		text = "SelectedTile"
-	case 6:
-		preview.WriteString(theme.General.CurrentLine)
-		text = "CurrentLine"
-	case 7:
-		preview.WriteString(theme.General.EmptyLine)
-		text = "EmptyLine"
-	case 8:
-		preview.WriteString(theme.General.Command)
-		text = "Command"
-	case 9:
-		preview.WriteString(theme.General.Error)
-		text = "Error"
-	case 10:
-		preview.WriteString(theme.Code.Symbol)
-		text = "Symbol"
-	case 11:
-		preview.WriteString(theme.Code.Keyword)
-		text = "Keyword"
-	case 12:
-		preview.WriteString(theme.Code.Bracket)
-		text = "Brackets"
-	case 13:
-		preview.WriteString(theme.Code.String)
-		text = "String"
-	case 14:
-		preview.WriteString(theme.Code.Number)
-		text = "Number"
+
+	if index == 0 {
+		preview.WriteString(ascii.UnderLine.Str())
+		preview.WriteString(strings.Repeat(" ", max(0, t.w-offset)))
+		preview.WriteString(ascii.Reset.Str())
+		return services.VisibleSubString(preview.String(), 0, t.w-offset)
 	}
-	if len(text) != 0 {
-		preview.WriteByte(' ')
+
+	index -= 1 // removeing header offset
+	if index >= len(t.list) {
+		preview.WriteString(strings.Repeat(" ", max(0, t.w-offset)))
+		return services.VisibleSubString(preview.String(), 0, t.w-offset)
+	}
+
+	pallete, err := config.GetThemePallete(t.list[index])
+	if err != nil {
+		t.SetError(err.Error())
+		return strings.Repeat(" ", t.w-offset)
+	}
+
+	if index == t.cursor {
+		preview.WriteString(ascii.UnderLine.Str())
+		preview.WriteString(ascii.OverLine.Str())
+	}
+
+	preview.WriteString(strings.Repeat(" ", max(0, t.w-offset-16))) // 16 - amount of pallete symbols
+	for _, c := range pallete {
+		preview.WriteString(c)
 		preview.WriteString(ascii.ColorBox.Str())
-		preview.WriteByte(' ')
-	} else {
-		preview.WriteString("   ")
+		preview.WriteString(" ")
 	}
-	preview.WriteString(ascii.ResetFg.Str())
-	preview.WriteString(text)
-	preview.WriteString(strings.Repeat(" ", max(0, t.w-offset-len(text)-3))) // -3 - offset for symbols
 
 	return services.VisibleSubString(preview.String(), 0, t.w-offset)
 }
