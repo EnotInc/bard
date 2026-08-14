@@ -43,6 +43,7 @@ func listenResize() {
 	for {
 		changed := <-global.resize
 		if changed {
+
 			diff_h := global.h - last_h
 
 			last_h = global.h
@@ -55,7 +56,11 @@ func listenResize() {
 				t.object.Resize(t.w, t.h)
 			}
 
-			global.call = calls.PurgeCache
+			for _, p := range global.popups {
+				p.Resize()
+			}
+
+			global.call = calls.ClosePopups // this will also purge cache
 			DrawAll()
 		}
 	}

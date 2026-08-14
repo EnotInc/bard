@@ -8,4 +8,7 @@ const (
 	PurgeCache
 	OpenFile
 	DelFile
+
+	ClosePopups
+	OpenThemes
 )

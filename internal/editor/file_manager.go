@@ -204,6 +204,10 @@ func (e *Editor) ChangeModeCallback(mode mode.Mode) {
 	e.curMode = mode
 }
 
+func (e *Editor) PurgeCacheCallback() {
+	e.tui.PurgeCache()
+}
+
 func (e *Editor) setBufferType(file string) {
 	ext := filepath.Ext(file)
 	ext = strings.TrimPrefix(ext, ".")

@@ -5,8 +5,10 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/editor"
+	"github.com/EnotInc/Bard/internal/enums/popups"
 	"github.com/EnotInc/Bard/internal/explorer"
 	"github.com/EnotInc/Bard/internal/screen"
+	"github.com/EnotInc/Bard/internal/themes"
 )
 
 func main() {
@@ -40,6 +42,14 @@ func main() {
 	screen.SetStatusBar(ed.DrawStatusBar)
 	screen.AddTile(ed_tile)
 	screen.AddTile(ex_tile)
+
+	t := themes.InitThemes(
+		ed.PurgeCacheCallback,
+		ed.ChangeModeCallback,
+		ed.SetErrorCallback)
+	t_popup := screen.NewPopup(t)
+
+	screen.AddPopup(t_popup, popups.Themes)
 
 	if len(os.Args) == 2 {
 		arg := os.Args[1]

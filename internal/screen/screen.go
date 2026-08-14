@@ -12,6 +12,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/enums/keys"
+	"github.com/EnotInc/Bard/internal/enums/popups"
 	"golang.org/x/term"
 )
 
@@ -25,11 +26,13 @@ type Screen struct {
 	resize   chan bool
 	oldState *term.State
 	status   func(withBorder bool) string
+	popups   map[popups.PopUp]*popup
 	root     []rune
 	tiles    []*tile
 	hiden    tile
 	call     calls.Call
 	focus    int
+	popup    popups.PopUp
 	w        int
 	h        int
 	fdIn     int
@@ -65,8 +68,10 @@ func InitScreen() {
 	s := &Screen{
 		resize:   make(chan bool, 1),
 		oldState: old,
+		popups:   make(map[popups.PopUp]*popup, 0),
 		tiles:    make([]*tile, 0),
 		focus:    0,
+		popup:    popups.Close,
 		w:        _w,
 		h:        _h,
 		fdIn:     _fdIn,
@@ -74,6 +79,10 @@ func InitScreen() {
 		root:     []rune(enums.DefaultRoot),
 	}
 	global = s
+}
+
+func AddPopup(p *popup, t popups.PopUp) {
+	global.popups[t] = p
 }
 
 func AddTile(t *tile) {
@@ -105,9 +114,26 @@ func SetStatusBar(builder func(withBorder bool) string) {
 	global.status = builder
 }
 
-// NOTE: I don't rly shure will this work...
+func drawPopUp() {
+	p := global.popups[global.popup]
+
+	p.object.PreDraw()
+	p.Draw()
+
+	var data strings.Builder
+	cX, cY, _ := p.object.GetCursor(false)
+	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
+	data.WriteString(string(ascii.HideCursor))
+
+	fmt.Print(data.String())
+}
+
 func DrawAll() {
 	handleCalls()
+	if global.popup != popups.Close { // render popup window
+		drawPopUp()
+		return
+	}
 
 	var data strings.Builder
 	var tilesOfset int = 0
@@ -151,6 +177,15 @@ func DrawAll() {
 
 func handleCalls() {
 	switch global.call {
+	case calls.OpenThemes:
+		global.popup = popups.Themes
+
+	case calls.ClosePopups:
+		global.popup = popups.Close
+		for i := range global.tiles {
+			global.tiles[i].hash = make(map[int]uint32, 0)
+		}
+
 	case calls.PurgeCache:
 		for i := range global.tiles {
 			global.tiles[i].hash = make(map[int]uint32, 0)
@@ -175,6 +210,12 @@ func Run() {
 			} else {
 				panic(err)
 			}
+		}
+
+		if global.popup != popups.Close {
+			global.popups[global.popup].object.Handle(key)
+			DrawAll()
+			continue
 		}
 
 		switch key {

@@ -162,6 +162,9 @@ func (e *Editor) execCommand() {
 	case "theme":
 		e.tui.Message = fmt.Sprintf("Theme: %s", cfg.ThemeName)
 
+	case "themes":
+		screen.SendCall(calls.OpenThemes)
+
 	case "keeptab", "kt":
 		cfg.KeepTabs = !cfg.KeepTabs
 

@@ -28,6 +28,29 @@ func (c *Config) DefaultThemeName() string {
 	return defaultThemeName
 }
 
+func GetThemeList() ([]string, error) {
+	var path string
+	home, err := os.UserHomeDir()
+	if err != nil {
+		path = themeDir
+	}
+	path = filepath.Join(home, themeDir)
+
+	files, err := os.ReadDir(path)
+	if err != nil {
+		return []string{}, err
+	}
+
+	var themes []string
+	for _, file := range files {
+		if !file.IsDir() {
+			themes = append(themes, file.Name())
+		}
+	}
+
+	return themes, err
+}
+
 func getThemeDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
