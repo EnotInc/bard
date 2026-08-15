@@ -187,6 +187,9 @@ func handleCalls() {
 	case calls.OpenThemes:
 		global.popup = popups.Themes
 
+	case calls.OpenSettings:
+		global.popup = popups.Settings
+
 	case calls.ClosePopups:
 		global.popup = popups.Close
 		for i := range global.tiles {

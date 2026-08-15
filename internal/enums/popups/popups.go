@@ -6,4 +6,5 @@ const (
 	_ PopUp = iota
 	Close
 	Themes
+	Settings
 )

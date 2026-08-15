@@ -149,3 +149,22 @@ func SearchIcon(showIcons bool) string {
 		return "> "
 	}
 }
+
+func SwitchIcon(status bool, showIcons bool) string {
+	iconFalse := "+ "
+	iconTrue := "- "
+
+	if showIcons {
+		iconFalse = "󰨙 "
+		iconTrue = "󰨚 "
+	}
+
+	switch status {
+	case false:
+		return iconFalse
+	case true:
+		return iconTrue
+	}
+
+	return ""
+}
