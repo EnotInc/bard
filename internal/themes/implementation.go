@@ -6,8 +6,6 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
-	"github.com/EnotInc/Bard/internal/enums/keys"
-	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
 
 const sep float32 = 0.5
@@ -16,6 +14,12 @@ func (t *Themes) DrawLineAt(index int) string {
 	var data strings.Builder
 
 	theme := config.GetTheme().General
+
+	if index == 0 {
+		data.WriteString(t.buildSearchBar())
+		data.WriteString(ascii.Reset.Str())
+		return data.String()
+	}
 
 	if index == t.h-1 {
 		text := " k/j - up/down   <enter> - select   <esc> - exit"
@@ -40,23 +44,26 @@ func (t *Themes) DrawLineAt(index int) string {
 }
 
 func (t *Themes) Handle(key rune) {
-	switch key {
-	case ':':
-		t.changeMode(mode.Command)
-		t.close()
-	case 'j': // down
-		t.j()
-	case 'k': // up
-		t.k()
-	case keys.Enter:
-		t.change()
-	case keys.Esc:
-		t.close()
+	switch t.action {
+	case search:
+		t.handleSearch(key)
+	case none:
+		t.handleDefault(key)
 	}
 }
 
 func (t *Themes) GetCursor(withBorder bool) (int, int, cursor.CursorType) {
-	return 1, 1, cursor.CursorBloc
+	var x, y int
+	switch t.action {
+	case none:
+		x = -1
+		y = -1
+	case search:
+		x = searchOffset + len(t.search) + 1
+		y = 0
+	}
+
+	return x, y, cursor.CursorBloc
 }
 
 func (t *Themes) SetTitle() string {
@@ -69,4 +76,15 @@ func (t *Themes) Resize(w, h int) {
 }
 
 func (t *Themes) PreDraw() {
+	if len(t.search) == 0 {
+		t.searched = t.list
+		return
+	}
+
+	t.searched = []ThemeEntry{}
+	for _, theme := range t.list {
+		if strings.Contains(theme.name, string(t.search)) {
+			t.searched = append(t.searched, theme)
+		}
+	}
 }

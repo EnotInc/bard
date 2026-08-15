@@ -12,11 +12,22 @@ type ThemeEntry struct {
 	pallete [9]string
 }
 
+type action int
+
+const (
+	_ action = iota
+	none
+	search
+)
+
 type Themes struct {
 	list        []ThemeEntry
+	searched    []ThemeEntry
 	SetError    func(msg string)
 	changeMode  func(mode mode.Mode)
 	changeTheme func()
+	search      []rune
+	action      action
 	cursor      int
 	w, h        int
 }
@@ -47,6 +58,7 @@ func InitThemes(purgeCache func(), changeMode func(mode.Mode), SetError func(msg
 		changeTheme: purgeCache,
 		SetError:    SetError,
 		cursor:      cursor,
+		action:      none,
 		list:        list,
 	}
 }

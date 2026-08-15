@@ -121,9 +121,16 @@ func drawPopUp() {
 	p.Draw()
 
 	var data strings.Builder
-	cX, cY, _ := p.object.GetCursor(false)
-	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
-	data.WriteString(string(ascii.HideCursor))
+	cX, cY, c := p.object.GetCursor(false)
+	if cX == -1 && cY == -1 {
+		fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
+		data.WriteString(string(ascii.HideCursor))
+	} else {
+		data.WriteString(string(ascii.ShowCursor))
+		_x, _y := p.calcPos()
+		fmt.Fprintf(&data, "\033[%d;%dH", cY+_y, cX+_x)
+		data.WriteString(string(c))
+	}
 
 	fmt.Print(data.String())
 }
