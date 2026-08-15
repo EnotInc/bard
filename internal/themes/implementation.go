@@ -22,7 +22,7 @@ func (t *Themes) DrawLineAt(index int) string {
 	}
 
 	if index == t.h-1 {
-		text := " k/j - up/down   <enter> - select   <esc> - exit"
+		text := " k/j up/down   <enter> select   <esc> - exit "
 		data.WriteString(theme.BottomBar)
 		data.WriteString(theme.Message)
 		data.WriteString(ascii.Italic.Str())

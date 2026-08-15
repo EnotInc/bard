@@ -16,6 +16,7 @@ func (t *Themes) buildSearchBar() string {
 	var searchBar strings.Builder
 
 	searchBar.WriteString(ascii.UnderLine.Str())
+	searchBar.WriteString(config.GetTheme().General.BottomBar)
 	si := config.GetConfig().ShowIcons
 	icon := services.SearchIcon(si)
 	searchBar.WriteString(" ")
