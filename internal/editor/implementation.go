@@ -100,7 +100,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string 
 
 		n := e.tui.BuildNumber(buf.Cursor.Line(), i+1, maxNumLen, cfg.RLN)
 
-		enable_render := buf.Type == buffers.Markdown && cfg.Render
+		enable_render := buf.Type == buffers.Markdown && !cfg.Render
 
 		var data string
 
