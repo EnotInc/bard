@@ -1,25 +1,15 @@
-package settings
+package setting
 
 import (
 	"github.com/EnotInc/Bard/internal/enums/cursor"
-	"github.com/EnotInc/Bard/internal/enums/keys"
 )
 
 func (s *Settings) DrawLineAt(index int) string {
-	return s.RenderSettingAt(index)
+	return s.render(index)
 }
 
 func (s *Settings) Handle(key rune) {
-	switch key {
-	case 'j':
-		s.j()
-	case 'k':
-		s.k()
-	case keys.Enter:
-		s.toggelSetting()
-	case keys.Esc:
-		s.exit()
-	}
+	s.handle(key)
 }
 
 func (s *Settings) GetCursor(withBorder bool) (int, int, cursor.CursorType) {
@@ -35,11 +25,4 @@ func (s *Settings) Resize(w, h int) {
 	s.h = h
 }
 
-func (s *Settings) PreDraw() {
-	if !s.uptade {
-		return
-	}
-
-	s.uptade = false
-	s.updateSettings()
-}
+func (s *Settings) PreDraw() {}

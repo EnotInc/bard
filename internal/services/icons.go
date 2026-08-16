@@ -151,20 +151,17 @@ func SearchIcon(showIcons bool) string {
 }
 
 func SwitchIcon(status bool, showIcons bool) string {
-	iconFalse := "+ "
-	iconTrue := "- "
+	iconFalse := "\033[31m- "
+	iconTrue := "\033[32m+ "
 
 	if showIcons {
-		iconFalse = "󰨙 "
-		iconTrue = "󰨚 "
+		iconFalse = "\033[31m󰨙 "
+		iconTrue = "\033[32m󰨚 "
 	}
 
-	switch status {
-	case false:
-		return iconFalse
-	case true:
+	if status {
 		return iconTrue
+	} else {
+		return iconFalse
 	}
-
-	return ""
 }
