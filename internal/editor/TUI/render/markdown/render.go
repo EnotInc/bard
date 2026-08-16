@@ -326,17 +326,35 @@ func (r *Render) renderTab(t *Token) string {
 }
 
 func (r *Render) renderLink(t *Token, show bool) string {
+	var data strings.Builder
 	if show {
-		return r.theme.Link + string(t.Literal) + ascii.Reset.Str()
+		data.WriteString(r.theme.Link)
+		data.WriteString(string(t.Literal))
+	} else {
+		data.WriteString(r.theme.Link)
+		data.WriteString(ascii.UnderLine.Str())
+		data.WriteString(ascii.LinkSymbol.Str())
+		data.WriteString(" ")
+		data.WriteString(string(t.Value))
 	}
-	return r.theme.Link + string(t.Value) + ascii.Reset.Str()
+	data.WriteString(ascii.Reset.Str())
+	return data.String()
 }
 
 func (r *Render) renderImage(t *Token, show bool) string {
+	var data strings.Builder
 	if show {
-		return r.theme.Image + string(t.Literal) + ascii.Reset.Str()
+		data.WriteString(r.theme.Image)
+		data.WriteString(string(t.Literal))
+	} else {
+		data.WriteString(r.theme.Image)
+		data.WriteString(ascii.UnderLine.Str())
+		data.WriteString(ascii.ImageSymbol.Str())
+		data.WriteString(" ")
+		data.WriteString(string(t.Value))
 	}
-	return r.theme.Image + string(t.Value) + ascii.Reset.Str()
+	data.WriteString(ascii.Reset.Str())
+	return data.String()
 }
 
 func (r *Render) renderHtmlBlcok(t *Token) string {

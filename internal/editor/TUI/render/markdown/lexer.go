@@ -48,7 +48,6 @@ func (l *Lexer) NextToken() Token {
 			} else {
 				t.Type = image
 				t.Literal = append([]rune{'!'}, t.Literal...)
-				t.Value = append([]rune{'!'}, t.Value...)
 			}
 		} else {
 			t = Token{Type: symbol, Value: []rune("!")}

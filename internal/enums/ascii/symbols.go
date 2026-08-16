@@ -15,6 +15,9 @@ const (
 	BoxEmpty    Symbol = " \u2610"
 	BoxField    Symbol = " \u25a0"
 	BoxComplete Symbol = " \u2612"
+	LinkSymbol  Symbol = "\U0001f517"
+	ImageSymbol Symbol = "\U0001f3a8"
+	ColorBox    Symbol = "\u2b1b"
 
 	WSEOL   Symbol = "\u00b7"
 	NewLine Symbol = "\u21b5"
@@ -35,6 +38,4 @@ const (
 
 	ArrowUp   Symbol = "\u2303"
 	ArrowDown Symbol = "\u2304"
-
-	ColorBox Symbol = "\u25a0"
 )

@@ -70,7 +70,6 @@ func (t *Themes) renderPreviewAt(index int, offset int) string {
 		}
 		preview.WriteString(c)
 		preview.WriteString(ascii.ColorBox.Str())
-		preview.WriteString(" ")
 	}
 
 	preview.WriteString(ascii.Reset.Str())
