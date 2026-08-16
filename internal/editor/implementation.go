@@ -85,7 +85,7 @@ func (e *Editor) DrawLineAt(index int) string {
 func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string {
 	cfg := config.GetConfig()
 	buf := e.b[e.curBuffer]
-	show := buf.Cursor.Line() == i || cfg.ShowMD
+	show := (buf.Cursor.Line() == i || cfg.ShowMD) && !buf.IsReadOnly
 	isFirst := i == upperBorder
 
 	var l strings.Builder
