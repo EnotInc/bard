@@ -21,15 +21,15 @@ const (
 )
 
 type Themes struct {
-	list        []ThemeEntry
-	searched    []ThemeEntry
-	SetError    func(msg string)
-	changeMode  func(mode mode.Mode)
-	changeTheme func()
-	search      []rune
-	action      action
-	cursor      int
-	w, h        int
+	list       []ThemeEntry
+	searched   []ThemeEntry
+	SetError   func(msg string)
+	changeMode func(mode mode.Mode)
+	onChange   func()
+	search     []rune
+	action     action
+	cursor     int
+	w, h       int
 }
 
 func InitThemes(purgeCache func(), changeMode func(mode.Mode), SetError func(msg string)) *Themes {
@@ -54,11 +54,11 @@ func InitThemes(purgeCache func(), changeMode func(mode.Mode), SetError func(msg
 	})
 
 	return &Themes{
-		changeMode:  changeMode,
-		changeTheme: purgeCache,
-		SetError:    SetError,
-		cursor:      cursor,
-		action:      none,
-		list:        list,
+		changeMode: changeMode,
+		onChange:   purgeCache,
+		SetError:   SetError,
+		cursor:     cursor,
+		action:     none,
+		list:       list,
 	}
 }

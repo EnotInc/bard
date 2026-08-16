@@ -63,6 +63,8 @@ You can read more about this in Bard by running the following commands:
 - `:h[elp] space`
 - `:h[elp] theme`
 
+You can quickly change some values with `:settings` and `:themes` commands.
+
 ## Installation
 Requirements:
 - [NerdFont](https://nerdfonts.com). If your terminal doesn't support Nerd Font, you can turn icons off with `:si`/`:showicon` commands in Bard.

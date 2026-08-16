@@ -32,7 +32,7 @@ func (t *Themes) change() {
 	}
 	cfg.ThemeName = name
 	screen.SendCall(calls.PurgeCache)
-	t.changeTheme()
+	t.onChange()
 }
 
 func (t *Themes) close() {

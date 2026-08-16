@@ -21,4 +21,6 @@ Default config looks like this:
 ` + "\t" + `show_dot_files: true` + "         " + `# Used in explorer to show or hide hidden (dot) files.
 }
 ` + "```" + `
+
+You can also run ` + "`:settings`" + ` command to open pup-up window, and change some values there
 `
