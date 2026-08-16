@@ -8,6 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/popups"
 	"github.com/EnotInc/Bard/internal/explorer"
 	"github.com/EnotInc/Bard/internal/screen"
+	"github.com/EnotInc/Bard/internal/setting"
 	"github.com/EnotInc/Bard/internal/themes"
 )
 
@@ -49,7 +50,11 @@ func main() {
 		ed.SetErrorCallback)
 	t_popup := screen.NewPopup(t)
 
+	s := setting.IntiSettings(ed.PurgeCacheCallback)
+	s_popup := screen.NewPopup(s)
+
 	screen.AddPopup(t_popup, popups.Themes)
+	screen.AddPopup(s_popup, popups.Settings)
 
 	if len(os.Args) == 2 {
 		arg := os.Args[1]

@@ -11,4 +11,5 @@ const (
 
 	ClosePopups
 	OpenThemes
+	OpenSettings
 )

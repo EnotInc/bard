@@ -165,6 +165,9 @@ func (e *Editor) execCommand() {
 	case "themes":
 		screen.SendCall(calls.OpenThemes)
 
+	case "settings":
+		screen.SendCall(calls.OpenSettings)
+
 	case "keeptab", "kt":
 		cfg.KeepTabs = !cfg.KeepTabs
 

@@ -149,3 +149,19 @@ func SearchIcon(showIcons bool) string {
 		return "> "
 	}
 }
+
+func SwitchIcon(status bool, showIcons bool) string {
+	iconFalse := "\033[31m- "
+	iconTrue := "\033[32m+ "
+
+	if showIcons {
+		iconFalse = "\033[31m󰨙 "
+		iconTrue = "\033[32m󰨚 "
+	}
+
+	if status {
+		return iconTrue
+	} else {
+		return iconFalse
+	}
+}
