@@ -52,7 +52,13 @@ func (t *Themes) handleSearch(key rune) {
 			t.search = []rune{}
 		}
 	default:
-		if services.IsLetterOrNumber(key) {
+		cfg := config.GetConfig()
+		iconOffset := 4
+		offset := 0
+		if cfg.ShowBorder {
+			offset = 2
+		}
+		if len(t.search) < t.w-offset-iconOffset && services.IsLetterOrNumber(key) {
 			t.search = append(t.search, key)
 		}
 	}

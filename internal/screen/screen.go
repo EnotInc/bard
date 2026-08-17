@@ -115,16 +115,17 @@ func SetStatusBar(builder func(withBorder bool) string) {
 }
 
 func drawPopUp() {
-	p := global.popups[global.popup]
-
-	p.object.PreDraw()
-	p.Draw()
-
 	var data strings.Builder
-	cX, cY, c := p.object.GetCursor(false)
+
+	p := global.popups[global.popup]
+	p.object.PreDraw()
+	window := p.Draw()
+
+	data.WriteString(window)
+
+	cX, cY, c := p.object.GetCursor(config.GetConfig().ShowBorder)
 	if cX == -1 && cY == -1 {
-		fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)
-		data.WriteString(string(ascii.HideCursor))
+		data.WriteString(ascii.HideCursor)
 	} else {
 		data.WriteString(string(ascii.ShowCursor))
 		_x, _y := p.calcPos()

@@ -61,6 +61,11 @@ func (t *Themes) GetCursor(withBorder bool) (int, int, cursor.CursorType) {
 	case search:
 		x = searchOffset + len(t.search) + 1
 		y = 0
+
+		if withBorder {
+			x += 1
+			y += 1
+		}
 	}
 
 	return x, y, cursor.CursorBloc

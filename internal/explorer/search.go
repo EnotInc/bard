@@ -59,7 +59,14 @@ func (ex *Explorer) handleSearch(key rune) {
 			ex.search = ex.search[:len(ex.search)-1]
 		}
 	default:
-		if services.IsLetterOrNumber(key) || key == '.' {
+		cfg := config.GetConfig()
+		iconOffset := 3
+		offset := 0
+		if cfg.ShowBorder {
+			offset = 2
+		}
+
+		if len(ex.search) < ex.w-offset-iconOffset && (services.IsLetterOrNumber(key) || key == '.') {
 			ex.search = append(ex.search, key)
 		}
 	}

@@ -16,7 +16,7 @@ type popup struct {
 	w, h   int
 }
 
-func (p *popup) Draw() {
+func (p *popup) Draw() string {
 	var diff strings.Builder
 	cfg := config.GetConfig()
 	theme := config.GetTheme().General
@@ -82,7 +82,7 @@ func (p *popup) Draw() {
 		}
 	}
 
-	fmt.Print(diff.String())
+	return diff.String()
 }
 
 const width int = 48
