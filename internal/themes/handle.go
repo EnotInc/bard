@@ -22,6 +22,10 @@ func (t *Themes) k() {
 }
 
 func (t *Themes) change() {
+	if len(t.searched) == 0 {
+		return
+	}
+
 	cfg := config.GetConfig()
 	name := t.searched[t.cursor].name
 
@@ -48,6 +52,7 @@ func (t *Themes) handleSearch(key rune) {
 		if len(t.search) > 0 {
 			t.search = t.search[:len(t.search)-1]
 		} else {
+			t.cursor = 0
 			t.action = none
 			t.search = []rune{}
 		}
