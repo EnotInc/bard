@@ -70,7 +70,7 @@ func (t *Themes) handleDefault(key rune) {
 	case '/':
 		t.action = search
 		t.cursor = -1
-	case keys.Enter:
+	case keys.Enter, keys.Space:
 		t.change()
 	case keys.Esc:
 		t.close()

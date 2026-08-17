@@ -15,9 +15,11 @@ const searchBarOfset = 1
 
 func (ex *Explorer) buildSearchBar() string {
 	var searchBar strings.Builder
-	searchBar.WriteString(string(ascii.UnderLine))
+	searchBar.WriteString(ascii.UnderLine.Str())
 
-	si := config.GetConfig().ShowIcons
+	cfg := config.GetConfig()
+
+	si := cfg.ShowIcons
 	icon := services.SearchIcon(si)
 	searchBar.WriteString(icon)
 
@@ -35,7 +37,8 @@ func (ex *Explorer) buildSearchBar() string {
 		searchBar.WriteString(fill)
 	}
 
-	return searchBar.String()
+	searchBar.WriteString(ascii.Reset.Str())
+	return services.VisibleSubString(searchBar.String(), 0, ex.w-2)
 }
 
 func (ex *Explorer) beginSearch() {

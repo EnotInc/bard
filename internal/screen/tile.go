@@ -130,6 +130,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 				data.WriteString(ascii.Reset.Str())
 			}
 
+			data.WriteString(ascii.Reset.Str())
 			diff.WriteString(data.String())
 		}
 	}
