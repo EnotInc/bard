@@ -73,6 +73,7 @@ func (p *popup) Draw() {
 			diff.WriteString(ascii.Reset.Str())
 
 			if cfg.ShowBorder {
+				fmt.Fprintf(&diff, "\033[%d;%dH", i+y, p.w+x-1)
 				diff.WriteString(theme.BottomBar)
 				diff.WriteString(theme.SelectedTile)
 				diff.WriteString(ascii.BorderV)

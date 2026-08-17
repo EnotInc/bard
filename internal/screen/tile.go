@@ -59,8 +59,8 @@ const termShift = 1
 
 func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 	var diff strings.Builder
-	diff.WriteString(string(ascii.HideCursor))
-	diff.WriteString(string(ascii.MoveToStart))
+	diff.WriteString(ascii.HideCursor)
+	diff.WriteString(ascii.MoveToStart)
 
 	border := config.GetConfig().ShowBorder
 
@@ -70,12 +70,12 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 		var data strings.Builder
 		if border && i == 0 {
 			border := t.getBorder(true, isFocused)
-			data.WriteString(string(ascii.Reset))
+			data.WriteString(ascii.Reset.Str())
 			data.WriteString(c)
-			data.WriteString(string(ascii.BorderCUL))
+			data.WriteString(ascii.BorderCUL)
 			data.WriteString(border)
 			data.WriteString(c)
-			data.WriteString(string(ascii.BorderCUR))
+			data.WriteString(ascii.BorderCUR)
 
 			pos := fmt.Sprintf("\033[%d;%dH", termShift, tileOfset+termShift)
 			diff.WriteString(pos)
@@ -87,12 +87,12 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 			pos := fmt.Sprintf("\033[%d;%dH", t.h-statusLine, tileOfset+termShift)
 			diff.WriteString(pos)
 
-			data.WriteString(string(ascii.Reset))
+			data.WriteString(ascii.Reset.Str())
 			data.WriteString(c)
-			data.WriteString(string(ascii.BorderCDL))
+			data.WriteString(ascii.BorderCDL)
 			data.WriteString(border)
 			data.WriteString(c)
-			data.WriteString(string(ascii.BorderCDR))
+			data.WriteString(ascii.BorderCDR)
 
 			diff.WriteString(data.String())
 			break
@@ -100,7 +100,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 
 		offset := 0
 		if border {
-			offset = 1 // NOTE: border ofset
+			offset = 1 // border ofset
 		}
 		line := t.object.DrawLineAt(i - offset)
 
@@ -117,17 +117,18 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 			diff.WriteString(pos)
 			if border {
 				data.WriteString(c)
-				data.WriteString(string(ascii.BorderV))
+				data.WriteString(ascii.BorderV)
 				data.WriteString(string(ascii.Reset))
 			}
 			data.WriteString(trim)
+			data.WriteString(ascii.Reset.Str())
 			if border {
 				fmt.Fprintf(&data, "\033[%d;%dH", i+termShift, tileOfset+t.w)
-				data.WriteString(string(ascii.Reset))
+				data.WriteString(ascii.Reset.Str())
 				data.WriteString(c)
-				data.WriteString(string(ascii.BorderV))
+				data.WriteString(ascii.BorderV)
+				data.WriteString(ascii.Reset.Str())
 			}
-			data.WriteString(string(ascii.Reset))
 
 			diff.WriteString(data.String())
 		}
@@ -149,15 +150,15 @@ func (t *tile) getBorder(withTitle bool, isFocused bool) string {
 		amount := max(t.w-2-visible-termShift, 0)
 
 		border.WriteString(c)
-		border.WriteString(string(ascii.BorderH))
+		border.WriteString(ascii.BorderH)
 		border.WriteString(ascii.Reset.Str())
 		border.WriteString(t.title)
-		border.WriteString(string(ascii.Reset))
+		border.WriteString(ascii.Reset.Str())
 		border.WriteString(c)
-		border.WriteString(strings.Repeat(string(ascii.BorderH), amount))
+		border.WriteString(strings.Repeat(ascii.BorderH, amount))
 	} else {
 		border.WriteString(c)
-		border.WriteString(strings.Repeat(string(ascii.BorderH), t.w-2))
+		border.WriteString(strings.Repeat(ascii.BorderH, t.w-2))
 	}
 	return border.String()
 }

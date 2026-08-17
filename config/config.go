@@ -100,7 +100,7 @@ func Save() {
 }
 
 func getDefaultConfig() *Config {
-	config := &Config{
+	return &Config{
 		RLN:        false,
 		ShowMD:     false,
 		ShowEmpty:  true,
@@ -111,8 +111,7 @@ func getDefaultConfig() *Config {
 		ResizeTime: defaultResizeDuration,
 		KeepTabs:   true,
 		ShowIcons:  true,
-		ShowBorder: true,
+		ShowBorder: false,
 		ShowDot:    true,
 	}
-	return config
 }

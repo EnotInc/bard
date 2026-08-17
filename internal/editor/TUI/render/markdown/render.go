@@ -48,11 +48,20 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 	var renderMode render.Render = render.Markdown
 
 	if isLine(line, '-') || isLine(line, '*') || isLine(line, '_') {
+		var data strings.Builder
+		var keep bool
+
 		if show {
-			return r.theme.Symbol + string(line), renderMode, false
+			data.WriteString(r.theme.Symbol)
+			data.WriteString(string(line))
+			keep = false
+		} else {
+			data.WriteString(r.theme.Symbol)
+			data.WriteString(strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+xOffset))
+			data.WriteString(ascii.Reset.Str())
+			keep = true
 		}
-		return r.theme.Symbol + strings.Repeat(ascii.SplitLine.Str(), r.w-enums.InitialOffset*2+xOffset),
-			renderMode, true
+		return data.String(), renderMode, keep
 	}
 
 	r.l.input = line
