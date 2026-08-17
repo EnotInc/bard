@@ -200,6 +200,9 @@ func handleCalls() {
 		for i := range global.tiles {
 			global.tiles[i].hash = make(map[int]uint32, 0)
 		}
+		for j := range global.popups {
+			global.popups[j].hash = make(map[int]uint32, 0)
+		}
 	case calls.OpenFile, calls.DelFile:
 		ShiftFocus()
 	}

@@ -55,4 +55,5 @@ func (s *Settings) toggle() {
 	}
 
 	s.onChange()
+	screen.SendCall(calls.PurgeCache)
 }

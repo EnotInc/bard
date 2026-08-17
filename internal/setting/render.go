@@ -16,6 +16,7 @@ func (s *Settings) render(index int) string {
 	var enable bool
 
 	cfg := config.GetConfig()
+	theme := config.GetTheme().General
 
 	switch index {
 	case 0:
@@ -49,6 +50,10 @@ func (s *Settings) render(index int) string {
 	}
 
 	const iconOffset int = 3
+	var offset int = 0
+	if cfg.ShowBorder {
+		offset = 1
+	}
 
 	if text == "" || index == 0 {
 		icon = "   "
@@ -61,7 +66,6 @@ func (s *Settings) render(index int) string {
 		data.WriteString(ascii.Bold.Str())
 	}
 
-	theme := config.GetTheme().General
 	data.WriteString(theme.BottomBar)
 	data.WriteString(icon)
 	data.WriteString(ascii.ResetFg.Str())
@@ -72,7 +76,7 @@ func (s *Settings) render(index int) string {
 	}
 
 	data.WriteString(text)
-	data.WriteString(strings.Repeat(" ", max(0, s.w-len(text)-iconOffset)))
+	data.WriteString(strings.Repeat(" ", max(0, s.w-len(text)-iconOffset-offset)))
 	data.WriteString(ascii.Reset.Str())
 
 	return data.String()

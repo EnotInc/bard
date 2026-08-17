@@ -28,7 +28,12 @@ func (t *Themes) rednerNameAt(index int, offset int) string {
 			n = fmt.Sprintf("  %s", n)
 		}
 
-		emtpy := strings.Repeat(" ", max(0, offset-services.CountClear(n, 0, len(n))))
+		cfg := config.GetConfig()
+		var borderOffset int = 0
+		if cfg.ShowBorder {
+			borderOffset = 2
+		}
+		emtpy := strings.Repeat(" ", max(0, offset-services.CountClear(n, 0, len(n))-borderOffset))
 
 		if index == t.cursor {
 			name.WriteString(ascii.UnderLine.Str())

@@ -104,9 +104,8 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 		}
 		line := t.object.DrawLineAt(i - offset)
 
-		// NOTE: magic 2
-		trim := services.VisibleSubString(line, 0, t.w-2)
-		if !border { // used to make borderlett tiles more readable
+		trim := services.VisibleSubString(line, 0, t.w-offset*2)
+		if !border { // used to make borderless tiles more readable
 			trim = fmt.Sprintf(" %s", trim)
 		}
 
