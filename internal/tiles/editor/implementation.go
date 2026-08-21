@@ -13,6 +13,7 @@ import (
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
 	tui "github.com/EnotInc/Bard/internal/tiles/editor/TUI"
+	"github.com/EnotInc/Bard/theme"
 
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )
@@ -132,7 +133,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string 
 		fmt.Fprint(&content, ascii.Reset)
 		fmt.Fprint(&l, n, content.String())
 	} else if cfg.ShowEmpty && !buf.IsReadOnly { // getting empty line
-		theme := config.GetTheme().General
+		theme := theme.GetTheme().General
 		fmt.Fprint(&l, ascii.Reset, theme.EmptyLine, "~")
 	}
 

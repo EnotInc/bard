@@ -7,6 +7,7 @@ import (
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 func (t *Themes) j() {
@@ -29,7 +30,7 @@ func (t *Themes) change() {
 	cfg := config.GetConfig()
 	name := t.searched[t.cursor].name
 
-	msg := config.ChangeTheme(name)
+	msg := theme.ChangeTheme(name)
 	if msg != "" {
 		t.SetError(msg)
 		return

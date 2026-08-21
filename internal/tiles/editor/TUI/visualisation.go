@@ -8,6 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 // This function is used to add visual highlight to the selected lines
@@ -72,7 +73,7 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 			ui.render.Render(l, i, true, true, i == startLine, ui.XScroll, Type)
 		}
 
-		theme := config.GetTheme().General
+		theme := theme.GetTheme().General
 		l := theme.Selection + string(clear) + ascii.Reset.Str()
 		line = ui.WithEndLine(l)
 	}
@@ -82,13 +83,13 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 // used to add 'new line' symbol to the givven selected line
 func (ui *TUI) WithEndLine(l string) []rune {
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 	return []rune(l + theme.Selection + ascii.NewLine.Str() + ascii.Reset.Str())
 }
 
 func (ui *TUI) paint(line []rune) []rune {
 	var s strings.Builder
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 	s.WriteString(theme.Selection)
 	s.WriteString(string(line))
 	s.WriteString(ascii.Reset.Str())

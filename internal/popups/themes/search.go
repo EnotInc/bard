@@ -6,6 +6,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 const placeholder = "'/' to search"
@@ -16,7 +17,7 @@ func (t *Themes) buildSearchBar() string {
 	var searchBar strings.Builder
 
 	searchBar.WriteString(ascii.UnderLine.Str())
-	searchBar.WriteString(config.GetTheme().General.BottomBar)
+	searchBar.WriteString(theme.GetTheme().General.BottomBar)
 	si := config.GetConfig().ShowIcons
 	icon := services.SearchIcon(si)
 	searchBar.WriteString(" ")

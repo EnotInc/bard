@@ -7,24 +7,25 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 
 	render "github.com/EnotInc/Bard/internal/enums/render"
 )
 
 type Render struct {
 	l       *Lexer
-	theme   *config.Markdown
+	theme   *theme.Markdown
 	curAttr string
 	w       int
 }
 
 func (r *Render) Update() {
-	theme := config.GetTheme().Markdown
+	theme := theme.GetTheme().Markdown
 	r.theme = &theme
 }
 
 func NewRender(w int) *Render {
-	theme := config.GetTheme().Markdown
+	theme := theme.GetTheme().Markdown
 	r := &Render{w: w, theme: &theme}
 	r.l = newLexer()
 	return r

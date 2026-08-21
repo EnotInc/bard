@@ -13,6 +13,7 @@ import (
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
 	"github.com/EnotInc/Bard/internal/tiles/editor/TUI/render"
+	"github.com/EnotInc/Bard/theme"
 )
 
 type visual struct {
@@ -78,7 +79,7 @@ func (ui *TUI) BuildNumber(curLine int, n int, maxOffset int, rln bool) string {
 	}
 	fmt.Fprint(&num, ascii.Reset, strings.Repeat(" ", maxOffset-numLen))
 
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 
 	if curLine+1 == n {
 		fmt.Fprint(&num, theme.CurrentLine, numStr)
@@ -108,7 +109,7 @@ func (ui *TUI) fillSpace() string {
 }
 
 func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err string, cmd string) string {
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 	var data strings.Builder
 	pos := fmt.Sprintf(" %d-%d ", x, y)
 	fmt.Fprintf(&data, "%s%s%s %s%s %s%s%s ", theme.BottomBar, pos, curdata, theme.Message, message, theme.Error, err, theme.BottomBar)
@@ -124,7 +125,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err s
 }
 
 func (ui *TUI) BuildCommandBar(curdata string) string {
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 	var data strings.Builder
 	cmd := theme.Command + " :" + theme.BottomBar
 	fmt.Fprintf(&data, "%s%s%s%s%s", theme.BottomBar, cmd, curdata, ui.fillSpaceWith(len(curdata)+2), ascii.Reset)
@@ -156,7 +157,7 @@ func (ui *TUI) Center(l []rune) string {
 }
 
 func (ui *TUI) BuildTabs(tabs []string, curTab int, show bool) string {
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 	si := config.GetConfig().ShowIcons
 	if len(tabs) == 1 {
 		icon := ""

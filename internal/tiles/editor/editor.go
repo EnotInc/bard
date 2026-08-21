@@ -3,7 +3,6 @@ package editor
 import (
 	"strconv"
 
-	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
@@ -39,8 +38,6 @@ func initCmd() *cmd {
 // turn terminal into raw mode, saves old state, initializes Config, Buffer and TUI
 // checks if terminal save to work in
 func InitEditor(w int) *Editor {
-	cfg := config.GetConfig()
-	err := config.InitTheme(cfg.ThemeName)
 	_b := buffer.InitBuffer()
 	_tui := tui.InitTUI(w)
 	_cmd := initCmd()
@@ -53,10 +50,6 @@ func InitEditor(w int) *Editor {
 		lastCmd:   "",
 		subCmd:    "",
 		curBuffer: 0,
-	}
-
-	if err != nil {
-		cfg.ThemeName = cfg.DefaultThemeName()
 	}
 
 	return e

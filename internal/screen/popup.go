@@ -7,6 +7,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 type popup struct {
@@ -19,7 +20,7 @@ type popup struct {
 func (p *popup) Draw() string {
 	var diff strings.Builder
 	cfg := config.GetConfig()
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 
 	for i := range p.h {
 

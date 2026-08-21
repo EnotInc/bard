@@ -3,8 +3,8 @@ package themes
 import (
 	"sort"
 
-	"github.com/EnotInc/Bard/config"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
+	"github.com/EnotInc/Bard/theme"
 )
 
 type ThemeEntry struct {
@@ -37,7 +37,7 @@ func InitThemes(purgeCache func(), changeMode func(mode.Mode), SetError func(msg
 	var cursor int = 0
 	var list []ThemeEntry
 
-	t, err := config.GetThemeList()
+	t, err := theme.GetThemeList()
 	if err != nil {
 		list = []ThemeEntry{}
 	}

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 )
 
+const defaultThemeName = "bard.json"
 const defaultConfigFile = ".bard/config.json"
 const configDir = ".bard"
 const defaultTabStop = 4
@@ -16,6 +17,10 @@ var config *Config
 
 func GetConfig() *Config {
 	return config
+}
+
+func (c *Config) DefaultThemeName() string {
+	return defaultThemeName
 }
 
 func getConfigPath() string {

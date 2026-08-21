@@ -6,6 +6,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 func (s *Settings) render(index int) string {
@@ -16,7 +17,7 @@ func (s *Settings) render(index int) string {
 	var enable bool
 
 	cfg := config.GetConfig()
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 
 	switch index {
 	case 0:

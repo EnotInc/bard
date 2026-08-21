@@ -13,6 +13,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
+	"github.com/EnotInc/Bard/theme"
 )
 
 // Called from Run() func
@@ -220,7 +221,7 @@ func (e *Editor) parseCommand() {
 				}
 			}
 
-			err := config.ChangeTheme(arg)
+			err := theme.ChangeTheme(arg)
 			if err != "" {
 				e.tui.Error = err
 				return

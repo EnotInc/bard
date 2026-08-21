@@ -10,6 +10,7 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
+	"github.com/EnotInc/Bard/theme"
 	"golang.org/x/term"
 )
 
@@ -26,7 +27,7 @@ func SaveLog(e string) error {
 	logs := filepath.Join(path, ".log")
 
 	file, err := os.OpenFile(logs, os.O_APPEND|os.O_CREATE, 0644)
-	theme := config.GetTheme().General
+	theme := theme.GetTheme().General
 	if err != nil {
 		return fmt.Errorf("%s%s%s%s%s", theme.Message, err, "\n\n Error stack:\n", ascii.Reset, string(debug.Stack()))
 	}

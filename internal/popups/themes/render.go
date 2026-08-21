@@ -7,11 +7,12 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 func (t *Themes) rednerNameAt(index int, offset int) string {
 	var name strings.Builder
-	theme := config.GetTheme()
+	theme := theme.GetTheme()
 
 	index -= 1 // removeing header offset
 	if index >= len(t.searched) {
@@ -51,7 +52,7 @@ func (t *Themes) rednerNameAt(index int, offset int) string {
 
 func (t *Themes) renderPreviewAt(index int, offset int) string {
 	var preview strings.Builder
-	theme := config.GetTheme()
+	theme := theme.GetTheme()
 
 	index -= 1 // removeing header offset
 	if index >= len(t.searched) {

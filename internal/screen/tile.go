@@ -8,6 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/theme"
 )
 
 type object interface {
@@ -166,7 +167,7 @@ func (t *tile) getBorder(withTitle bool, isFocused bool) string {
 
 func (t *tile) getColor(focused bool) string {
 	if focused {
-		theme := config.GetTheme()
+		theme := theme.GetTheme()
 		return theme.General.SelectedTile
 	} else {
 		return ""

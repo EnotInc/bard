@@ -10,10 +10,12 @@ import (
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/tiles/editor"
 	"github.com/EnotInc/Bard/internal/tiles/explorer"
+	"github.com/EnotInc/Bard/theme"
 )
 
 func main() {
 	config.InitConfig()
+	theme.InitTheme(config.GetConfig().ThemeName)
 	config.CreateSpace()
 	screen.InitScreen()
 
