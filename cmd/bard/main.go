@@ -4,12 +4,12 @@ import (
 	"os"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/editor"
 	"github.com/EnotInc/Bard/internal/enums/popups"
-	"github.com/EnotInc/Bard/internal/explorer"
+	"github.com/EnotInc/Bard/internal/popups/setting"
+	"github.com/EnotInc/Bard/internal/popups/themes"
 	"github.com/EnotInc/Bard/internal/screen"
-	"github.com/EnotInc/Bard/internal/setting"
-	"github.com/EnotInc/Bard/internal/themes"
+	"github.com/EnotInc/Bard/internal/tiles/editor"
+	"github.com/EnotInc/Bard/internal/tiles/explorer"
 )
 
 func main() {

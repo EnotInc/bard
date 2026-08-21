@@ -1,11 +1,11 @@
 package render
 
 import (
-	code "github.com/EnotInc/Bard/internal/editor/TUI/render/code"
-	md "github.com/EnotInc/Bard/internal/editor/TUI/render/markdown"
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	render "github.com/EnotInc/Bard/internal/enums/render"
 	"github.com/EnotInc/Bard/internal/services"
+	code "github.com/EnotInc/Bard/internal/tiles/editor/TUI/render/code"
+	md "github.com/EnotInc/Bard/internal/tiles/editor/TUI/render/markdown"
 )
 
 // struct is used to work with different renders

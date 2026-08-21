@@ -1,11 +1,11 @@
 package editor
 
 import (
-	"github.com/EnotInc/Bard/internal/editor/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
 	cases "github.com/EnotInc/Bard/internal/enums/cases"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
+	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 )
 
 const visual_line = true

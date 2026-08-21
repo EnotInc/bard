@@ -9,11 +9,11 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/docs/help"
-	"github.com/EnotInc/Bard/internal/editor/buffer"
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	h "github.com/EnotInc/Bard/internal/enums/help"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
+	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 )
 
 // Used to create hew Buffer in Editor with selected help topic

@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
+	tui "github.com/EnotInc/Bard/internal/tiles/editor/TUI"
 
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 )

@@ -4,11 +4,11 @@ import (
 	"unicode"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/editor/buffer"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 )
 
 func (e *Editor) caseReplaceChar(key rune) {

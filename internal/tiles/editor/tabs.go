@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/EnotInc/Bard/internal/editor/buffer"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/screen"
+	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 )
 
 func (e *Editor) ClearAllBuffers() {

@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/editor/TUI/render"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/tiles/editor/TUI/render"
 )
 
 type visual struct {

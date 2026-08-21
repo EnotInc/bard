@@ -4,10 +4,10 @@ import (
 	"strconv"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/editor/buffer"
+	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 
-	tui "github.com/EnotInc/Bard/internal/editor/TUI"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
+	tui "github.com/EnotInc/Bard/internal/tiles/editor/TUI"
 )
 
 type Editor struct {
