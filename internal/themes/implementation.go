@@ -3,7 +3,6 @@ package themes
 import (
 	"strings"
 
-	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
 )
@@ -13,24 +12,24 @@ const sep float32 = 0.5
 func (t *Themes) DrawLineAt(index int) string {
 	var data strings.Builder
 
-	theme := config.GetTheme().General
-
 	if index == 0 {
 		data.WriteString(t.buildSearchBar())
 		data.WriteString(ascii.Reset.Str())
 		return data.String()
 	}
 
-	if index == t.h-1 {
-		text := " k/j up/down   <enter> select   <esc> - exit "
-		data.WriteString(theme.BottomBar)
-		data.WriteString(theme.Message)
-		data.WriteString(ascii.Italic.Str())
-		data.WriteString(text)
-		data.WriteString(strings.Repeat(" ", max(0, t.w-len(text))))
-		data.WriteString(ascii.Reset.Str())
-		return data.String()
-	}
+	// TODO: move to render
+	//theme := config.GetTheme().General
+	// if index == t.h-1 {
+	// 	text := " k/j up/down   <enter> select   <esc> - exit "
+	// 	data.WriteString(theme.BottomBar)
+	// 	data.WriteString(theme.Message)
+	// 	data.WriteString(ascii.Italic.Str())
+	// 	data.WriteString(text)
+	// 	data.WriteString(strings.Repeat(" ", max(0, t.w-len(text))))
+	// 	data.WriteString(ascii.Reset.Str())
+	// 	return data.String()
+	// }
 
 	offset := float32(t.w) * sep
 	name := t.rednerNameAt(index, int(offset))

@@ -23,8 +23,8 @@ func (p *popup) Draw() string {
 
 	for i := range p.h {
 
+		x, y := p.calcPos()
 		if i == 0 && cfg.ShowBorder {
-			x, y := p.calcPos()
 			fmt.Fprintf(&diff, "\033[%d;%dH", y, x)
 			diff.WriteString(theme.BottomBar)
 			diff.WriteString(theme.SelectedTile)
@@ -36,7 +36,6 @@ func (p *popup) Draw() string {
 		}
 
 		if i == p.h-1 && cfg.ShowBorder {
-			x, y := p.calcPos()
 			fmt.Fprintf(&diff, "\033[%d;%dH", y+p.h-1, x)
 			diff.WriteString(theme.BottomBar)
 			diff.WriteString(theme.SelectedTile)
@@ -59,7 +58,6 @@ func (p *popup) Draw() string {
 		oldHash, ok := p.hash[i]
 
 		if !ok || (ok && curHash != oldHash) {
-			x, y := p.calcPos()
 			pos := fmt.Sprintf("\033[%d;%dH", i+y, x)
 			diff.WriteString(pos)
 			if cfg.ShowBorder {
@@ -87,16 +85,15 @@ func (p *popup) Draw() string {
 
 const width int = 48
 
-func calcSize() (w, h int) {
+func calcSize() (int, int) {
 	_w := width
 	_h := float32(global.h) * 0.8
-	w, h = _w, int(_h)
-	return w, h
+	return _w, int(_h)
 }
 
 func (p *popup) calcPos() (x, y int) {
-	x = (global.w - p.w) / 2
-	y = (global.h - p.h) / 2
+	x = max(0, (global.w-p.w)/2)
+	y = max(0, (global.h-p.h)/2)
 	return x, y
 }
 
