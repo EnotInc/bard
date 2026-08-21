@@ -19,10 +19,6 @@ func GetConfig() *Config {
 	return config
 }
 
-func (c *Config) DefaultThemeName() string {
-	return defaultThemeName
-}
-
 func getConfigPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {

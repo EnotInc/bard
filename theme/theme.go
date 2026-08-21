@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"reflect"
 
-	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/services"
 )
 
@@ -108,19 +107,40 @@ func (t *Theme) parceRecursive(val reflect.Value) {
 	}
 }
 
+func createAllThemes() {
+	on_err := func(name string, theme *Theme) {
+		json, _ := json.MarshalIndent(theme, "", "    ")
+		dir := getThemeDir()
+		os.Mkdir(dir, 0755)
+		os.WriteFile(getThemePath(name), []byte(json), 0644)
+		setTheme(theme)
+	}
+
+	themes := map[theme_name]*Theme{
+		bard:        getDefaultTheme(),
+		catppuccin:  getCatppuccinTheme(),
+		dracula:     getDraculaTheme(),
+		gruvbox:     getGruvboxTheme(),
+		solarized:   getSolarizedTheme(),
+		tokyo_night: getTokyoNightTheme(),
+		rose_pine:   getRosePineTheme(),
+		one_dark:    getOneDarkTheme(),
+	}
+
+	for name, theme := range themes {
+		path := getThemePath(string(name))
+
+		if _, err := os.Stat(path); err != nil {
+			on_err(string(name), theme)
+		}
+	}
+
+}
+
 func InitTheme(themeName string) error {
 	defaultTheme := getDefaultTheme()
 	theme_path := getThemePath(themeName)
-	defaultThemeName := config.GetConfig().DefaultThemeName()
-
-	if _, err := os.Stat(theme_path); err != nil {
-		json, _ := json.MarshalIndent(defaultTheme, "", "    ")
-		dir := getThemeDir()
-		os.Mkdir(dir, 0755)
-		os.WriteFile(getThemePath(defaultThemeName), []byte(json), 0644)
-		setTheme(defaultTheme)
-		return fmt.Errorf("Unable to load theme %s", themeName)
-	}
+	createAllThemes()
 
 	data, err := os.ReadFile(theme_path)
 	if err != nil {
