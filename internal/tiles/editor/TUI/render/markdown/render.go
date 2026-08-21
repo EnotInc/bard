@@ -252,7 +252,8 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 		s.WriteString(r.theme.Symbol)
 		s.WriteString(string(t.Literal))
 	} else {
-		s.WriteString(ascii.QuoteSymbol.Str())
+		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(t.Literal))
+		s.WriteString(quote)
 	}
 	s.WriteString(ascii.Reset.Str())
 	return s.String()

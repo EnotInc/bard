@@ -65,8 +65,13 @@ func (l *Lexer) NextToken() Token {
 		}
 		l.readChar()
 	case '>':
-		t = Token{Type: quote, Literal: []rune{l.ch}}
-		l.readChar()
+		pos := l.position
+		for l.ch == '>' {
+			l.readChar()
+		}
+
+		lit := l.input[pos:l.position]
+		t = Token{Type: quote, Literal: lit}
 	case ' ':
 		spaces, isEnd := l.readWhiteSpace()
 		if isEnd {
