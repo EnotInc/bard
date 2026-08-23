@@ -70,6 +70,44 @@ func (l *Lexer) NextToken() Token {
 			l.readChar()
 		}
 
+		if l.peekChar() != 0 {
+			read := func() {
+				for range len(l.input) - l.position {
+					l.readChar()
+				}
+			}
+
+			text := l.input[l.position:]
+			lower := strings.ToLower(string(text))
+			switch lower {
+			case " [!note]":
+				lit := l.input
+				t = Token{Type: quote_note, Literal: lit}
+				read()
+				return t
+			case " [!tip]":
+				lit := l.input
+				t = Token{Type: quote_tip, Literal: lit}
+				read()
+				return t
+			case " [!important]":
+				lit := l.input
+				t = Token{Type: quote_important, Literal: lit}
+				read()
+				return t
+			case " [!warning]":
+				lit := l.input
+				t = Token{Type: quote_warning, Literal: lit}
+				read()
+				return t
+			case " [!caution]":
+				lit := l.input
+				t = Token{Type: quote_caution, Literal: lit}
+				read()
+				return t
+			}
+		}
+
 		lit := l.input[pos:l.position]
 		t = Token{Type: quote, Literal: lit}
 	case ' ':

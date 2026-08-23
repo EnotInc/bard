@@ -107,6 +107,36 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 			} else {
 				data.WriteString(string(tok.Literal))
 			}
+		case quote_note:
+			if isWhiteSpace {
+				data.WriteString(r.renderQuoteNote(&tok, show))
+			} else {
+				data.WriteString(string(tok.Literal))
+			}
+		case quote_tip:
+			if isWhiteSpace {
+				data.WriteString(r.renderQuoteTip(&tok, show))
+			} else {
+				data.WriteString(string(tok.Literal))
+			}
+		case quote_important:
+			if isWhiteSpace {
+				data.WriteString(r.renderQuoteImportant(&tok, show))
+			} else {
+				data.WriteString(string(tok.Literal))
+			}
+		case quote_warning:
+			if isWhiteSpace {
+				data.WriteString(r.renderQuoteWarning(&tok, show))
+			} else {
+				data.WriteString(string(tok.Literal))
+			}
+		case quote_caution:
+			if isWhiteSpace {
+				data.WriteString(r.renderQuoteCaution(&tok, show))
+			} else {
+				data.WriteString(string(tok.Literal))
+			}
 		case codeBlock:
 			if isFirst {
 				data.WriteString(r.renderCodeBlock(&tok, show, xOffset))
@@ -254,6 +284,94 @@ func (r *Render) renderQuote(t *Token, show bool) string {
 	} else {
 		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(t.Literal))
 		s.WriteString(quote)
+	}
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
+}
+
+func (r *Render) renderQuoteNote(t *Token, show bool) string {
+	var s strings.Builder
+	s.WriteString(r.theme.Quote)
+	if show {
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
+	} else {
+		spl := strings.Split(string(t.Literal), " ")
+		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(spl[0]))
+		s.WriteString(quote)
+		s.WriteString(" ")
+		s.WriteString(ascii.QuoteNote.Str())
+		s.WriteString(" Note")
+	}
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
+}
+
+func (r *Render) renderQuoteTip(t *Token, show bool) string {
+	var s strings.Builder
+	s.WriteString(r.theme.Quote)
+	if show {
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
+	} else {
+		spl := strings.Split(string(t.Literal), " ")
+		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(spl[0]))
+		s.WriteString(quote)
+		s.WriteString(ascii.QuoteTip.Str())
+		s.WriteString(" Tip")
+	}
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
+}
+
+func (r *Render) renderQuoteImportant(t *Token, show bool) string {
+	var s strings.Builder
+	s.WriteString(r.theme.Quote)
+	if show {
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
+	} else {
+		spl := strings.Split(string(t.Literal), " ")
+		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(spl[0]))
+		s.WriteString(quote)
+		s.WriteString(" ")
+		s.WriteString(ascii.QuoteImportant.Str())
+		s.WriteString(" Important")
+	}
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
+}
+
+func (r *Render) renderQuoteWarning(t *Token, show bool) string {
+	var s strings.Builder
+	s.WriteString(r.theme.Quote)
+	if show {
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
+	} else {
+		spl := strings.Split(string(t.Literal), " ")
+		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(spl[0]))
+		s.WriteString(quote)
+		s.WriteString(" ")
+		s.WriteString(ascii.QuoteWarning.Str())
+		s.WriteString(" Warning")
+	}
+	s.WriteString(ascii.Reset.Str())
+	return s.String()
+}
+
+func (r *Render) renderQuoteCaution(t *Token, show bool) string {
+	var s strings.Builder
+	s.WriteString(r.theme.Quote)
+	if show {
+		s.WriteString(r.theme.Symbol)
+		s.WriteString(string(t.Literal))
+	} else {
+		spl := strings.Split(string(t.Literal), " ")
+		quote := strings.Repeat(ascii.QuoteSymbol.Str(), len(spl[0]))
+		s.WriteString(quote)
+		s.WriteString(ascii.QuoteCaution.Str())
+		s.WriteString(" Caution")
 	}
 	s.WriteString(ascii.Reset.Str())
 	return s.String()

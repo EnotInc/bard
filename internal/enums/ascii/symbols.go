@@ -19,6 +19,12 @@ const (
 	ImageSymbol Symbol = "\U0001f3a8"
 	ColorBox    Symbol = "\u2b1b"
 
+	QuoteNote      Symbol = "\033[34m\U0001f6c8"
+	QuoteTip       Symbol = "\033[32m\U0001f4a1"
+	QuoteImportant Symbol = "\033[35m\u203c"
+	QuoteWarning   Symbol = "\033[33m\u26a0"
+	QuoteCaution   Symbol = "\033[31m\U0001f6d1"
+
 	WSEOL   Symbol = "\u00b7"
 	NewLine Symbol = "\u21b5"
 	Tab     Symbol = "\u21a6"

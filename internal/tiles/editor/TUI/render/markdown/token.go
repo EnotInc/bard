@@ -45,8 +45,14 @@ const ( // maybe it's better to use iota for tokens?
 	header_5 // "#####"
 	header_6 // "######"
 
-	quote // ">"
 	tag   // "#text"
+	quote // ">"
+
+	quote_note      // > [!note]
+	quote_tip       // > [!tip]
+	quote_important // > [!important]
+	quote_warning   // > [!warning]
+	quote_caution   // > [!caution]
 
 	codeLine  // "`"
 	codeBlock // "```"
