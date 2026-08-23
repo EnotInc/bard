@@ -44,4 +44,8 @@ const (
 
 	ArrowUp   Symbol = "\u2303"
 	ArrowDown Symbol = "\u2304"
+
+	File   Symbol = "\U0001f5ce "
+	Folder Symbol = "\U0001f5c0 "
+	Search Symbol = "\U0001f50d"
 )

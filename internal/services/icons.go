@@ -9,7 +9,7 @@ import (
 
 func GetFileIcon(s string, showIcons bool) string {
 	if !showIcons {
-		return "  "
+		return ascii.File.Str()
 	}
 
 	s = strings.TrimSpace(s)
@@ -102,7 +102,7 @@ var langIcon map[string]string = map[string]string{
 
 func GetDirIcon(s string, showIcons bool) string {
 	if !showIcons {
-		return "  \033[96m" // default dir icon color
+		return "\033[96m" + ascii.Folder.Str() // default dir icon color
 	}
 
 	var icon string
@@ -146,7 +146,7 @@ func SearchIcon(showIcons bool) string {
 	if showIcons {
 		return search
 	} else {
-		return "> "
+		return ascii.Search.Str()
 	}
 }
 

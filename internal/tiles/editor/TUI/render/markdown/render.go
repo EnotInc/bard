@@ -214,8 +214,14 @@ func (r *Render) renderWSEOL(t *Token) string {
 }
 
 func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
+	var data strings.Builder
 	if show {
-		return r.theme.CodeHeader + r.theme.Symbol + string(t.Literal) + string(t.Value) + r.fillSpace(xScroll)
+		data.WriteString(r.theme.CodeHeader)
+		data.WriteString(r.theme.Symbol)
+		data.WriteString(string(t.Literal))
+		data.WriteString(string(t.Value))
+		data.WriteString(r.fillSpace(xScroll))
+		return data.String()
 	}
 
 	i := ""
@@ -224,28 +230,49 @@ func (r *Render) renderCodeBlock(t *Token, show bool, xScroll int) string {
 		i = services.GetFileIcon(string(t.Value), si)
 	}
 
-	return r.theme.CodeHeader + " " + i + r.theme.Symbol + string(t.Value) + r.fillSpace(xScroll)
+	data.WriteString(r.theme.CodeHeader)
+	data.WriteString(" ")
+	data.WriteString(i)
+	data.WriteString(r.theme.Symbol)
+	data.WriteString(string(t.Value))
+	data.WriteString(r.fillSpace(xScroll))
+	return data.String()
 }
 
 func (r *Render) renderBoxEmpty(t *Token, show bool) string {
+	var data strings.Builder
 	if show {
-		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
+		data.WriteString(r.theme.Symbol)
+		data.WriteString(string(t.Literal))
+		data.WriteString(ascii.Reset.Str())
+	} else {
+		data.WriteString(ascii.BoxEmpty.Str())
 	}
-	return ascii.BoxEmpty.Str()
+	return data.String()
 }
 
 func (r *Render) renderBoxComplete(t *Token, show bool) string {
+	var data strings.Builder
 	if show {
-		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
+		data.WriteString(r.theme.Symbol)
+		data.WriteString(string(t.Literal))
+		data.WriteString(ascii.Reset.Str())
+	} else {
+		data.WriteString(ascii.BoxComplete.Str())
 	}
-	return ascii.BoxComplete.Str()
+	return data.String()
 }
 
 func (r *Render) renderBoxFilled(t *Token, show bool) string {
+	var data strings.Builder
 	if show {
-		return r.theme.Symbol + string(t.Literal) + ascii.Reset.Str()
+		data.WriteString(r.theme.Symbol)
+		data.WriteString(string(t.Literal))
+		data.WriteString(ascii.Reset.Str())
+	} else {
+		data.WriteString(ascii.BoxField.Str())
 	}
-	return ascii.BoxField.Str()
+	return data.String()
 }
 
 func (r *Render) renderListNumber(t *Token) string {
@@ -446,13 +473,17 @@ func (r *Render) renderHeader(t *Token) string {
 	return header.String()
 }
 
-// FIXME: rewrite with strings.Builder
 func (r *Render) renderTab(t *Token) string {
+	var data strings.Builder
+	data.WriteString(r.theme.Symbol)
+	data.WriteString(ascii.Tab.Str())
+	data.WriteString(ascii.ResetFg.Str())
+
 	if len(t.Literal) > 0 {
-		return r.theme.Symbol + ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
-	} else {
-		return r.theme.Symbol + ascii.Tab.Str() + ascii.ResetFg.Str()
+		data.WriteString(string(t.Literal[1:]))
 	}
+
+	return data.String()
 }
 
 func (r *Render) renderLink(t *Token, show bool) string {
