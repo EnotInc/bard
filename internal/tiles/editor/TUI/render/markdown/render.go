@@ -446,6 +446,7 @@ func (r *Render) renderHeader(t *Token) string {
 	return header.String()
 }
 
+// FIXME: rewrite with strings.Builder
 func (r *Render) renderTab(t *Token) string {
 	if len(t.Literal) > 0 {
 		return r.theme.Symbol + ascii.Tab.Str() + ascii.ResetFg.Str() + string(t.Literal[1:])
