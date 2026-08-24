@@ -123,8 +123,9 @@ func createAllThemes() {
 		gruvbox:     getGruvboxTheme(),
 		solarized:   getSolarizedTheme(),
 		tokyo_night: getTokyoNightTheme(),
-		rose_pine:   getRosePineTheme(),
+		monokai:     getMonokaiTheme(),
 		one_dark:    getOneDarkTheme(),
+		nord:        getNordTheme(),
 	}
 
 	for name, theme := range themes {
