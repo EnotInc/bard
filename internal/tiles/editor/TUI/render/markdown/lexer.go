@@ -1,6 +1,7 @@
 package markdown
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
@@ -208,8 +209,15 @@ func (l *Lexer) NextToken() Token {
 				t = Token{Type: text, Value: s}
 			}
 		} else if services.IsLetterOrNumber(l.ch) {
-			s := l.readText()
-			t = Token{Type: text, Value: s}
+			txt := l.readText()
+			switch string(txt) {
+			case "http", "https":
+				path := l.readExternalLink()
+				link := slices.Concat(txt, path)
+				t = Token{Type: external_link, Value: link}
+			default:
+				t = Token{Type: text, Value: txt}
+			}
 		} else {
 			t = Token{Type: symbol, Value: []rune{l.ch}}
 			l.readChar()
@@ -217,6 +225,21 @@ func (l *Lexer) NextToken() Token {
 	}
 
 	return t
+}
+
+func (l *Lexer) isExternalLinkText(r rune) bool {
+	return services.IsLetterOrNumber(r) || r == '.' || r == '/' || r == '?' || r == '#' || r == '-' || r == '~' || r == '!' || r == '\'' || r == '(' || r == ')' || r == '*' || r == '&' || r == '=' || r == ':' || r == '@'
+}
+
+func (l *Lexer) readExternalLink() []rune {
+	pos := l.position
+	for l.isExternalLinkText(l.ch) {
+		l.readChar()
+		if l.ch == '_' && (l.peekChar() == '_' || l.peekChar() == ' ' || l.peekChar() == 0) {
+			break
+		}
+	}
+	return l.input[pos:l.position]
 }
 
 func (l *Lexer) readTagOrHex(lit []rune) Token {

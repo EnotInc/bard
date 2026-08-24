@@ -57,6 +57,8 @@ const ( // maybe it's better to use iota for tokens?
 	codeLine  // "`"
 	codeBlock // "```"
 
+	external_link // http[s] links
+
 	link  // "[text](link)"
 	image // "![text](link)"
 

@@ -158,6 +158,8 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 				data.WriteString(string(tok.Value))
 				data.WriteString(string(tok.Literal))
 			}
+		case external_link:
+			data.WriteString(r.renderExternalLinks(&tok))
 		case tab:
 			data.WriteString(r.renderTab(&tok))
 		case hightlight:
@@ -207,6 +209,15 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 func (r *Render) fillSpace(xScroll int) string {
 	amount := max(r.w-len(r.l.input)-enums.InitialOffset, 0)
 	return strings.Repeat(" ", amount+xScroll)
+}
+
+func (r *Render) renderExternalLinks(t *Token) string {
+	var data strings.Builder
+	data.WriteString(ascii.UnderLine.Str())
+	data.WriteString(r.theme.Link)
+	data.WriteString(string(t.Value))
+	data.WriteString(ascii.Reset.Str())
+	return data.String()
 }
 
 func (r *Render) renderWSEOL(t *Token) string {
