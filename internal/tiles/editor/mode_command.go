@@ -222,8 +222,8 @@ func (e *Editor) parseCommand() {
 			}
 
 			err := theme.ChangeTheme(arg)
-			if err != "" {
-				e.tui.Error = err
+			if err != nil {
+				e.tui.Error = err.Error()
 				return
 			}
 			cfg.ThemeName = arg

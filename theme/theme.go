@@ -160,26 +160,29 @@ func InitTheme(themeName string) error {
 	return nil
 }
 
-func ChangeTheme(themeName string) string {
+func ChangeTheme(themeName string) error {
 	theme_path := getThemePath(themeName)
 
 	if _, err := os.Stat(theme_path); err != nil {
-		return "Unknown theme '" + themeName + "'"
+		return fmt.Errorf("Unknown theme %s", themeName)
+		//return "Unknown theme '" + themeName + "'"
 	}
 
 	data, err := os.ReadFile(theme_path)
 	if err != nil {
-		return "unable to read theme file '" + themeName + "'"
+		return fmt.Errorf("Unable to read theme file '%s'", themeName)
+		//return "unable to read theme file '" + themeName + "'"
 	}
 
 	new := &Theme{}
 	err = json.Unmarshal(data, new)
 	if err != nil {
-		return "unable to set theme '" + themeName + "'"
+		return fmt.Errorf("Unable to set theme '%s'", themeName)
+		//return "unable to set theme '" + themeName + "'"
 	}
 
 	setTheme(new)
-	return ""
+	return nil
 }
 
 func getThemePallete(name string) ([9]string, error) {

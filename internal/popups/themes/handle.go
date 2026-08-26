@@ -30,9 +30,9 @@ func (t *Themes) change() {
 	cfg := config.GetConfig()
 	name := t.searched[t.cursor].name
 
-	msg := theme.ChangeTheme(name)
-	if msg != "" {
-		t.SetError(msg)
+	err := theme.ChangeTheme(name)
+	if err != nil {
+		t.SetError(err.Error())
 		return
 	}
 	cfg.ThemeName = name
