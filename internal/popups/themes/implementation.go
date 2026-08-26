@@ -82,7 +82,8 @@ func (t *Themes) PreDraw() {
 
 	t.searched = []ThemeEntry{}
 	for _, theme := range t.list {
-		if strings.Contains(theme.name, string(t.search)) {
+		clear := strings.TrimSuffix(theme.name, ".json")
+		if strings.Contains(clear, string(t.search)) {
 			t.searched = append(t.searched, theme)
 		}
 	}
