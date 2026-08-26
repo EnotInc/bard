@@ -9,8 +9,6 @@ import (
 	"github.com/EnotInc/Bard/theme"
 )
 
-const sep float32 = 0.5
-
 func (t *Themes) DrawLineAt(index int) string {
 	var data strings.Builder
 
@@ -33,12 +31,7 @@ func (t *Themes) DrawLineAt(index int) string {
 		return data.String()
 	}
 
-	offset := float32(t.w) * sep
-	name := t.rednerNameAt(index, int(offset))
-	preview := t.renderPreviewAt(index, int(offset))
-
-	data.WriteString(name)
-	data.WriteString(preview)
+	data.WriteString(t.renderAt(index))
 	data.WriteString(ascii.Reset.Str())
 
 	return data.String()

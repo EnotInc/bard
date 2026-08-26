@@ -10,74 +10,61 @@ import (
 	"github.com/EnotInc/Bard/theme"
 )
 
-func (t *Themes) rednerNameAt(index int, offset int) string {
-	var name strings.Builder
+func (t *Themes) renderAt(index int) string {
+	var data strings.Builder
 	theme := theme.GetTheme()
+	cfg := config.GetConfig()
 
-	index -= 1 // removeing header offset
-	if index >= len(t.searched) {
-		emtpy := strings.Repeat(" ", int(offset))
-		name.WriteString(theme.General.BottomBar)
-		name.WriteString(emtpy)
+	index -= 1 // removing search bard offset
 
+	if index >= len(t.searched) { // on empty lines
+		empty := strings.Repeat(" ", t.w)
+		data.WriteString(theme.General.BottomBar)
+		data.WriteString(empty)
 	} else {
+		const palleteOffset int = 16
+		const spacing int = 4
 		item := t.searched[index]
-		n := item.name
-		if item.name == config.GetConfig().ThemeName {
-			n = fmt.Sprintf("> %s <", n)
+		name := item.name
+		clear := strings.TrimSuffix(name, ".json")
+
+		if item.name == cfg.ThemeName {
+			name = fmt.Sprintf("> %s <", clear)
 		} else {
-			n = fmt.Sprintf("  %s", n)
+			name = fmt.Sprintf("  %s", clear)
 		}
 
-		cfg := config.GetConfig()
 		var borderOffset int = 0
 		if cfg.ShowBorder {
 			borderOffset = 2
 		}
-		emtpy := strings.Repeat(" ", max(0, offset-services.CountClear(n, 0, len(n))-borderOffset))
+
+		amount := services.CountClear(name, 0, len(name))
+		empty := strings.Repeat(" ", max(0, t.w-amount-palleteOffset-borderOffset-spacing))
 
 		if index == t.cursor {
-			name.WriteString(ascii.UnderLine.Str())
-			name.WriteString(ascii.OverLine.Str())
+			data.WriteString(ascii.UnderLine.Str())
+			data.WriteString(ascii.OverLine.Str())
 		}
 
-		name.WriteString(item.pallete[8])
-		name.WriteString(n)
-		name.WriteString(emtpy)
-	}
+		data.WriteString(theme.General.BottomBar)
+		data.WriteString("  ")
+		data.WriteString(item.pallete[8])
+		data.WriteString(name)
+		data.WriteString(empty)
 
-	name.WriteString(ascii.Reset.Str())
-	return services.VisibleSubString(name.String(), 0, offset)
-}
-
-func (t *Themes) renderPreviewAt(index int, offset int) string {
-	var preview strings.Builder
-	theme := theme.GetTheme()
-
-	index -= 1 // removeing header offset
-	if index >= len(t.searched) {
-		preview.WriteString(theme.General.BottomBar)
-		preview.WriteString(strings.Repeat(" ", max(0, t.w-offset)))
-		return services.VisibleSubString(preview.String(), 0, t.w-offset)
-	}
-
-	item := t.searched[index]
-
-	if index == t.cursor {
-		preview.WriteString(ascii.UnderLine.Str())
-		preview.WriteString(ascii.OverLine.Str())
-	}
-
-	preview.WriteString(item.pallete[8])
-	preview.WriteString(strings.Repeat(" ", max(0, t.w-offset-16))) // 16 - amount of pallete symbols
-	for i, c := range item.pallete {
-		if i == len(item.pallete)-1 {
-			continue
+		for i, c := range item.pallete {
+			if i == len(item.pallete)-1 {
+				continue
+			}
+			data.WriteString(c)
+			data.WriteString(ascii.ColorBox.Str())
 		}
-		preview.WriteString(c)
-		preview.WriteString(ascii.ColorBox.Str())
+
+		data.WriteString(theme.General.BottomBar)
+		data.WriteString("  ")
 	}
 
-	preview.WriteString(ascii.Reset.Str())
-	return services.VisibleSubString(preview.String(), 0, t.w-offset)
+	data.WriteString(ascii.Reset.Str())
+	return data.String()
 }
