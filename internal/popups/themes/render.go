@@ -23,7 +23,7 @@ func (t *Themes) renderAt(index int) string {
 		data.WriteString(empty)
 	} else {
 		const palleteOffset int = 16
-		const spacing int = 4
+		const spacing int = 6
 		item := t.searched[index]
 		name := item.name
 		clear := strings.TrimSuffix(name, ".json")
@@ -47,8 +47,9 @@ func (t *Themes) renderAt(index int) string {
 			data.WriteString(ascii.OverLine.Str())
 		}
 
-		data.WriteString(theme.General.BottomBar)
-		data.WriteString("  ")
+		border := fmt.Sprintf("%s%s", theme.General.BottomBar, strings.Repeat(" ", spacing/2))
+
+		data.WriteString(border)
 		data.WriteString(item.pallete[8])
 		data.WriteString(name)
 		data.WriteString(empty)
@@ -60,9 +61,7 @@ func (t *Themes) renderAt(index int) string {
 			data.WriteString(c)
 			data.WriteString(ascii.ColorBox.Str())
 		}
-
-		data.WriteString(theme.General.BottomBar)
-		data.WriteString("  ")
+		data.WriteString(border)
 	}
 
 	data.WriteString(ascii.Reset.Str())
