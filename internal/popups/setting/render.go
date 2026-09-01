@@ -34,6 +34,9 @@ func (s *Settings) render(index int) string {
 	case int(EnableRender):
 		text = "Enable Render"
 		enable = cfg.Render
+	case int(KeepTabs):
+		text = "Keep Tabs"
+		enable = cfg.KeepTabs
 	case int(ShowDotFiles):
 		text = "Show Dot Files"
 		enable = cfg.ShowDot

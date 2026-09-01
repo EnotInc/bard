@@ -13,6 +13,7 @@ type setting int
 
 const (
 	_ setting = iota
+	KeepTabs
 	RelativeNumbers
 	ShowMDSymbols
 	ShowTabNames
