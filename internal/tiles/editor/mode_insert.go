@@ -82,6 +82,13 @@ func (e *Editor) caseInsert(key rune) {
 			enums.Without)
 
 		cfg := config.GetConfig()
+		changed := buf.TryShiftList()
+		if changed {
+			buf.MoveToLastChar()
+			buf.Insert_a()
+			return
+		}
+
 		if !cfg.KeepTabs {
 			curLine := buf.Lines[buf.Cursor.Line()]
 			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
