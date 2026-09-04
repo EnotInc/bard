@@ -133,7 +133,7 @@ func (b *Buffer) ClearLine() {
 	b.Lines[b.Cursor.line].Data = []rune{}
 }
 
-func (b *Buffer) TryShiftList() bool {
+func (b *Buffer) TryShiftList(keepTabs bool, tabStop int, insertTab func(keepTabs bool, tabStop int) []rune) bool {
 	curLine := b.Lines[b.Cursor.line]
 	trim := strings.TrimSpace(string(curLine.Data))
 	parts := strings.Split(trim, " ")
@@ -151,7 +151,8 @@ func (b *Buffer) TryShiftList() bool {
 				offset += 1
 			}
 
-			curLine.Data = slices.Concat([]rune{'\t'}, curLine.Data)
+			tab := insertTab(keepTabs, tabStop)
+			curLine.Data = slices.Concat(tab, curLine.Data)
 			return true
 		}
 	}

@@ -81,23 +81,39 @@ func (e *Editor) caseInsert(key rune) {
 			buf.Cursor.Line(),
 			enums.Without)
 
+		insertTab := func(keepTabs bool, tabStop int) []rune {
+			tab := []rune{}
+			if !keepTabs {
+				curLine := buf.Lines[buf.Cursor.Line()]
+				tabs := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), tabStop)
+				for range tabs {
+					tab = append(tab, ' ')
+				}
+			} else {
+				tab = append(tab, '\t')
+			}
+			return tab
+		}
+
 		cfg := config.GetConfig()
-		changed := buf.TryShiftList()
+		changed := buf.TryShiftList(cfg.KeepTabs, cfg.TabStop, insertTab)
 		if changed {
 			buf.MoveToLastChar()
 			buf.Insert_a()
 			return
 		}
 
-		if !cfg.KeepTabs {
-			curLine := buf.Lines[buf.Cursor.Line()]
-			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
-			for range tab {
-				buf.InsertKey(' ')
-			}
-		} else {
-			buf.InsertKey('\t')
-		}
+		tab := insertTab(cfg.KeepTabs, cfg.TabStop)
+		buf.Lines[buf.Cursor.Line()].Data = append(buf.Lines[buf.Cursor.Line()].Data, tab...)
+		// if !cfg.KeepTabs {
+		// 	curLine := buf.Lines[buf.Cursor.Line()]
+		// 	tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
+		// 	for range tab {
+		// 		buf.InsertKey(' ')
+		// 	}
+		// } else {
+		// 	buf.InsertKey('\t')
+		// }
 
 	case '[', '{', '(', ')', '}', ']', '\'', '"', '<', '>', '*', '_', '`':
 		e.b[e.curBuffer].InsertPair(key)
