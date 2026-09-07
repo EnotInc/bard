@@ -36,6 +36,8 @@ func (s *Settings) toggle() {
 	cfg := config.GetConfig()
 
 	switch s.cursor + header_offset {
+	case int(KeepTabs):
+		cfg.KeepTabs = !cfg.KeepTabs
 	case int(RelativeNumbers):
 		cfg.RLN = !cfg.RLN
 	case int(ShowMDSymbols):

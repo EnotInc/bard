@@ -133,6 +133,32 @@ func (b *Buffer) ClearLine() {
 	b.Lines[b.Cursor.line].Data = []rune{}
 }
 
+func (b *Buffer) TryShiftList(keepTabs bool, tabStop int, insertTab func(keepTabs bool, tabStop int) []rune) bool {
+	curLine := b.Lines[b.Cursor.line]
+	trim := strings.TrimSpace(string(curLine.Data))
+	parts := strings.Split(trim, " ")
+
+	if len(parts) != 0 && (strings.HasSuffix(parts[0], ")") || strings.HasSuffix(parts[0], ".")) {
+		prefix := trim[:len(parts[0])-1]
+		_, err := strconv.Atoi(prefix)
+		if err == nil {
+			offset := 0
+			for i := range len(curLine.Data) {
+				ch := curLine.Data[i]
+				if ch != ' ' && ch != '\t' {
+					break
+				}
+				offset += 1
+			}
+
+			tab := insertTab(keepTabs, tabStop)
+			curLine.Data = slices.Concat(tab, curLine.Data)
+			return true
+		}
+	}
+	return false
+}
+
 func (b *Buffer) continueList() []rune {
 	curLine := b.Lines[b.Cursor.line]
 	trim := strings.TrimSpace(string(curLine.Data))
@@ -162,7 +188,7 @@ func (b *Buffer) continueList() []rune {
 		}
 	} else {
 		parts := strings.Split(trim, " ")
-		if len(parts) != 0 && strings.HasSuffix(parts[0], ")") || strings.HasSuffix(parts[0], ".") {
+		if len(parts) != 0 && (strings.HasSuffix(parts[0], ")") || strings.HasSuffix(parts[0], ".")) {
 			suffix := string(trim[len(parts[0])-1])
 			prefix := trim[:len(parts[0])-1]
 			number, err := strconv.Atoi(prefix)
