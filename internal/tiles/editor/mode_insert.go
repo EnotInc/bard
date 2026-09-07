@@ -8,7 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 )
 
@@ -85,7 +85,7 @@ func (e *Editor) caseInsert(key rune) {
 			tab := []rune{}
 			if !keepTabs {
 				curLine := buf.Lines[buf.Cursor.Line()]
-				tabs := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), tabStop)
+				tabs := text.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), tabStop)
 				for range tabs {
 					tab = append(tab, ' ')
 				}

@@ -6,7 +6,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/theme"
 )
 
@@ -64,7 +64,7 @@ func (t *Themes) handleSearch(key rune) {
 		if cfg.ShowBorder {
 			offset = 2
 		}
-		if len(t.search) < t.w-offset-iconOffset && services.IsLetterOrNumber(key) {
+		if len(t.search) < t.w-offset-iconOffset && text.IsLetterOrNumber(key) {
 			t.search = append(t.search, key)
 		}
 	}

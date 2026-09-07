@@ -1,13 +1,9 @@
 package editor
 
-import (
-	mode "github.com/EnotInc/Bard/internal/enums/mode"
-	"github.com/EnotInc/Bard/internal/services"
-)
+import "github.com/EnotInc/Bard/internal/services/text"
 
-// FIXME: move to screen?
 func (e *Editor) fromKeyMap(r rune) rune {
-	if services.IsLetter(r) || e.curMode == mode.Insert {
+	if text.IsLetter(r) {
 		return r
 	}
 

@@ -6,7 +6,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
-	"github.com/EnotInc/Bard/internal/services"
+	txt "github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/theme"
 
 	render "github.com/EnotInc/Bard/internal/enums/render"
@@ -42,7 +42,7 @@ func (r *Render) Reset() {
 
 func (r *Render) fillSpace(xScroll int) string {
 	ts := config.GetConfig().TabStop
-	clear := services.ReplaceTabs(r.l.input, ts)
+	clear := txt.ReplaceTabs(r.l.input, ts)
 	amount := max(r.w-len(clear)-enums.InitialOffset-1, 0)
 	return strings.Repeat(" ", amount+xScroll)
 }

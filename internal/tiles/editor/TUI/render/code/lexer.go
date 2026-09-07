@@ -2,7 +2,7 @@ package code
 
 import (
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/services"
+	txt "github.com/EnotInc/Bard/internal/services/text"
 )
 
 type Lexer struct {
@@ -38,7 +38,7 @@ func (l *Lexer) peekChar() rune {
 
 func (l *Lexer) readNumber() []rune {
 	pos := l.position
-	for services.IsNumber(l.ch) || (l.ch == '.' && services.IsNumber(l.peekChar())) {
+	for txt.IsNumber(l.ch) || (l.ch == '.' && txt.IsNumber(l.peekChar())) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
@@ -46,7 +46,7 @@ func (l *Lexer) readNumber() []rune {
 
 func (l *Lexer) readText() []rune {
 	pos := l.position
-	for services.IsLetterOrNumber(l.ch) || islinkSymbol(l.ch) {
+	for txt.IsLetterOrNumber(l.ch) || islinkSymbol(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
@@ -79,7 +79,7 @@ func islinkSymbol(ch rune) bool {
 
 func (l *Lexer) readTab() Token {
 	ts := config.GetConfig().TabStop
-	new := services.ReadTabAt(l.input, l.position, ts)
+	new := txt.ReadTabAt(l.input, l.position, ts)
 	return Token{Type: tab, Literal: new}
 }
 
@@ -123,10 +123,10 @@ func (l *Lexer) NextToken() Token {
 		t = Token{Type: EOL, Literal: []rune("")}
 		l.readChar()
 	default:
-		if services.IsNumber(l.ch) {
+		if txt.IsNumber(l.ch) {
 			s := l.readNumber()
 			t = Token{Type: number, Literal: s}
-		} else if services.IsLetter(l.ch) {
+		} else if txt.IsLetter(l.ch) {
 			s := l.readText()
 			if _, ok := keywords[string(s)]; ok {
 				t = Token{Type: keyword, Literal: s}

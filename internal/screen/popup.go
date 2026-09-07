@@ -7,6 +7,7 @@ import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/services"
+	text "github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/theme"
 )
 
@@ -53,7 +54,7 @@ func (p *popup) Draw() string {
 		}
 
 		_l := p.object.DrawLineAt(i - offset)
-		trim := services.VisibleSubString(_l, 0, p.w-offset*3)
+		trim := text.VisibleSubString(_l, 0, p.w-offset*3)
 
 		curHash := services.GetHash(trim)
 		oldHash, ok := p.hash[i]

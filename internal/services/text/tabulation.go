@@ -1,4 +1,4 @@
-package services
+package text
 
 func ReplaceTabs(line []rune, tabstop int) []rune {
 	var new []rune

@@ -1,6 +1,6 @@
 package buffer
 
-import "github.com/EnotInc/Bard/internal/services"
+import "github.com/EnotInc/Bard/internal/services/text"
 
 type cursor struct {
 	line   int
@@ -214,9 +214,9 @@ func (b *Buffer) MoveBack(amount int) {
 			ch = curLine.Data[offset]
 		}
 
-		isSymbol := !services.IsLetterOrNumber(ch)
+		isSymbol := !text.IsLetterOrNumber(ch)
 		if !isSymbol {
-			for offset > 0 && services.IsLetterOrNumber(ch) && ch != ' ' {
+			for offset > 0 && text.IsLetterOrNumber(ch) && ch != ' ' {
 				offset -= 1
 				ch = curLine.Data[offset]
 			}
@@ -288,7 +288,7 @@ func (b *Buffer) MoveWord(amount int) {
 		}
 
 		ch := curLine.Data[offset]
-		isSymbol := !services.IsLetterOrNumber(ch)
+		isSymbol := !text.IsLetterOrNumber(ch)
 
 		if isSymbol {
 			symbol := ch
@@ -297,7 +297,7 @@ func (b *Buffer) MoveWord(amount int) {
 				ch = curLine.Data[offset]
 			}
 		} else {
-			for offset < len(curLine.Data)-1 && services.IsLetterOrNumber(ch) && ch != ' ' {
+			for offset < len(curLine.Data)-1 && text.IsLetterOrNumber(ch) && ch != ' ' {
 				offset += 1
 				ch = curLine.Data[offset]
 			}
@@ -363,8 +363,8 @@ func (b *Buffer) MoveEnd(amount int) {
 			ch = curLine.Data[offset]
 		}
 
-		if services.IsLetterOrNumber(ch) {
-			for services.IsLetterOrNumber(ch) && offset < len(curLine.Data)-1 {
+		if text.IsLetterOrNumber(ch) {
+			for text.IsLetterOrNumber(ch) && offset < len(curLine.Data)-1 {
 				offset += 1
 				ch = curLine.Data[offset]
 			}

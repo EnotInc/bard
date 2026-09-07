@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 
 	"github.com/EnotInc/Bard/internal/enums/keys"
-	"github.com/EnotInc/Bard/internal/services"
+	text "github.com/EnotInc/Bard/internal/services/text"
 )
 
 func (ex *Explorer) beginChanges(clear bool) {
@@ -34,7 +34,7 @@ func (ex *Explorer) handleChanges(key rune) {
 			_entry.name = _entry.name[:len(_entry.name)-1]
 		}
 	default:
-		if services.IsLetterOrNumber(key) || key == '.' {
+		if text.IsLetterOrNumber(key) || key == '.' {
 			_entry.name = append(_entry.name, key)
 			_entry.path = []rune(filepath.Join(string(ex.path), string(_entry.name)))
 		}

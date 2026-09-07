@@ -7,7 +7,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/theme"
 )
 
@@ -21,11 +21,11 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 	ts := config.GetConfig().TabStop
 
-	clear := services.ReplaceTabs(l, ts)
+	clear := text.ReplaceTabs(l, ts)
 	switch curMode {
 	case mode.Visual:
-		startOffset += services.CursorShiftAt(l, startOffset, ts)
-		endOffset += services.CursorShiftAt(l, endOffset, ts)
+		startOffset += text.CursorShiftAt(l, startOffset, ts)
+		endOffset += text.CursorShiftAt(l, endOffset, ts)
 
 		if startLine > endLine || (startLine == endLine && startOffset > endOffset) {
 			startLine, endLine = endLine, startLine
@@ -44,8 +44,8 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		if startLine == i && i == endLine {
 			selected := ui.paint(clear[startOffset:endOffset])
-			before := services.VisibleSubString(rendered, 0, startOffset-1)
-			after := services.VisibleSubString(rendered, endOffset, len(clear))
+			before := text.VisibleSubString(rendered, 0, startOffset-1)
+			after := text.VisibleSubString(rendered, endOffset, len(clear))
 			line = []rune(before + ascii.Reset.Str() + string(selected) + after)
 
 		} else if startLine < i && i < endLine {
@@ -53,12 +53,12 @@ func (ui *TUI) AddVisual(curMode mode.Mode, l []rune, i int, startOffset, startL
 
 		} else if startLine == i {
 			selected := ui.paint(clear[startOffset:])
-			before := services.VisibleSubString(rendered, 0, startOffset-1)
+			before := text.VisibleSubString(rendered, 0, startOffset-1)
 			line = ui.WithEndLine(before + ascii.Reset.Str() + string(selected))
 
 		} else if endLine == i {
 			selected := ui.paint(clear[:endOffset])
-			after := services.VisibleSubString(rendered, endOffset, len(clear))
+			after := text.VisibleSubString(rendered, endOffset, len(clear))
 			line = []rune(string(selected) + after)
 
 		} else {

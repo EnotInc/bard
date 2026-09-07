@@ -8,6 +8,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/services"
+	text "github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/theme"
 )
 
@@ -105,7 +106,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 		}
 		line := t.object.DrawLineAt(i - offset)
 
-		trim := services.VisibleSubString(line, 0, t.w-offset*2)
+		trim := text.VisibleSubString(line, 0, t.w-offset*2)
 		if !border { // used to make borderless tiles more readable
 			trim = fmt.Sprintf(" %s", trim)
 		}
@@ -144,10 +145,10 @@ func (t *tile) getBorder(withTitle bool, isFocused bool) string {
 	c := t.getColor(isFocused)
 	if withTitle {
 		t.title = t.object.SetTitle()
-		visible := services.CountClear(t.title, 0, len(t.title))
+		visible := text.CountClear(t.title, 0, len(t.title))
 		if visible >= t.w-2-termShift {
-			t.title = services.VisibleSubString(t.title, 0, t.w-2-termShift-1)
-			visible = services.CountClear(t.title, 0, len(t.title)-1)
+			t.title = text.VisibleSubString(t.title, 0, t.w-2-termShift-1)
+			visible = text.CountClear(t.title, 0, len(t.title)-1)
 		}
 		amount := max(t.w-2-visible-termShift, 0)
 

@@ -11,7 +11,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/buffers"
 	"github.com/EnotInc/Bard/internal/enums/cursor"
 	"github.com/EnotInc/Bard/internal/screen"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	tui "github.com/EnotInc/Bard/internal/tiles/editor/TUI"
 	"github.com/EnotInc/Bard/theme"
 
@@ -118,7 +118,7 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string 
 					enable_render,
 					buf.Type)
 
-				fmt.Fprint(&content, services.VisibleSubString(visual, start, end))
+				fmt.Fprint(&content, text.VisibleSubString(visual, start, end))
 			} else {
 				data = e.tui.BuildLine(str, show, start, end, i, i == buf.Cursor.Line(), isFirst, enable_render, buf.Type)
 				fmt.Fprint(&content, data)

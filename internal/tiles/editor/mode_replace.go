@@ -7,7 +7,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 )
 
@@ -45,7 +45,7 @@ func (e *Editor) caseReplaceChar(key rune) {
 		cfg := config.GetConfig()
 		if !cfg.KeepTabs {
 			curLine := buf.Lines[buf.Cursor.Line()]
-			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
+			tab := text.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
 			for range tab {
 				buf.InsertKey(' ')
 			}
@@ -93,7 +93,7 @@ func (e *Editor) caseReplaceMode(key rune) {
 		cfg := config.GetConfig()
 		if !cfg.KeepTabs {
 			curLine := buf.Lines[buf.Cursor.Line()]
-			tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
+			tab := text.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
 			for range tab {
 				buf.InsertKey(' ')
 			}

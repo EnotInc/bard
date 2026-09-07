@@ -7,6 +7,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/ascii"
 	"github.com/EnotInc/Bard/internal/enums/keys"
 	"github.com/EnotInc/Bard/internal/services"
+	text "github.com/EnotInc/Bard/internal/services/text"
 )
 
 const placeholder = "'/' to search"
@@ -38,7 +39,7 @@ func (ex *Explorer) buildSearchBar() string {
 	}
 
 	searchBar.WriteString(ascii.Reset.Str())
-	return services.VisibleSubString(searchBar.String(), 0, ex.w-2)
+	return text.VisibleSubString(searchBar.String(), 0, ex.w-2)
 }
 
 func (ex *Explorer) beginSearch() {
@@ -66,7 +67,7 @@ func (ex *Explorer) handleSearch(key rune) {
 			offset = 2
 		}
 
-		if len(ex.search) < ex.w-offset-iconOffset && (services.IsLetterOrNumber(key) || key == '.') {
+		if len(ex.search) < ex.w-offset-iconOffset && (text.IsLetterOrNumber(key) || key == '.') {
 			ex.search = append(ex.search, key)
 		}
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/EnotInc/Bard/internal/enums/calls"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/internal/tiles/editor/TUI/render"
 	"github.com/EnotInc/Bard/theme"
 )
@@ -121,7 +122,7 @@ func (ui *TUI) BuildLowerBar(x int, y int, curdata string, message string, err s
 	}
 	fmt.Fprintf(&data, "%s", ui.fillSpace())
 
-	return services.VisibleSubString(data.String(), 0, screen.W()-1)
+	return text.VisibleSubString(data.String(), 0, screen.W()-1)
 }
 
 func (ui *TUI) BuildCommandBar(curdata string) string {
@@ -136,14 +137,14 @@ func (ui *TUI) BuildCommandBar(curdata string) string {
 func (ui *TUI) BuildLine(str []rune, show bool, start, end int, i int, isCurrent bool, isFirst bool, enable_render bool, Type buffers.BufferType) string {
 	ts := config.GetConfig().TabStop
 	if Type == buffers.Other || enable_render {
-		clear := services.ReplaceTabs(str, ts)
-		shift := services.CursorShift(str, ts)
-		return services.VisibleSubString(string(clear), start, end+shift)
+		clear := text.ReplaceTabs(str, ts)
+		shift := text.CursorShift(str, ts)
+		return text.VisibleSubString(string(clear), start, end+shift)
 	}
 
 	l := ui.render.Render(str, i, show, isCurrent, isFirst, ui.XScroll, Type)
 
-	return services.VisibleSubString(l, start, end)
+	return text.VisibleSubString(l, start, end)
 }
 
 func (ui *TUI) ResetRender() {

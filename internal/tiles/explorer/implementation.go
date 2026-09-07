@@ -13,6 +13,7 @@ import (
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
 	"github.com/EnotInc/Bard/internal/screen"
 	"github.com/EnotInc/Bard/internal/services"
+	text "github.com/EnotInc/Bard/internal/services/text"
 )
 
 func (ex *Explorer) DrawLineAt(index int) string {
@@ -51,7 +52,7 @@ func (ex *Explorer) DrawLineAt(index int) string {
 	}
 
 	e := fmt.Sprintf("%s%s", icon, string(entry.name))
-	e = services.VisibleSubString(e, 0, ex.w)
+	e = text.VisibleSubString(e, 0, ex.w)
 	return e
 }
 

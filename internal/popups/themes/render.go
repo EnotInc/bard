@@ -6,7 +6,7 @@ import (
 
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums/ascii"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 	"github.com/EnotInc/Bard/theme"
 )
 
@@ -39,7 +39,7 @@ func (t *Themes) renderAt(index int) string {
 			borderOffset = 2
 		}
 
-		amount := services.CountClear(name, 0, len(name))
+		amount := text.CountClear(name, 0, len(name))
 		empty := strings.Repeat(" ", max(0, t.w-amount-palleteOffset-borderOffset-spacing))
 
 		if index == t.cursor {

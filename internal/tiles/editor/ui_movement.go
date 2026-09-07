@@ -3,14 +3,14 @@ package editor
 import (
 	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/enums"
-	"github.com/EnotInc/Bard/internal/services"
+	"github.com/EnotInc/Bard/internal/services/text"
 )
 
 // Making sure that visual Cursor is not out of bounds
 func (e *Editor) setUiCursor() {
 	buf := e.b[e.curBuffer]
 	ts := config.GetConfig().TabStop
-	shift := services.CursorShiftAt(buf.Lines[buf.Cursor.Line()].Data, buf.Cursor.Offset(), ts)
+	shift := text.CursorShiftAt(buf.Lines[buf.Cursor.Line()].Data, buf.Cursor.Offset(), ts)
 
 	if e.tui.XScroll > buf.Cursor.Offset()+shift {
 		e.tui.XScroll = buf.Cursor.Offset() + shift

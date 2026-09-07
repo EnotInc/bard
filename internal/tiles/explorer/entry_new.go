@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/EnotInc/Bard/internal/enums/keys"
-	"github.com/EnotInc/Bard/internal/services"
+	text "github.com/EnotInc/Bard/internal/services/text"
 )
 
 func (ex *Explorer) beginCreation() {
@@ -40,7 +40,7 @@ func (ex *Explorer) handleCreate(key rune) {
 			_entry.isDir = !_entry.isDir
 			return
 		}
-		if services.IsLetterOrNumber(key) || key == '.' {
+		if text.IsLetterOrNumber(key) || key == '.' {
 			_entry.name = append(_entry.name, key)
 			_entry.path = []rune(filepath.Join(string(ex.path), string(_entry.name)))
 		}

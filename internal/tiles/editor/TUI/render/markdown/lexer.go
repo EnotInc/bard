@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/EnotInc/Bard/config"
-	"github.com/EnotInc/Bard/internal/services"
+	txt "github.com/EnotInc/Bard/internal/services/text"
 )
 
 type Lexer struct {
@@ -57,7 +57,7 @@ func (l *Lexer) NextToken() Token {
 	case '-':
 		t = l.readListOrCheckBox()
 	case '\\':
-		if (services.IsLetterOrNumber(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ') && l.peekChar() != '_' {
+		if (txt.IsLetterOrNumber(l.peekChar()) || l.peekChar() == 0 || l.peekChar() == ' ') && l.peekChar() != '_' {
 			t = Token{Type: symbol, Value: []rune{l.ch}}
 		} else {
 			sh := l.ch
@@ -146,7 +146,7 @@ func (l *Lexer) NextToken() Token {
 		end := l.position + 1
 		lit := []rune(l.input[pos:end])
 
-		if count == 1 && services.IsLetterOrNumber(l.peekChar()) {
+		if count == 1 && txt.IsLetterOrNumber(l.peekChar()) {
 			t = l.readTagOrHex(lit)
 		} else if count > 6 || l.peekChar() != ' ' {
 			t = Token{Type: symbol, Value: lit}
@@ -196,7 +196,7 @@ func (l *Lexer) NextToken() Token {
 	case 0:
 		t = Token{Type: eol}
 	default:
-		if services.IsNumber(l.ch) {
+		if txt.IsNumber(l.ch) {
 			s := l.readNumber()
 			switch l.ch {
 			case ')':
@@ -208,7 +208,7 @@ func (l *Lexer) NextToken() Token {
 			default:
 				t = Token{Type: text, Value: s}
 			}
-		} else if services.IsLetterOrNumber(l.ch) {
+		} else if txt.IsLetterOrNumber(l.ch) {
 			txt := l.readText()
 			switch string(txt) {
 			case "http", "https":
@@ -228,7 +228,7 @@ func (l *Lexer) NextToken() Token {
 }
 
 func (l *Lexer) isExternalLinkText(r rune) bool {
-	return services.IsLetterOrNumber(r) || r == '.' || r == '/' || r == '?' || r == '#' || r == '-' || r == '~' || r == '!' || r == '\'' || r == '(' || r == ')' || r == '*' || r == '&' || r == '=' || r == ':' || r == '@'
+	return txt.IsLetterOrNumber(r) || r == '.' || r == '/' || r == '?' || r == '#' || r == '-' || r == '~' || r == '!' || r == '\'' || r == '(' || r == ')' || r == '*' || r == '&' || r == '=' || r == ':' || r == '@'
 }
 
 func (l *Lexer) readExternalLink() []rune {
@@ -268,13 +268,13 @@ func (l *Lexer) readTagOrHex(lit []rune) Token {
 
 func (l *Lexer) readTab() Token {
 	ts := config.GetConfig().TabStop
-	new := services.ReadTabAt(l.input, l.position, ts)
+	new := txt.ReadTabAt(l.input, l.position, ts)
 	return Token{Type: tab, Literal: []rune(new)}
 }
 
 func (l *Lexer) readNumber() []rune {
 	pos := l.position
-	for services.IsNumber(l.ch) {
+	for txt.IsNumber(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]
@@ -282,7 +282,7 @@ func (l *Lexer) readNumber() []rune {
 
 func (l *Lexer) readText() []rune {
 	pos := l.position
-	for services.IsLetterOrNumber(l.ch) {
+	for txt.IsLetterOrNumber(l.ch) {
 		l.readChar()
 		if l.ch == '_' && (l.peekChar() == '_' || l.peekChar() == ' ' || l.peekChar() == 0) {
 			break
@@ -294,7 +294,7 @@ func (l *Lexer) readText() []rune {
 func (l *Lexer) readHTMLBlock() Token {
 	start := l.position
 	l.readChar()
-	for l.ch != '>' && l.peekChar() != 0 && (services.IsLetterOrNumber(l.ch) || isSymbol(l.ch) || l.ch == ' ') {
+	for l.ch != '>' && l.peekChar() != 0 && (txt.IsLetterOrNumber(l.ch) || isSymbol(l.ch) || l.ch == ' ') {
 		l.readChar()
 	}
 	if l.ch == '>' {
@@ -455,7 +455,7 @@ func (l *Lexer) readListOrCheckBox() Token {
 		l.readChar()
 
 		ch := l.peekChar()
-		if ch == ' ' || services.IsLetter(ch) || ch == '?' {
+		if ch == ' ' || txt.IsLetter(ch) || ch == '?' {
 			l.readChar()
 			filled := ch
 
