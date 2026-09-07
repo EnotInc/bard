@@ -57,6 +57,30 @@ func ReadConfig() error {
 	return nil
 }
 
+func ReadKeyMaps() []map[rune]rune {
+	keymaps := []map[rune]rune{}
+
+	for i, km := range config.KeyMaps {
+		list_from := []rune(km.From)
+		list_to := []rune(km.To)
+
+		if len(list_from) != len(list_to) {
+			continue
+		}
+
+		keymaps = append(keymaps, map[rune]rune{})
+		for j := range list_from {
+
+			f := list_from[j]
+			t := list_to[j]
+
+			keymaps[i][f] = t
+		}
+	}
+
+	return keymaps
+}
+
 func InitConfig() {
 	defaultConfing := getDefaultConfig()
 	cfg_path := getConfigPath()

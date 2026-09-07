@@ -141,31 +141,32 @@ func (e *Editor) drawRenderedLine(i int, upperBorder int, maxNumLen int) string 
 }
 
 func (e *Editor) Handle(key rune) {
+	k := e.fromKeyMap(key)
 	switch e.curMode {
 	case mode.Normal:
-		if e.IsGeneralMove(key) {
-			e.GeneralCase(key)
+		if e.IsGeneralMove(k) {
+			e.GeneralCase(k)
 		} else {
-			e.caseNormal(key)
+			e.caseNormal(k)
 		}
 	case mode.Visual:
-		if e.IsGeneralMove(key) {
-			e.GeneralCase(key)
+		if e.IsGeneralMove(k) {
+			e.GeneralCase(k)
 		} else {
-			e.caseVisual(key)
+			e.caseVisual(k)
 		}
 	case mode.Visual_line:
-		if e.IsGeneralMove(key) {
-			e.GeneralCase(key)
+		if e.IsGeneralMove(k) {
+			e.GeneralCase(k)
 		} else {
-			e.caseVisualLine(key)
+			e.caseVisualLine(k)
 		}
 	case mode.Command:
-		e.caseCommand(key)
+		e.caseCommand(k)
 	case mode.Insert:
-		e.caseInsert(key)
+		e.caseInsert(k)
 	case mode.Replace:
-		e.caseReplaceMode(key)
+		e.caseReplaceMode(k)
 	default:
 		screen.Exit(1)
 	}

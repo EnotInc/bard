@@ -3,6 +3,7 @@ package editor
 import (
 	"strconv"
 
+	"github.com/EnotInc/Bard/config"
 	"github.com/EnotInc/Bard/internal/tiles/editor/buffer"
 
 	mode "github.com/EnotInc/Bard/internal/enums/mode"
@@ -16,6 +17,7 @@ type Editor struct {
 	emptyLineSpaces string
 	subCmd          string
 	lastCmd         string
+	keyMaps         []map[rune]rune
 	b               []*buffer.Buffer
 	curBuffer       int
 }
@@ -51,6 +53,8 @@ func InitEditor(w int) *Editor {
 		subCmd:    "",
 		curBuffer: 0,
 	}
+
+	e.keyMaps = config.ReadKeyMaps()
 
 	return e
 }

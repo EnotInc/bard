@@ -56,7 +56,7 @@ func InitScreen() {
 	_fdOut := int(os.Stdout.Fd())
 
 	old, err := term.MakeRaw(_fdIn)
-	if err != nil && 1 == 2 {
+	if err != nil {
 		panic(err)
 	}
 

@@ -7,6 +7,7 @@ Config is located at ` + "`~/.bard/config.json`" + ` file. You can edit it manua
 Default config looks like this:
 ` + "```json" + `
 {
+` + "\t" + `keymaps: [{<from>, <to>}]` + "        " + `# Used to set custom key maps. You can add new in list, with formant {"from" : <your keys>, "to": <eng keys>}. You can find example lower.
 ` + "\t" + `theme_name: "bard.json" ` + "     " + `# Used to set theme. This field is required '.josn' at the end. All themes is stored at '~/.bard/themes' directory.
 ` + "\t" + `tab_stop: 4 ` + "                 " + `# Can't be less thant 1. Used to set max tab width.
 ` + "\t" + `resize_time_duration: 200 ` + "   " + `# Time in milliceconds. Used to set timer to handle terminal resize. Can't be less than 200 and greater than 1000 milliseconds
@@ -23,4 +24,14 @@ Default config looks like this:
 ` + "```" + `
 
 You can also run ` + "`:settings`" + ` command to open pup-up window, and change some values there
-`
+
+Key map example for russian letters:
+
+` + "```json" + `
+"key_maps": [
+	{
+		"from": "йцукенгшщзфывапролдячсмитьЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬ",
+		"to": "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+	}
+]
+` + "```" + ``
