@@ -1,9 +1,12 @@
 package editor
 
-import "github.com/EnotInc/Bard/internal/services/text"
+import (
+	mode "github.com/EnotInc/Bard/internal/enums/mode"
+	"github.com/EnotInc/Bard/internal/services/text"
+)
 
 func (e *Editor) fromKeyMap(r rune) rune {
-	if text.IsLetter(r) {
+	if text.IsLetter(r) || e.curMode == mode.Insert {
 		return r
 	}
 

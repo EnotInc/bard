@@ -105,15 +105,15 @@ func (e *Editor) caseInsert(key rune) {
 
 		tab := insertTab(cfg.KeepTabs, cfg.TabStop)
 		buf.Lines[buf.Cursor.Line()].Data = append(buf.Lines[buf.Cursor.Line()].Data, tab...)
-		// if !cfg.KeepTabs {
-		// 	curLine := buf.Lines[buf.Cursor.Line()]
-		// 	tab := services.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
-		// 	for range tab {
-		// 		buf.InsertKey(' ')
-		// 	}
-		// } else {
-		// 	buf.InsertKey('\t')
-		// }
+		if !cfg.KeepTabs {
+			curLine := buf.Lines[buf.Cursor.Line()]
+			tab := text.CursorShiftCalculateAt(curLine.Data, buf.Cursor.Offset(), cfg.TabStop)
+			for range tab {
+				buf.InsertKey(' ')
+			}
+		} else {
+			buf.InsertKey('\t')
+		}
 
 	case '[', '{', '(', ')', '}', ']', '\'', '"', '<', '>', '*', '_', '`':
 		e.b[e.curBuffer].InsertPair(key)
