@@ -49,6 +49,9 @@ func (s *Settings) render(index int) string {
 	case int(ShowEmpty):
 		text = "Show Empty Lines"
 		enable = cfg.ShowEmpty
+	case int(ClipBoard):
+		text = "copy to clipboard"
+		enable = cfg.ClipBoard
 	default:
 		text = ""
 	}

@@ -120,6 +120,8 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 		lineCount++
 	}
 
+	b.copyToClipboard(isVisualLine)
+
 	if isDelete && len(tempLine) > 0 {
 		b.InsertLineWithData(startLine, tempLine)
 	}

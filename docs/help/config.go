@@ -20,6 +20,7 @@ Default config looks like this:
 ` + "\t" + `show_icons: true` + "             " + `# Used in render do decide should it draw nerdfont icons or not.
 ` + "\t" + `show_borders: true` + "           " + `# Turns on and off tile borders.
 ` + "\t" + `show_dot_files: true` + "         " + `# Used in explorer to show or hide hidden (dot) files.
+` + "\t" + `copty_to_clipboard: false` + "    " + `# Copy selected text to the system clipboard. Experemental, using the terminal's OSC 52 escape sequence.
 }
 ` + "```" + `
 

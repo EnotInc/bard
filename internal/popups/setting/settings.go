@@ -7,13 +7,12 @@ type Settings struct {
 }
 
 const header_offset = 1
-const settings_amount int = 7
+const settings_amount int = 9
 
 type setting int
 
 const (
 	_ setting = iota
-	KeepTabs
 	RelativeNumbers
 	ShowMDSymbols
 	ShowTabNames
@@ -22,6 +21,8 @@ const (
 	ShowBorders
 	ShowIcons
 	ShowEmpty
+	ClipBoard
+	KeepTabs
 )
 
 func IntiSettings(onChange func()) *Settings {

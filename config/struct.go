@@ -14,6 +14,7 @@ type Config struct {
 	ShowIcons  bool     `json:"show_icons"`
 	ShowBorder bool     `json:"show_borders"`
 	ShowDot    bool     `json:"show_dot_files"`
+	ClipBoard  bool     `json:"copy_to_clipboard"`
 }
 
 type keyMap struct {

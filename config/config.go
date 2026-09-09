@@ -138,5 +138,6 @@ func getDefaultConfig() *Config {
 		ShowIcons:  true,
 		ShowBorder: false,
 		ShowDot:    true,
+		ClipBoard:  false,
 	}
 }

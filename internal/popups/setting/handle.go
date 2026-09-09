@@ -54,6 +54,8 @@ func (s *Settings) toggle() {
 		cfg.ShowIcons = !cfg.ShowIcons
 	case int(ShowEmpty):
 		cfg.ShowEmpty = !cfg.ShowEmpty
+	case int(ClipBoard):
+		cfg.ClipBoard = !cfg.ClipBoard
 	}
 
 	s.onChange()
