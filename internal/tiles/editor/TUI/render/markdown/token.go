@@ -35,8 +35,8 @@ const ( // maybe it's better to use iota for tokens?
 	twoUnderLines   // "__"
 	threeUnderLines // "___"
 
-	stricked   // "~~"
-	hightlight // "=="
+	stricked  // "~~"
+	highlight // "=="
 
 	header_1 // "#"
 	header_2 // "##"

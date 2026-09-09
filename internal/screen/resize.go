@@ -59,7 +59,7 @@ func listenResize() {
 
 			// NOTE: I don't like this solution
 			// unfortunately I'm way too dumb to figure out how to fix it
-			// For now, if there is only one tile oppened (editor) I make it fullscreen
+			// For now, if there is only one tile opened (editor) I make it fullscreen
 			if len(global.tiles) == 1 {
 				ed := global.tiles[0]
 				ed.w = global.w

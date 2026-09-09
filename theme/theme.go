@@ -13,7 +13,7 @@ import (
 var theme *Theme
 
 func setTheme(t *Theme) {
-	t.parceColors()
+	t.parseColors()
 	theme = t
 }
 
@@ -66,11 +66,11 @@ func getThemePath(themeName string) string {
 	return filepath.Join(home, themeDir, themeName)
 }
 
-func (t *Theme) parceColors() {
-	t.parceRecursive(reflect.ValueOf(t).Elem())
+func (t *Theme) parseColors() {
+	t.parseRecursive(reflect.ValueOf(t).Elem())
 }
 
-func (t *Theme) parceRecursive(val reflect.Value) {
+func (t *Theme) parseRecursive(val reflect.Value) {
 	typ := val.Type()
 
 	for i := 0; i < val.NumField(); i++ {
@@ -78,7 +78,7 @@ func (t *Theme) parceRecursive(val reflect.Value) {
 		fieldType := typ.Field(i)
 
 		if field.Kind() == reflect.Struct {
-			t.parceRecursive(field)
+			t.parseRecursive(field)
 			continue
 		}
 
@@ -199,9 +199,9 @@ func getThemePallete(name string) ([9]string, error) {
 	tmp := &Theme{}
 	err = json.Unmarshal(data, tmp)
 	if err != nil {
-		return [9]string{}, fmt.Errorf("Unable to parce theme '%s'", name)
+		return [9]string{}, fmt.Errorf("Unable to parse theme '%s'", name)
 	}
-	tmp.parceColors()
+	tmp.parseColors()
 
 	var pallete [9]string
 	pallete[0] = tmp.Markdown.Header1

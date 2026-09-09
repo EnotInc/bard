@@ -82,34 +82,34 @@ func (b *Buffer) CopySelected(isDelete bool, isVisualLine bool) {
 	lineCount := 0
 	lineSelected := endLine - startLine
 	for i := startLine; i <= endLine; {
-		curOfsetStart := 0
-		curOfsetEnd := max(len(b.Lines[i].Data)-1, 0)
+		curOffsetStart := 0
+		curOffsetEnd := max(len(b.Lines[i].Data)-1, 0)
 
 		if isVisualLine {
-			curOfsetStart = 0
-			// not changing curOfsetEnd coz it was set to the max of 0 and len of the current line
+			curOffsetStart = 0
+			// not changing curOffsetEnd coz it was set to the max of 0 and len of the current line
 		} else {
 			if lineCount == 0 {
-				curOfsetStart = startOffset
+				curOffsetStart = startOffset
 			}
 			if i == endLine {
-				curOfsetEnd = endOffset
+				curOffsetEnd = endOffset
 			}
 		}
 
 		if len(b.Lines[i].Data) > 0 {
-			curOfsetEnd++
+			curOffsetEnd++
 		}
 
-		line := b.CopyLine(b.Lines[i], curOfsetStart, curOfsetEnd)
+		line := b.CopyLine(b.Lines[i], curOffsetStart, curOffsetEnd)
 		b.Copies = append(b.Copies, line)
 
 		if isDelete {
 			if lineCount == 0 {
-				tempLine = b.Lines[i].Data[:curOfsetStart]
+				tempLine = b.Lines[i].Data[:curOffsetStart]
 			}
 			if lineCount == lineSelected {
-				tempLine = append(tempLine, b.Lines[i].Data[curOfsetEnd:]...)
+				tempLine = append(tempLine, b.Lines[i].Data[curOffsetEnd:]...)
 			}
 			b.RemoveLineAt(i)
 			endLine--
@@ -223,36 +223,36 @@ func (b *Buffer) ChangeLetterCaseTo(Case cases.Case, isVisualLine bool) {
 
 	lineCount := 0
 	for i := startLine; i <= endLine; {
-		curOfsetStart := 0
-		curOfsetEnd := max(len(b.Lines[i].Data)-1, 0)
+		curOffsetStart := 0
+		curOffsetEnd := max(len(b.Lines[i].Data)-1, 0)
 
 		if isVisualLine {
-			curOfsetStart = 0
-			// not changing curOfsetEnd coz it was set to the max of 0 and len of the current line
+			curOffsetStart = 0
+			// not changing curOffsetEnd coz it was set to the max of 0 and len of the current line
 		} else {
 			if lineCount == 0 {
-				curOfsetStart = startOffset
+				curOffsetStart = startOffset
 			}
 			if i == endLine {
-				curOfsetEnd = endOffset
+				curOffsetEnd = endOffset
 			}
 		}
 
 		if len(b.Lines[i].Data) > 0 {
-			curOfsetEnd++
+			curOffsetEnd++
 		}
 
 		var changed_line string
 		switch Case {
 		case cases.Lower:
-			changed_line = strings.ToLower(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
+			changed_line = strings.ToLower(string(b.Lines[i].Data[curOffsetStart:curOffsetEnd]))
 		case cases.Upper:
-			changed_line = strings.ToUpper(string(b.Lines[i].Data[curOfsetStart:curOfsetEnd]))
+			changed_line = strings.ToUpper(string(b.Lines[i].Data[curOffsetStart:curOffsetEnd]))
 		default:
 			changed_line = ""
 		}
 
-		b.Lines[i].Data = slices.Concat(b.Lines[i].Data[:curOfsetStart], []rune(changed_line), b.Lines[i].Data[curOfsetEnd:])
+		b.Lines[i].Data = slices.Concat(b.Lines[i].Data[:curOffsetStart], []rune(changed_line), b.Lines[i].Data[curOffsetEnd:])
 
 		i++
 		lineCount++

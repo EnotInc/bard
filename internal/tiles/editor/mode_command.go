@@ -47,10 +47,10 @@ func (e *Editor) caseCommand(key rune) {
 			e.cmd.command = e.cmd.history[e.cmd.index]
 		}
 	default:
-		cmdOfset := 10
-		if len(e.cmd.command) >= e.tui.W-cmdOfset {
+		cmdOffset := 10
+		if len(e.cmd.command) >= e.tui.W-cmdOffset {
 			e.cmd.command = []rune{}
-			e.tui.Error = "Unable process command of this length"
+			e.tui.Error = "Unable to process command of this length"
 			e.curMode = mode.Normal
 			return
 		}
@@ -60,7 +60,7 @@ func (e *Editor) caseCommand(key rune) {
 	}
 }
 
-func (cmd *cmd) saveToHisory() {
+func (cmd *cmd) saveToHistory() {
 	// if we moved back on cmd history and change one of the commands, history will continue from this point
 	if cmd.index != len(cmd.history) {
 		cmd.history = slices.Delete(cmd.history, cmd.index, len(cmd.history))
@@ -73,7 +73,7 @@ func (cmd *cmd) saveToHisory() {
 // Later I'll make some sort of a lexer to do it
 func (e *Editor) execCommand() {
 	cfg := config.GetConfig()
-	e.cmd.saveToHisory()
+	e.cmd.saveToHistory()
 	switch string(e.cmd.command) {
 	case "c", "close":
 		if len(e.b) == 1 {

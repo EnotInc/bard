@@ -14,7 +14,7 @@ type cursor struct {
 func initCursor() *cursor {
 	return &cursor{
 		x: 0,
-		y: searchBarOfset,
+		y: searchBarOffset,
 	}
 }
 
@@ -29,8 +29,8 @@ func (ex *Explorer) j() {
 
 func (ex *Explorer) k() {
 	ex.cursor.y -= 1
-	if ex.cursor.y < searchBarOfset {
-		ex.cursor.y = searchBarOfset
+	if ex.cursor.y < searchBarOffset {
+		ex.cursor.y = searchBarOffset
 	}
 
 	ex.scroll()
@@ -47,8 +47,8 @@ func (ex *Explorer) scroll() {
 }
 
 func (ex *Explorer) fixCursor() {
-	if ex.cursor.y < searchBarOfset {
-		ex.cursor.y = searchBarOfset
+	if ex.cursor.y < searchBarOffset {
+		ex.cursor.y = searchBarOffset
 	}
 	if ex.cursor.y > len(ex.entries) {
 		ex.cursor.y = len(ex.entries)
@@ -56,7 +56,7 @@ func (ex *Explorer) fixCursor() {
 }
 
 func (ex *Explorer) moveToTop() {
-	ex.cursor.y = searchBarOfset
+	ex.cursor.y = searchBarOffset
 	if !slices.Equal(ex.path, screen.Root()) && len(ex.entries) > 1 {
 		ex.cursor.y += 1
 	}
@@ -64,4 +64,4 @@ func (ex *Explorer) moveToTop() {
 
 func (ex *Explorer) moveToBottom() {
 	ex.cursor.y = max(len(ex.entries), 0)
-} // ex.cursor.y = max(len(ex.enties)-1+serchBarOfset, 0)
+}

@@ -9,20 +9,20 @@ import (
 
 func (ex *Explorer) beginChanges(clear bool) {
 	ex.action = changing
-	entry := ex.entries[ex.cursor.y-searchBarOfset]
+	entry := ex.entries[ex.cursor.y-searchBarOffset]
 	ex.buffer = entry
 	entry.path = []rune(filepath.Join(string(ex.path), ""))
 
 	if clear {
-		ex.entries[ex.cursor.y-searchBarOfset].name = []rune{}
+		ex.entries[ex.cursor.y-searchBarOffset].name = []rune{}
 	}
 }
 
 func (ex *Explorer) handleChanges(key rune) {
-	_entry := &ex.entries[ex.cursor.y-searchBarOfset]
+	_entry := &ex.entries[ex.cursor.y-searchBarOffset]
 	switch key {
 	case keys.Esc:
-		ex.entries[ex.cursor.y-searchBarOfset] = ex.buffer
+		ex.entries[ex.cursor.y-searchBarOffset] = ex.buffer
 		ex.buffer = entry{}
 		ex.action = none
 	case keys.Enter:

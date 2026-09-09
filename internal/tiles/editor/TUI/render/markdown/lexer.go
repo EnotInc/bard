@@ -129,7 +129,7 @@ func (l *Lexer) NextToken() Token {
 	case '=':
 		if l.peekChar() == '=' {
 			l.readChar()
-			t = Token{Type: hightlight, Value: []rune("==")}
+			t = Token{Type: highlight, Value: []rune("==")}
 		} else {
 			t = Token{Type: symbol, Value: []rune("=")}
 		}

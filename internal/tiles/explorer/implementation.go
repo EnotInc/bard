@@ -22,9 +22,9 @@ func (ex *Explorer) DrawLineAt(index int) string {
 	}
 
 	cfg := config.GetConfig()
-	ofset := 2
+	offset := 2
 	if cfg.ShowBorder {
-		ofset *= 2
+		offset *= 2
 	}
 
 	if index == 0 {
@@ -33,11 +33,11 @@ func (ex *Explorer) DrawLineAt(index int) string {
 
 	if ex.yScroll > 0 && index == 1 {
 		return ascii.ArrowUp.Str()
-	} else if index == ex.h-ofset {
+	} else if index == ex.h-offset {
 		return ascii.ArrowDown.Str()
 	}
 
-	entry := ex.entries[index+ex.yScroll-searchBarOfset]
+	entry := ex.entries[index+ex.yScroll-searchBarOffset]
 	var icon string
 	if entry.isDir {
 		icon = services.GetDirIcon(string(entry.name), cfg.ShowIcons)
@@ -119,10 +119,10 @@ func (ex *Explorer) GetCursor(withBorder bool) (int, int, cursorType.CursorType)
 
 	switch ex.action {
 	case changing:
-		x += len(ex.entries[ex.cursor.y-searchBarOfset].name)
+		x += len(ex.entries[ex.cursor.y-searchBarOffset].name)
 	case creating:
 		x += len(ex.entries[len(ex.entries)-1].name)
-		y += searchBarOfset
+		y += searchBarOffset
 	case searching:
 		x += len(ex.search)
 		y = enums.CursorOffset

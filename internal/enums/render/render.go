@@ -1,6 +1,6 @@
 package enums
 
-// helps to decide wich type of render use
+// helps to decide which type of render use
 type Render int
 
 const (

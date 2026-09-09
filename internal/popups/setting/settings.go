@@ -25,7 +25,7 @@ const (
 	KeepTabs
 )
 
-func IntiSettings(onChange func()) *Settings {
+func InitSettings(onChange func()) *Settings {
 	s := &Settings{
 		onChange: onChange,
 	}

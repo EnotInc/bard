@@ -162,14 +162,14 @@ func (r *Render) RenderMarkdownLine(line []rune, lineIndex int, show bool, xOffs
 			data.WriteString(r.renderExternalLinks(&tok))
 		case tab:
 			data.WriteString(r.renderTab(&tok))
-		case hightlight:
+		case highlight:
 			data.WriteString(r.simpleAttrRender(r.theme.Highlight, string(tok.Value), show))
 		case link:
 			data.WriteString(r.renderLink(&tok, show))
 		case image:
 			data.WriteString(r.renderImage(&tok, show))
 		case html:
-			data.WriteString(r.renderHtmlBlcok(&tok))
+			data.WriteString(r.renderHtmlBlock(&tok))
 		case codeLine:
 			data.WriteString(r.renderCodeLine(&tok, show))
 		case text:
@@ -529,7 +529,7 @@ func (r *Render) renderImage(t *Token, show bool) string {
 	return data.String()
 }
 
-func (r *Render) renderHtmlBlcok(t *Token) string {
+func (r *Render) renderHtmlBlock(t *Token) string {
 	var s strings.Builder
 	switch len(t.Literal) {
 	case 3: // </>

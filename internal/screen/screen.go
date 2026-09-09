@@ -144,19 +144,19 @@ func DrawAll() {
 	}
 
 	var data strings.Builder
-	var tilesOfset int = 0
-	var focusedOfset = 0
+	var tilesOffset int = 0
+	var focusedOffset = 0
 
 	for i, t := range global.tiles {
 		focused := i == global.focus
 		t.object.PreDraw()
-		tile := t.GetDiff(tilesOfset, focused)
+		tile := t.GetDiff(tilesOffset, focused)
 		data.WriteString(tile)
 
 		if focused {
-			focusedOfset = tilesOfset
+			focusedOffset = tilesOffset
 		}
-		tilesOfset += t.w
+		tilesOffset += t.w
 	}
 
 	f_tile := global.tiles[global.focus]
@@ -173,7 +173,7 @@ func DrawAll() {
 	data.WriteString(status)
 
 	cX, cY, cursor := f_tile.object.GetCursor(border)
-	cX += offset + focusedOfset
+	cX += offset + focusedOffset
 	cY += offset
 
 	fmt.Fprintf(&data, "\033[%d;%dH", cY, cX)

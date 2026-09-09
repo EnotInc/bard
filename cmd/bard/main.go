@@ -52,7 +52,7 @@ func main() {
 		ed.SetErrorCallback)
 	t_popup := screen.NewPopup(t)
 
-	s := setting.IntiSettings(ed.PurgeCacheCallback)
+	s := setting.InitSettings(ed.PurgeCacheCallback)
 	s_popup := screen.NewPopup(s)
 
 	screen.AddPopup(t_popup, popups.Themes)

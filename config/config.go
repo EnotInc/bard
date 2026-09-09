@@ -49,7 +49,7 @@ func ReadConfig() error {
 	err = json.Unmarshal(data, cfg)
 	if err != nil {
 		config = defaultConfing
-		return fmt.Errorf("Unable to parce config. Using default settings instead")
+		return fmt.Errorf("Unable to parse config. Using default settings instead")
 	}
 
 	config = cfg

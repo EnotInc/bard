@@ -12,7 +12,7 @@ import (
 
 const placeholder = "'/' to search"
 
-const searchBarOfset = 1
+const searchBarOffset = 1
 
 func (ex *Explorer) buildSearchBar() string {
 	var searchBar strings.Builder

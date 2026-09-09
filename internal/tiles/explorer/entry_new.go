@@ -13,7 +13,7 @@ func (ex *Explorer) beginCreation() {
 
 	entry := entry{name: []rune{}, path: ex.path, isDir: false}
 	ex.entries = append(ex.entries, entry)
-	ex.cursor.y = len(ex.entries) + searchBarOfset
+	ex.cursor.y = len(ex.entries) + searchBarOffset
 }
 
 func (ex *Explorer) handleCreate(key rune) {

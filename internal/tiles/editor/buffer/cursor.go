@@ -261,7 +261,7 @@ func (b *Buffer) MoveBACK(amount int) {
 			ch = curLine.Data[offset]
 		}
 
-		// when we found prev word - skipping everything until we find scpace
+		// when we found prev word - skipping everything until we find space
 		for offset > 0 && ch != ' ' {
 			offset -= 1
 			ch = curLine.Data[offset]
@@ -325,7 +325,7 @@ func (b *Buffer) MoveWORD(amount int) {
 
 		ch := curLine.Data[offset]
 
-		// skipping everything until we find scpace
+		// skipping everything until we find space
 		for offset < len(curLine.Data)-1 && ch != ' ' {
 			offset += 1
 			ch = curLine.Data[offset]
@@ -407,7 +407,7 @@ func (b *Buffer) MoveEND(amount int) {
 			}
 		}
 
-		// skipping everything until we find scpace
+		// skipping everything until we find space
 		for offset < len(curLine.Data)-1 && ch != ' ' {
 			offset += 1
 			ch = curLine.Data[offset]

@@ -26,7 +26,7 @@ func (s *Settings) render(index int) string {
 		text = "Relative Line Number"
 		enable = cfg.RLN
 	case int(ShowMDSymbols):
-		text = "Show MarkDonw Symbols"
+		text = "Show Markdown Symbols"
 		enable = cfg.ShowMD
 	case int(ShowTabNames):
 		text = "Show Tab Names"
@@ -50,7 +50,7 @@ func (s *Settings) render(index int) string {
 		text = "Show Empty Lines"
 		enable = cfg.ShowEmpty
 	case int(ClipBoard):
-		text = "copy to clipboard"
+		text = "Copy to clipboard"
 		enable = cfg.ClipBoard
 	default:
 		text = ""

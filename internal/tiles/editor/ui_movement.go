@@ -28,7 +28,7 @@ func (e *Editor) setUiCursor() {
 	e.tui.CurRow = buf.Cursor.Line() - e.tui.YScroll
 }
 
-// changes XScroll if CurOff is toching ScrollBorder
+// changes XScroll if CurOff is touching ScrollBorder
 func (e *Editor) ScrollRight() {
 	if e.tui.CurOff >= e.tui.W-enums.ScrollBorder*2 {
 		if e.tui.XScroll+e.tui.W-enums.InitialOffset != len(e.b[e.curBuffer].Lines[e.b[e.curBuffer].Cursor.Line()].Data)+enums.ScrollBorder {
@@ -37,7 +37,7 @@ func (e *Editor) ScrollRight() {
 	}
 }
 
-// changes XScroll if CurOff is toching ScrollBorder
+// changes XScroll if CurOff is touching ScrollBorder
 func (e *Editor) ScrollLeft() {
 	if e.tui.CurOff <= enums.ScrollBorder {
 		if e.tui.XScroll != 0 {

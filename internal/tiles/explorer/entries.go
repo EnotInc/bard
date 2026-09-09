@@ -75,7 +75,7 @@ func (ex *Explorer) openEntry(entry *entry) {
 }
 
 func (ex *Explorer) openEntryWithCallback() {
-	entry := ex.entries[ex.cursor.y-searchBarOfset]
+	entry := ex.entries[ex.cursor.y-searchBarOffset]
 	if entry.isDir {
 		if slices.Equal(entry.name, []rune(enums.Back)) {
 			ex.path = []rune(filepath.Dir(string(ex.path)))
@@ -91,7 +91,7 @@ func (ex *Explorer) openEntryWithCallback() {
 }
 
 func (ex *Explorer) delFileWithCallback() {
-	entry := ex.entries[ex.cursor.y-searchBarOfset]
+	entry := ex.entries[ex.cursor.y-searchBarOffset]
 	ex.delFile(string(entry.path))
 	screen.SendCall(calls.DelFile)
 }

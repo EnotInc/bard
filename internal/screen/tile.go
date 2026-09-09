@@ -59,7 +59,7 @@ func NewTile(o object, spacing float32) (*tile, error) {
 // move to enums?
 const termShift = 1
 
-func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
+func (t *tile) GetDiff(tileOffset int, isFocused bool) string {
 	var diff strings.Builder
 	diff.WriteString(ascii.HideCursor)
 	diff.WriteString(ascii.MoveToStart)
@@ -79,14 +79,14 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 			data.WriteString(c)
 			data.WriteString(ascii.BorderCUR)
 
-			pos := fmt.Sprintf("\033[%d;%dH", termShift, tileOfset+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH", termShift, tileOffset+termShift)
 			diff.WriteString(pos)
 			diff.WriteString(data.String())
 			continue
 		}
 		if border && i == t.h-1-statusLine {
 			border := t.getBorder(false, isFocused)
-			pos := fmt.Sprintf("\033[%d;%dH", t.h-statusLine, tileOfset+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH", t.h-statusLine, tileOffset+termShift)
 			diff.WriteString(pos)
 
 			data.WriteString(ascii.Reset.Str())
@@ -102,7 +102,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 
 		offset := 0
 		if border {
-			offset = 1 // border ofset
+			offset = 1 // border offset
 		}
 		line := t.object.DrawLineAt(i - offset)
 
@@ -115,7 +115,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 		oldHash, ok := t.hash[i]
 
 		if !ok || (ok && curHash != oldHash) { // add check for current line
-			pos := fmt.Sprintf("\033[%d;%dH\033[0K", i+termShift, tileOfset+termShift)
+			pos := fmt.Sprintf("\033[%d;%dH\033[0K", i+termShift, tileOffset+termShift)
 			diff.WriteString(pos)
 			if border {
 				data.WriteString(c)
@@ -125,7 +125,7 @@ func (t *tile) GetDiff(tileOfset int, isFocused bool) string {
 			data.WriteString(trim)
 			data.WriteString(ascii.Reset.Str())
 			if border {
-				fmt.Fprintf(&data, "\033[%d;%dH", i+termShift, tileOfset+t.w)
+				fmt.Fprintf(&data, "\033[%d;%dH", i+termShift, tileOffset+t.w)
 				data.WriteString(ascii.Reset.Str())
 				data.WriteString(c)
 				data.WriteString(ascii.BorderV)
